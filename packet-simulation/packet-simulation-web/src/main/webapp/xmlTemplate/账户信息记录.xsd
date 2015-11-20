@@ -1,0 +1,14 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<xs:schema xmlns="std:rims:2015:tech:xsd:sjcj.001.001.01"
+	xmlns:xs="http://www.w3.org/2001/XMLSchema"
+	targetNamespace="std:rims:2015:tech:xsd:sjcj.001.001.01"
+	elementFormDefault="qualified">
+	<xs:element name="Document" type="Document"/>
+	<xs:complexType name="Document">
+		<xs:sequence>
+			<xs:element name="AgreEffMessg" type="BsiInformation"/>
+		</xs:sequence>
+	</xs:complexType>
+	<xs:complexType name="BsiInformation">
+	</xs:complexType>
+</xs:schema>
