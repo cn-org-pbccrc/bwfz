@@ -35,9 +35,33 @@ public class MesgController {
 	
 	@ResponseBody
 	@RequestMapping("/batch")
-	public InvokeResult batch(MesgDTO mesgDTO,HttpServletRequest request,@RequestParam int batchNumber) {
+	public InvokeResult batch(MesgDTO mesgDTO,HttpServletRequest request,@RequestParam String ids,@RequestParam String start,@RequestParam String end,@RequestParam String currentUserId) {
 		String realPath = request.getSession().getServletContext().getRealPath("/");
-		return mesgFacade.creatMesgs(mesgDTO,realPath,batchNumber);
+		Long count = mesgFacade.queryCountOfThreeStandard(currentUserId);
+		int countOfThreeStandard = Integer.parseInt(String.valueOf(count));
+		if(start != null && !"".equals(start) && end != null && !"".equals(end)){
+			int startOfThreeStandard = Integer.parseInt(start);
+			int endOfThreeStandard = Integer.parseInt(end);
+			if(startOfThreeStandard>=1&&startOfThreeStandard<=endOfThreeStandard&&endOfThreeStandard<=countOfThreeStandard){
+				return mesgFacade.creatMesgsByInput(mesgDTO,startOfThreeStandard,endOfThreeStandard,currentUserId);
+			}
+			else if(startOfThreeStandard<1 || startOfThreeStandard>endOfThreeStandard || endOfThreeStandard>countOfThreeStandard){
+				return InvokeResult.failure("起始值不能小于1,结束值不能大于数据库记录总数,且起始值不能大于结束值");
+			}
+		}else if((start == null || "".equals(start)) && (end == null || "".equals(end))){
+			System.out.println("start:"+start);
+			System.out.println("三标数目来啦哈哈:"+count);
+			System.out.println("三标数目来的更猛烈!!!!!:"+countOfThreeStandard);
+			String[] values = ids.split(",");
+			return mesgFacade.creatMesgs(mesgDTO,realPath,values);
+		}else if((start == null || "".equals(start)) && (end != null || !"".equals(end))){			
+			return InvokeResult.failure("不能起始为空，结束不为空");
+		}else if((start != null || !"".equals(start)) && (end == null || "".equals(end))){
+			return InvokeResult.failure("不能结束为空，起始不为空");
+		}else{
+			return InvokeResult.failure("批量失败");
+		}
+		return null;
 	}
 	
 	@ResponseBody

@@ -195,6 +195,7 @@ function initFun(){
 // 	            	  alert("报送机构编码为14位,请确认！");
 // 	            	  return;
 // 	              }	    
+					
 	              $.post('${pageContext.request.contextPath}/Packet/add.koala?createdBy='+currentUserId, dialog.find('form').serialize()).done(function(result){
 	                   if(result.success ){
 	                        dialog.modal('hide');
@@ -220,7 +221,7 @@ function initFun(){
     			+'data-dismiss="modal" aria-hidden="true">&times;</button>'
     			+'<h4 class="modal-title">上传外部文件</h4></div><div class="modal-body">'
     			+'<p>One fine body&hellip;</p></div><div class="modal-footer">'	        	
-    			+'<button type="button" class="btn btn-default" data-dismiss="modal">返回</button>'
+    			+'<button type="button" class="btn btn-default" id="back" data-dismiss="modal">返回</button>'
     			+'<button type="button" class="btn btn-success" id="upload">上传</button>'
     			+'<button type="button" class="btn btn-warning" id="cancelUpload">取消上传</button></div></div>'
     			+'</div></div>');
@@ -232,6 +233,12 @@ function initFun(){
         		}).on({
             		'hidden.bs.modal': function(){
                 	$(this).remove();
+                	var $menuLi =  $('.g-sidec').find('li[data-mark="menuMark188"]');
+                    if($menuLi.length){
+                        $menuLi.click();
+                    }else{
+                        clearMenuEffect();
+                    }
             		}
         		}).find('.modal-body').html(html);
         		self.initPage(dialog.find('form'));
@@ -240,6 +247,15 @@ function initFun(){
         		});
         		dialog.find('#cancelUpload').on('click',{grid: grid}, function(e){
         			$('#uploadify').uploadify('cancel');
+        		});
+        		dialog.find('#back').on('click',{grid: grid}, function(e){
+         			//alert("haha")
+        			var $menuLi =  $('.g-sidec').find('li[data-mark="menuMark188"]');
+                    if($menuLi.length){
+                        $menuLi.click();
+                    }else{
+                        clearMenuEffect();
+                    }
         		});
     		});
 	    },
@@ -309,14 +325,14 @@ function initFun(){
 	    },
 
 	    initPage: function(form){
-// 	              form.find('.form_datetime').datetimepicker({
-// 	                   language: 'zh-CN',
-// 	                   format: "yyyy-mm-dd",
-// 	                   autoclose: true,
-// 	                   todayBtn: true,
-// 	                   //minView: 2,
-// 	                   pickerPosition: 'bottom-left'
-// 	               }).datetimepicker('setDate', new Date());//加载日期选择器
+	              form.find('.form_datetime').datetimepicker({
+	                   language: 'zh-CN',
+	                   format: "yyyy-mm-dd hh:ii:ss",
+	                   autoclose: true,
+	                   todayBtn: true,
+	                   //minView: 2,
+	                   pickerPosition: 'bottom-left'
+	               }).datetimepicker('setDate', new Date());//加载日期选择器
 	               var selectItems = {};
 	               var contents = [{title:'请选择', value: ''}];
 	               contents.push({title:'正常' , value:'0'});

@@ -21,9 +21,11 @@ import org.openkoala.koala.commons.InvokeResult;
 import org.packet.packetsimulation.application.MesgApplication;
 import org.packet.packetsimulation.application.MesgTypeApplication;
 import org.packet.packetsimulation.application.PacketApplication;
+import org.packet.packetsimulation.application.ThreeStandardApplication;
 import org.packet.packetsimulation.core.domain.Mesg;
 import org.packet.packetsimulation.core.domain.MesgType;
 import org.packet.packetsimulation.core.domain.Packet;
+import org.packet.packetsimulation.core.domain.ThreeStandard;
 import org.packet.packetsimulation.facade.MesgFacade;
 import org.packet.packetsimulation.facade.dto.MesgDTO;
 import org.packet.packetsimulation.facade.impl.assembler.MesgAssembler;
@@ -42,7 +44,10 @@ public class MesgFacadeImpl implements MesgFacade {
 	
 	@Inject
 	private PacketApplication  packetApplication;
-
+	
+	@Inject
+	private ThreeStandardApplication threeStandardApplication;
+	
 	private QueryChannelService queryChannel;
 
     private QueryChannelService getQueryChannelService(){
@@ -136,16 +141,77 @@ public class MesgFacadeImpl implements MesgFacade {
 		return InvokeResult.success();
 	}
 	
-	public InvokeResult creatMesgs(MesgDTO mesgDTO,String realPath,int batchNumber) {
+	public InvokeResult creatMesgs(MesgDTO mesgDTO,String realPath,String[] values) {		
 		Set<Mesg> mesgs= new HashSet<Mesg>();
-		for(int i = 0; i<batchNumber; i++){
-			Mesg mesg = MesgAssembler.toEntity(mesgDTO);
+		String flag = null;
+		//System.out.println(values.length);
+		Mesg mesgById = application.getMesg(mesgDTO.getId());
+		String content = mesgById.getContent();
+		System.out.println("啊哈哈哈哈米米变驴啦:"+mesgById.getContent());
+		for(int i = 0; i < values.length; i++){
+			Mesg mesg = new Mesg();
+			//Mesg mesg = application.getMesg(mesgDTO.getId());
+			String name = content.substring(content.indexOf("<Nm>")+4,content.indexOf("</Nm>"));
+			String credentialType = content.substring(content.indexOf("<IdTp>")+6,content.indexOf("</IdTp>"));
+			String credentialNumber = content.substring(content.indexOf("<IdNb>")+6,content.indexOf("</IdNb>"));
+			String customerCode = content.substring(content.indexOf("<AcctId>")+8,content.indexOf("</AcctId>"));
+			ThreeStandard threeStandard = threeStandardApplication.getThreeStandard(Long.parseLong(values[i]));			
+			if(threeStandard.getCredentialType().equals("0")){
+				flag = "身份证";
+			}else if(threeStandard.getCredentialType().equals("1")){
+				flag = "军官证";
+			}else if(threeStandard.getCredentialType().equals("2")){
+				flag = "护照";
+			}
+			content = content.replace("<Nm>"+name+"</Nm>","<Nm>"+threeStandard.getName()+"</Nm>");
+			content = content.replace("<IdTp>"+credentialType+"</IdTp>","<IdTp>"+flag+"</IdTp>");
+			content = content.replace("<IdNb>"+credentialNumber+"</IdNb>","<IdNb>"+threeStandard.getCredentialNumber()+"</IdNb>");
+			content = content.replace("<AcctId>"+customerCode+"</AcctId>","<AcctId>"+threeStandard.getCustomerCode()+"</AcctId>");
+			System.out.println("变驴啦:"+content);
 			mesg.setMesgId(new Date().getTime()+"");
 			MesgType mesgType = mesgTypeApplication.getMesgType(mesgDTO.getMesgType());
 			mesg.setMesgType(mesgType);
 			Packet packet = packetApplication.getPacket(mesgDTO.getPacketId());
 			mesg.setPacket(packet);
-			mesg.setContent(mesgDTO.getNodeValues());
+			mesg.setContent(content);
+			mesgs.add(mesg);
+		}
+		application.creatMesgs(mesgs);
+		return InvokeResult.success();
+	}
+	
+	public InvokeResult creatMesgsByInput(MesgDTO mesgDTO,int startOfThreeStandard,int endOfThreeStandard,String currentUserId){
+		List<ThreeStandard> list= queryThreeStandardByInput(startOfThreeStandard,endOfThreeStandard,currentUserId);
+		Set<Mesg> mesgs= new HashSet<Mesg>();
+		String flag = null;
+		Mesg mesgById = application.getMesg(mesgDTO.getId());
+		String content = mesgById.getContent();
+		for(int i = 0; i < list.size(); i++){
+			Mesg mesg = new Mesg();
+			//Mesg mesg = application.getMesg(mesgDTO.getId());
+			String name = content.substring(content.indexOf("<Nm>")+4,content.indexOf("</Nm>"));
+			String credentialType = content.substring(content.indexOf("<IdTp>")+6,content.indexOf("</IdTp>"));
+			String credentialNumber = content.substring(content.indexOf("<IdNb>")+6,content.indexOf("</IdNb>"));
+			String customerCode = content.substring(content.indexOf("<AcctId>")+8,content.indexOf("</AcctId>"));
+			ThreeStandard threeStandard = threeStandardApplication.getThreeStandard(list.get(i).getId());			
+			if(threeStandard.getCredentialType().equals("0")){
+				flag = "身份证";
+			}else if(threeStandard.getCredentialType().equals("1")){
+				flag = "军官证";
+			}else if(threeStandard.getCredentialType().equals("2")){
+				flag = "护照";
+			}
+			content = content.replace("<Nm>"+name+"</Nm>","<Nm>"+threeStandard.getName()+"</Nm>");
+			content = content.replace("<IdTp>"+credentialType+"</IdTp>","<IdTp>"+flag+"</IdTp>");
+			content = content.replace("<IdNb>"+credentialNumber+"</IdNb>","<IdNb>"+threeStandard.getCredentialNumber()+"</IdNb>");
+			content = content.replace("<AcctId>"+customerCode+"</AcctId>","<AcctId>"+threeStandard.getCustomerCode()+"</AcctId>");
+			System.out.println("变驴啦:"+content);
+			mesg.setMesgId(new Date().getTime()+"");
+			MesgType mesgType = mesgTypeApplication.getMesgType(mesgDTO.getMesgType());
+			mesg.setMesgType(mesgType);
+			Packet packet = packetApplication.getPacket(mesgDTO.getPacketId());
+			mesg.setPacket(packet);
+			mesg.setContent(content);
 			mesgs.add(mesg);
 		}
 		application.creatMesgs(mesgs);
@@ -274,5 +340,25 @@ public class MesgFacadeImpl implements MesgFacade {
 	   	List<MesgDTO> dtolist = MesgAssembler.toDTOs(list);
 	   	return dtolist;
 	}
+	public Long queryCountOfThreeStandard(String currentUserId){
+		List<Object> conditionVals = new ArrayList<Object>();
+		StringBuilder jpql = new StringBuilder("select count(_threeStandard) from ThreeStandard _threeStandard where 1=1");
+		if (currentUserId != null ) {
+	   		jpql.append(" and _threeStandard.createdBy = ? ");
+	   		conditionVals.add(currentUserId);
+	   	}
+		Long result = (Long) getQueryChannelService().createJpqlQuery(jpql.toString()).setParameters(conditionVals).singleResult();
+		return result;
+	}
 	
+	public List<ThreeStandard> queryThreeStandardByInput(int startOfThreeStandard,int endOfThreeStandard,String currentUserId){
+		List<Object> conditionVals = new ArrayList<Object>();
+		StringBuilder jpql = new StringBuilder("select _threeStandard from ThreeStandard _threeStandard where 1=1");
+		if (currentUserId != null ) {
+	   		jpql.append(" and _threeStandard.createdBy = ? ");
+	   		conditionVals.add(currentUserId);
+	   	}
+		List<ThreeStandard> result = getQueryChannelService().createJpqlQuery(jpql.toString()).setParameters(conditionVals).list();
+		return result.subList(startOfThreeStandard-1, endOfThreeStandard);
+	}
 }

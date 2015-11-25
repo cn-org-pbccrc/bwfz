@@ -103,6 +103,7 @@ public class PacketController {
 	@RequestMapping("/add")
 	public InvokeResult add(PacketDTO packetDTO) {
 		System.out.println("哈哈哈哈呱呱:"+packetDTO.getOrigSendDate());
+		System.out.println("哈哈哈哈呱呱2222:"+new Date());
 		return packetFacade.creatPacket(packetDTO);
 	}
 	

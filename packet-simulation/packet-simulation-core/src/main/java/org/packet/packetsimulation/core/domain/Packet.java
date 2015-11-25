@@ -50,7 +50,7 @@ public class Packet extends KoalaAbstractEntity{
 	@Column(name = "ORIG_SENDER")
 	private String origSender;
 	
-	//@Temporal(TemporalType.DATE)
+	@Temporal(TemporalType.DATE)
 	@Column(name = "ORIG_SEND_DATE")
 	private Date origSendDate;
 	

@@ -18,7 +18,7 @@ public final class PropertiesManager {
 			 //String p = PropertiesManager.class.getClassLoader().getResource("").toURI().getPath();
 			 //pros.load(new FileInputStream(new File(p+"translate.properties")));   
 		     System.out.println(PropertiesManager.class.getResource("/"));
-	         pros.load(PropertiesManager.class.getClassLoader().getResourceAsStream("translate.properties"));        
+	         pros.load(PropertiesManager.class.getClassLoader().getResourceAsStream("translate8.1.3.properties"));        
 	         //读取properties文件 这里是将文件从classpath里读取出来!因为在eclispe里src里的文件最后编译后都会放入bin文件夹下,也就是classpath下面,这样可以保证能找到文件
 	     } catch (IOException e) {
 	    	 e.printStackTrace();

@@ -77,6 +77,7 @@ function initFun(){
 	                        {content: '<button class="btn btn-inverse" type="button"><span class="glyphicon glyphicon-download"><span>导出三标信息</button>', action: 'exportFile'}
 	                    ],
 	                url:"${pageContext.request.contextPath}/ThreeStandard/pageJson/" + currentUserId + ".koala",
+	                isShowIndexCol:true,
 	                columns: [
 	                     	                         	                         { title: '姓名', name: 'name', width: width/2},
 	                         	                         	                         	                         { title: '证件类型', name: 'credentialType', width: width/2,
@@ -199,7 +200,7 @@ function initFun(){
     			+'data-dismiss="modal" aria-hidden="true">&times;</button>'
     			+'<h4 class="modal-title">导入三标信息</h4></div><div class="modal-body">'
     			+'<p>One fine body&hellip;</p></div><div class="modal-footer">'	        	
-    			+'<button type="button" class="btn btn-default" data-dismiss="modal">返回</button>'
+    			+'<button type="button" class="btn btn-default" id="back" data-dismiss="modal">返回</button>'
     			+'<button type="button" class="btn btn-success" id="upload">上传</button>'
     			+'<button type="button" class="btn btn-warning" id="cancelUpload">取消上传</button></div></div>'
     			+'</div></div>');
@@ -211,6 +212,12 @@ function initFun(){
         		}).on({
             		'hidden.bs.modal': function(){
                 	$(this).remove();
+        			var $menuLi =  $('.g-sidec').find('li[data-mark="menuMark192"]');
+                    if($menuLi.length){
+                        $menuLi.click();
+                    }else{
+                        clearMenuEffect();
+                    }
             		}
         		}).find('.modal-body').html(html);
         		self.initPage(dialog.find('form'));
@@ -219,6 +226,14 @@ function initFun(){
         		});
         		dialog.find('#cancelUpload').on('click',{grid: grid}, function(e){
         			$('#uploadify').uploadify('cancel');
+        		});
+        		dialog.find('#back').on('click',{grid: grid}, function(e){
+        			var $menuLi =  $('.g-sidec').find('li[data-mark="menuMark192"]');
+                    if($menuLi.length){
+                        $menuLi.click();
+                    }else{
+                        clearMenuEffect();
+                    }
         		});
     		});
 	    },
@@ -311,6 +326,15 @@ function initFun(){
 	    	});
 	    }
 	}
+	/*
+	* 清除菜单效果
+	*/
+	var clearMenuEffect = function(){
+	   $('.first-level-menu').find('li').each(function(){
+	       var $menuLi = $(this);
+	       $menuLi.hasClass('active') && $menuLi.removeClass('active').parent().parent().removeClass('active');
+	   });
+	};
 	PageLoader.initSearchPanel();
 	PageLoader.initGridPanel();
 	form.find('#search').on('click', function(){

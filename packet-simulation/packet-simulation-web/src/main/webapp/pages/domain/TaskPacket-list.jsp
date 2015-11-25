@@ -548,7 +548,7 @@ function initFun(){
 	        	+'data-dismiss="modal" aria-hidden="true">&times;</button>'
 	        	+'<h4 class="modal-title">上传外部文件</h4></div><div class="modal-body">'
 	        	+'<p>One fine body&hellip;</p></div><div class="modal-footer">'	        	
-	        	+'<button type="button" class="btn btn-default" data-dismiss="modal">返回</button>'
+	        	+'<button type="button" class="btn btn-default" id="back" data-dismiss="modal">返回</button>'
 	        	+'<button type="button" class="btn btn-success" id="upload">上传</button>'
 	        	+'<button type="button" class="btn btn-warning" id="cancelUpload">取消上传</button></div></div>'
 	        	+'</div></div>');
@@ -563,69 +563,16 @@ function initFun(){
 	                    $(this).remove();
 	                }
 	            }).find('.modal-body').html(html);
-	            //alert(dialog.html())
 	            self.initPage(dialog.find('form'));
-// 	            $(document).ready(function(){
-// 	        		$("#uploadify").uploadify({
-// 	        			'uploader':'${pageContext.request.contextPath}/TaskPacket/uploadFile.koala?taskId='+taskId,
-// 	        			'swf':'/lib/uploadify.swf',
-// 	        			'cancelImg':'/lib/uploadify-cancel.png',
-// 	        			'folder':'uploads',
-// 	        			'queueID':'fileQueue',
-// 	        			'queueSizeLimit':1,
-// 	        			'auto':false,
-// 	        			'fileObjName':'file',
-// 	        			'multi':false,
-// 	        			'simUploadLimit':1,
-// 	        			'buttonText':'选择文件',
-// 	        			'onUploadSuccess':function(file,data,response){
-// 	        				alert(file.name+'上传成功!');
-// 	        				dialog.modal('hide');
-//     						grid.data('koala.grid').refresh(); 
-//     						grid.message({
-//     							type: 'success',
-//     							content: '上传成功'
-//     					    });
-// 	        			},
-// 	        		    'onUploadError' : function(file, errorCode, errorMsg, errorString) {
-// 	                        alert('The file ' + file.name + ' could not be uploaded: ' + errorString);
-// 	                    } 
-// 	        		});
-// 	            });
-	            dialog.find('#upload').on('click',{grid: grid}, function(e){
-	            	
+	            dialog.find('#upload').on('click',{grid: grid}, function(e){	            	
 	            	$('#uploadify').uploadify('upload');
-	            	//dialog.modal('hide');
-	            	//e.data.grid.data('koala.grid').refresh(); 
-
-			
-	            	   /*  $.ajaxFileUpload({  
-	            	        url : '${pageContext.request.contextPath}/TaskPacket/upload.koala?packetFrom='+'外部报文'+'&taskId='+taskId,   //submit to UploadFileServlet  
-	            	        secureuri : false,  
-	            	        fileElementId : 'fileToUpload',  
-	            	        dataType : 'text', //or json xml whatever you like~  
-	            	        success : function(data, status) {
-	            	        	alert(status);
-	            	            $("#result").append(data);
-	            	            dialog.modal('hide');
-	    						e.data.grid.data('koala.grid').refresh(); 
-	    						e.data.grid.message({
-	    							type: 'success',
-	    							content: '上传成功'
-	    					    });
-	            	            //$("#result").parent().parent().parent().parent().parent().parent().parent().modal('hide');
-
-	            	        },  
-	            	        error : function(data, status, e) {  
-	            	            $("#result").append(data);  
-	            	            return false;  
-	            	        }  
-	            	    });  */ 
-
 		        });
 	            dialog.find('#cancelUpload').on('click',{grid: grid}, function(e){
 	            	$('#uploadify').uploadify('cancel');
 	            });
+	            //dialog.find('#back').on('click',{grid: grid}, function(e){
+	            	//openTaskPacket(taskId);	            	
+        		//});
 	        });
 	    }       	
 	}

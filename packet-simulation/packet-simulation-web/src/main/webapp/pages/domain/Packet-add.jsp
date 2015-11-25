@@ -17,7 +17,7 @@ a:hover{color:#00f;}
 
 .wrap{width:600px;margin:0 auto;padding:20px 40px;border:2px solid #999;border-radius:8px;background:#fff;box-shadow:0 0 10px rgba(0,0,0,0.5);}
 </style>
-<script src="${contextPath}/datetime/jquery-1.9.1.js"></script>
+<%-- <script src="${contextPath}/datetime/jquery-1.9.1.js"></script> --%>
 <script src="${contextPath}/datetime/calendar.js"></script>
 </head>
 <body>
@@ -55,18 +55,18 @@ a:hover{color:#00f;}
 <!-- 				</div> -->
 <!-- 			</div> -->
 <!-- 		</div> -->
-<p>
-		开始时间：<input name="origSendDate" id="origSendDateID" type="text" class="input_cxcalendar" style="width:200px;">
-</p>
-<!-- <div class="form-group"> -->
-<!--                     <label class="col-lg-3 control-label">文件生成时间:</label> -->
-<!-- 	                 <div class="col-lg-9"> -->
-<!--                     <div class="input-group date form_datetime" style="width:160px;float:left;" > -->
-<!--                         <input type="text" class="form-control" style="width:160px;" name="taskCreatedTime" id="taskCreatedTimeID" dataType="Require"> -->
-<!--                         <span class="input-group-addon"><span class="glyphicon glyphicon-th"></span></span> -->
-<!--                      </div> -->
-<!--                      </div> -->
-<!--                      </div> -->
+<!-- <p> -->
+<!-- 		开始时间：<input name="origSendDate" id="origSendDateID" type="text" class="input_cxcalendar" style="width:200px;"> -->
+<!-- </p> -->
+<div class="form-group">
+                    <label class="col-lg-3 control-label">文件生成时间:</label>
+	                 <div class="col-lg-9">
+                    <div class="input-group date form_datetime" style="width:160px;float:left;" >
+                        <input type="text" class="form-control" style="width:160px;" name="origSendDate" id="origSendDateID" data-date-format="yyyy-mm-dd hh:ii:ss">
+                        <span class="input-group-addon"><span class="glyphicon glyphicon-th"></span></span>
+                     </div>
+                     </div>
+                     </div>
 		         <div class="form-group">
                     <label class="col-lg-3 control-label">记录类型:</label>
 	                    <div class="col-lg-9">

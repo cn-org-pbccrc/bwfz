@@ -12,7 +12,11 @@ public interface MesgFacade {
 	
 	public InvokeResult creatMesg(MesgDTO mesg,String realPath);
 	
-	public InvokeResult creatMesgs(MesgDTO mesg,String realPath,int batchNumber);
+	public InvokeResult creatMesgs(MesgDTO mesg,String realPath,String[] values);
+	
+	public InvokeResult creatMesgsByInput(MesgDTO mesg,int startOfThreeStandard,int endOfThreeStandard,String currentUserId);
+	
+	public Long queryCountOfThreeStandard(String currentUserId);
 	
 	public InvokeResult creatBatch(MesgDTO mesg,String realPath,int batchNumber);
 	
