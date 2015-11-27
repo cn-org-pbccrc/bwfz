@@ -22,7 +22,7 @@ public class XmlNode implements Serializable, Cloneable{
 	
 	private static final String TAB_TABLE_TAG = "<table class='table'>";
 	
-	private static final String TAB_CONTENT_TAG = "<div class='tab-content' id='myTabContent'>";
+//	private static final String TAB_CONTENT_TAG = "<div class='tab-content' id='myTabContent'>";
 	
 	private static final String DIV_ENDTAG = "</div>";
 	
@@ -158,23 +158,23 @@ public class XmlNode implements Serializable, Cloneable{
 //		return result;
 //	}
 	
-	public String toHtmlTabString(){
+	public String toHtmlTabString(String templateName){
 		
 		String result = UL_TAG;
-		String contentStr=TAB_CONTENT_TAG;
+		String contentStr="<div class='tab-content' id='myTabContent'>";
 		String tabClass="active";
 		String contentClass="tab-pane fade active in";
 		List<XmlNode> tabNodes=nodes.get(0).getNodes();
 		if(null!=tabNodes && tabNodes.size()>0){
 			for(XmlNode xmlNode : tabNodes){
 				List<XmlNode> childNode = xmlNode.getNodes();
-				result = result + "<li class='"+tabClass+"'><a data-toggle='tab' href='#"+xmlNode.getTagName()+"'>"+PropertiesManager.getProperties(xmlNode.getTagName())+"</a></li>";
+				result = result + "<li class='"+tabClass+"'><a data-toggle='tab' href='#"+xmlNode.getTagName()+"'>"+PropertiesManager.getProperties(xmlNode.getTagName(),templateName)+"</a></li>";
 				tabClass="";
 				if(null!= childNode && childNode.size()>0){
 					contentStr=contentStr+"<div id='"+xmlNode.getTagName()+"' class='"+contentClass+"'>";
 					contentClass="tab-pane fade";
 					contentStr=contentStr+TAB_TABLE_TAG + TR_TAG;
-					contentStr=contentStr+getTabContents(childNode,null);
+					contentStr=contentStr+getTabContents(childNode,null,templateName);
 					contentStr=contentStr+TABLE_ENDTAG+DIV_ENDTAG;
 				}
 			}
@@ -185,7 +185,7 @@ public class XmlNode implements Serializable, Cloneable{
 	}
 	
 	
-	private String getTabContents(List<XmlNode> nodes,String countTagId){
+	private String getTabContents(List<XmlNode> nodes,String countTagId,String templateName){
 		if(null!=nodes && nodes.size()>0){
 			
 			String htmlStr = "";
@@ -194,19 +194,19 @@ public class XmlNode implements Serializable, Cloneable{
 				if(xmlNode.getRowspan()==1 && childNode.size()<=0){
 					List<XmlNode> peerNodes = xmlNode.getPeerNodes();
 					if(null!=peerNodes && peerNodes.size()>0){
-						htmlStr = htmlStr + "<p><label class='rgt'>"+PropertiesManager.getProperties(xmlNode.getTagName())+" :</label><label class='lft'>" + xmlNode.getValue() + "</label></p>";
-						htmlStr = htmlStr + getTabContents(peerNodes,xmlNode.getTagName());
+						htmlStr = htmlStr + "<p><label class='rgt'>"+PropertiesManager.getProperties(xmlNode.getTagName(),templateName)+" :</label><label class='lft'>" + xmlNode.getValue() + "</label></p>";
+						htmlStr = htmlStr + getTabContents(peerNodes,xmlNode.getTagName(),templateName);
 					}else{
-						htmlStr = htmlStr + "<p><label class='rgt'>"+PropertiesManager.getProperties(xmlNode.getTagName())+" :</label><label class='lft'>" + xmlNode.getValue() + "</label></p>";
+						htmlStr = htmlStr + "<p><label class='rgt'>"+PropertiesManager.getProperties(xmlNode.getTagName(),templateName)+" :</label><label class='lft'>" + xmlNode.getValue() + "</label></p>";
 					}
 				}else if(null!= childNode && childNode.size()>0){
-					htmlStr = htmlStr + "<fieldset><legend>"+PropertiesManager.getProperties(xmlNode.getTagName())+"</legend>";
+					htmlStr = htmlStr + "<fieldset><legend>"+PropertiesManager.getProperties(xmlNode.getTagName(),templateName)+"</legend>";
 					for (XmlNode node:childNode) {
 						List<XmlNode> childNodes = node.getNodes();
 						if(null!= childNodes && childNodes.size()>0){
-							htmlStr = htmlStr + getTabContents(childNodes,null);
+							htmlStr = htmlStr + getTabContents(childNodes,null,templateName);
 						}else{
-							htmlStr = htmlStr + "<p><label class='rgt'>"+PropertiesManager.getProperties(node.getTagName())+" :</label><label class='lft'>" + node.getValue() + "</label></p>";
+							htmlStr = htmlStr + "<p><label class='rgt'>"+PropertiesManager.getProperties(node.getTagName(),templateName)+" :</label><label class='lft'>" + node.getValue() + "</label></p>";
 						}
 					}
 					htmlStr = htmlStr +"</fieldset>";
@@ -429,23 +429,24 @@ public class XmlNode implements Serializable, Cloneable{
 		return valueIndex;
 	}
 	
-	public String toEditHtmlTabString(){
-		
-		String result = UL_TAG;
-		String contentStr=TAB_CONTENT_TAG;
+	public String toEditHtmlTabString(String templateName){
+		String result = UL_TAG;		
 		String tabClass="active";
 		String contentClass="tab-pane fade active in";
+		//System.out.println("看看到底nodes是多少个:"+nodes.size());
+		//System.out.println("看看到底nodes(0)是啥:"+nodes.get(0).getTagName());
 		List<XmlNode> tabNodes=nodes.get(0).getNodes();
+		String contentStr="<div class='tab-content' id='"+nodes.get(0).getTagName()+"'>";
 		if(null!=tabNodes && tabNodes.size()>0){
 			for(XmlNode xmlNode : tabNodes){
 				List<XmlNode> childNode = xmlNode.getNodes();
-				result = result + "<li class='"+tabClass+"'><a data-toggle='tab' href='#"+xmlNode.getTagName()+"'>"+PropertiesManager.getProperties(xmlNode.getTagName()) + "<button type='button' style='padding:2px 4px;' class='btn btn-failure' onclick='removeTab(this,\"" + xmlNode.getTagName() + "\");'><span class='glyphicon glyphicon-remove'><span></button></a></li>";
+				result = result + "<li class='"+tabClass+"'><a data-toggle='tab' href='#"+xmlNode.getTagName()+"'>"+PropertiesManager.getProperties(xmlNode.getTagName(),templateName) + "<button type='button' style='padding:2px 4px;' class='btn btn-failure' onclick='removeTab(this,\"" + xmlNode.getTagName() + "\");'><span class='glyphicon glyphicon-remove'><span></button></a></li>";
 				tabClass="";
 				if(null!= childNode && childNode.size()>0){
 					contentStr=contentStr+"<div id='"+xmlNode.getTagName()+"' class='"+contentClass+"'>";
 					contentClass="tab-pane fade";
 					contentStr=contentStr+TAB_TABLE_TAG + TR_TAG;
-					contentStr=contentStr+getEditTabContents(childNode,false,null);
+					contentStr=contentStr+getEditTabContents(childNode,false,null,templateName);
 					contentStr=contentStr+TR_ENDTAG+TABLE_ENDTAG+DIV_ENDTAG;
 				}
 			}
@@ -456,7 +457,7 @@ public class XmlNode implements Serializable, Cloneable{
 	}
 	
 	
-	private String getEditTabContents(List<XmlNode> nodes,boolean hasPeerNode,String countTagId){
+	private String getEditTabContents(List<XmlNode> nodes,boolean hasPeerNode,String countTagId,String templateName){
 		if(null!=nodes && nodes.size()>0){
 			
 			String htmlStr = "";
@@ -466,28 +467,28 @@ public class XmlNode implements Serializable, Cloneable{
 				if(xmlNode.getRowspan()==1 && childNode.size()<=0){
 					List<XmlNode> peerNodes = xmlNode.getPeerNodes();
 					if(null!=peerNodes && peerNodes.size()>0){
-						htmlStr = htmlStr + "<p><label class='rgt'>"+PropertiesManager.getProperties(xmlNode.getTagName())+" :</label><label class='lft'><input type='text' value='" + xmlNode.getValue() + "' name='"+xmlNode.getTagName()+ "' class='form-control' readonly id='"+ xmlNode.getTagName() +"' /></label>";
+						htmlStr = htmlStr + "<p><label class='rgt'>"+PropertiesManager.getProperties(xmlNode.getTagName(),templateName)+" :</label><label class='lft'><input type='text' value='" + xmlNode.getValue() + "' name='"+xmlNode.getTagName()+ "' class='form-control' readonly id='"+ xmlNode.getTagName() +"' /></label>";
 						htmlStr = htmlStr + "<button type='button' style='padding:2px 4px;' class='btn btn-primary' onclick='cloneHtml(this,\"" + xmlNode.getTagName() + "\");'><span class='glyphicon glyphicon-plus'><span></button></p><div id='"+ xmlNode.getTagName() +"_div'>";
-						htmlStr = htmlStr + getEditTabContents(peerNodes,true,xmlNode.getTagName()) + "</div>";
+						htmlStr = htmlStr + getEditTabContents(peerNodes,true,xmlNode.getTagName(),templateName) + "</div>";
 					}else{
-						htmlStr = htmlStr + "<p><label class='rgt'>"+PropertiesManager.getProperties(xmlNode.getTagName())+" :</label><label class='lft'><input type='text' value='" + xmlNode.getValue() + "' name='"+xmlNode.getTagName()+ "' class='form-control' /></label></p>";
+						htmlStr = htmlStr + "<p><label class='rgt'>"+PropertiesManager.getProperties(xmlNode.getTagName(),templateName)+" :</label><label class='lft'><input type='text' value='" + xmlNode.getValue() + "' name='"+xmlNode.getTagName()+ "' class='form-control' /></label></p>";
 					}
 				}else if(null!= childNode && childNode.size()>0){
 					if(hasPeerNode){
 						htmlStr = htmlStr  
-								+ "<fieldset><legend>"+PropertiesManager.getProperties(xmlNode.getTagName())
+								+ "<fieldset><legend>"+PropertiesManager.getProperties(xmlNode.getTagName(),templateName)
 							    + "<button type='button' style='padding:2px 4px;' class='btn btn-failure' name='" + xmlNode.getTagName() +"' onclick='removeHtml(this,\"" + countTagId + "\");'><span class='glyphicon glyphicon-remove'><span></button>"
 								+ "</legend>";
 						index = index + 1;
 					}else{
-						htmlStr = htmlStr + "<fieldset><legend>"+PropertiesManager.getProperties(xmlNode.getTagName())+"</legend>";
+						htmlStr = htmlStr + "<fieldset><legend>"+PropertiesManager.getProperties(xmlNode.getTagName(),templateName)+"</legend>";
 					}
 					for (XmlNode node:childNode) {
 						List<XmlNode> childNodes = node.getNodes();
 						if(null!= childNodes && childNodes.size()>0){
-							htmlStr = htmlStr + getEditTabContents(childNodes,false,null);
+							htmlStr = htmlStr + getEditTabContents(childNodes,false,null,templateName);
 						}else{
-							htmlStr = htmlStr + "<p><label class='rgt'>"+PropertiesManager.getProperties(node.getTagName())+" :</label><label class='lft'><input type='text' value='" + node.getValue() + "' subName='"+node.getTagName()+ "' class='form-control' /></label></p>";
+							htmlStr = htmlStr + "<p><label class='rgt'>"+PropertiesManager.getProperties(node.getTagName(),templateName)+" :</label><label class='lft'><input type='text' value='" + node.getValue() + "' subName='"+node.getTagName()+ "' class='form-control' /></label></p>";
 						}
 					}
 					htmlStr = htmlStr +"</fieldset>";

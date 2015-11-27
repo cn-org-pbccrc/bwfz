@@ -1,0 +1,12 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<Document>
+	<ActMdfc>
+		<ActMdfcSgmt>
+			<CdOfDtaPdgOgztn>数据提供机构代码</CdOfDtaPdgOgztn>
+			<MdfcRcdId>待修改记录标识</MdfcRcdId>
+			<InfRptDt>信息报告日期</InfRptDt>
+			<MdfcSgmtId>待修改段段标</MdfcSgmtId>
+			<MdfcSgmt>待改段全部数据项</MdfcSgmt>
+		</ActMdfcSgmt>
+	</ActMdfc>
+</Document>

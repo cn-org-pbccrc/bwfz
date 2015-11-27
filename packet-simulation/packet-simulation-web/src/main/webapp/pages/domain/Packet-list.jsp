@@ -36,10 +36,10 @@ function initFun(){
 	                     var endTime = endTimeVal.parent();
 	                     startTime.datetimepicker({
 	                                        language: 'zh-CN',
-	                                        format: "yyyy-mm-dd",
+	                                        format: "yyyy-mm-dd hh:ii:ss",
 	                                        autoclose: true,
 	                                        todayBtn: true,
-	                                        minView: 2,
+	                                        //minView: 2,
 	                                        pickerPosition: 'bottom-left'
 	                     }).on('changeDate', function(){
 	                                 endTime.datetimepicker('setStartDate', startTimeVal.val());
@@ -48,10 +48,10 @@ function initFun(){
 	                     yesterday.setDate(yesterday.getDate() - 1);
 	                     endTime.datetimepicker({
 	                             language: 'zh-CN',
-	                             format: "yyyy-mm-dd",
+	                             format: "yyyy-mm-dd hh:ii:ss",
 	                             autoclose: true,
 	                             todayBtn: true,
-	                             minView: 2,
+	                             //minView: 2,
 	                             pickerPosition: 'bottom-left'
 	                     }).on('changeDate', function(ev){
 	                                startTime.datetimepicker('setEndDate', endTimeVal.val());
@@ -76,7 +76,19 @@ function initFun(){
 	                     	                         	                         								 { title: '报文名称', name: 'packetName', width: 2*width/3},
 	                     	                         	                         								 { title: '版本号', name: 'fileVersion', width: 11*width/24},
 	                         	                         	                         	                         { title: '数据提供机构代码', name: 'origSender', width: 3*width/4},	                     	                
-	                         	                         	                         	                         { title: '文件生成时间', name: 'origSendDate', width: 2*width/3},
+	                         	                         	                         	                         { title: '文件生成时间', name: 'origSendDate', width: 2*width/3,
+	                         	                         	                         	                        	 render: function(item, name, index){
+	                     	                         	                         						                //alert(item[name].getMonth());
+	                     	                         	                         						                var d = new Date(item[name]);    //根据时间戳生成的时间对象
+																														var date = (d.getFullYear()) + "-" + 
+           																													(d.getMonth() + 1) + "-" +
+           																													(d.getDate()) + " " + 
+           																													(d.getHours()) + ":" + 
+           																													(d.getMinutes()) + ":" + 
+           																													(d.getSeconds());
+	                     	                         	                         						                return date;
+	                     	                         	                         						             }	
+	                         	                         	                         	                         },
 	                         	                         	                         	                         { title: '记录类型', name: 'recordType', width: 11*width/24},
 	                         	                         	                         	                         { title: '数据类型', name: 'dataType', width: 2*width/3,
 	                         	                         	                         	                 		 render: function(item, name, index){
@@ -272,10 +284,20 @@ function initFun(){
 	                            elm = dialog.find('#'+ index + 'ID');
 	                            if(elm.hasClass('select')){
 	                                elm.setValue(json[index]);
+// 	                            }else if(elm.hasClass('date')){
+// 	                            	elm.val("mimi");
 	                            }else{
 	                                elm.val(json[index]);
 	                            }	                            
 	                        }
+	                        var d = new Date(json['origSendDate']);    //根据时间戳生成的时间对象
+							var date = (d.getFullYear()) + "-" + 
+									(d.getMonth() + 1) + "-" +
+									(d.getDate()) + " " + 
+									(d.getHours()) + ":" + 
+									(d.getMinutes()) + ":" + 
+									(d.getSeconds());
+	                        dialog.find('#origSendDateID').val(date);
 	                        //alert(dialog.find('#origSendDateID').val())
 	                        dialog.find('#packetNameID').val(json['packetName']).attr('disabled', 'disabled');
 	                });
@@ -540,23 +562,27 @@ function downloadENC(id){
                   <div class="form-group">
           <label class="control-label" style="width:160px;float:left;">文件生成时间:&nbsp;</label>
            <div style="margin-left:15px;float:left;">
-            <div class="input-group date form_datetime" style="width:140px;float:left;" >
-                <input type="text" class="form-control" style="width:140px;" name="origSendDate" id="origSendDateID_start" >
+            <div class="input-group date form_datetime" style="width:160px;float:left;" >
+                <input type="text" class="form-control" style="width:160px;" name="origSendDate" id="origSendDateID_start" >
                 <span class="input-group-addon"><span class="glyphicon glyphicon-th"></span></span>
             </div>
             <div style="float:left; width:10px; margin-left:auto; margin-right:auto;">&nbsp;-&nbsp;</div>
-            <div class="input-group date form_datetime" style="width:140px;float:left;" >
-                <input type="text" class="form-control" style="width:140px;" name="origSendDateEnd" id="origSendDateID_end" >
+            <div class="input-group date form_datetime" style="width:160px;float:left;" >
+                <input type="text" class="form-control" style="width:160px;" name="origSendDateEnd" id="origSendDateID_end" >
                 <span class="input-group-addon"><span class="glyphicon glyphicon-th"></span></span>
             </div>
        </div>
-                 <label class="control-label" style="width:80px;float:left;">记录类型:&nbsp;</label>
+       
+       </div>
+                  <div class="form-group">
+                  
+                 <label class="control-label" style="width:160px;float:left;">记录类型:&nbsp;</label>
             <div style="margin-left:15px;float:left;">
-            <input name="recordType" class="form-control" type="text" style="width:140px;" id="recordID"  />
+            <input name="recordType" class="form-control" type="text" style="width:160px;" id="recordID"  />
         </div>
-                      <label class="control-label" style="width:80px;float:left;">数据类型:&nbsp;</label>
+                      <label class="control-label" style="width:160px;float:left;">数据类型:&nbsp;</label>
             <div style="margin-left:15px;float:left;">
-            <input name="dataType" class="form-control" type="text" style="width:140px;" id="dataTypeID"  />
+            <input name="dataType" class="form-control" type="text" style="width:160px;" id="dataTypeID"  />
         </div>
         
         

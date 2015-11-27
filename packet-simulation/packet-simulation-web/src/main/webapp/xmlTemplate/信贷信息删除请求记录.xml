@@ -1,0 +1,12 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<Document>
+	<CrdInfDlt>
+		<CrdInfDltSgmt>
+			<CdOfDtaPdgOgztn>数据提供机构代码</CdOfDtaPdgOgztn>
+			<DltRcdId>待删除记录标识</DltRcdId>
+			<DltRcdTp>待删除记录类型</DltRcdTp>
+			<InfRptSttDt>信息报告开始日期</InfRptSttDt>
+			<InfRptEdDt>信息报告结束日期</InfRptEdDt>
+		</CrdInfDltSgmt>
+	</CrdInfDlt>
+</Document>

@@ -1,0 +1,20 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<Document>
+	<FalMmbsInf>
+		<FalMmbsInfSgmt>
+			<InfRecTp>信息记录类型</InfRecTp>
+			<CdOfDtaPdgOgztn>数据提供机构代码</CdOfDtaPdgOgztn>
+			<Nm>姓名</Nm>
+			<IdTp>证件类型</IdTp>
+			<IdNb>证件号码</IdNb>
+			<FalRel>家族关系</FalRel>
+			<FalMmbsNm>家族成员姓名</FalMmbsNm>
+			<FalMmbsIdTp>家族成员证件类型</FalMmbsIdTp>
+			<FalMmbsIdNb>家族成员证件号码</FalMmbsIdNb>
+			<FalRelIdTp>家族成员认定类型</FalRelIdTp>
+			<FalRelIdDspn>家族成员认定说明</FalRelIdDspn>
+			<FalRelAsctnId>家族成员关联标识</FalRelAsctnId>
+			<AfmDt>认定日期</AfmDt>
+		</FalMmbsInfSgmt>
+	</FalMmbsInf>
+</Document>

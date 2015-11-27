@@ -62,7 +62,7 @@ public class MesgFacadeImpl implements MesgFacade {
 		MesgType mesgType = mesgTypeApplication.getMesgType(dto.getMesgType());
 		try {
 			XmlNode xmlNode = XmlUtil.getXmlNodeByXmlContent(dto.getContent(),mesgType.getCountTag());
-			dto.setContent(xmlNode.toHtmlTabString());
+			dto.setContent(xmlNode.toHtmlTabString(mesgType.getFilePath()));
 		} catch (SAXException e) {
 			// TODO Auto-generated catch block
 			e.printStackTrace();
@@ -305,7 +305,7 @@ public class MesgFacadeImpl implements MesgFacade {
 		MesgType mesgType = mesgTypeApplication.getMesgType(dto.getMesgType());
 		try {
 			XmlNode xmlNode = XmlUtil.getXmlNodeByXmlContent(dto.getContent(),mesgType.getCountTag());
-			dto.setContent(xmlNode.toEditHtmlTabString());
+			dto.setContent(xmlNode.toEditHtmlTabString(mesgType.getFilePath()));
 		} catch (SAXException e) {
 			// TODO Auto-generated catch block
 			e.printStackTrace();

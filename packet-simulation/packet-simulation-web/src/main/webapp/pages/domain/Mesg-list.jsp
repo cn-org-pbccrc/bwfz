@@ -232,8 +232,8 @@ legend {
 // var haha = $("input[name='Nm']").parent().parent().parent().attr('id')
 // alert(haha);
 
-
-					var xml = '<?xml version="1.0" encoding="UTF-8"?><Document><AcctInf>';
+					var info = dialog.find($(".tab-content")).attr('id');
+					var xml = '<?xml version="1.0" encoding="UTF-8"?><Document><'+info+'>';
 					dialog.find($(".tab-pane")).each(function(){
     					
     					var id = $(this).attr('id');
@@ -259,6 +259,7 @@ legend {
 							if($(this).parent().parent()[0].tagName != 'FIELDSET'){
 								var name = ($(this).attr('name'));
 	    						var value = ($(this).val());
+	    						//alert(value)
 								xml += '<' + name + '>' + value + '</' + name + '>';
 							}
 							else{
@@ -274,7 +275,7 @@ legend {
     					});
     					xml += '</' + id + '>';
   					});
-					xml += '</AcctInf></Document>';
+					xml += '</'+info+'></Document>';
 					//alert(xml);
 // 					dialog.find($("[name]")).each(function(){
 //     					alert($(this).attr('value'))
@@ -400,7 +401,8 @@ legend {
 // 	                            });
 	                        //}
 	                    //});
-	                	var xml = '<?xml version="1.0" encoding="UTF-8"?><Document><AcctInf>';
+	                	var info = dialog.find($(".tab-content")).attr('id');
+						var xml = '<?xml version="1.0" encoding="UTF-8"?><Document><'+info+'>';
 						dialog.find($(".tab-pane")).each(function(){
 	    					
 	    					var id = $(this).attr('id');
@@ -425,7 +427,7 @@ legend {
 	    					});
 	    					xml += '</' + id + '>';
 	  					});
-						xml += '</AcctInf></Document>';
+						xml += '</'+info+'></Document>';
 						//alert(xml);	           
 	                if(!Validator.Validate(dialog.find('form')[0],3))return;
 	 				var data = [{ name: 'nodeValues', value: xml },

@@ -1,0 +1,12 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<Document> 
+	<BsInfIdCagsInf>
+		<BsInfIdCagsSgmt>
+			<IdCagsTp>标识变更类型</IdCagsTp>
+			<OdCdOfDtaPdgOgztn>原数据提供机构代码</OdCdOfDtaPdgOgztn>
+			<OdIdOfCtmDta>原客户资料标识号</OdIdOfCtmDta>
+			<NwCdOfDtaPdgOgztn>新数据提供机构代码</NwCdOfDtaPdgOgztn>
+			<NwIdOfCtmDta>新客户资料标识号</NwIdOfCtmDta>
+		</BsInfIdCagsSgmt>
+	</BsInfIdCagsInf>
+</Document>

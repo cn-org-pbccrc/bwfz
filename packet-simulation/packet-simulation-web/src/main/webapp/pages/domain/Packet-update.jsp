@@ -48,7 +48,7 @@
                     <label class="col-lg-3 control-label">文件生成时间:</label>
 	                 <div class="col-lg-9">
                     <div class="input-group date form_datetime" style="width:160px;float:left;" >
-                        <input type="text" class="form-control" style="width:160px;" name="origSendDate" id="origSendDateID" dataType="Require">
+                        <input type="text" class="form-control" style="width:160px;" name="origSendDate" id="origSendDateID">
                         <span class="input-group-addon"><span class="glyphicon glyphicon-th"></span></span>
                      </div>
                      </div>

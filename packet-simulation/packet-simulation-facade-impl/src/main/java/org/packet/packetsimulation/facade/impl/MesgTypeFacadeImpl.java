@@ -101,8 +101,9 @@ public class MesgTypeFacadeImpl implements MesgTypeFacade {
 		MesgTypeDTO dto = MesgTypeAssembler.toDTO(application.getMesgType(id));
 		try {
 			XmlNode xmlNode = XmlUtil.getXmlNodeByXml(dto.getFilePath(),realPath,dto.getCountTag());
-			System.out.println(xmlNode.toEditHtmlTabString());
-			return InvokeResult.success(xmlNode.toEditHtmlTabString());
+			System.out.println("痛苦是因为想忘记谁:"+dto.getFilePath());
+			System.out.println(xmlNode.toEditHtmlTabString(dto.getFilePath()));
+			return InvokeResult.success(xmlNode.toEditHtmlTabString(dto.getFilePath()));
 		} catch (SAXException e) {
 			// TODO Auto-generated catch block
 			e.printStackTrace();

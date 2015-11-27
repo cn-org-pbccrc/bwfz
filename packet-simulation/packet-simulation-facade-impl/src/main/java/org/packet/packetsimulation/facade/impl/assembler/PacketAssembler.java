@@ -25,7 +25,7 @@ public class PacketAssembler {
      	    result.setMesgNum(packet.getMesgCountOfPacket(packet).toString());
      	    result.setReserve(packet.getReserve());
      	    result.setCreatedBy(packet.getCreatedBy());
-     	   	result.setOrigSendDate(packet.getOrigSendDate());
+     	   	result.setOrigSendDate(new Date(packet.getOrigSendDate().getTime()));
      	    result.setOrigSender(packet.getOrigSender());
      	    result.setPackId(packet.getPackId());
      	return result;
@@ -60,6 +60,8 @@ public class PacketAssembler {
   	    result.setCreatedBy(packetDTO.getCreatedBy());
   	    //result.setOrigSendDate(getTimestamp(packetDTO.getOrigSendDate()));
   	   	result.setOrigSendDate(packetDTO.getOrigSendDate());
+  	   	System.out.println("实况超强阵容:"+packetDTO.getOrigSendDate());
+  	    System.out.println("C罗世界第一:"+result.getOrigSendDate());
   	    result.setOrigSender(packetDTO.getOrigSender());
   	    result.setPackId(packetDTO.getPackId());
  	  	return result;

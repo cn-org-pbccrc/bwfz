@@ -505,7 +505,7 @@ private static final String DES_ALGORITHM = "DES";
 
     @InitBinder    
     public void initBinder(WebDataBinder binder) {  
-        SimpleDateFormat dateFormat = new SimpleDateFormat("yyyy-MM-dd");    
+        SimpleDateFormat dateFormat = new SimpleDateFormat("yyyy-MM-dd HH:mm:ss");    
         dateFormat.setLenient(false);    
         binder.registerCustomEditor(Date.class, new CustomDateEditor(dateFormat, true));    
         //CustomDateEditor 可以换成自己定义的编辑器。  

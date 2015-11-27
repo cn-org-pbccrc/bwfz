@@ -6,7 +6,10 @@
 <body>
 <form class="form-horizontal">
 	<input type="hidden" id="idID" name="id" /> 
-	<input type="hidden" id="versionID" name="version" /> 
+	<input type="hidden" id="versionID" name="version" />
+	<input type="hidden" id="taskCreatorID" name="taskCreator" />
+	<input type="hidden" id="packetNumID" name="packetNum" /> 
+	<input type="hidden" id="taskStatusID" name="taskStatus" />	
 	
 	           <div class="form-group">
                     <label class="col-lg-3 control-label">任务名称:</label>

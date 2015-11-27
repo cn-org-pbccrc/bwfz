@@ -1,0 +1,19 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<Document>
+	<CtfItgInf>
+		<CtfcItgInfSgmt>
+			<InfRecTp>信息记录类型</InfRecTp>
+			<CdOfDtaPdgOgztn>数据提供机构代码</CdOfDtaPdgOgztn>
+			<Nm>姓名</Nm>
+			<IdTp>证件类型</IdTp>
+			<IdNb>证件号码</IdNb>
+			<OtrNm>其他姓名</OtrNm>
+			<OtrIdTp>其他证件类型</OtrIdTp>
+			<OtrIdNb>其他证件号码</OtrIdNb>
+			<OtrCtfctIdTp>其他证件认定类型</OtrCtfctIdTp>
+			<OtrCtfctIdDspn>其他证件认定说明</OtrCtfctIdDspn>
+			<OtrCtfctAsctnId>其他证件关联标识</OtrCtfctAsctnId>
+			<InfRepDt>信息报告日期</InfRepDt>
+		</CtfcItgInfSgmt>
+	</CtfItgInf>
+</Document>

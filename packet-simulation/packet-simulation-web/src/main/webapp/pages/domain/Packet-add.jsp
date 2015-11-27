@@ -5,8 +5,8 @@
 <%-- 	<script src="${contextPath}/lib/koala-datetimepicker/js/Koala_DateTimePicker.js" type="text/javascript" ></script> --%>
 <%-- 	<link href="${contextPath}/lib/koala-datetimepicker/css/font-awesome.css" rel="stylesheet">  --%>
 <%-- 	<link href="${contextPath}/lib/koala-datetimepicker/css/koala_datetimepicker.css" rel="stylesheet">  --%>
-<link rel="stylesheet" href="${contextPath}/datetime/css/cxcalendar.css">
-<style>
+<%-- <link rel="stylesheet" href="${contextPath}/datetime/css/cxcalendar.css"> --%>
+<!-- <style>
 h1,h2,h3{font:bold 36px/1 "\5fae\8f6f\96c5\9ed1";}
 h2{font-size:20px;}
 h3{font-size:16px;}
@@ -16,9 +16,9 @@ a{color:#06f;text-decoration:none;}
 a:hover{color:#00f;}
 
 .wrap{width:600px;margin:0 auto;padding:20px 40px;border:2px solid #999;border-radius:8px;background:#fff;box-shadow:0 0 10px rgba(0,0,0,0.5);}
-</style>
+</style> -->
 <%-- <script src="${contextPath}/datetime/jquery-1.9.1.js"></script> --%>
-<script src="${contextPath}/datetime/calendar.js"></script>
+<%-- <script src="${contextPath}/datetime/calendar.js"></script> --%>
 </head>
 <body>
 <form class="form-horizontal">
@@ -62,7 +62,7 @@ a:hover{color:#00f;}
                     <label class="col-lg-3 control-label">文件生成时间:</label>
 	                 <div class="col-lg-9">
                     <div class="input-group date form_datetime" style="width:160px;float:left;" >
-                        <input type="text" class="form-control" style="width:160px;" name="origSendDate" id="origSendDateID" data-date-format="yyyy-mm-dd hh:ii:ss">
+                        <input type="text" class="form-control" style="width:160px;" name="origSendDate" id="origSendDateID">
                         <span class="input-group-addon"><span class="glyphicon glyphicon-th"></span></span>
                      </div>
                      </div>
@@ -116,15 +116,15 @@ a:hover{color:#00f;}
 // 	});
 // 	//alert(datetimepicker.getDate());
 // });
-$('.input_cxcalendar').each(function(){
-			var a = new Calendar({
-				targetCls: $(this),
-				type: 'yyyy-mm-dd HH:MM:SS',
-				wday:2
-			},function(val){
-				console.log(val);
-			});
-		});
+// $('.input_cxcalendar').each(function(){
+// 			var a = new Calendar({
+// 				targetCls: $(this),
+// 				type: 'yyyy-mm-dd HH:MM:SS',
+// 				wday:2
+// 			},function(val){
+// 				console.log(val);
+// 			});
+// 		});
     var selectItems = {};
     var contents = [{title:'请选择', value: ''}];
     contents.push({title:'正常' , value:'0'});

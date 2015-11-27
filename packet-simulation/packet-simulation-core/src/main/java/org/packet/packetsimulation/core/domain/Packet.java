@@ -50,7 +50,8 @@ public class Packet extends KoalaAbstractEntity{
 	@Column(name = "ORIG_SENDER")
 	private String origSender;
 	
-	@Temporal(TemporalType.DATE)
+	//@Temporal(TemporalType.TIMESTAMP)
+	@DateTimeFormat(pattern="yyyy-MM-dd HH:mm:ss")
 	@Column(name = "ORIG_SEND_DATE")
 	private Date origSendDate;
 	
@@ -156,7 +157,7 @@ public class Packet extends KoalaAbstractEntity{
 		return origSendDate;
 	}
 
-
+	@DateTimeFormat(pattern="yyyy-MM-dd HH:mm:ss")
 	public void setOrigSendDate(Date origSendDate) {
 		this.origSendDate = origSendDate;
 	}

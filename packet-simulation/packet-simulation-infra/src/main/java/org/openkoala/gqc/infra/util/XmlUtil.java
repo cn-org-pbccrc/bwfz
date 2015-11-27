@@ -85,7 +85,7 @@ public class XmlUtil {
 
 	public static XmlNode parseElement(Element element, XmlNode xmlNode,String[] countTag) {
 		String tagName = element.getNodeName();
-		
+		//System.out.println("这这这tagName是:"+tagName);
 		NodeList children = element.getChildNodes();
 		xmlNode.setTagName(tagName);
 
@@ -148,6 +148,7 @@ public class XmlUtil {
 					countIndex=countIndex+1;
 				}else{
 					xmlNodes.add(childNode);
+					//System.out.println("米米去日本啦!!:"+childNode.getTagName());
 				}
 				
 				if(null!=countTag){

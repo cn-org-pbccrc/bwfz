@@ -86,6 +86,7 @@ legend {
 <script type="text/javascript">
     var selectItems = {};
     function addContent(id){
+    	//alert(id)
     	$("#content").empty();
     	$.get( '${pageContext.request.contextPath}/MesgType/getEditHtmlByMesgType/' + id + '.koala').done(function(data){
             $("#content").append(data.data);
