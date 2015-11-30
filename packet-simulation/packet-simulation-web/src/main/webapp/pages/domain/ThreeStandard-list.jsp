@@ -227,14 +227,14 @@ function initFun(){
         		dialog.find('#cancelUpload').on('click',{grid: grid}, function(e){
         			$('#uploadify').uploadify('cancel');
         		});
-        		dialog.find('#back').on('click',{grid: grid}, function(e){
-        			var $menuLi =  $('.g-sidec').find('li[data-mark="menuMark192"]');
-                    if($menuLi.length){
-                        $menuLi.click();
-                    }else{
-                        clearMenuEffect();
-                    }
-        		});
+//         		dialog.find('#back').on('click',{grid: grid}, function(e){
+//         			var $menuLi =  $('.g-sidec').find('li[data-mark="menuMark192"]');
+//                     if($menuLi.length){
+//                         $menuLi.click();
+//                     }else{
+//                         clearMenuEffect();
+//                     }
+//         		});
     		});
 	    },
 	    modify: function(id, grid){

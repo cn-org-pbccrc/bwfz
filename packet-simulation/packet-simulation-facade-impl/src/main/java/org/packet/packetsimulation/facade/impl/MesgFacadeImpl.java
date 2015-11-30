@@ -63,6 +63,7 @@ public class MesgFacadeImpl implements MesgFacade {
 		try {
 			XmlNode xmlNode = XmlUtil.getXmlNodeByXmlContent(dto.getContent(),mesgType.getCountTag());
 			dto.setContent(xmlNode.toHtmlTabString(mesgType.getFilePath()));
+			System.out.println("巨头现身吧:"+xmlNode.toHtmlTabString(mesgType.getFilePath()));
 		} catch (SAXException e) {
 			// TODO Auto-generated catch block
 			e.printStackTrace();
