@@ -400,6 +400,10 @@ var openDetailsPage = function(id){
             <div style="margin-left:15px;float:left;">
             <input name="sendChannel" class="form-control" type="text" style="width:180px;" id="sendChannelID"  />
         </div>
+                              <label class="control-label" style="width:100px;float:left;">定时发送:&nbsp;</label>
+            <div style="margin-left:15px;float:left;">
+            <input name="setTime" class="form-control" type="text" style="width:180px;" id="setTimeID"  />
+        </div>
             </div>
                   <div class="form-group">
           <label class="control-label" style="width:100px;float:left;">创建时间:&nbsp;</label>
@@ -419,16 +423,12 @@ var openDetailsPage = function(id){
             <input name="taskStatus" class="form-control" type="text" style="width:180px;" id="taskStatusID"  />
         </div>
             </div>
-                  <div class="form-group">
+<!--                   <div class="form-group"> -->
 <!--           <label class="control-label" style="width:100px;float:left;">报文数量:&nbsp;</label> -->
 <!--             <div style="margin-left:15px;float:left;"> -->
 <!--             <input name="packetNum" class="form-control" type="text" style="width:180px;" id="packetNumID"  /> -->
 <!--         </div> -->
-                      <label class="control-label" style="width:100px;float:left;">定时发送:&nbsp;</label>
-            <div style="margin-left:15px;float:left;">
-            <input name="setTime" class="form-control" type="text" style="width:180px;" id="setTimeID"  />
-        </div>
-            </div>
+<!--             </div> -->
             </td>
        <td style="vertical-align: bottom;"><button id="search" type="button" style="position:relative; margin-left:35px; top: -15px" class="btn btn-primary"><span class="glyphicon glyphicon-search"></span>&nbsp;查询</button></td>
   </tr>

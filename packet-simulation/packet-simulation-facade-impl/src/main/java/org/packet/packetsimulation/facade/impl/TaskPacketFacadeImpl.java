@@ -60,7 +60,7 @@ public class TaskPacketFacadeImpl implements TaskPacketFacade {
 		TaskPacket taskPacket = TaskPacketAssembler.toEntity(taskPacketDTO);
 		Task task = taskApplication.getTask(taskPacketDTO.getTaskId());			
 		taskPacket.setTask(task);
-		SimpleDateFormat sdf = new SimpleDateFormat("yyyy-MM-dd");
+		SimpleDateFormat sdf = new SimpleDateFormat("yyyy-MM-dd HH:mm:ss");
 		taskPacket.setPacketFrom("外部报文");
 		taskPacket.setSelectedPacketName(fileName);
 		taskPacket.setSelectedFileVersion("-");
@@ -98,7 +98,7 @@ public class TaskPacketFacadeImpl implements TaskPacketFacade {
 	
 	public InvokeResult creatTaskPackets(TaskPacketDTO taskPacketDTO, String[] values, String[] vers, String[] senders, String[] dates, String[] datTs, String[] recTs, String[] coms, String[] encs) throws ParseException {
 		Set<TaskPacket> taskPackets= new HashSet<TaskPacket>();
-		SimpleDateFormat sdf = new SimpleDateFormat("yyyy-MM-dd");
+		SimpleDateFormat sdf = new SimpleDateFormat("yyyy-MM-dd HH:mm:ss");
 		for (int i =0; i < values.length; i++) {
 			TaskPacket taskPacket = TaskPacketAssembler.toEntity(taskPacketDTO);
 			Task task = taskApplication.getTask(taskPacketDTO.getTaskId());			
@@ -170,9 +170,14 @@ public class TaskPacketFacadeImpl implements TaskPacketFacade {
 	   		jpql.append(" and _taskPacket.selectedOrigSender like ?");
 	   		conditionVals.add(MessageFormat.format("%{0}%", queryVo.getSelectedOrigSender()));
 	   	}
-	   	if (queryVo.getSelectedOrigSendDate() != null && !"".equals(queryVo.getSelectedOrigSendDate())) {
-	   		jpql.append(" and _taskPacket.selectedOrigSendDate like ?");
-	   		conditionVals.add(MessageFormat.format("%{0}%", queryVo.getSelectedOrigSendDate()));
+//	   	if (queryVo.getSelectedOrigSendDate() != null && !"".equals(queryVo.getSelectedOrigSendDate())) {
+//	   		jpql.append(" and _taskPacket.selectedOrigSendDate like ?");
+//	   		conditionVals.add(MessageFormat.format("%{0}%", queryVo.getSelectedOrigSendDate()));
+//	   	}
+	   	if (queryVo.getSelectedOrigSendDate() != null ) {
+	   		jpql.append(" and _taskPacket.selectedOrigSendDate between ? and ? ");
+	   		conditionVals.add(queryVo.getSelectedOrigSendDate());
+	   		conditionVals.add(queryVo.getSelectedOrigSendDateEnd());
 	   	}
 	   	if (queryVo.getSelectedDataType() != null && !"".equals(queryVo.getSelectedDataType())) {
 	   		jpql.append(" and _taskPacket.selectedDataType like ?");

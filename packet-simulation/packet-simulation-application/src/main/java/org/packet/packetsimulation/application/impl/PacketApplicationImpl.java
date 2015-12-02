@@ -2,9 +2,12 @@ package org.packet.packetsimulation.application.impl;
 
 import java.util.List;
 import java.util.Set;
+
 import javax.inject.Named;
+
 import org.springframework.transaction.annotation.Transactional;
 import org.packet.packetsimulation.application.PacketApplication;
+import org.packet.packetsimulation.core.domain.FileName;
 import org.packet.packetsimulation.core.domain.Packet;
 
 @Named
@@ -15,8 +18,20 @@ public class PacketApplicationImpl implements PacketApplication {
 		return Packet.get(Packet.class, id);
 	}
 	
+	public FileName getFileName(Long id){
+		return FileName.get(FileName.class,id);
+	}
+	
 	public void creatPacket(Packet packet) {
 		packet.save();
+	}
+	
+	public void creatFileName(FileName fileName){
+		fileName.save();
+	}
+	
+	public void updateFileName(FileName fileName){
+		fileName.save();
 	}
 	
 	public void updatePacket(Packet packet) {

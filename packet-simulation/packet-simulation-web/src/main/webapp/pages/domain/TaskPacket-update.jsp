@@ -7,6 +7,14 @@
 <form class="form-horizontal">
 	<input type="hidden" id="idID" name="id" /> 
 	<input type="hidden" id="versionID" name="version" /> 
+	<input type="hidden" id="selectedPacketNameID" name="selectedPacketName" />
+	<input type="hidden" id="packetFromID" name="packetFrom" />
+	<input type="hidden" id="selectedFileVersionID" name="selectedFileVersion" />
+	<input type="hidden" id="selectedOrigSenderID" name="selectedOrigSender" />
+	<input type="hidden" id="selectedOrigSendDateID" name="selectedOrigSendDate" />
+	<input type="hidden" id="selectedDataTypeID" name="selectedDataType" />
+	<input type="hidden" id="selectedRecordTypeID" name="selectedRecordType" />
+	<input type="hidden" id="taskIdID" name="taskId" />
 	
 <!-- 	           <div class="form-group"> -->
 <!--                     <label class="col-lg-3 control-label">报文名称:</label> -->

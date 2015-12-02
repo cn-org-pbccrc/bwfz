@@ -7,6 +7,7 @@ import java.util.List;
 
 import org.dayatang.utils.Page;
 import org.openkoala.koala.commons.InvokeResult;
+import org.packet.packetsimulation.core.domain.FileName;
 import org.packet.packetsimulation.facade.dto.*;
 
 public interface PacketFacade {
@@ -32,6 +33,12 @@ public interface PacketFacade {
 	public Page<PacketDTO> pageQueryPacket(PacketDTO packet, int currentPage, int pageSize);
 	
 	public String downloadCSV(Long id);
+	
+	public InvokeResult creatFileName(String frontPosition, String serialNumber);
+	
+	public InvokeResult updateFileName(Long id, String serialNumber);
+	
+	public FileName findIdByFrontPosition(String frontPosition);
 	
 	//public InvokeResult getPacketView(int id);
 	

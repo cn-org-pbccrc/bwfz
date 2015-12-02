@@ -51,6 +51,7 @@ public class TaskPacketController {
 	@ResponseBody
 	@RequestMapping("/add")
 	public InvokeResult add(TaskPacketDTO taskPacketDTO, @RequestParam String packetNames, @RequestParam String fileVersions, @RequestParam String origSenders, @RequestParam String origSendDates, @RequestParam String dataTypes, @RequestParam String recordTypes, @RequestParam String compressions, @RequestParam String encryptions) throws ParseException {
+		System.out.println("真相只有一个:"+origSendDates);
 		String[] values = packetNames.split(",");
 		String[] vers = fileVersions.split(",");
 		String[] senders = origSenders.split(",");
@@ -212,7 +213,7 @@ public class TaskPacketController {
 	
     @InitBinder    
     public void initBinder(WebDataBinder binder) {  
-        SimpleDateFormat dateFormat = new SimpleDateFormat("yyyy-MM-dd");    
+        SimpleDateFormat dateFormat = new SimpleDateFormat("yyyy-MM-dd HH:mm:ss");    
         dateFormat.setLenient(false);    
         binder.registerCustomEditor(Date.class, new CustomDateEditor(dateFormat, true));    
         //CustomDateEditor 可以换成自己定义的编辑器。  

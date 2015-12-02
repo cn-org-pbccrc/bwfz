@@ -54,9 +54,9 @@ function initFun(){
 	                           }).datetimepicker('setDate', new Date()).trigger('changeDate');//加载日期选择器
 	                     startTime.datetimepicker('setDate', yesterday).trigger('changeDate');
 	                	            	                	            	                	                     var contents = [{title:'请选择', value: ''}];
-	                     	                     contents.push({title:'护照' , value:'2'});
+	                	            	         contents.push({title:'身份证' , value:'0'});
 	                     	                     contents.push({title:'军官证' , value:'1'});
-	                     	                     contents.push({title:'身份证' , value:'0'});
+	                     	                     contents.push({title:'护照' , value:'2'});
 	                     	                     form.find('#credentialType_SELECT').select({
 	                                            title: '请选择',
 	                                            contents: contents

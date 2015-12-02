@@ -24,6 +24,10 @@ import javax.inject.Named;
 import javax.xml.parsers.ParserConfigurationException;
 
 
+
+
+
+
 //import org.openkoala.security.shiro.CurrentUser;
 import org.dayatang.domain.InstanceFactory;
 import org.dayatang.querychannel.QueryChannelService;
@@ -45,6 +49,7 @@ import org.openkoala.security.org.core.domain.EmployeeUser;
 import org.packet.packetsimulation.application.MesgApplication;
 import org.packet.packetsimulation.application.MesgTypeApplication;
 import org.packet.packetsimulation.application.PacketApplication;
+import org.packet.packetsimulation.core.domain.FileName;
 import org.packet.packetsimulation.core.domain.Mesg;
 import org.packet.packetsimulation.core.domain.MesgType;
 import org.packet.packetsimulation.core.domain.Packet;
@@ -272,12 +277,12 @@ public class PacketFacadeImpl implements PacketFacade {
 	   	
 	   	if(null!=mesgList && mesgList.size()>0){
 	   		Date origSendDate = packet.getOrigSendDate();
-	   		DateFormat dateFormat = new SimpleDateFormat("yyyyMMdd");  
+	   		DateFormat dateFormat = new SimpleDateFormat("yyyyMMddHHmmss");  
 	   		DateFormat timeFormat = new SimpleDateFormat("HHmmss");  
 	   		//DateFormat haha = new SimpleDateFormat("yyyyMMddHHmmss");
 	   		String counter = mesgList.size() + "";
 	   		counter = fillStringToHead(10,counter,"0");
-	   		String result = "A" + packet.getFileVersion() + packet.getOrigSender() + dateFormat.format(origSendDate) + "000000" + packet.getRecordType() + packet.getDataType() + counter + "                              " + "\r\n";
+	   		String result = "A" + packet.getFileVersion() + packet.getOrigSender() + dateFormat.format(origSendDate) + packet.getRecordType() + packet.getDataType() + counter + "                              " + "\r\n";
 //	   		System.out.println("OrigSender:"+packet.getOrigSender());
 //	   		System.out.println("counter:"+counter);
 //	   		System.out.println("size:"+mesgList.size());
@@ -326,6 +331,18 @@ public class PacketFacadeImpl implements PacketFacade {
 	   	return mesgList;
 	}
 	
+	public FileName findIdByFrontPosition(String frontPosition){
+		List<Object> conditionVals = new ArrayList<Object>();
+	   	StringBuilder jpql = new StringBuilder("select _fileName from FileName _fileName  where 1=1 ");
+	   	
+	   	if (frontPosition != null ) {
+	   		jpql.append(" and _fileName.frontPosition = ? ");
+	   		conditionVals.add(frontPosition);
+	   	}
+	   	FileName fileName = (FileName)getQueryChannelService().createJpqlQuery(jpql.toString()).setParameters(conditionVals).singleResult();
+	   	return fileName;
+	}
+	
 	private String fillStringToHead(int length,String target,String filler){
 		if(null!=target && target.length()<length && null!=filler && !"".equals(filler)){
 			String result = "";
@@ -354,9 +371,9 @@ public class PacketFacadeImpl implements PacketFacade {
 			packetDTO.setFileVersion(line.substring(1,4));
 			System.out.println("``````````````"+line.substring(1,4));
 			packetDTO.setOrigSender(line.substring(4,18));
-			String date = line.substring(18,26);
-			String dateFormat = date.substring(0,4)+"-"+date.substring(4,6)+"-"+date.substring(6,8);
-			SimpleDateFormat sdf = new SimpleDateFormat("yyyy-MM-dd");//小写的mm表示的是分钟    
+			String date = line.substring(18,32);
+			String dateFormat = date.substring(0,4)+"-"+date.substring(4,6)+"-"+date.substring(6,8)+" "+date.substring(8,10)+":"+date.substring(10,12)+":"+date.substring(12,14);
+			SimpleDateFormat sdf = new SimpleDateFormat("yyyy-MM-dd HH:mm:ss");//小写的mm表示的是分钟    
 			Date origSendDate = sdf.parse(dateFormat);   
 			packetDTO.setOrigSendDate(origSendDate);
 			recordType = line.substring(32,36);
@@ -453,6 +470,19 @@ public class PacketFacadeImpl implements PacketFacade {
 			mesgs.add(mesg);
 		}
 		mesgApplication.updateMesgs(mesgs);
+		return InvokeResult.success();
+	}
+	
+	public InvokeResult creatFileName(String frontPosition, String serialNumber){
+		FileName fileName = new FileName(frontPosition, serialNumber);
+		application.creatFileName(fileName);
+		return InvokeResult.success();
+	}
+	
+	public InvokeResult updateFileName(Long id, String serialNumber){
+		FileName fileName = application.getFileName(id);
+		fileName.setSerialNumber(serialNumber);
+		application.updateFileName(fileName);
 		return InvokeResult.success();
 	}
 }

@@ -13,6 +13,7 @@ import javax.persistence.TemporalType;
 
 import org.openkoala.koala.commons.domain.KoalaAbstractEntity;
 import org.openkoala.security.org.core.domain.EmployeeUser;
+import org.springframework.format.annotation.DateTimeFormat;
 
 @Entity 
 @Table(name = "TASK_PACKET")
@@ -36,7 +37,8 @@ public class TaskPacket extends KoalaAbstractEntity{
 	@Column(name = "SELECTED_ORIG_SENDER")
 	private String selectedOrigSender;
 	
-	@Temporal(TemporalType.DATE)
+	//@Temporal(TemporalType.DATE)
+	@DateTimeFormat(pattern="yyyy-MM-dd HH:mm:ss")
 	@Column(name = "SELECTED_ORIG_SEND_DATE")
 	private Date selectedOrigSendDate;
 	

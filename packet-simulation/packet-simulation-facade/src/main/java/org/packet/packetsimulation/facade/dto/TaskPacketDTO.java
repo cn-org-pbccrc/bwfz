@@ -28,6 +28,8 @@ public class TaskPacketDTO implements Serializable {
 		
 		private Date selectedOrigSendDate;
 		
+		private Date selectedOrigSendDateEnd;
+		
 		private String selectedDataType;
 
 		private String selectedRecordType;
@@ -36,6 +38,14 @@ public class TaskPacketDTO implements Serializable {
 		
 			
 	
+	public Date getSelectedOrigSendDateEnd() {
+			return selectedOrigSendDateEnd;
+		}
+
+		public void setSelectedOrigSendDateEnd(Date selectedOrigSendDateEnd) {
+			this.selectedOrigSendDateEnd = selectedOrigSendDateEnd;
+		}
+
 	public String getPacketFrom() {
 			return packetFrom;
 		}

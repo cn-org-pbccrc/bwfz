@@ -48,6 +48,7 @@ import org.openkoala.koala.commons.InvokeResult;
 import org.packet.packetsimulation.application.MesgApplication;
 import org.packet.packetsimulation.application.MesgTypeApplication;
 import org.packet.packetsimulation.application.PacketApplication;
+import org.packet.packetsimulation.core.domain.FileName;
 import org.packet.packetsimulation.core.domain.Mesg;
 import org.packet.packetsimulation.core.domain.MesgType;
 import org.packet.packetsimulation.core.domain.Packet;
@@ -97,6 +98,7 @@ public class PacketController {
 	@Inject
 	private PacketFacade packetFacade;
 	
+	//String serialNumber = "0001";
 
 	
 	@ResponseBody
@@ -156,9 +158,26 @@ public class PacketController {
 		String origSenderDate = downloadCSV.substring(18,32);
 		String recordType = downloadCSV.substring(32,36);
 		String dataType = downloadCSV.substring(36,37);
-		
+		String serialNumber = "0001";
+		String frontPosition = origSender +origSenderDate + recordType + dataType;
+		//FileName fileName = new FileName(frontPosition, serialNumber);
+		//packetFacade.creatFileName(frontPosition,serialNumber);
+		//System.out.println("是骡子是马拉出来溜溜:"+(FileName.getByFrontPosition(frontPosition)==null));
+		if(FileName.getByFrontPosition(frontPosition)==null){
+			System.out.println("原来最初是这样:"+serialNumber);
+			packetFacade.creatFileName(frontPosition,serialNumber);			
+		}else{
+			FileName fileName = packetFacade.findIdByFrontPosition(frontPosition);
+			System.out.println("哈哈哈哈哈id:"+fileName.getId()+";version:"+fileName.getVersion());
+			serialNumber = ""+(Integer.parseInt(fileName.getSerialNumber())+1); 
+			int size = 4-serialNumber.length(); 
+			for(int j=0; j<size; j++){ 
+				serialNumber="0"+serialNumber; 
+			} 
+			packetFacade.updateFileName(fileName.getId(), serialNumber);
+		}
 		response.setContentType("application/csv;charset=UTF-8");
-		response.setHeader("Content-Disposition", "attachment; filename=" + fileVersion + origSender +origSenderDate + recordType + dataType + "0" + "0001" + ".csv");
+		response.setHeader("Content-Disposition", "attachment; filename=" + origSender +origSenderDate + recordType + dataType + "0" + serialNumber + ".csv");
 		response.setCharacterEncoding("UTF-8");
 		
 		InputStream in = null;;

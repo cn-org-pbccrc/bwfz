@@ -42,8 +42,65 @@ function initFun(){
     form2 = $("#<%=formId2%>");
 	PageLoader = {
 	   //
-	    initSearchPanel:function(){	    	
-	        	            	                	            	                	            	                	            	        	     },
+	    initSearchPanel:function(){
+	    	var startTimeVal = form.find('#selectedOrigSendDateID_start');
+            var startTime = startTimeVal.parent();
+            var endTimeVal = form.find('#selectedOrigSendDateID_end');
+            var endTime = endTimeVal.parent();
+            startTime.datetimepicker({
+                               language: 'zh-CN',
+                               format: "yyyy-mm-dd hh:ii:ss",
+                               autoclose: true,
+                               todayBtn: true,
+                               //minView: 2,
+                               pickerPosition: 'bottom-left'
+            }).on('changeDate', function(){
+                        endTime.datetimepicker('setStartDate', startTimeVal.val());
+                  });//加载日期选择器
+            var yesterday = new Date();
+            yesterday.setDate(yesterday.getDate() - 1);
+            endTime.datetimepicker({
+                    language: 'zh-CN',
+                    format: "yyyy-mm-dd hh:ii:ss",
+                    autoclose: true,
+                    todayBtn: true,
+                    //minView: 2,
+                    pickerPosition: 'bottom-left'
+            }).on('changeDate', function(ev){
+                       startTime.datetimepicker('setEndDate', endTimeVal.val());
+                  }).datetimepicker('setDate', new Date()).trigger('changeDate');//加载日期选择器
+            startTime.datetimepicker('setDate', yesterday).trigger('changeDate');
+            var contents = [{title:'请选择', value: ''}];
+             contents.push({title:'正常' , value:'0'});
+             contents.push({title:'删除且不需重报' , value:'1'});
+             contents.push({title:'删除且需重报' , value:'2'});
+             contents.push({title:'-' , value:'-'});
+             form.find('#selectedDataType_SELECT').select({
+           title: '请选择',
+           contents: contents
+      }).on('change',function(){
+          form.find('#selectedDataTypeID_').val($(this).getValue());
+      });
+             var contentsOfCompression = [{title:'请选择', value: ''}];
+             contentsOfCompression.push({title:'是' , value:'是'});
+             contentsOfCompression.push({title:'否' , value:'否'});
+             contentsOfCompression.push({title:'-' , value:'-'});
+             form.find('#compression_SELECT').select({
+           title: '请选择',
+           contents: contentsOfCompression
+      }).on('change',function(){
+          form.find('#compressionID_').val($(this).getValue());
+      });
+             var contentsOfEncryption = [{title:'请选择', value: ''}];
+             contentsOfEncryption.push({title:'是' , value:'是'});
+             contentsOfEncryption.push({title:'否' , value:'否'});             
+             contentsOfEncryption.push({title:'-' , value:'-'});
+             form.find('#encryption_SELECT').select({
+           title: '请选择',
+           contents: contentsOfEncryption
+      }).on('change',function(){
+          form.find('#encryptionID_').val($(this).getValue());
+      });},
 	    initGridPanel: function(){
 	         var self = this;
 	         var width = 180;
@@ -61,7 +118,19 @@ function initFun(){
 	                     	                         	                        { title: '报文名称', name: 'selectedPacketName', width: 3*width/4},
 	                     	                         	                        { title: '版本号', name: 'selectedFileVersion', width: width/2},
 	                     	                         	                        { title: '数据提供机构代码', name: 'selectedOrigSender', width: 3*width/4},
-	                     	                         	                        { title: '生成时间', name: 'selectedOrigSendDate', width: width/2},
+	                     	                         	                        { title: '生成时间', name: 'selectedOrigSendDate', width: width/2,
+	                     	                         	                        	render: function(item, name, index){
+                      	                         						                //alert(item[name].getMonth());
+                      	                         						                var d = new Date(item[name]);    //根据时间戳生成的时间对象
+																						var date = (d.getFullYear()) + "-" + 
+																								(d.getMonth() + 1) + "-" +
+																								(d.getDate()) + " " + 
+																								(d.getHours()) + ":" + 
+																								(d.getMinutes()) + ":" + 
+																								(d.getSeconds());
+                      	                         						                return date;
+                      	                         						             }	
+	                     	                         	                        },
 	                     	                         	                        { title: '数据类型', name: 'selectedDataType', width: 3*width/4,
 	                     	                         	                        	render: function(item, name, index){
                      	                         						                 if(item[name] == '0'){
@@ -190,7 +259,19 @@ function initFun(){
 	    	                    { title:'报文名称', name:'packetName' , width: 120},
 	    	                    { title:'文件格式版本号', name:'fileVersion', width: 120},
 	    	                    { title:'数据提供机构代码', name:'origSender', width: 130},
-	    	                    { title:'文件生成时间', name:'origSendDate', width: 100},
+	    	                    { title:'文件生成时间', name:'origSendDate', width: 100,
+	    	                    	render: function(item, name, index){
+   						                //alert(item[name].getMonth());
+   						                var d = new Date(item[name]);    //根据时间戳生成的时间对象
+										var date = (d.getFullYear()) + "-" + 
+												(d.getMonth() + 1) + "-" +
+												(d.getDate()) + " " + 
+												(d.getHours()) + ":" + 
+												(d.getMinutes()) + ":" + 
+												(d.getSeconds());
+   						                return date;
+   						             }	
+	    	                    },
 	    	                    { title:'记录类型', name:'recordType', width: 90},
 	    	                    { title:'数据类型', name:'dataType', width: 120,
 	    	                    	render: function(item, name, index){
@@ -237,10 +318,10 @@ function initFun(){
 	                     var endTime = endTimeVal.parent();
 	                     startTime.datetimepicker({
 	                                        language: 'zh-CN',
-	                                        format: "yyyy-mm-dd",
+	                                        format: "yyyy-mm-dd hh:ii:ss",
 	                                        autoclose: true,
 	                                        todayBtn: true,
-	                                        minView: 2,
+	                                        //minView: 2,
 	                                        pickerPosition: 'bottom-left'
 	                     }).on('changeDate', function(){
 	                                 endTime.datetimepicker('setStartDate', startTimeVal.val());
@@ -249,15 +330,25 @@ function initFun(){
 	                     yesterday.setDate(yesterday.getDate() - 1);
 	                     endTime.datetimepicker({
 	                             language: 'zh-CN',
-	                             format: "yyyy-mm-dd",
+	                             format: "yyyy-mm-dd hh:ii:ss",
 	                             autoclose: true,
 	                             todayBtn: true,
-	                             minView: 2,
+	                             //minView: 2,
 	                             pickerPosition: 'bottom-left'
 	                     }).on('changeDate', function(ev){
 	                                startTime.datetimepicker('setEndDate', endTimeVal.val());
 	                           }).datetimepicker('setDate', new Date()).trigger('changeDate');//加载日期选择器
 	                     startTime.datetimepicker('setDate', yesterday).trigger('changeDate');
+	                     var contents = [{title:'请选择', value: ''}];
+ 	                     contents.push({title:'正常' , value:'0'});
+ 	                     contents.push({title:'删除且不需重报' , value:'1'});
+ 	                     contents.push({title:'删除且需重报' , value:'2'});
+ 	                     dialog.find('#dataType_SELECT').select({
+                        title: '请选择',
+                        contents: contents
+                   }).on('change',function(){
+                       dialog.find('#dataTypeID_').val($(this).getValue());
+                   });
 	    }
 	    	        initSearch();
 	    	    	dialog.find('#search2').on('click', function(){
@@ -317,6 +408,14 @@ function initFun(){
 							fileVersions[i] = items[i].fileVersion;
 							origSenders[i] = items[i].origSender;
 							origSendDates[i] = items[i].origSendDate;
+							var d = new Date(origSendDates[i]);    //根据时间戳生成的时间对象
+							var date = (d.getFullYear()) + "-" + 
+									(d.getMonth() + 1) + "-" +
+									(d.getDate()) + " " + 
+									(d.getHours()) + ":" + 
+									(d.getMinutes()) + ":" + 
+									(d.getSeconds());
+							origSendDates[i] = date;
 							dataTypes[i] = items[i].dataType;
 							recordTypes[i] = items[i].recordType;
 						}
@@ -368,13 +467,13 @@ function initFun(){
 	               $.get( '${pageContext.request.contextPath}/TaskPacket/get/' + id + '.koala').done(function(json){
 	                       json = json.data;	                      
 	                        var elm;
-	                        selectedPacketName = json['selectedPacketName'];
+	                        //selectedPacketName = json['selectedPacketName'];
 	                        packetFrom = json['packetFrom'];
-							selectedFileVersion = json['selectedFileVersion'];
-	                		selectedOrigSender = json['selectedOrigSender'];
-	                		selectedOrigSendDate = json['selectedOrigSendDate'];
-	                		selectedDataType = json['selectedDataType'];
-	                		selectedRecordType = json['selectedRecordType'];
+							//selectedFileVersion = json['selectedFileVersion'];
+	                		//selectedOrigSender = json['selectedOrigSender'];
+	                		//selectedOrigSendDate = json['selectedOrigSendDate'];
+	                		//selectedDataType = json['selectedDataType'];
+	                		//selectedRecordType = json['selectedRecordType'];
 	                        for(var index in json){
 	                            elm = dialog.find('#'+ index + 'ID');
 	                            if(elm.hasClass('select')){
@@ -383,6 +482,14 @@ function initFun(){
 	                                elm.val(json[index]);
 	                            }
 	                        }
+	                        var d = new Date(json['selectedOrigSendDate']);    //根据时间戳生成的时间对象
+							var date = (d.getFullYear()) + "-" + 
+									(d.getMonth() + 1) + "-" +
+									(d.getDate()) + " " + 
+									(d.getHours()) + ":" + 
+									(d.getMinutes()) + ":" + 
+									(d.getSeconds());
+							selectedOrigSendDate = date;
 	                });
 	                dialog.modal({
 	                    keyboard:false
@@ -401,7 +508,7 @@ function initFun(){
 	                            });
 	                	}
 	                    if(!Validator.Validate(dialog.find('form')[0],3))return;
-	                    $.post('${pageContext.request.contextPath}/TaskPacket/update.koala?id='+id+'&taskId='+taskId+'&selectedPacketName='+selectedPacketName+'&packetFrom='+packetFrom+'&selectedFileVersion='+selectedFileVersion+'&selectedOrigSender='+selectedOrigSender+'&selectedOrigSendDate='+selectedOrigSendDate+'&selectedDataType='+selectedDataType+'&selectedRecordType='+selectedRecordType, dialog.find('form').serialize()).done(function(result){
+	                    $.post('${pageContext.request.contextPath}/TaskPacket/update.koala?selectedOrigSendDate='+selectedOrigSendDate, dialog.find('form').serialize()).done(function(result){
 	                        if(result.success){
 	                            dialog.modal('hide');
 	                            e.data.grid.data('koala.grid').refresh();
@@ -422,10 +529,10 @@ function initFun(){
 	    initPage: function(form){
 	              form.find('.form_datetime').datetimepicker({
 	                   language: 'zh-CN',
-	                   format: "yyyy-mm-dd",
+	                   format: "yyyy-mm-dd hh:ii:ss",
 	                   autoclose: true,
 	                   todayBtn: true,
-	                   minView: 2,
+	                   //minView: 2,
 	                   pickerPosition: 'bottom-left'
 	               }).datetimepicker('setDate', new Date());//加载日期选择器
 
@@ -503,13 +610,14 @@ function initFun(){
                    var contents = [{title:'请选择', value: ''}];
                    selectItems['selectedPacketNameID'] = contents;
                    var contents = [{title:'请选择', value: ''}];
-
-                   contents.push({title:'不加压' , value:'否'});
-                   contents.push({title:'加压' , value:'是'});
+                   contents.push({title:'是' , value:'是'});
+                   contents.push({title:'否' , value:'否'});
+                   
                    selectItems['compressionID'] = contents;
                    var contents = [{title:'请选择', value: ''}];
-        		   contents.push({title:'不加密' , value:'否'});
-        		   contents.push({title:'加密' , value:'是'});
+                   contents.push({title:'是' , value:'是'});
+        		   contents.push({title:'否' , value:'否'});
+        		   
 
         		   selectItems['encryptionID'] = contents;
 	               form.find('.select').each(function(){
@@ -610,6 +718,21 @@ var openDetailsPage = function(id){
                           		 dialog.find('#'+ index + 'ID').html(json[index]+"");
                         	}
                         }
+                        var d = new Date(json['selectedOrigSendDate']);    //根据时间戳生成的时间对象
+						var date = (d.getFullYear()) + "-" + 
+								(d.getMonth() + 1) + "-" +
+								(d.getDate()) + " " + 
+								(d.getHours()) + ":" + 
+								(d.getMinutes()) + ":" + 
+								(d.getSeconds());
+						dialog.find('#selectedOrigSendDateID').html(date);
+						if(json['selectedDataType'] == '0'){
+							dialog.find('#selectedDataTypeID').html('正常');
+			            }else if(json['selectedDataType'] == '1'){
+			            	dialog.find('#selectedDataTypeID').html('删除且不需重报');
+			            }else if(json['selectedDataType'] == '2'){
+			            	dialog.find('#selectedDataTypeID').html('删除且需重报');
+			            }
                });
                 dialog.modal({
                     keyboard:false
@@ -633,20 +756,69 @@ var openDetailsPage = function(id){
   <tr>
     <td>
           <div class="form-group">
-          <label class="control-label" style="width:100px;float:left;">报文名称:&nbsp;</label>
-            <div style="margin-left:15px;float:left;">
-            <input name="selectedPacketName" class="form-control" type="text" style="width:180px;" id="selectedPacketNameID"  />
+          <label class="control-label" style="width:160px;float:left;">内外部报文:&nbsp;</label>
+            <div style="margin-left:1px;float:left;">
+            <input name="packetFrom" class="form-control" type="text" style="width:160px;" id="packetFromID"  />
         </div>
-                      <label class="control-label" style="width:100px;float:left;">加压:&nbsp;</label>
-            <div style="margin-left:15px;float:left;">
-            <input name="compression" class="form-control" type="text" style="width:180px;" id="compressionID"  />
+          <label class="control-label" style="width:160px;float:left;">报文名称:&nbsp;</label>
+            <div style="margin-left:1px;float:left;">
+            <input name="selectedPacketName" class="form-control" type="text" style="width:160px;" id="selectedPacketNameID"  />
         </div>
+        <label class="control-label" style="width:160px;float:left;">文件格式版本号:&nbsp;</label>
+            <div style="margin-left:1px;float:left;">
+            <input name="selectedFileVersion" class="form-control" type="text" style="width:160px;" id="selectedFileVersionID"  />
+        </div>
+        </div>
+        <div class="form-group">
+                      <label class="control-label" style="width:160px;float:left;">数据提供机构代码:&nbsp;</label>
+            <div style="margin-left:1px;float:left;">
+            <input name="selectedOrigSender" class="form-control" type="text" style="width:160px;" id="selectedOrigSenderID"  />
+        </div>
+                  <label class="control-label" style="width:160px;float:left;">文件生成时间:&nbsp;</label>
+           <div style="margin-left:1px;float:left;">
+            <div class="input-group date form_datetime" style="width:160px;float:left;" >
+                <input type="text" class="form-control" style="width:160px;" name="selectedOrigSendDate" id="selectedOrigSendDateID_start" >
+                <span class="input-group-addon"><span class="glyphicon glyphicon-th"></span></span>
             </div>
-                  <div class="form-group">
-          <label class="control-label" style="width:100px;float:left;">加密:&nbsp;</label>
-            <div style="margin-left:15px;float:left;">
-            <input name="encryption" class="form-control" type="text" style="width:180px;" id="encryptionID"  />
+            <div style="float:left; width:10px; margin-left:auto; margin-right:auto;">&nbsp;-&nbsp;</div>
+            <div class="input-group date form_datetime" style="width:160px;float:left;" >
+                <input type="text" class="form-control" style="width:160px;" name="selectedOrigSendDateEnd" id="selectedOrigSendDateID_end" >
+                <span class="input-group-addon"><span class="glyphicon glyphicon-th"></span></span>
+            </div>
+       </div>
+       </div>
+       <div class="form-group">
+       <label class="control-label" style="width:160px;float:left;">记录类型:&nbsp;</label>
+            <div style="margin-left:1px;float:left;">
+            <input name="selectedRecordType" class="form-control" type="text" style="width:160px;" id="selectedRecordID"  />
         </div>
+                <label class="control-label" style="width:160px;float:left;">数据类型:&nbsp;</label>
+    	  <div style="margin-left:1px;float:left;">
+	      <div class="btn-group select" id="selectedDataType_SELECT"></div>
+	        <input type="hidden" id="selectedDataTypeID_" name="selectedDataType" />
+	      </div>
+	      		<label class="control-label" style="width:100px;float:left;">加压:&nbsp;</label>
+    	  <div style="margin-left:1px;float:left;">
+	      <div class="btn-group select" id="compression_SELECT"></div>
+	        <input type="hidden" id="compressionID_" name="compression" />
+	      </div>
+	      <label class="control-label" style="width:100px;float:left;">加密:&nbsp;</label>
+    	  <div style="margin-left:1px;float:left;">
+	      <div class="btn-group select" id="encryption_SELECT"></div>
+	        <input type="hidden" id="encryptionID_" name="encryption" />
+	      </div>
+	  </div>
+<!--        <div class="form-group"> -->
+<!--                       <label class="control-label" style="width:160px;float:left;">加压:&nbsp;</label> -->
+<!--             <div style="margin-left:15px;float:left;"> -->
+<!--             <input name="compression" class="form-control" type="text" style="width:160px;" id="compressionID"  /> -->
+<!--         </div> -->
+
+<!--           <label class="control-label" style="width:160px;float:left;">加密:&nbsp;</label> -->
+<!--             <div style="margin-left:15px;float:left;"> -->
+<!--             <input name="encryption" class="form-control" type="text" style="width:160px;" id="encryptionID"  /> -->
+<!--         </div> -->
+<!--         </div> -->
                 </td>
        <td style="vertical-align: bottom;"><button id="search" type="button" style="position:relative; margin-left:35px; top: -15px" class="btn btn-primary"><span class="glyphicon glyphicon-search"></span>&nbsp;查询</button></td>
   </tr>
@@ -683,10 +855,12 @@ var openDetailsPage = function(id){
             <div style="margin-left:1px;float:left;">
             <input name="recordType" class="form-control" type="text" style="width:160px;" id="recordID"  />
         </div>
-                      <label class="control-label" style="width:160px;float:left;">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;数据类型:</label>
-            <div style="margin-left:1px;float:left;">
-            <input name="dataType" class="form-control" type="text" style="width:160px;" id="dataTypeID"  />
-        </div>
+<label class="control-label" style="width:160px;float:left;">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;数据类型:</label>
+    	  <div style="margin-left:1px;float:left;">
+	      <div class="btn-group select" id="dataType_SELECT"></div>
+	        <input type="hidden" id="dataTypeID_" name="dataType" />
+	      </div>
+	  </div>
   </td>
   </tr>
   <tr>

@@ -57,6 +57,16 @@ function initFun(){
 	                                startTime.datetimepicker('setEndDate', endTimeVal.val());
 	                           }).datetimepicker('setDate', new Date()).trigger('changeDate');//加载日期选择器
 	                     startTime.datetimepicker('setDate', yesterday).trigger('changeDate');
+	                     var contents = [{title:'请选择', value: ''}];
+ 	                     contents.push({title:'正常' , value:'0'});
+ 	                     contents.push({title:'删除且不需重报' , value:'1'});
+ 	                     contents.push({title:'删除且需重报' , value:'2'});
+ 	                     form.find('#dataType_SELECT').select({
+                        title: '请选择',
+                        contents: contents
+                   }).on('change',function(){
+                       form.find('#dataTypeID_').val($(this).getValue());
+                   });
 	    },
 	    initGridPanel: function(){
 	         var self = this;
@@ -399,7 +409,7 @@ function initFun(){
                 var name = $this.attr('name');
                 if(name){
                     params[name] = $this.val();
-                }
+                } 
             });
             grid.getGrid().search(params);
         });
@@ -579,11 +589,16 @@ function downloadENC(id){
             <div style="margin-left:15px;float:left;">
             <input name="recordType" class="form-control" type="text" style="width:160px;" id="recordID"  />
         </div>
-                      <label class="control-label" style="width:160px;float:left;">数据类型:&nbsp;</label>
-            <div style="margin-left:15px;float:left;">
-            <input name="dataType" class="form-control" type="text" style="width:160px;" id="dataTypeID"  />
-        </div>
-        
+<!--                       <label class="control-label" style="width:160px;float:left;">数据类型:&nbsp;</label> -->
+<!--             <div style="margin-left:15px;float:left;"> -->
+<!--             <input name="dataType" class="form-control" type="text" style="width:160px;" id="dataTypeID"  /> -->
+<!--         </div> -->
+                <label class="control-label" style="width:160px;float:left;">数据类型:&nbsp;</label>
+    	  <div style="margin-left:15px;float:left;">
+	      <div class="btn-group select" id="dataType_SELECT"></div>
+	        <input type="hidden" id="dataTypeID_" name="dataType" />
+	      </div>
+	  </div>
         
             </div>
             </td>
