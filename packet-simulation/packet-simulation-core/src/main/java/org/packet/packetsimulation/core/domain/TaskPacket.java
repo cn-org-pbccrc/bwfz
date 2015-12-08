@@ -54,6 +54,17 @@ public class TaskPacket extends KoalaAbstractEntity{
 	@Column(name = "ENCRYPTION")
 	private String encryption;
 	
+	@Column(name = "SERIAL_NUMBER")
+	private Integer serialNumber;
+	
+	public Integer getSerialNumber() {
+		return serialNumber;
+	}
+
+	public void setSerialNumber(Integer serialNumber) {
+		this.serialNumber = serialNumber;
+	}
+
 	public String getPacketFrom() {
 		return packetFrom;
 	}

@@ -150,8 +150,8 @@ $(function (){
 	                        });
 	                   },
 	                   'search' : function() {						
-	       				$("#projectQueryDiv").slideToggle("slow");						 
-	       			}
+	       					$("#projectQueryDiv").slideToggle("slow");						 
+	       				}
 	         });
 	    },
 	    add: function(grid){

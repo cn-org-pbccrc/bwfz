@@ -1,4 +1,5 @@
 <%@ page language="java" contentType="text/html; charset=UTF-8" pageEncoding="UTF-8"%>
+<div class="taskPacketDetail" id="taskPacketDetail">
 <!DOCTYPE html>
 <html>
 <head>
@@ -14,7 +15,8 @@
 <script type="text/javascript">
 
 var tabData = $('.tab-pane.active').data();
-var taskId = tabData.taskId;
+//var taskId = tabData.taskId;
+var taskId = $('.taskPacketDetail').parent().attr('data-value');
 var grid;
 var form;
 var _dialog;
@@ -110,12 +112,15 @@ function initFun(){
 	                        {content: '<button class="btn btn-primary" type="button"><span class="glyphicon glyphicon-plus"><span>添加</button>', action: 'add'},
 	                        {content: '<button class="btn btn-success" type="button"><span class="glyphicon glyphicon-edit"><span>修改加压加密方式</button>', action: 'modify'},
 	                        {content: '<button class="btn btn-danger" type="button"><span class="glyphicon glyphicon-remove"><span>删除</button>', action: 'delete'},
-	                        {content: '<button class="btn btn-primary" type="button"><span class="glyphicon glyphicon-plus"><span>上传外部文件</button>', action: 'upload'}
+	                        {content: '<button class="btn btn-inverse" type="button"><span class="glyphicon glyphicon-upload"><span>上传外部文件</button>', action: 'upload'},
+	                        {content: '<button class="btn btn-info" type="button"><span class="glyphicon glyphicon-arrow-up"><span>上移</button>', action: 'up'},
+	                        {content: '<button class="btn btn-info" type="button"><span class="glyphicon glyphicon-arrow-down"><span>下移</button>', action: 'down'},
+	                        {content: '<button class="btn btn-success" type="button"><span class="glyphicon glyphicon-search"><span>高级搜索<span class="caret"></span></button>', action: 'search'}
 	                    ],
 	                url:"${pageContext.request.contextPath}/TaskPacket/pageJson/" + taskId + ".koala",
 	                columns: [
 																				{ title: '内外部报文', name: 'packetFrom', width: width/2},
-	                     	                         	                        { title: '报文名称', name: 'selectedPacketName', width: 3*width/4},
+	                     	                         	                        { title: '报文名称', name: 'selectedPacketName', width: width/2},
 	                     	                         	                        { title: '版本号', name: 'selectedFileVersion', width: width/2},
 	                     	                         	                        { title: '数据提供机构代码', name: 'selectedOrigSender', width: 3*width/4},
 	                     	                         	                        { title: '生成时间', name: 'selectedOrigSendDate', width: width/2,
@@ -147,7 +152,8 @@ function initFun(){
 	                     	                         	                        { title: '记录类型', name: 'selectedRecordType', width: width/2},
 	                         	                         	                         	                         { title: '加压', name: 'compression', width: width/3},
 	                         	                         	                         	                         { title: '加密', name: 'encryption', width: width/3},
-	                         	                         	                             { title: '操作', width: 120, render: function (rowdata, name, index)
+	                         	                         	                         	                         { title: '顺序号', name: 'serialNumber', width: 5*width/12},
+	                         	                         	                             { title: '操作', width: 100, render: function (rowdata, name, index)
 	                                 {
 	                                     var param = '"' + rowdata.id + '"';
 	                                     var h = "<a href='javascript:openDetailsPage(" + param + ")'>查看</a> ";
@@ -199,7 +205,48 @@ function initFun(){
 	                   },
 	                   'upload': function(){
 	                	   self.upload($(this));
-	                   } 
+	                   },
+	                   'up':function(event, data){
+	                        var indexs = data.data;
+	                        var $this = $(this);
+	                        if(indexs.length == 0){
+	                            $this.message({
+	                                type: 'warning',
+	                                content: '请选择一条记录进行上移'
+	                            })
+	                            return;
+	                        }
+	                        if(indexs.length > 1){
+	                            $this.message({
+	                                type: 'warning',
+	                                content: '只能选择一条记录进行上移'
+	                            })
+	                            return;
+	                        }
+	                       self.up($this);
+	                    },
+	                   'down':function(event, data){
+	                        var indexs = data.data;
+	                        var $this = $(this);
+	                        if(indexs.length == 0){
+	                            $this.message({
+	                                type: 'warning',
+	                                content: '请选择一条记录进行下移'
+	                            })
+	                            return;
+	                        }
+	                        if(indexs.length > 1){
+	                            $this.message({
+	                                type: 'warning',
+	                                content: '只能选择一条记录进行下移'
+	                            })
+	                            return;
+	                        }
+	                       self.down($this);
+	                    },
+	                    'search' : function() {						
+	       					$("#taskPacketQueryDiv").slideToggle("slow");						 
+	       				}
 	         });
 	    },
 	    add: function(grid){
@@ -244,7 +291,7 @@ function initFun(){
 	    selectPackets:function(grid){
 	    	$.get(contextPath + '/pages/auth/packet-select.jsp').done(function(data) {	    		
 	    	 	   var dialog = $(data);
-	    	 	   dialog.find('.modal-query').html(document.getElementById("<%=formId2%>").innerHTML);
+<%-- 	    	 	   dialog.find('.modal-title').html(document.getElementById("<%=formId2%>").innerHTML); --%>
 
 	    	        //显示对话框数据
 	    	        dialog.modal({
@@ -350,9 +397,9 @@ function initFun(){
                        dialog.find('#dataTypeID_').val($(this).getValue());
                    });
 	    }
-	    	        initSearch();
+	    	        initSearch(); 
 	    	    	dialog.find('#search2').on('click', function(){
-	    	            if(!Validator.Validate(document.getElementById("<%=formId2%>"),3))return;
+<%-- 	    	            if(!Validator.Validate(document.getElementById("<%=formId2%>"),3))return; --%>
 	    	            var params = {};
 	    	            dialog.find('input').each(function(){
 	    	                var $this = $(this);
@@ -682,11 +729,80 @@ function initFun(){
 	            	//openTaskPacket(taskId);	            	
         		//});
 	        });
-	    }       	
+	    },
+	    up: function(grid){
+	    	if(grid.getGrid().selectedRowsNo()==0){
+	    		grid.message({
+                     type: 'error',
+                     content: "不能再往上移啦"
+                 });
+	    		return;
+	    	}
+	    	var sourceIndex = grid.getGrid().selectedRowsNo();
+	    	var sourceId = grid.getGrid().getItemByIndex(sourceIndex).id;
+	    	//alert(sourceId)
+	    	grid.getGrid().up(grid.getGrid().selectedRowsNo());
+	    	var destId = grid.getGrid().getItemByIndex(sourceIndex).id;
+	    	//alert(destId)
+	    	var data = [{ name: 'sourceId', value: sourceId },
+	    	            { name: 'destId', value: destId }
+	    	            ];
+	    	$.post('${pageContext.request.contextPath}/TaskPacket/up.koala', data).done(function(result){
+	        	if(result.success){
+	            	//grid.data('koala.grid').refresh();
+                    grid.message({
+	                	type: 'success',
+	                    content: '上移成功'
+	                });
+	            }else{
+	                grid.message({
+	                    type: 'error',
+	                    content: result.result
+	                });
+	            }
+	    	});
+	    	//alert(grid.getGrid().selectedRowsNo())
+	    	//alert(grid.getGrid().getAllItems().length)
+	    	//alert(grid.getGrid().pageSize)
+
+	    },
+	    down: function(grid){
+	    	if(grid.getGrid().selectedRowsNo()==grid.getGrid().getAllItems().length-1){
+	    		grid.message({
+                    type: 'error',
+                    content: "不能再往下移啦"
+                });
+	    		return;
+	    	}
+	    	var sourceIndex = grid.getGrid().selectedRowsNo();
+	    	var sourceId = grid.getGrid().getItemByIndex(sourceIndex).id;
+	    	//alert(grid.getGrid().getAllItems().length)
+	    	grid.getGrid().down(grid.getGrid().selectedRowsNo());
+	    	//alert($("input[name='pagesize']").val())
+	    	var destId = grid.getGrid().getItemByIndex(sourceIndex).id;
+	    	//alert(destId)
+	    	var data = [{ name: 'sourceId', value: sourceId },
+	    	            { name: 'destId', value: destId }
+	    	            ];
+	    	$.post('${pageContext.request.contextPath}/TaskPacket/down.koala', data).done(function(result){
+	        	if(result.success){
+	            	//grid.data('koala.grid').refresh();
+                    grid.message({
+	                	type: 'success',
+	                    content: '下移成功'
+	                });
+	            }else{
+	                grid.message({
+	                    type: 'error',
+	                    content: result.result
+	                });
+	            }
+	    	});
+	    }
 	}
 	PageLoader.initSearchPanel();
 	PageLoader.initGridPanel();
-	document.getElementById("<%=formId2%>").style.display="none";
+<%-- 	document.getElementById("<%=formId2%>").style.display="none"; --%>
 	form.find('#search').on('click', function(){
             if(!Validator.Validate(document.getElementById("<%=formId%>"),3))return;
             var params = {};
@@ -751,31 +867,33 @@ var openDetailsPage = function(id){
 <!-- search form -->
 <form name=<%=formId%> id=<%=formId%> target="_self" class="form-horizontal">
 <input type="hidden" name="page" value="0">
-<input type="hidden" name="pagesize" value="10">
+<input type="hidden" id="pagesize" name="pagesize" value="10">
+<div id="taskPacketQueryDiv" hidden="true">
 <table border="0" cellspacing="0" cellpadding="0">
   <tr>
     <td>
           <div class="form-group">
           <label class="control-label" style="width:160px;float:left;">内外部报文:&nbsp;</label>
-            <div style="margin-left:1px;float:left;">
+            <div style="margin-left:15px;float:left;">
             <input name="packetFrom" class="form-control" type="text" style="width:160px;" id="packetFromID"  />
         </div>
           <label class="control-label" style="width:160px;float:left;">报文名称:&nbsp;</label>
-            <div style="margin-left:1px;float:left;">
+            <div style="margin-left:15px;float:left;">
             <input name="selectedPacketName" class="form-control" type="text" style="width:160px;" id="selectedPacketNameID"  />
         </div>
         <label class="control-label" style="width:160px;float:left;">文件格式版本号:&nbsp;</label>
-            <div style="margin-left:1px;float:left;">
+            <div style="margin-left:15px;float:left;">
             <input name="selectedFileVersion" class="form-control" type="text" style="width:160px;" id="selectedFileVersionID"  />
         </div>
         </div>
+
         <div class="form-group">
                       <label class="control-label" style="width:160px;float:left;">数据提供机构代码:&nbsp;</label>
-            <div style="margin-left:1px;float:left;">
+            <div style="margin-left:15px;float:left;">
             <input name="selectedOrigSender" class="form-control" type="text" style="width:160px;" id="selectedOrigSenderID"  />
         </div>
                   <label class="control-label" style="width:160px;float:left;">文件生成时间:&nbsp;</label>
-           <div style="margin-left:1px;float:left;">
+           <div style="margin-left:15px;float:left;">
             <div class="input-group date form_datetime" style="width:160px;float:left;" >
                 <input type="text" class="form-control" style="width:160px;" name="selectedOrigSendDate" id="selectedOrigSendDateID_start" >
                 <span class="input-group-addon"><span class="glyphicon glyphicon-th"></span></span>
@@ -787,27 +905,31 @@ var openDetailsPage = function(id){
             </div>
        </div>
        </div>
+
        <div class="form-group">
        <label class="control-label" style="width:160px;float:left;">记录类型:&nbsp;</label>
-            <div style="margin-left:1px;float:left;">
+            <div style="margin-left:15px;float:left;">
             <input name="selectedRecordType" class="form-control" type="text" style="width:160px;" id="selectedRecordID"  />
         </div>
                 <label class="control-label" style="width:160px;float:left;">数据类型:&nbsp;</label>
-    	  <div style="margin-left:1px;float:left;">
+    	  <div style="margin-left:15px;float:left;">
 	      <div class="btn-group select" id="selectedDataType_SELECT"></div>
 	        <input type="hidden" id="selectedDataTypeID_" name="selectedDataType" />
 	      </div>
+
 	      		<label class="control-label" style="width:100px;float:left;">加压:&nbsp;</label>
-    	  <div style="margin-left:1px;float:left;">
+    	  <div style="margin-left:15px;float:left;">
 	      <div class="btn-group select" id="compression_SELECT"></div>
 	        <input type="hidden" id="compressionID_" name="compression" />
 	      </div>
+
 	      <label class="control-label" style="width:100px;float:left;">加密:&nbsp;</label>
-    	  <div style="margin-left:1px;float:left;">
+    	  <div style="margin-left:15px;float:left;">
 	      <div class="btn-group select" id="encryption_SELECT"></div>
 	        <input type="hidden" id="encryptionID_" name="encryption" />
 	      </div>
-	  </div>
+</div>
+</td>
 <!--        <div class="form-group"> -->
 <!--                       <label class="control-label" style="width:160px;float:left;">加压:&nbsp;</label> -->
 <!--             <div style="margin-left:15px;float:left;"> -->
@@ -819,15 +941,17 @@ var openDetailsPage = function(id){
 <!--             <input name="encryption" class="form-control" type="text" style="width:160px;" id="encryptionID"  /> -->
 <!--         </div> -->
 <!--         </div> -->
-                </td>
        <td style="vertical-align: bottom;"><button id="search" type="button" style="position:relative; margin-left:35px; top: -15px" class="btn btn-primary"><span class="glyphicon glyphicon-search"></span>&nbsp;查询</button></td>
   </tr>
-</table>	
+</table>
+</div>	
 </form>
 
-<form name=<%=formId2%> id=<%=formId2%> target="_self" class="form-horizontal">
+<%-- <form name=<%=formId2%> style="display:none;" id=<%=formId2%> target="_self" class="form-horizontal">
 <input type="hidden" name="page" value="0">
 <input type="hidden" name="pagesize" value="10">
+<button class="btn btn-success" type="button" style="margin-top:10px" onclick="$('#searchQueryDiv').slideToggle('slow')"><span class="glyphicon glyphicon-flash"></span>高级搜索<span class="caret"></span></button>
+<div id="searchQueryDiv" style="margin-top:5px" hidden="true">
 <table border="0" cellspacing="0" cellpadding="0">
   <tr>
     <td>
@@ -860,7 +984,6 @@ var openDetailsPage = function(id){
 	      <div class="btn-group select" id="dataType_SELECT"></div>
 	        <input type="hidden" id="dataTypeID_" name="dataType" />
 	      </div>
-	  </div>
   </td>
   </tr>
   <tr>
@@ -884,11 +1007,13 @@ var openDetailsPage = function(id){
             </td>
        <td style="vertical-align: bottom;"><button id="search2" type="button" style="position:relative; margin-left:15px; top: -15px" class="btn btn-primary"><span class="glyphicon glyphicon-search"></span>&nbsp;查询</button></td>
   </tr>
-</table>	
-</form>
+</table>
+</div>	
+</form> --%>
 
 <!-- grid -->
 <div id=<%=gridId%>></div>
 </div>
 </body>
 </html>
+</div>

@@ -155,7 +155,7 @@ public class PacketController {
 		String downloadCSV = packetFacade.downloadCSV(id);
 		String fileVersion = downloadCSV.substring(1,4);
 		String origSender = downloadCSV.substring(4,18);
-		String origSenderDate = downloadCSV.substring(18,32);
+		String origSenderDate = downloadCSV.substring(18,32).substring(0,8);
 		String recordType = downloadCSV.substring(32,36);
 		String dataType = downloadCSV.substring(36,37);
 		String serialNumber = "0001";

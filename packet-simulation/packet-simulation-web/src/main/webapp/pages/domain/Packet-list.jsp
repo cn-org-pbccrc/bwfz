@@ -79,6 +79,7 @@ function initFun(){
 	                        {content: '<button class="btn btn-success" type="button"><span class="glyphicon glyphicon-edit"><span>修改</button>', action: 'modify'},
 	                        {content: '<button class="btn btn-danger" type="button"><span class="glyphicon glyphicon-remove"><span>删除</button>', action: 'delete'},
 	                        {content: '<button class="btn btn-primary" type="button"><span class="glyphicon glyphicon-plus"><span>加载外部报文</button>', action: 'load'},
+	                        {content: '<button class="btn btn-success" type="button"><span class="glyphicon glyphicon-search"><span>高级搜索<span class="caret"></span></button>', action: 'search'}
 	                    ],
 	                url:"${pageContext.request.contextPath}/Packet/pageJson/" + currentUserId + ".koala",
 	                columns: [
@@ -113,7 +114,7 @@ function initFun(){
 	                         	                         	                         	                         },
 	                         	                         	                         	                      	 { title: '信息记录数', name: 'mesgNum', width: width/2},
 	                         	                         	                         	                         { title: '创建人员', name: 'createdBy', width: 11*width/24},
-	                         	                         	                             { title: '操作', width: 120, render: function (rowdata, name, index)
+	                         	                         	                             { title: '操作', width: 170, render: function (rowdata, name, index)
 	                                 {
 	                                     var param = '"' + rowdata.id + '"';
 	                                     var packId = '"' + rowdata.packId + '"';
@@ -165,7 +166,10 @@ function initFun(){
 	                   },
 	                   'load':function(){
 	                	   self.load($(this));
-	                   }
+	                   },
+	                   'search' : function() {						
+	       					$("#packetQueryDiv").slideToggle("slow");						 
+	       				}
 	         });
 	    },
 	    add: function(grid){
@@ -255,12 +259,6 @@ function initFun(){
         		}).on({
             		'hidden.bs.modal': function(){
                 	$(this).remove();
-                	var $menuLi =  $('.g-sidec').find('li[data-mark="menuMark188"]');
-                    if($menuLi.length){
-                        $menuLi.click();
-                    }else{
-                        clearMenuEffect();
-                    }
             		}
         		}).find('.modal-body').html(html);
         		self.initPage(dialog.find('form'));
@@ -491,6 +489,25 @@ var clearMenuEffect = function(){
    });
 };
 
+/**
+ * 根据内容改变高度
+ */
+var changeHeight = function(){
+    var sidebar = $('.g-sidec');
+    var sidebarHeight = sidebar.outerHeight();
+    var headerHeight = $('.g-head').outerHeight();
+    var windowHeight = $(window).height();
+    var bodyHeight = $(document).height();
+    if(bodyHeight >  windowHeight){
+        windowHeight =  bodyHeight;
+    }
+    var footHeight = $('#footer').outerHeight();
+    var height =  windowHeight - headerHeight - footHeight;
+    sidebarHeight < height && sidebar.css('height', height);
+   // $('.g-sidec').css('min-height',height);
+    $('.g-mainc').css('min-height', height);
+};
+
 var openPacketView = function(id){
 	var dialog = $('<div class="modal fade"><div class="modal-dialog" style="width:900px;"><div class="modal-content"><div class="modal-header"><button type="button" class="close" data-dismiss="modal" aria-hidden="true">&times;</button><h4 class="modal-title">查看源数据</h4></div><div class="modal-body"><p>One fine body&hellip;</p></div><div class="modal-footer"><button type="button" class="btn btn-info" data-dismiss="modal">返回</button></div></div></div></div>');
     $.get('<%=path%>/Packet-view.jsp').done(function(html){
@@ -513,7 +530,7 @@ var mark;
 function openPacket(id,packId){
     var thiz 	= $(this);
     var  mark 	= thiz.attr('mark');
-    mark = openTabCust("/pages/domain/Mesg-list.jsp", "增加报文明细 ",packId,null,{packetId:id,packId:packId});
+    mark = openTabCust("/pages/domain/Mesg-list.jsp", "增加报文明细 ",packId,id,{packetId:id,packId:packId});
     if(mark){
         thiz.attr("mark",mark);
     }
@@ -549,6 +566,7 @@ function downloadENC(id){
 <form name=<%=formId%> id=<%=formId%> target="_self" class="form-horizontal">
 <input type="hidden" name="page" value="0">
 <input type="hidden" name="pagesize" value="10">
+<div id="packetQueryDiv" hidden="true">
 <table border="0" cellspacing="0" cellpadding="0">
   <tr>
     <td>
@@ -604,7 +622,8 @@ function downloadENC(id){
             </td>
        <td style="vertical-align: bottom;"><button id="search" type="button" style="position:relative; margin-left:35px; top: -15px" class="btn btn-primary"><span class="glyphicon glyphicon-search"></span>&nbsp;查询</button></td>
   </tr>
-</table>	
+</table>
+</div>	
 </form>
 <!-- grid -->
 <div id=<%=gridId%>></div>

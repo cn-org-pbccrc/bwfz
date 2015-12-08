@@ -62,7 +62,8 @@ function initFun(){
 	                buttons: [
 	                        {content: '<button class="btn btn-primary" type="button"><span class="glyphicon glyphicon-plus"><span>添加</button>', action: 'add'},
 	                        {content: '<button class="btn btn-success" type="button"><span class="glyphicon glyphicon-edit"><span>修改</button>', action: 'modify'},
-	                        {content: '<button class="btn btn-danger" type="button"><span class="glyphicon glyphicon-remove"><span>删除</button>', action: 'delete'}
+	                        {content: '<button class="btn btn-danger" type="button"><span class="glyphicon glyphicon-remove"><span>删除</button>', action: 'delete'},
+	                        {content: '<button class="btn btn-success" type="button"><span class="glyphicon glyphicon-search"><span>高级搜索<span class="caret"></span></button>', action: 'search'}
 	                    ],
 	                url:"${pageContext.request.contextPath}/Task/pageJson/" + currentUserId + ".koala",
 	                columns: [
@@ -73,7 +74,7 @@ function initFun(){
 	                         	                         	                         	                         { title: '创建时间', name: 'taskCreatedTime', width: 2*width/3},
 	                         	                         	                         	                         { title: '任务状态', name: 'taskStatus', width: 2*width/3},
 	                         	                         	                         	                         { title: '报文数量', name: 'packetNum', width: 2*width/3},
-	                         	                         	                             { title: '操作', width: 120, render: function (rowdata, name, index)
+	                         	                         	                             { title: '操作', width: 160, render: function (rowdata, name, index)
 	                                 {
 	                                     var param = '"' + rowdata.id + '"';
 	                                     var h = "<a href='javascript:openTaskPacket(" + param + ")'>增加报文文件</a> ";
@@ -121,7 +122,10 @@ function initFun(){
 	                            content: '确定要删除所选记录吗?',
 	                            callBack: remove
 	                        });
-	                   }
+	                   },
+	                   'search' : function() {						
+		       				$("#taskQueryDiv").slideToggle("slow");						 
+		       			}
 	         });
 	    },
 	    add: function(grid){
@@ -267,6 +271,7 @@ var openTabCust = function(target, title, mark, id, param){
     var tabs = mainc.find('#navTabs');
     var contents =  mainc.find('#tabContent');
     var content = contents.find('#'+mark);
+    //alert(content.length)
     if(content.length > 0){
         content.attr('data-value', id);
         loadContent(content, target);
@@ -338,11 +343,30 @@ var clearMenuEffect = function(){
    });
 };
 
+/**
+ * 根据内容改变高度
+ */
+var changeHeight = function(){
+    var sidebar = $('.g-sidec');
+    var sidebarHeight = sidebar.outerHeight();
+    var headerHeight = $('.g-head').outerHeight();
+    var windowHeight = $(window).height();
+    var bodyHeight = $(document).height();
+    if(bodyHeight >  windowHeight){
+        windowHeight =  bodyHeight;
+    }
+    var footHeight = $('#footer').outerHeight();
+    var height =  windowHeight - headerHeight - footHeight;
+    sidebarHeight < height && sidebar.css('height', height);
+   // $('.g-sidec').css('min-height',height);
+    $('.g-mainc').css('min-height', height);
+};
+
 var mark;
 function openTaskPacket(id){
     var thiz 	= $(this);
     var  mark 	= thiz.attr('mark');
-    mark = openTabCust("/pages/domain/TaskPacket-list.jsp", "增加报文文件 ",id,null,{taskId:id});
+    mark = openTabCust("/pages/domain/TaskPacket-list.jsp", "增加报文文件 ",mark,id);
     if(mark){
         thiz.attr("mark",mark);
     }
@@ -388,6 +412,7 @@ var openDetailsPage = function(id){
 <form name=<%=formId%> id=<%=formId%> target="_self" class="form-horizontal">
 <input type="hidden" name="page" value="0">
 <input type="hidden" name="pagesize" value="10">
+<div id="taskQueryDiv" hidden="true">
 <table border="0" cellspacing="0" cellpadding="0">
   <tr>
     <td>
@@ -432,7 +457,8 @@ var openDetailsPage = function(id){
             </td>
        <td style="vertical-align: bottom;"><button id="search" type="button" style="position:relative; margin-left:35px; top: -15px" class="btn btn-primary"><span class="glyphicon glyphicon-search"></span>&nbsp;查询</button></td>
   </tr>
-</table>	
+</table>
+</div>	
 </form>
 <!-- grid -->
 <div id=<%=gridId%>></div>

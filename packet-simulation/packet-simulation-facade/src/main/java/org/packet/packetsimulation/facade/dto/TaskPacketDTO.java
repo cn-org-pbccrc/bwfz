@@ -36,8 +36,18 @@ public class TaskPacketDTO implements Serializable {
 				
 		private String compression;
 		
+		private Integer serialNumber;
+		
 			
 	
+	public Integer getSerialNumber() {
+			return serialNumber;
+		}
+
+		public void setSerialNumber(Integer serialNumber) {
+			this.serialNumber = serialNumber;
+		}
+
 	public Date getSelectedOrigSendDateEnd() {
 			return selectedOrigSendDateEnd;
 		}

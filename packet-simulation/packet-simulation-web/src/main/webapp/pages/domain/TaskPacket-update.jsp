@@ -15,6 +15,7 @@
 	<input type="hidden" id="selectedDataTypeID" name="selectedDataType" />
 	<input type="hidden" id="selectedRecordTypeID" name="selectedRecordType" />
 	<input type="hidden" id="taskIdID" name="taskId" />
+	<input type="hidden" id="serialNumberID" name="serialNumber" />
 	
 <!-- 	           <div class="form-group"> -->
 <!--                     <label class="col-lg-3 control-label">报文名称:</label> -->

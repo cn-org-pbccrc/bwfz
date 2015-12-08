@@ -96,7 +96,17 @@ public class TaskPacketController {
 		return taskPacketFacade.getTaskPacket(id);
 	}
 	
+	@ResponseBody
+	@RequestMapping("/up")
+	public InvokeResult up(@RequestParam String sourceId, @RequestParam String destId){
+		return taskPacketFacade.upTaskPacket(sourceId, destId);
+	}
 	
+	@ResponseBody
+	@RequestMapping("/down")
+	public InvokeResult down(@RequestParam String sourceId, @RequestParam String destId){
+		return taskPacketFacade.downTaskPacket(sourceId, destId);
+	}
 //	@ResponseBody
 //	@RequestMapping("/upload")
 //	public void upload(TaskPacketDTO taskPacketDTO, HttpServletRequest request, HttpServletResponse response) throws IOException, ParseException {

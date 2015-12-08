@@ -1,4 +1,5 @@
 <%@ page language="java" contentType="text/html; charset=UTF-8" pageEncoding="UTF-8"%>
+<div class="mesgDetail" id="mesgDetail">
 <html lang="zh-CN">
 <head>
 <style>
@@ -70,9 +71,10 @@ legend {
 
     var selectItems = {};
     var tabData = $('.tab-pane.active').data();
-    var packetId = tabData.packetId;
-    var packId = tabData.packId;
-    
+//     var packetId = tabData.packetId;
+//     var packId = tabData.packId;
+    var packetId = $('.mesgDetail').parent().attr('data-value');
+    var packId = "000";
     var mesgTypeOption = '';
     var grid;
     var form;
@@ -617,7 +619,6 @@ legend {
  	 			    		       return false;
  	 			    	  	   }
     		    	            var items = dialog.find('.selectThreeStandardGrid').data('koala.grid').selectedRowsIndex();   
-    		    	            //alert(items[0])
     		    	            if(items.length == 0 && (dialog.find('#startID').val()==null||dialog.find('#startID').val()=="") && (dialog.find('#endID').val()==null||dialog.find('#endID').val()=="")){
     		    	            	//alert("狗狗")
     		    	                dialog.find('.selectThreeStandardGrid').message({
@@ -772,3 +773,4 @@ legend {
 </script>
 </body>
 </html>
+</div>

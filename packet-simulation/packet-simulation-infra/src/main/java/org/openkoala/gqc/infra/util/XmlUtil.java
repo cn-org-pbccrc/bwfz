@@ -40,7 +40,7 @@ import org.xml.sax.SAXException;
  */
 public class XmlUtil {
 
-	private static final String FOLDER = "\\xmlTemplate\\";
+	private static final String FOLDER = "/xmlTemplate/";
 
 	private static final String XML_SUFFIX = ".xml";
 

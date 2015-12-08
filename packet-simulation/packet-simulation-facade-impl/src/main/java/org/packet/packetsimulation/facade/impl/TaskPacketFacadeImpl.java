@@ -99,6 +99,9 @@ public class TaskPacketFacadeImpl implements TaskPacketFacade {
 	public InvokeResult creatTaskPackets(TaskPacketDTO taskPacketDTO, String[] values, String[] vers, String[] senders, String[] dates, String[] datTs, String[] recTs, String[] coms, String[] encs) throws ParseException {
 		Set<TaskPacket> taskPackets= new HashSet<TaskPacket>();
 		SimpleDateFormat sdf = new SimpleDateFormat("yyyy-MM-dd HH:mm:ss");
+		Integer max = findMaxSerialNumber(taskPacketDTO.getTaskId());
+		Integer flag = max + 1;
+		System.out.println("最大值来啦速来围观哈哈:"+max);
 		for (int i =0; i < values.length; i++) {
 			TaskPacket taskPacket = TaskPacketAssembler.toEntity(taskPacketDTO);
 			Task task = taskApplication.getTask(taskPacketDTO.getTaskId());			
@@ -112,11 +115,30 @@ public class TaskPacketFacadeImpl implements TaskPacketFacade {
 			taskPacket.setSelectedRecordType(recTs[i]);
 			taskPacket.setCompression(coms[i]);
 			taskPacket.setEncryption(encs[i]);
-			System.out.println("值:"+values[i]+"加压"+coms[i]+"加密"+encs[i]);
+			taskPacket.setSerialNumber(flag);
+			flag++;
+			//System.out.println("值:"+values[i]+"加压"+coms[i]+"加密"+encs[i]);
 			taskPackets.add(taskPacket);
 		}
 		application.creatTaskPackets(taskPackets);
 		return InvokeResult.success();
+	}
+	
+	private Integer findMaxSerialNumber(Long taskId){
+		List<Object> conditionVals = new ArrayList<Object>();
+	   	StringBuilder jpql = new StringBuilder("select max(_taskPacket.serialNumber) from TaskPacket _taskPacket  where 1=1 ");
+	   	
+	   	if (taskId != null ) {
+	   		jpql.append(" and _taskPacket.task.id = ? ");
+	   		conditionVals.add(taskId);
+	   	}
+	   	//System.out.println("将军百战死:"+getQueryChannelService().createJpqlQuery(jpql.toString()).setParameters(conditionVals).singleResult());
+	   	//System.out.println("不破楼兰终不还:"+(getQueryChannelService().createJpqlQuery(jpql.toString()).setParameters(conditionVals).singleResult()==null));
+	   	if((getQueryChannelService().createJpqlQuery(jpql.toString()).setParameters(conditionVals).singleResult()==null)){
+	   		return 0;
+	   	}
+	   	Integer max = (Integer) getQueryChannelService().createJpqlQuery(jpql.toString()).setParameters(conditionVals).singleResult();
+	   	return max;
 	}
 	
 	public InvokeResult updateTaskPacket(TaskPacketDTO taskPacketDTO) {
@@ -147,9 +169,34 @@ public class TaskPacketFacadeImpl implements TaskPacketFacade {
 		return TaskPacketAssembler.toDTOs(application.findAllTaskPacket());
 	}
 	
+	public InvokeResult upTaskPacket(String sourceId, String destId){
+		TaskPacket sourceTaskPacket = application.getTaskPacket(Long.parseLong(sourceId));
+		TaskPacket destTaskPacket = application.getTaskPacket(Long.parseLong(destId));
+		Integer sourceSerialNumber = sourceTaskPacket.getSerialNumber();
+		Integer destSerialNumber = destTaskPacket.getSerialNumber();
+		sourceTaskPacket.setSerialNumber(destSerialNumber);
+		destTaskPacket.setSerialNumber(sourceSerialNumber);
+		application.updateTaskPacket(sourceTaskPacket);
+		application.updateTaskPacket(destTaskPacket);
+		return InvokeResult.success();
+	}
+	
+	public InvokeResult downTaskPacket(String sourceId, String destId){
+		TaskPacket sourceTaskPacket = application.getTaskPacket(Long.parseLong(sourceId));
+		TaskPacket destTaskPacket = application.getTaskPacket(Long.parseLong(destId));
+		Integer sourceSerialNumber = sourceTaskPacket.getSerialNumber();
+		Integer destSerialNumber = destTaskPacket.getSerialNumber();
+		sourceTaskPacket.setSerialNumber(destSerialNumber);
+		destTaskPacket.setSerialNumber(sourceSerialNumber);
+		application.updateTaskPacket(sourceTaskPacket);
+		application.updateTaskPacket(destTaskPacket);
+		return InvokeResult.success();
+	}
+	
 	public Page<TaskPacketDTO> pageQueryTaskPacket(TaskPacketDTO queryVo, int currentPage, int pageSize, Long taskId) {
 		List<Object> conditionVals = new ArrayList<Object>();
-	   	StringBuilder jpql = new StringBuilder("select _taskPacket from TaskPacket _taskPacket   where 1=1 ");
+	   	StringBuilder jpql = new StringBuilder("select _taskPacket from TaskPacket _taskPacket   where 1=1");
+	   	//StringBuilder jpql = new StringBuilder("select _taskPacket from TaskPacket _taskPacket   where 1=1");
 	   	if (taskId != null ) {
 	   		jpql.append(" and _taskPacket.task.id = ? ");
 	   		conditionVals.add(taskId);
@@ -194,7 +241,16 @@ public class TaskPacketFacadeImpl implements TaskPacketFacade {
 	   	if (queryVo.getEncryption() != null && !"".equals(queryVo.getEncryption())) {
 	   		jpql.append(" and _taskPacket.encryption like ?");
 	   		conditionVals.add(MessageFormat.format("%{0}%", queryVo.getEncryption()));
-	   	}		
+	   	}
+		if (queryVo.getSerialNumber() != null && !"".equals(queryVo.getSerialNumber())) {
+	   		jpql.append(" and _taskPacket.serialNumber like ?");
+	   		conditionVals.add(queryVo.getSerialNumber());
+	   	}	
+		//if (queryVo.getSerialNumber() != null && !"".equals(queryVo.getSerialNumber())) {
+			jpql.append("order by _taskPacket.serialNumber asc");
+	   		//conditionVals.add(MessageFormat.format("%{0}%", queryVo.getSerialNumber()));
+	   	//}
+		
         Page<TaskPacket> pages = getQueryChannelService()
 		   .createJpqlQuery(jpql.toString())
 		   .setParameters(conditionVals)

@@ -25,6 +25,7 @@ public class TaskPacketAssembler {
      	    	result.setSelectedRecordType(taskPacket.getSelectedRecordType());
      	    	result.setCompression (taskPacket.getCompression());
      	    	result.setEncryption (taskPacket.getEncryption());
+     	    	result.setSerialNumber(taskPacket.getSerialNumber());
      	    return result;
 	 }
 	
@@ -55,6 +56,7 @@ public class TaskPacketAssembler {
          result.setSelectedRecordType(taskPacketDTO.getSelectedRecordType());
          result.setCompression (taskPacketDTO.getCompression());
          result.setEncryption (taskPacketDTO.getEncryption());
+         result.setSerialNumber(taskPacketDTO.getSerialNumber());
  	  	return result;
 	 }
 	

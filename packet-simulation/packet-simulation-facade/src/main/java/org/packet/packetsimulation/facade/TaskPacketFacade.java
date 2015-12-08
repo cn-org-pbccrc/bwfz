@@ -6,6 +6,7 @@ import java.util.List;
 import org.dayatang.utils.Page;
 import org.openkoala.koala.commons.InvokeResult;
 import org.packet.packetsimulation.facade.dto.*;
+//import org.springframework.web.bind.annotation.RequestParam;
 
 public interface TaskPacketFacade {
 
@@ -24,6 +25,10 @@ public interface TaskPacketFacade {
 	public InvokeResult removeTaskPacket(Long id);
 	
 	public InvokeResult removeTaskPackets(Long[] ids, String savePath);
+	
+	public InvokeResult upTaskPacket(String sourceId, String destId);
+	
+	public InvokeResult downTaskPacket(String sourceId, String destId);
 	
 	public List<TaskPacketDTO> findAllTaskPacket();
 	

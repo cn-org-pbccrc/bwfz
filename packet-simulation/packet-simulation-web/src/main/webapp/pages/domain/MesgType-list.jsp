@@ -29,7 +29,8 @@ $(function (){
 	                buttons: [
 	                        {content: '<button class="btn btn-primary" type="button"><span class="glyphicon glyphicon-plus"><span>添加</button>', action: 'add'},
 	                        {content: '<button class="btn btn-success" type="button"><span class="glyphicon glyphicon-edit"><span>修改</button>', action: 'modify'},
-	                        {content: '<button class="btn btn-danger" type="button"><span class="glyphicon glyphicon-remove"><span>删除</button>', action: 'delete'}
+	                        {content: '<button class="btn btn-danger" type="button"><span class="glyphicon glyphicon-remove"><span>删除</button>', action: 'delete'},
+	                        {content: '<button class="btn btn-success" type="button"><span class="glyphicon glyphicon-search"><span>高级搜索<span class="caret"></span></button>', action: 'search'}
 	                    ],
 	                url:"${pageContext.request.contextPath}/MesgType/pageJson.koala",
 	                columns: [
@@ -85,7 +86,10 @@ $(function (){
 	                            content: '确定要删除所选记录吗?',
 	                            callBack: remove
 	                        });
-	                   }
+	                   },
+	                   'search' : function() {						
+	       					$("#mesgTypeQueryDiv").slideToggle("slow");						 
+	       			   }
 	         });
 	    },
 	    add: function(grid){
@@ -274,6 +278,7 @@ var openDetailsPage = function(id){
 <form name=<%=formId%> id=<%=formId%> target="_self" class="form-horizontal">
 <input type="hidden" name="page" value="0">
 <input type="hidden" name="pagesize" value="10">
+<div id="mesgTypeQueryDiv" hidden="true">
 <table border="0" cellspacing="0" cellpadding="0">
   <tr>
     <td>
@@ -286,16 +291,18 @@ var openDetailsPage = function(id){
             <div style="margin-left:15px;float:left;">
             <input name="filePath" class="form-control" type="text" style="width:180px;" id="filePathID"  />
         </div>
-            </div>
-                  <div class="form-group">
+<!--             </div> -->
+<!--                   <div class="form-group"> -->
           <label class="control-label" style="width:100px;float:left;">显示顺序:&nbsp;</label>
             <div style="margin-left:15px;float:left;">
             <input name="sort" class="form-control" type="text" style="width:180px;" id="sortID"  />
         </div>
+        </div>
                 </td>
        <td style="vertical-align: bottom;"><button id="search" type="button" style="position:relative; margin-left:35px; top: -15px" class="btn btn-primary"><span class="glyphicon glyphicon-search"></span>&nbsp;查询</button></td>
   </tr>
-</table>	
+</table>
+</div>	
 </form>
 <!-- grid -->
 <div id=<%=gridId%>></div>
