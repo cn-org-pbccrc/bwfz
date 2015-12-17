@@ -12,8 +12,8 @@
 		//alert(taskId);
 		$("#uploadify").uploadify({
 			'uploader':'${pageContext.request.contextPath}/TaskPacket/uploadFile.koala?taskId='+taskId,
-			'swf':'/lib/uploadify.swf',
-			'cancelImg':'/lib/uploadify-cancel.png',
+			'swf':'${pageContext.request.contextPath}/lib/uploadify.swf',
+			'cancelImg':'${pageContext.request.contextPath}/lib/uploadify-cancel.png',
 			'folder':'uploads',
 			'queueID':'fileQueue',
 			'queueSizeLimit':1,

@@ -14,11 +14,13 @@ public interface TaskPacketFacade {
 	
 	public InvokeResult creatTaskPacket(TaskPacketDTO taskPacket);
 	
+	public InvokeResult verifyTaskPacketName(String[] values, Long taskId);
+	
 	public InvokeResult creatOutSideTaskPacket(TaskPacketDTO taskPacket, String fileName) throws ParseException;
 	
 	public InvokeResult updateOutSideTaskPacket(String fileName) throws ParseException;
 	
-	public InvokeResult creatTaskPackets(TaskPacketDTO taskPacket, String[] values, String[] vers, String[] senders, String[] dates, String[] datTs, String[] recTs, String[] coms, String[] encs) throws ParseException;
+	public InvokeResult creatTaskPackets(TaskPacketDTO taskPacket, String ctxPath, String[] flags, String[] coms, String[] encs) throws ParseException;
 	
 	public InvokeResult updateTaskPacket(TaskPacketDTO taskPacket);
 	
@@ -29,6 +31,8 @@ public interface TaskPacketFacade {
 	public InvokeResult upTaskPacket(String sourceId, String destId);
 	
 	public InvokeResult downTaskPacket(String sourceId, String destId);
+	
+	public String showPacketContent(Long id, String ctxPath);
 	
 	public List<TaskPacketDTO> findAllTaskPacket();
 	

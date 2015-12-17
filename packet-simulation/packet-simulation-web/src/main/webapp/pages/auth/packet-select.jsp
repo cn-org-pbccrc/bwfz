@@ -26,17 +26,17 @@
     <td>
           <div class="form-group">
           
-           <label class="control-label" style="width:160px;float:left;">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;报文名称:</label>
-            <div style="margin-left:1px;float:left;">
+           <label class="control-label" style="width:130px;float:left;">报文名称:</label>
+            <div style="margin-left:5px;margin-right: 25px;float:left;">
             <input name="packetName" class="form-control" type="text" style="width:160px;" id="packetNameID"  />
         </div>
           
-          <label class="control-label" style="width:160px;float:left;">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;文件格式版本号:</label>
-            <div style="margin-left:1px;float:left;">
+          <label class="control-label" style="width:130px;float:left;">文件格式版本号:</label>
+            <div style="margin-left:5px;margin-right: 25px;float:left;">
             <input name="fileVersion" class="form-control" type="text" style="width:160px;" id="fileVersionID"  />
         </div>
-                      <label class="control-label" style="width:160px;float:left;">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;数据提供机构代码:</label>
-            <div style="margin-left:1px;float:left;">
+                      <label class="control-label" style="width:130px;float:left;">数据提供机构代码:</label>
+            <div style="margin-left:5px;margin-right: 25px;float:left;">
             <input name="origSender" class="form-control" type="text" style="width:160px;" id="origSenderID"  />
         </div>
             </div>
@@ -44,12 +44,12 @@
   </tr>
   <tr>
   <td>
-                 <label class="control-label" style="width:160px;float:left;">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;记录类型:</label>
-            <div style="margin-left:1px;float:left;">
+                 <label class="control-label" style="width:130px;float:left;">记录类型:</label>
+            <div style="margin-left:5px;margin-right: 25px;float:left;">
             <input name="recordType" class="form-control" type="text" style="width:160px;" id="recordID"  />
         </div>
-<label class="control-label" style="width:160px;float:left;">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;数据类型:</label>
-    	  <div style="margin-left:1px;float:left;">
+<label class="control-label" style="width:130px;float:left;">数据类型:</label>
+    	  <div style="margin-left:5px;margin-right: 25px;float:left;">
 	      <div class="btn-group select" id="dataType_SELECT"></div>
 	        <input type="hidden" id="dataTypeID_" name="dataType" />
 	      </div>
@@ -58,8 +58,8 @@
   <tr>
   <td>      
                         <div class="form-group">
-          <label class="control-label" style="width:160px;float:left;">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;文件生成时间:</label>
-           <div style="margin-left:1px;float:left;">
+          <label class="control-label" style="width:130px;float:left;">文件生成时间:</label>
+           <div style="margin-left:5px;margin-right: 25px;float:left;">
             <div class="input-group date form_datetime" style="width:160px;float:left;" >
                 <input type="text" class="form-control" style="width:160px;" name="origSendDate" id="origSendDateID_start" >
                 <span class="input-group-addon"><span class="glyphicon glyphicon-th"></span></span>

@@ -17,7 +17,6 @@ public class PacketAssembler {
 		PacketDTO result  = new PacketDTO();
 	    	result.setId (packet.getId());
      	    result.setVersion (packet.getVersion());
-     	    //result.setCreatedAt(packet.getCreatedAt());
      	    result.setPacketName(packet.getPacketName());
      	    result.setFileVersion(packet.getFileVersion());
      	    result.setDataType(packet.getDataType());
@@ -46,27 +45,23 @@ public class PacketAssembler {
 	 	if (packetDTO == null) {
 			return null;
 		}
-	 	//Packet result  = new Packet();
-	 	Packet result = new Packet(packetDTO.getPacketName());
+	 	Packet result  = new Packet();
+	 	//Packet result = new Packet(packetDTO.getPacketName());
         result.setId (packetDTO.getId());
         result.setVersion (packetDTO.getVersion());
-        //result.setCreatedAt(packetDTO.getCreatedAt());
-        //result.setPacketName(packetDTO.getPacketName());
+        result.setPacketName(packetDTO.getPacketName());
         result.setFileVersion(packetDTO.getFileVersion());
   	    result.setDataType(packetDTO.getDataType());
   	    result.setRecordType(packetDTO.getRecordType());
   	    result.setMesgNum(packetDTO.getMesgNum());
   	    result.setReserve(packetDTO.getReserve()); 
   	    result.setCreatedBy(packetDTO.getCreatedBy());
-  	    //result.setOrigSendDate(getTimestamp(packetDTO.getOrigSendDate()));
   	   	result.setOrigSendDate(packetDTO.getOrigSendDate());
-  	   	System.out.println("实况超强阵容:"+packetDTO.getOrigSendDate());
-  	    System.out.println("C罗世界第一:"+result.getOrigSendDate());
   	    result.setOrigSender(packetDTO.getOrigSender());
   	    result.setPackId(packetDTO.getPackId());
  	  	return result;
 	 }
-
+	 
 	public static List<Packet> toEntities(Collection<PacketDTO> packetDTOs) {
 		if (packetDTOs == null) {
 			return null;

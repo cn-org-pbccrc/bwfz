@@ -5,14 +5,14 @@
 <head>
 <meta http-equiv="Content-Type" content="text/html; charset=UTF-8">
 <title>Insert title here</title>
-    <%@include file="/commons/statics.jsp"%>
+<%--     <%@include file="/commons/statics.jsp"%> --%>
 
 <script type="text/javascript">
 	 $(document).ready(function(){
 		$("#uploadify").uploadify({
 			'uploader':'${pageContext.request.contextPath}/ThreeStandard/importFile.koala?createdBy='+currentUserId,
-			'swf':'/lib/uploadify.swf',
-			'cancelImg':'/lib/uploadify-cancel.png',
+			'swf':'${pageContext.request.contextPath}/lib/uploadify.swf',
+			'cancelImg':'${pageContext.request.contextPath}/lib/uploadify-cancel.png',
 			'folder':'uploads',
 			'queueID':'fileQueue',
 			'queueSizeLimit':1,

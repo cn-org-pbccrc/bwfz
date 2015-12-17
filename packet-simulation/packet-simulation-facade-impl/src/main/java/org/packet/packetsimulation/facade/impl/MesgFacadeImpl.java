@@ -143,7 +143,7 @@ public class MesgFacadeImpl implements MesgFacade {
 	}
 	
 	public InvokeResult creatMesgs(MesgDTO mesgDTO,String realPath,String[] values) {		
-		Set<Mesg> mesgs= new HashSet<Mesg>();
+		List<Mesg> mesgs= new ArrayList<Mesg>();
 		String flag = null;
 		//System.out.println(values.length);
 		Mesg mesgById = application.getMesg(mesgDTO.getId());
@@ -183,7 +183,7 @@ public class MesgFacadeImpl implements MesgFacade {
 	
 	public InvokeResult creatMesgsByInput(MesgDTO mesgDTO,int startOfThreeStandard,int endOfThreeStandard,String currentUserId){
 		List<ThreeStandard> list= queryThreeStandardByInput(startOfThreeStandard,endOfThreeStandard,currentUserId);
-		Set<Mesg> mesgs= new HashSet<Mesg>();
+		List<Mesg> mesgs= new ArrayList<Mesg>();
 		String flag = null;
 		Mesg mesgById = application.getMesg(mesgDTO.getId());
 		String content = mesgById.getContent();

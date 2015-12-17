@@ -34,7 +34,7 @@ $(function (){
 	                    ],
 	                url:"${pageContext.request.contextPath}/MesgType/pageJson.koala",
 	                columns: [
-	                     	                         	                         { title: '报文类型', name: 'mesgType', width: width},
+	                     	                         	                         { title: '报文类型', name: 'mesgType', width: 200},
 	                     	                         	                       { title: '类型代码', name: 'code', width: width},
 	                         	                         	                     { title: '模版名称', name: 'filePath', width: width},
 	                         	                         	                     { title: '显示顺序', name: 'sort', width: width},

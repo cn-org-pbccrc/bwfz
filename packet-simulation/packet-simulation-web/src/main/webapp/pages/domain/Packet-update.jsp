@@ -11,25 +11,25 @@
 	<input type="hidden" id="idID" name="id" /> 
 	<input type="hidden" id="versionID" name="version" /> 
 	<input type="hidden" id="packIdID" name="packId" /> 
-	<div class="form-group">
-                    <label class="col-lg-3 control-label">报文名称:</label>
-	                    <div class="col-lg-9">
-                           <input name="packetName" style="display:inline; width:94%;" class="form-control"  type="text"  id="packetNameID" />
-                           <span class="required">*</span>
-			    </div>
-	</div>
+<!-- 	<div class="form-group"> -->
+<!--                     <label class="col-lg-3 control-label">报文名称:</label> -->
+<!-- 	                    <div class="col-lg-9"> -->
+<!--                            <input name="packetName" style="display:inline; width:94%;" class="form-control"  type="text"  id="packetNameID" /> -->
+<!--                            <span class="required">*</span> -->
+<!-- 			    </div> -->
+<!-- 	</div> -->
 <div class="form-group">
                     <label class="col-lg-3 control-label">文件格式版本号:</label>
 	                    <div class="col-lg-9">
                            <input name="fileVersion" style="display:inline; width:94%;" class="form-control"  type="text"  id="fileVersionID" />
-			    <span class="required">*</span>
+<!-- 			    <span class="required">*</span> -->
 			    </div>
 	</div>
 	           <div class="form-group">
                     <label class="col-lg-3 control-label">数据提供机构代码:</label>
 	                    <div class="col-lg-9">
                            <input name="origSender" style="display:inline; width:94%;" class="form-control"  type="text"  id="origSenderID" />
-			    <span class="required">*</span>
+<!-- 			    <span class="required">*</span> -->
 			    </div>
 	</div>
 <!-- 	     <div class="form-group"> -->
@@ -66,7 +66,7 @@
                     <label class="col-lg-3 control-label">记录类型:</label>
 	                    <div class="col-lg-9">
                            <input name="recordType" style="display:inline; width:94%;" class="form-control"  type="text"  id="recordTypeID" />
-                           <span class="required">*</span>
+<!--                            <span class="required">*</span> -->
 			    </div>
 	</div>
 	 <div class="form-group">
@@ -75,7 +75,7 @@
                            <div class="btn-group select" id="dataTypeID"></div>
                            
 	                       <input type="hidden" id="dataTypeID_"  name="dataType"/>
-	                       <span class="required">*</span>
+<!-- 	                       <span class="required">*</span> -->
 	                       </div>
 		    </div>
 		    

@@ -78,7 +78,7 @@ function initFun(){
 	                        {content: '<button class="btn btn-primary" type="button"><span class="glyphicon glyphicon-plus"><span>添加</button>', action: 'add'},
 	                        {content: '<button class="btn btn-success" type="button"><span class="glyphicon glyphicon-edit"><span>修改</button>', action: 'modify'},
 	                        {content: '<button class="btn btn-danger" type="button"><span class="glyphicon glyphicon-remove"><span>删除</button>', action: 'delete'},
-	                        {content: '<button class="btn btn-primary" type="button"><span class="glyphicon glyphicon-plus"><span>加载外部报文</button>', action: 'load'},
+	                        {content: '<button class="btn btn-inverse" type="button"><span class="glyphicon glyphicon-cloud-upload"><span>加载外部报文</button>', action: 'load'},
 	                        {content: '<button class="btn btn-success" type="button"><span class="glyphicon glyphicon-search"><span>高级搜索<span class="caret"></span></button>', action: 'search'}
 	                    ],
 	                url:"${pageContext.request.contextPath}/Packet/pageJson/" + currentUserId + ".koala",
@@ -198,23 +198,22 @@ function initFun(){
 // 	        });
 	        dialog.find('#save').on('click',{grid: grid}, function(e){
 		        //alert(currentUserId);
-		        if(!Validator.Validate(dialog.find('form')[0],3))return;
-		        if (!Validation.notNull(dialog, dialog.find('#packetNameID'), dialog.find('#packetNameID').val(), '报文名称不能为空')) {
-    			    return false;
-    		    }
-		        if (!Validation.checkByRegExp(dialog, dialog.find('#fileVersionID'), '^[0-9]+[.][0-9]+$', dialog.find('#fileVersionID').val(), '文件格式版本号应该为N.N格式')) {
-					return false;
-				}
-		        if (!Validation.checkByRegExp(dialog, dialog.find('#origSenderID'), '^[0-9]{14}$', dialog.find('#origSenderID').val(), '数据提供机构代码应为14位')) {
-					return false;
-			    }
-		        if (!Validation.checkByRegExp(dialog, dialog.find('#recordTypeID'), '^[0-9]{4}$', dialog.find('#recordTypeID').val(), '记录类型只能为四位数字')) {
-					return false;
-			    }
-		        //alert(dialog.find('#dataTypeID').getValue());
-		        if (!Validation.notNull(dialog, dialog.find('#dataTypeID'), dialog.find('#dataTypeID').getValue(), '请选择数据类型')) {
-    			    return false;
-    		    }
+ 		        if(!Validator.Validate(dialog.find('form')[0],3))return;
+// 		        if (!Validation.notNull(dialog, dialog.find('#packetNameID'), dialog.find('#packetNameID').val(), '报文名称不能为空')) {
+//     			    return false;
+//     		    }
+// 		        if (!Validation.checkByRegExp(dialog, dialog.find('#fileVersionID'), '^[0-9]+[.][0-9]+$', dialog.find('#fileVersionID').val(), '文件格式版本号应该为N.N格式数字')) {
+// 					return false;
+// 				}
+// 		        if (!Validation.checkByRegExp(dialog, dialog.find('#origSenderID'), '^[0-9]{14}$', dialog.find('#origSenderID').val(), '数据提供机构代码应为14位数字')) {
+// 					return false;
+// 			    }
+// 		        if (!Validation.checkByRegExp(dialog, dialog.find('#recordTypeID'), '^[0-9]{4}$', dialog.find('#recordTypeID').val(), '记录类型只能为四位数字')) {
+// 					return false;
+// 			    }
+// 		        if (!Validation.notNull(dialog, dialog.find('#dataTypeID'), dialog.find('#dataTypeID').getValue(), '请选择数据类型')) {
+//     			    return false;
+//     		    }
 		        
 // 	              var origSenderID = dialog.find("#origSenderID").val();
 // 	              if('undefined'==origSenderID || null==origSenderID || origSenderID.length!=14){
@@ -305,8 +304,7 @@ function initFun(){
 									(d.getMinutes()) + ":" + 
 									(d.getSeconds());
 	                        dialog.find('#origSendDateID').val(date);
-	                        //alert(dialog.find('#origSendDateID').val())
-	                        dialog.find('#packetNameID').val(json['packetName']).attr('disabled', 'disabled');
+	                        //dialog.find('#packetNameID').val(json['packetName']).attr('disabled', 'disabled');
 	                });
 	                dialog.modal({
 	                    keyboard:false
@@ -317,23 +315,18 @@ function initFun(){
 	                });
 	                dialog.find('#save').on('click',{grid: grid}, function(e){
 	                    if(!Validator.Validate(dialog.find('form')[0],3))return;	                
-	                    if (!Validation.checkByRegExp(dialog, dialog.find('#fileVersionID'), '^[0-9]+[.][0-9]+$', dialog.find('#fileVersionID').val(), '文件格式版本号应该为N.N格式')) {
-	    					return false;
-	    				}
-	    		        if (!Validation.checkByRegExp(dialog, dialog.find('#origSenderID'), '^[0-9]{14}$', dialog.find('#origSenderID').val(), '数据提供机构代码应为14位')) {
-	    					return false;
-	    			    }
-	    		        if (!Validation.checkByRegExp(dialog, dialog.find('#recordTypeID'), '^[0-9]{4}$', dialog.find('#recordTypeID').val(), '记录类型只能为四位数字')) {
-	    					return false;
-	    			    }
-	    		        if (!Validation.notNull(dialog, dialog.find('#dataTypeID'), dialog.find('#dataTypeID').getValue(), '请选择数据类型')) {
-	        			    return false;
-	        		    }
-// 	                    var origSenderID = dialog.find("#origSenderID").val();
-// 	  	              if('undefined'==origSenderID || null==origSenderID || origSenderID.length!=14){
-// 	  	            	  alert("报送机构编码为14位,请确认！");
-// 	  	            	  return;
-// 	  	              }	  	         
+// 	                    if (!Validation.checkByRegExp(dialog, dialog.find('#fileVersionID'), '^[0-9]+[.][0-9]+$', dialog.find('#fileVersionID').val(), '文件格式版本号应该为N.N格式')) {
+// 	    					return false;
+// 	    				}
+// 	    		        if (!Validation.checkByRegExp(dialog, dialog.find('#origSenderID'), '^[0-9]{14}$', dialog.find('#origSenderID').val(), '数据提供机构代码应为14位')) {
+// 	    					return false;
+// 	    			    }
+// 	    		        if (!Validation.checkByRegExp(dialog, dialog.find('#recordTypeID'), '^[0-9]{4}$', dialog.find('#recordTypeID').val(), '记录类型只能为四位数字')) {
+// 	    					return false;
+// 	    			    }
+// 	    		        if (!Validation.notNull(dialog, dialog.find('#dataTypeID'), dialog.find('#dataTypeID').getValue(), '请选择数据类型')) {
+// 	        			    return false;
+// 	        		    }	         
 	                    $.post('${pageContext.request.contextPath}/Packet/update.koala?id='+id+'&createdBy='+currentUserId, dialog.find('form').serialize()).done(function(result){
 	                        if(result.success){
 	                            dialog.modal('hide');
@@ -530,7 +523,7 @@ var mark;
 function openPacket(id,packId){
     var thiz 	= $(this);
     var  mark 	= thiz.attr('mark');
-    mark = openTabCust("/pages/domain/Mesg-list.jsp", "增加报文明细 ",packId,id,{packetId:id,packId:packId});
+    mark = openTabCust("/pages/domain/Mesg-list.jsp", "增加报文明细 ",mark,id);
     if(mark){
         thiz.attr("mark",mark);
     }

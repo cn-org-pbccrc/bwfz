@@ -45,6 +45,8 @@ import org.openkoala.gqc.infra.util.ReadAppointedLine;
 import org.openkoala.gqc.infra.util.XmlNode;
 import org.openkoala.gqc.infra.util.XmlUtil;
 import org.openkoala.koala.commons.InvokeResult;
+import org.openkoala.security.core.PacketHeadFormatException;
+import org.openkoala.security.core.PacketNameIsExistedException;
 import org.packet.packetsimulation.application.MesgApplication;
 import org.packet.packetsimulation.application.MesgTypeApplication;
 import org.packet.packetsimulation.application.PacketApplication;
@@ -56,7 +58,11 @@ import org.packet.packetsimulation.facade.PacketFacade;
 import org.packet.packetsimulation.facade.dto.MesgDTO;
 import org.packet.packetsimulation.facade.dto.PacketDTO;
 import org.packet.packetsimulation.facade.dto.TaskPacketDTO;
+import org.packet.packetsimulation.facade.impl.PacketFacadeImpl;
 import org.packet.packetsimulation.facade.impl.assembler.MesgAssembler;
+import org.packet.packetsimulation.facade.impl.assembler.PacketAssembler;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.springframework.beans.propertyeditors.CustomDateEditor;
 import org.springframework.stereotype.Controller;
 import org.springframework.util.FileCopyUtils;
@@ -94,6 +100,7 @@ import javax.crypto.spec.DESKeySpec;
 public class PacketController {
 	private final static String DES = "DES";
 	public final static String PWD_KEY = "MZTHPWDJM";
+	private static final Logger LOGGER = LoggerFactory.getLogger(PacketController.class);
 	
 	@Inject
 	private PacketFacade packetFacade;
@@ -104,8 +111,6 @@ public class PacketController {
 	@ResponseBody
 	@RequestMapping("/add")
 	public InvokeResult add(PacketDTO packetDTO) {
-		System.out.println("哈哈哈哈呱呱:"+packetDTO.getOrigSendDate());
-		System.out.println("哈哈哈哈呱呱2222:"+new Date());
 		return packetFacade.creatPacket(packetDTO);
 	}
 	
@@ -120,13 +125,6 @@ public class PacketController {
 	@RequestMapping("/pageJson/{currentUserId}")
 	public Page pageJson(PacketDTO packetDTO, @RequestParam int page, @RequestParam int pagesize,@PathVariable String currentUserId){
 		Page<PacketDTO> all = packetFacade.pageQueryPacket(packetDTO, page, pagesize,currentUserId);
-		return all;
-	}
-	
-	@ResponseBody
-	@RequestMapping("/pageJson")
-	public Page pageJson(PacketDTO packetDTO, @RequestParam int page, @RequestParam int pagesize){
-		Page<PacketDTO> all = packetFacade.pageQueryPacket(packetDTO, page, pagesize);
 		return all;
 	}
 	
@@ -153,31 +151,9 @@ public class PacketController {
 	public void downloadCSV(@PathVariable Long id,HttpServletRequest request, HttpServletResponse response) {
 		
 		String downloadCSV = packetFacade.downloadCSV(id);
-		String fileVersion = downloadCSV.substring(1,4);
-		String origSender = downloadCSV.substring(4,18);
-		String origSenderDate = downloadCSV.substring(18,32).substring(0,8);
-		String recordType = downloadCSV.substring(32,36);
-		String dataType = downloadCSV.substring(36,37);
-		String serialNumber = "0001";
-		String frontPosition = origSender +origSenderDate + recordType + dataType;
-		//FileName fileName = new FileName(frontPosition, serialNumber);
-		//packetFacade.creatFileName(frontPosition,serialNumber);
-		//System.out.println("是骡子是马拉出来溜溜:"+(FileName.getByFrontPosition(frontPosition)==null));
-		if(FileName.getByFrontPosition(frontPosition)==null){
-			System.out.println("原来最初是这样:"+serialNumber);
-			packetFacade.creatFileName(frontPosition,serialNumber);			
-		}else{
-			FileName fileName = packetFacade.findIdByFrontPosition(frontPosition);
-			System.out.println("哈哈哈哈哈id:"+fileName.getId()+";version:"+fileName.getVersion());
-			serialNumber = ""+(Integer.parseInt(fileName.getSerialNumber())+1); 
-			int size = 4-serialNumber.length(); 
-			for(int j=0; j<size; j++){ 
-				serialNumber="0"+serialNumber; 
-			} 
-			packetFacade.updateFileName(fileName.getId(), serialNumber);
-		}
+		Packet packet = packetFacade.getPacketById(id);
 		response.setContentType("application/csv;charset=UTF-8");
-		response.setHeader("Content-Disposition", "attachment; filename=" + origSender +origSenderDate + recordType + dataType + "0" + serialNumber + ".csv");
+		response.setHeader("Content-Disposition", "attachment; filename=" + packet.getPacketName() + ".csv");
 		response.setCharacterEncoding("UTF-8");
 		
 		InputStream in = null;;
@@ -209,11 +185,6 @@ public class PacketController {
 	@RequestMapping("/getPacketView/{id}")
 	public InvokeResult getPacketView(@PathVariable Long id) throws Exception{
 		String downloadCSV = packetFacade.downloadCSV(id);
-//		String[] part = downloadCSV.split("\r\n");
-//		System.out.println("叔叔叔:"+part.length);
-//		System.out.println("downloadCSV:"+downloadCSV);
-//		String xmlFormat = formatXml(part[1]);
-//		System.out.println("xmlFormat:"+xmlFormat);
 		return InvokeResult.success(downloadCSV);	
 	}
 	
@@ -285,10 +256,9 @@ public class PacketController {
 	
 	@ResponseBody
 	@RequestMapping("/load")
-	public String load(PacketDTO packetDTO, HttpServletRequest request, HttpServletResponse response) throws IOException, ParseException, ParserConfigurationException, SAXException {
+	public InvokeResult load(PacketDTO packetDTO, HttpServletRequest request, HttpServletResponse response) throws IOException, ParseException, ParserConfigurationException, SAXException {
 		request.setCharacterEncoding("utf-8"); 
 		System.out.println("哈哈哈哈收到啦！！！！！！！！！");
-		String responseStr="";
 		MultipartHttpServletRequest multipartRequest = (MultipartHttpServletRequest) request;	
 		Map<String, MultipartFile> fileMap = multipartRequest.getFileMap();
 		String ctxPath=request.getSession().getServletContext().getRealPath("/")+File.separator+"loadFiles";		
@@ -297,40 +267,109 @@ public class PacketController {
 		File file = new File(ctxPath);    	
 		if (!file.exists()) {    	
 			file.mkdirs();    	
-		}	
-		File[] fileList = file.listFiles();
-		boolean flag = false;
+		}
 		String fileName = null;    	
 		for (Map.Entry<String, MultipartFile> entity : fileMap.entrySet()) {    	
 			MultipartFile mf = entity.getValue();  	
 			fileName = mf.getOriginalFilename();
-			System.out.println("filename="+fileName);	
+			System.out.println("filename="+fileName);
+			System.out.println(packetFacade.findPacketByPacketNameAndCreatedBy(fileName, packetDTO.getCreatedBy())!=null);
+			//if(packetFacade.verifyPacketName(fileName)){
+//			if(packetFacade.findPacketByPacketNameAndCreatedBy(fileName, packetDTO.getCreatedBy())!=null){
+//				System.out.println("臭米米");
+//				return InvokeResult.failure("报文名称已经存在");
+//			}
 			File uploadFile = new File(ctxPath + fileName);	
-			try {
+			try {				
 				FileCopyUtils.copy(mf.getBytes(), uploadFile);
-				for (int i = 0; i < fileList.length; i++) {
-					if(fileName.equals(fileList[i].getName())){
-						flag = true;
-						break;
-					}
+				BufferedReader br = new BufferedReader(new InputStreamReader(new FileInputStream(ctxPath + fileName)));  
+				String line = br.readLine();	
+				if(line.length()!=77){
+					br.close();
+					uploadFile.delete();
+					response.setHeader("Content-type", "text/html;charset=UTF-8");
+				    response.setCharacterEncoding("UTF-8");
+					response.getWriter().write("文件头长度应为77位!");
+					return null;
 				}
-				if(flag){
-					packetFacade.updateUploadPacket(fileName, ctxPath);
-					responseStr="上传成功";
-				}else{
-					packetFacade.uploadPacket(packetDTO, fileName, ctxPath);
-					responseStr="上传成功";
-				}				  	   
-			} catch (IOException e) {  	   	
-				responseStr="上传失败";  	       
+				if(!line.substring(0,1).equals("A")){
+					br.close();
+					uploadFile.delete();
+					response.setHeader("Content-type", "text/html;charset=UTF-8");
+				    response.setCharacterEncoding("UTF-8");
+					response.getWriter().write("文件头标识应为'A'!");					
+					return null;
+				}
+				if(!line.substring(1,4).matches("^[0-9]+[.][0-9]+$")){
+					br.close();
+					uploadFile.delete();
+					response.setHeader("Content-type", "text/html;charset=UTF-8");
+				    response.setCharacterEncoding("UTF-8");
+					response.getWriter().write("文件格式版本号应该为N.N格式数字!");					
+					return null;
+				}
+				if(!line.substring(4,18).matches("^[0-9]{14}$")){
+					br.close();
+					uploadFile.delete();
+					response.setHeader("Content-type", "text/html;charset=UTF-8");
+				    response.setCharacterEncoding("UTF-8");
+					response.getWriter().write("数据提供机构代码应为14位数字!");					
+					return null;
+				}
+				String date = line.substring(18,32);
+				String dateForVerify = date.substring(0,4)+"-"+date.substring(4,6)+"-"+date.substring(6,8)+" "+date.substring(8,10)+"-"+date.substring(10,12)+"-"+date.substring(12,14);
+				String reg = "^((([0-9]{3}[1-9]|[0-9]{2}[1-9][0-9]{1}|[0-9]{1}[1-9][0-9]{2}|[1-9][0-9]{3})-(((0[13578]|1[02])-(0[1-9]|[12][0-9]|3[01]))|((0[469]|11)-(0[1-9]|[12][0-9]|30))|(02-(0[1-9]|[1][0-9]|2[0-8]))))|((([0-9]{2})(0[48]|[2468][048]|[13579][26])|((0[48]|[2468][048]|[3579][26])00))-02-29))\\s+([0-1]?[0-9]|2[0-3])-([0-5][0-9])-([0-5][0-9])$";  
+				if(!dateForVerify.matches(reg)){
+					br.close();
+					uploadFile.delete();
+					response.setHeader("Content-type", "text/html;charset=UTF-8");
+				    response.setCharacterEncoding("UTF-8");
+					response.getWriter().write("文件生成时间格式不正确!");					
+					return null;
+				}
+				if(!line.substring(32,36).matches("^[0-9]{4}$")){
+					br.close();
+					uploadFile.delete();
+					response.setHeader("Content-type", "text/html;charset=UTF-8");
+				    response.setCharacterEncoding("UTF-8");
+					response.getWriter().write("记录类型应为4位数字!");					
+					return null;
+				}
+				if(!(line.substring(36,37).equals("0")||line.substring(36,37).equals("1")||line.substring(36,37).equals("2"))){
+					br.close();
+					uploadFile.delete();
+					response.setHeader("Content-type", "text/html;charset=UTF-8");
+				    response.setCharacterEncoding("UTF-8");
+					response.getWriter().write("数据类型应为'0','1'或'2'!");					
+					return null;
+				}
+				if(!line.substring(37,47).matches("^[0-9]{10}$")){
+					br.close();
+					uploadFile.delete();
+					response.setHeader("Content-type", "text/html;charset=UTF-8");
+				    response.setCharacterEncoding("UTF-8");
+					response.getWriter().write("信息记录数应为10位数字!");					
+					return null;
+				}
+				int totalLines = ReadAppointedLine.getTotalLines(uploadFile);
+				if(Integer.parseInt(line.substring(37,47))!=(totalLines-1)){
+					br.close();
+					uploadFile.delete();
+					response.setHeader("Content-type", "text/html;charset=UTF-8");
+				    response.setCharacterEncoding("UTF-8");
+					response.getWriter().write("信息记录数和文件中记录行数不一致!");					
+					return null;
+				}
+				br.close();
+				packetFacade.uploadPacket(packetDTO, fileName, ctxPath);			  	    
+			} catch (IOException e) {  	   	  	       
 				e.printStackTrace();  	       
 			}	
-		}   	
-		return responseStr;    
-		
-//		String ctxPath = request.getSession().getServletContext().getRealPath("/")+File.separator+"lib"+File.separator+"loading"+File.separator;
-//		packetFacade.uploadPacket(packetDTO, path, ctxPath);
-//		return InvokeResult.success();
+		}
+		response.setHeader("Content-type", "text/html;charset=UTF-8");
+        response.setCharacterEncoding("UTF-8");
+		response.getWriter().write("上传并解析成功!");
+		return null;
 	}
 	
 	//压缩

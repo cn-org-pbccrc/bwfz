@@ -50,18 +50,24 @@ public class TaskPacketController {
 	
 	@ResponseBody
 	@RequestMapping("/add")
-	public InvokeResult add(TaskPacketDTO taskPacketDTO, @RequestParam String packetNames, @RequestParam String fileVersions, @RequestParam String origSenders, @RequestParam String origSendDates, @RequestParam String dataTypes, @RequestParam String recordTypes, @RequestParam String compressions, @RequestParam String encryptions) throws ParseException {
-		System.out.println("真相只有一个:"+origSendDates);
-		String[] values = packetNames.split(",");
-		String[] vers = fileVersions.split(",");
-		String[] senders = origSenders.split(",");
-		String[] dates = origSendDates.split(",");
-		String[] datTs = dataTypes.split(",");
-		String[] recTs = recordTypes.split(",");
+	public InvokeResult add(TaskPacketDTO taskPacketDTO, HttpServletRequest request, @RequestParam String flagIds, @RequestParam String compressions, @RequestParam String encryptions) throws ParseException {
+		String[] flags = flagIds.split(",");
 		String[] coms = compressions.split(",");
 		String[] encs = encryptions.split(",");
-		return taskPacketFacade.creatTaskPackets(taskPacketDTO,values,vers,senders,dates,datTs,recTs,coms,encs);
+		String ctxPath = request.getSession().getServletContext().getRealPath("/") + File.separator + "uploadFiles" + File.separator + taskPacketDTO.getTaskId() + File.separator + "insideFiles" + File.separator;
+		File file = new File(ctxPath);    	
+		if (!file.exists()) {    	
+			file.mkdirs();    	
+		}	
+		return taskPacketFacade.creatTaskPackets(taskPacketDTO,ctxPath,flags,coms,encs);
 		//return taskPacketFacade.creatTaskPacket(taskPacketDTO);
+	}
+	
+	@ResponseBody
+	@RequestMapping("/verify")
+	public InvokeResult verify(@RequestParam String selectedPacketNames, @RequestParam Long taskId){
+		String[] values = selectedPacketNames.split(",");
+		return taskPacketFacade.verifyTaskPacketName(values,taskId);
 	}
 	
 	@ResponseBody
@@ -97,6 +103,14 @@ public class TaskPacketController {
 	}
 	
 	@ResponseBody
+	@RequestMapping("/getTaskPacketView/{id}")
+	public InvokeResult getPacketView(@PathVariable Long id, HttpServletRequest request) throws Exception{		
+		String ctxPath=request.getSession().getServletContext().getRealPath("/") + File.separator + "uploadFiles" + File.separator;
+		String packetContent = taskPacketFacade.showPacketContent(id,ctxPath);
+		return InvokeResult.success(packetContent);	
+	}
+	
+	@ResponseBody
 	@RequestMapping("/up")
 	public InvokeResult up(@RequestParam String sourceId, @RequestParam String destId){
 		return taskPacketFacade.upTaskPacket(sourceId, destId);
@@ -107,82 +121,16 @@ public class TaskPacketController {
 	public InvokeResult down(@RequestParam String sourceId, @RequestParam String destId){
 		return taskPacketFacade.downTaskPacket(sourceId, destId);
 	}
-//	@ResponseBody
-//	@RequestMapping("/upload")
-//	public void upload(TaskPacketDTO taskPacketDTO, HttpServletRequest request, HttpServletResponse response) throws IOException, ParseException {
-//		System.out.println("从哪来DTO:"+taskPacketDTO.getPacketFrom());
-//		System.out.println("taskId:"+taskPacketDTO.getTaskId());
-//		String name = null;
-//		request.setCharacterEncoding("utf-8");  
-//        //判断提交过来的表单是否为文件上传菜单  
-//        boolean isMultipart= ServletFileUpload.isMultipartContent(request);  
-//        List<String> list = new ArrayList<String>();
-//        if(isMultipart){  
-//            //构造一个文件上传处理对象  
-//            FileItemFactory factory = new DiskFileItemFactory();  
-//            ServletFileUpload upload = new ServletFileUpload(factory);  
-//  
-//            Iterator items;  
-//            try{  
-//                //解析表单中提交的所有文件内容  
-//                items = upload.parseRequest(request).iterator();  
-//                while(items.hasNext()){  
-//                    FileItem item = (FileItem) items.next();  
-//                    if(!item.isFormField()){  
-//                        //取出上传文件的文件名称  
-//                        name = item.getName();
-////                        if( name == null ||"".equals(name)){
-////                        	System.out.println("哈哈哈哈哈哈");                      	
-////                        	response.setStatus(HttpServletResponse.SC_INTERNAL_SERVER_ERROR);
-////                        	break;
-////                        }
-//                        System.out.println("name:"+name);
-//                        //取得上传文件以后的存储路径  
-//                        String fileName = name.substring(name.lastIndexOf('\\') + 1, name.length());
-//                        list.add(fileName);
-//                        System.out.println("fileName:"+fileName);
-//                        //上传文件以后的存储路径  
-//                        String saveDir = request.getSession().getServletContext().getRealPath("/")+ "/upload/"+taskPacketDTO.getTaskId();  
-//                        System.out.println("saveDir:"+saveDir);
-//                        if (!(new File(saveDir).isDirectory())){  
-//                            new File(saveDir).mkdir();  
-//                        }  
-//                        String path= saveDir + File.separatorChar + fileName;  
-//                        System.out.println("path:"+path);
-//                        //上传文件  
-//                        File uploaderFile = new File(path);  
-//                        item.write(uploaderFile);  
-//                        taskPacketFacade.creatOutSideTaskPacket(taskPacketDTO,name);
-//                        response.setStatus(HttpServletResponse.SC_OK);  
-//                        response.getWriter().append("上传成功!");
-//                    }  
-//                }  
-//            }catch(Exception e){
-//            	System.out.println("异常啦哈哈哈哈!");
-//                e.printStackTrace();  
-//                response.setStatus(HttpServletResponse.SC_INTERNAL_SERVER_ERROR);       
-//            }   
-//        }else{
-//        	response.setStatus(HttpServletResponse.SC_INTERNAL_SERVER_ERROR);
-//        }
-//       
-//        	
-//	}
 	
 	@ResponseBody
 	@RequestMapping("/uploadFile")  	
-	public String upload(TaskPacketDTO taskPacketDTO, HttpServletResponse response, HttpServletRequest request) throws IOException, ParseException{
+	public InvokeResult upload(TaskPacketDTO taskPacketDTO, HttpServletResponse response, HttpServletRequest request) throws IOException, ParseException{
 		request.setCharacterEncoding("utf-8"); 
-		System.out.println("哈哈哈哈收到啦！！！！！！！！！");
-		String responseStr="";
 		MultipartHttpServletRequest multipartRequest = (MultipartHttpServletRequest) request;	
 //		MultipartResolver resolver = new CommonsMultipartResolver(request.getSession().getServletContext());
 //		MultipartHttpServletRequest multipartRequest = resolver.resolveMultipart(request);
 		Map<String, MultipartFile> fileMap = multipartRequest.getFileMap();
-		String ctxPath=request.getSession().getServletContext().getRealPath("/")+File.separator+"uploadFiles";	
-//		SimpleDateFormat sdf = new SimpleDateFormat("yyyyMM");  	
-//		String ymd = sdf.format(new Date());  	
-		ctxPath += File.separator + taskPacketDTO.getTaskId() + File.separator;  	
+		String ctxPath=request.getSession().getServletContext().getRealPath("/") + File.separator + "uploadFiles" + File.separator + taskPacketDTO.getTaskId() + File.separator + "outsideFiles" + File.separator;
 		System.out.println("ctxpath="+ctxPath);	
 		File file = new File(ctxPath);    	
 		if (!file.exists()) {    	
@@ -206,17 +154,14 @@ public class TaskPacketController {
 				}
 				if(flag){
 					taskPacketFacade.updateOutSideTaskPacket(fileName);
-					responseStr="上传成功";
 				}else{
 					taskPacketFacade.creatOutSideTaskPacket(taskPacketDTO,fileName);
-					responseStr="上传成功";
 				}				  	   
-			} catch (IOException e) {  	   	
-				responseStr="上传失败";  	       
+			} catch (IOException e) {  	   		       
 				e.printStackTrace();  	       
 			}	
 		}   	
-		return responseStr;    
+		return InvokeResult.success();    
 
 	}    	
 	

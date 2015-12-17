@@ -11,7 +11,7 @@ public interface MesgApplication {
 	
 	public void creatMesg(Mesg mesg);
 	
-	public void creatMesgs(Set<Mesg> mesg);
+	public void creatMesgs(List<Mesg> mesg);
 	
 	public void updateMesgs(Set<Mesg> mesg);
 	

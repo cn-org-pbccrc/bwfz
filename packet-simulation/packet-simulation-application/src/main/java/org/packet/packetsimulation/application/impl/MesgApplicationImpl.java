@@ -22,7 +22,7 @@ public class MesgApplicationImpl implements MesgApplication {
 		mesg.save();
 	}
 	
-	public void creatMesgs(Set<Mesg> mesgs) {
+	public void creatMesgs(List<Mesg> mesgs) {
 		for (Mesg mesg : mesgs) {
 			mesg.save();
 		}

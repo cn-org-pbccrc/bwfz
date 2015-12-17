@@ -12,8 +12,8 @@
 		//alert(taskId);
 		$("#uploadify").uploadify({
 			'uploader':'${pageContext.request.contextPath}/Packet/load.koala?createdBy='+currentUserId,
-			'swf':'/lib/uploadify.swf',
-			'cancelImg':'/lib/uploadify-cancel.png',
+			'swf':'${pageContext.request.contextPath}/lib/uploadify.swf',
+			'cancelImg':'${pageContext.request.contextPath}/lib/uploadify-cancel.png',
 			'folder':'uploads',
 			'queueID':'fileQueue',
 			'queueSizeLimit':1,
@@ -23,13 +23,33 @@
 			'simUploadLimit':1,
 			'buttonText':'选择文件',
 			'onUploadSuccess':function(file,data,response){
-				alert(file.name+'上传成功!');
-				grid.data('koala.grid').refresh(); 
+				//alert(data)
+				if(data=="上传并解析成功!"){
+					grid.message({
+	                	type: 'success',
+	                	content: data
+	                });
+					grid.data('koala.grid').refresh();
+				}else{
+					grid.message({
+                		type: 'error',
+                		content: data
+                	});
+				}
+				//grid.data('koala.grid').refresh();
 			},
 		    'onUploadStart':function(file){
 // 				if(true){
 // 		        	alert(file.name);
 // 		        }
+		    },
+		    'onUploadError': function(file, errorCode, errorMsg, errorString) { 
+		    	//alert(errorMsg)
+		    	//alert(errorString)
+		    	grid.message({
+                    type: 'error',
+                    content: errorString
+                });
 		    }
 		});
 	}); 
