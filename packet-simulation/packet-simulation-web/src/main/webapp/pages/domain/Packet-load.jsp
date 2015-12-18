@@ -23,7 +23,6 @@
 			'simUploadLimit':1,
 			'buttonText':'选择文件',
 			'onUploadSuccess':function(file,data,response){
-				//alert(data)
 				if(data=="上传并解析成功!"){
 					grid.message({
 	                	type: 'success',
@@ -36,16 +35,10 @@
                 		content: data
                 	});
 				}
-				//grid.data('koala.grid').refresh();
 			},
 		    'onUploadStart':function(file){
-// 				if(true){
-// 		        	alert(file.name);
-// 		        }
 		    },
 		    'onUploadError': function(file, errorCode, errorMsg, errorString) { 
-		    	//alert(errorMsg)
-		    	//alert(errorString)
 		    	grid.message({
                     type: 'error',
                     content: errorString

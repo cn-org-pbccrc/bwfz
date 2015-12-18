@@ -22,15 +22,53 @@
 			'multi':false,
 			'simUploadLimit':1,
 			'buttonText':'选择文件',
+			'buttonCursor' : "hand",
 			'onUploadSuccess':function(file,data,response){
-				alert(file.name+'上传成功!');
-				grid.data('koala.grid').refresh(); 
+				if(data=="上传成功!"){
+					grid.message({
+	                	type: 'success',
+	                	content: data
+	                });
+					grid.data('koala.grid').refresh();
+				}else{
+					grid.message({
+                		type: 'error',
+                		content: data
+                	});
+				}
 			},
 		    'onUploadStart':function(file){
-// 				if(true){
-// 		        	alert(file.name);
-// 		        }
-		    }
+		    	var data = [{ name: 'fileName', value: file.name},
+		    	            { name: 'taskId', value: taskId}
+		    	            ];
+	            $.post('${pageContext.request.contextPath}/TaskPacket/checkExisting.koala', data).done(function(result){
+	            	if(result.success){
+	            		alert("哈哈成功啦");
+	            	}else{
+	            		alert("羞羞失败啦")
+	            		$('#uploadify').uploadify('stop');
+	            		var haha = function(){
+	            			$('#uploadify').uploadify('upload');
+						};
+	    	            grid.confirm({
+		                    content: '确定要覆盖报文吗?',
+		                    callBack: haha
+		                });
+	            	}
+	            });
+		    },
+		    'onUploadError': function(file, errorCode, errorMsg, errorString) { 
+		    	grid.message({
+                    type: 'error',
+                    content: errorString
+                });
+		    },
+		    'onFallback' : function() {//检测FLASH失败调用  
+		    	grid.message({
+                    type: 'error',
+                    content: "您未安装FLASH控件，无法上传图片！请安装FLASH控件后再试。"
+                });     
+		    },
 		});
 	}); 
 </script>

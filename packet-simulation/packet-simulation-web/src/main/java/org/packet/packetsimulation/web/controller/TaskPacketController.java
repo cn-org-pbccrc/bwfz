@@ -123,6 +123,19 @@ public class TaskPacketController {
 	}
 	
 	@ResponseBody
+	@RequestMapping("/checkExisting")
+	public InvokeResult checkExisting(HttpServletRequest request, @RequestParam String fileName, @RequestParam String taskId){
+		File file = new File(request.getSession().getServletContext().getRealPath("/") + File.separator + "uploadFiles" + File.separator + taskId + File.separator + "outsideFiles" + File.separator);
+		File[] fileList = file.listFiles();
+		for (int i = 0; i < fileList.length; i++) {
+			if(fileName.equals(fileList[i].getName())){
+				return InvokeResult.failure("报文名称"+fileName+"已存在");
+			}
+		}
+		return InvokeResult.success();
+	}
+	
+	@ResponseBody
 	@RequestMapping("/uploadFile")  	
 	public InvokeResult upload(TaskPacketDTO taskPacketDTO, HttpServletResponse response, HttpServletRequest request) throws IOException, ParseException{
 		request.setCharacterEncoding("utf-8"); 
@@ -161,8 +174,10 @@ public class TaskPacketController {
 				e.printStackTrace();  	       
 			}	
 		}   	
-		return InvokeResult.success();    
-
+		response.setHeader("Content-type", "text/html;charset=UTF-8");
+        response.setCharacterEncoding("UTF-8");
+		response.getWriter().write("上传成功!");
+		return null;    
 	}    	
 	
 	

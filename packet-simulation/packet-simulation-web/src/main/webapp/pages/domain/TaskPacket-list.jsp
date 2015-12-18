@@ -748,7 +748,7 @@ function initFun(){
 	                }
 	            }).find('.modal-body').html(html);
 	            self.initPage(dialog.find('form'));
-	            dialog.find('#upload').on('click',{grid: grid}, function(e){	            	
+	            dialog.find('#upload').on('click',{grid: grid}, function(e){
 	            	$('#uploadify').uploadify('upload');
 		        });
 	            dialog.find('#cancelUpload').on('click',{grid: grid}, function(e){
