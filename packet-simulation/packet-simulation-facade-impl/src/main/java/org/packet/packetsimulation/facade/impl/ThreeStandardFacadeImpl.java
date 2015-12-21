@@ -153,6 +153,7 @@ public class ThreeStandardFacadeImpl implements ThreeStandardFacade {
 		int totalLines = ReadAppointedLine.getTotalLines(new File(ctxPath+path));
 		String flag = null;
 		EmployeeUser employeeUser = findEmployeeUserByCreatedBy(threeStandardDTO.getCreatedBy());
+		System.out.println("xxxxx"+employeeUser);
 		if(employeeUser.getOrganization().equals("1")){
 			threeStandardDTO.setOrganizationCode(employeeUser.getCompany().getSn());
 		}else{
@@ -206,9 +207,9 @@ public class ThreeStandardFacadeImpl implements ThreeStandardFacade {
 	}
 	
 	@Override
-	public String downloadCSV() {
+	public String downloadCSV(String createdBy) {
 		// TODO Auto-generated method stub
-		List<ThreeStandard> threeStandardList = findThreeStandards();
+		List<ThreeStandard> threeStandardList = findThreeStandards(createdBy);
 		if(null != threeStandardList && threeStandardList.size()>0){
 			String flag = null;
 	   		String result = "\"姓名\"" + ","+ "\"证件类型\"" + "," + "\"证件号码\"" + "\r\n";
@@ -228,10 +229,14 @@ public class ThreeStandardFacadeImpl implements ThreeStandardFacade {
 	}
 	
 	@SuppressWarnings("unchecked")
-	private List<ThreeStandard> findThreeStandards() {
+	private List<ThreeStandard> findThreeStandards(String createdBy) {
 		// TODO Auto-generated method stub
 		List<Object> conditionVals = new ArrayList<Object>();
 	   	StringBuilder jpql = new StringBuilder("select _threeStandard from ThreeStandard _threeStandard  where 1=1 ");
+		if (createdBy != null && !"".equals(createdBy)) {
+			jpql.append(" and _threeStandard.createdBy = ? ");
+			conditionVals.add(createdBy);
+		}
 	   	List<ThreeStandard> threeStandardList = getQueryChannelService().createJpqlQuery(jpql.toString()).setParameters(conditionVals).list();
 	   	return threeStandardList;
 	}

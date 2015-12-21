@@ -151,7 +151,7 @@ function initFun(){
 	                   },
 	                   'exportFile':function(){
 	                	   var date = new Date();
-	                	   window.open('${pageContext.request.contextPath}/ThreeStandard/downloadCSV.koala?id='+date.getTime()+'.csv');
+	                	   window.open('${pageContext.request.contextPath}/ThreeStandard/downloadCSV.koala?id='+date.getTime()+'.csv'+'&createdBy='+currentUserId);
 	                   },
 	                   'search' : function() {						
 	       					$("#threeStandardQueryDiv").slideToggle("slow");						 

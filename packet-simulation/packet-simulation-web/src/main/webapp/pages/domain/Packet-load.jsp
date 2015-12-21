@@ -22,6 +22,7 @@
 			'multi':false,
 			'simUploadLimit':1,
 			'buttonText':'选择文件',
+			'fileSizeLimit' : '500MB',
 			'onUploadSuccess':function(file,data,response){
 				if(data=="上传并解析成功!"){
 					grid.message({
@@ -39,11 +40,17 @@
 		    'onUploadStart':function(file){
 		    },
 		    'onUploadError': function(file, errorCode, errorMsg, errorString) { 
+// 		    	grid.message({
+//                     type: 'error',
+//                     content: errorString
+//                 });
+		    },
+		    'onFallback' : function() {//检测FLASH失败调用  
 		    	grid.message({
                     type: 'error',
-                    content: errorString
-                });
-		    }
+                    content: "您未安装FLASH控件，无法上传图片！请安装FLASH控件后再试。"
+                });     
+		    },
 		});
 	}); 
 </script>

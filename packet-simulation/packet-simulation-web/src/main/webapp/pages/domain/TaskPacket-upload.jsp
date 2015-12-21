@@ -23,6 +23,25 @@
 			'simUploadLimit':1,
 			'buttonText':'选择文件',
 			'buttonCursor' : "hand",
+			'checkExisting' : '${pageContext.request.contextPath}/TaskPacket/checkExisting.koala?taskId='+taskId,
+			'fileSizeLimit' : '500MB',
+// 	        'overrideEvents' : ['onSelectError' ],
+// 	        'onSelectError':function(file, errorCode, errorMsg){
+// 	            switch(errorCode) {
+// 	            	case -100:
+// 	                	alert("上传的文件数量已经超出系统限制的"+$('#uploadify').uploadify('settings','queueSizeLimit')+"个文件！");
+// 	                    break;
+// 	                case -110:
+// 	                    alert("文件 ["+file.name+"] 大小超出系统限制的"+$('#uploadify').uploadify('settings','fileSizeLimit')+"大小！");
+// 	                    break;
+// 	                case -120:
+//                         alert("文件 ["+file.name+"] 大小异常！");
+//                         break;
+//                     case -130:
+//                         alert("文件 ["+file.name+"] 类型不正确！");
+//                         break;
+// 	            }
+// 	        },
 			'onUploadSuccess':function(file,data,response){
 				if(data=="上传成功!"){
 					grid.message({
@@ -37,31 +56,31 @@
                 	});
 				}
 			},
-		    'onUploadStart':function(file){
-		    	var data = [{ name: 'fileName', value: file.name},
-		    	            { name: 'taskId', value: taskId}
-		    	            ];
-	            $.post('${pageContext.request.contextPath}/TaskPacket/checkExisting.koala', data).done(function(result){
-	            	if(result.success){
-	            		alert("哈哈成功啦");
-	            	}else{
-	            		alert("羞羞失败啦")
-	            		$('#uploadify').uploadify('stop');
-	            		var haha = function(){
-	            			$('#uploadify').uploadify('upload');
-						};
-	    	            grid.confirm({
-		                    content: '确定要覆盖报文吗?',
-		                    callBack: haha
-		                });
-	            	}
-	            });
+		    'onUploadStart':function(d){
+// 		    	var data = [{ name: 'fileName', value: file.name},
+// 		    	            { name: 'taskId', value: taskId}
+// 		    	            ];
+// 	            $.post('${pageContext.request.contextPath}/TaskPacket/checkExisting.koala', data).done(function(result){
+// 	            	if(result.success){
+// 	            		alert("哈哈成功啦");
+// 	            	}else{
+// 	            		alert("羞羞失败啦");
+//	            		$('#uploadify').uploadify('stop');
+// 	            		var haha = function(){
+// 	            			$('#uploadify').uploadify('upload');
+// 						};
+// 	    	            grid.confirm({
+// 		                    content: '确定要覆盖报文吗?',
+// 		                    callBack: haha
+// 		                });
+// 	            	}
+// 	            });			
 		    },
 		    'onUploadError': function(file, errorCode, errorMsg, errorString) { 
-		    	grid.message({
-                    type: 'error',
-                    content: errorString
-                });
+// 		    	grid.message({
+//                     type: 'error',
+//                     content: errorString
+//                 });
 		    },
 		    'onFallback' : function() {//检测FLASH失败调用  
 		    	grid.message({

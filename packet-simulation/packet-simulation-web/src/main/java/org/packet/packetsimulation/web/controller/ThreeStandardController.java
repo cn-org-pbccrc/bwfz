@@ -8,10 +8,13 @@ import javax.xml.parsers.ParserConfigurationException;
 import org.springframework.util.FileCopyUtils;
 import org.springframework.web.bind.WebDataBinder;
 
+import java.io.BufferedReader;
 import java.io.ByteArrayInputStream;
 import java.io.File;
+import java.io.FileInputStream;
 import java.io.IOException;
 import java.io.InputStream;
+import java.io.InputStreamReader;
 import java.io.OutputStream;
 import java.text.ParseException;
 import java.text.SimpleDateFormat;
@@ -78,55 +81,65 @@ public class ThreeStandardController {
 	
 	@ResponseBody
 	@RequestMapping("/importFile")
-	public String load(ThreeStandardDTO threeStandardDTO, HttpServletRequest request, HttpServletResponse response) throws IOException, ParseException, ParserConfigurationException, SAXException {
+	public InvokeResult load(ThreeStandardDTO threeStandardDTO, HttpServletRequest request, HttpServletResponse response) throws IOException, ParseException, ParserConfigurationException, SAXException {
 		request.setCharacterEncoding("utf-8"); 
-		System.out.println("哈哈哈哈收到啦！！！！！！！！！");
-		String responseStr="";
 		MultipartHttpServletRequest multipartRequest = (MultipartHttpServletRequest) request;	
 		Map<String, MultipartFile> fileMap = multipartRequest.getFileMap();
-		String ctxPath=request.getSession().getServletContext().getRealPath("/")+File.separator+"importFiles";		
-		ctxPath += File.separator + threeStandardDTO.getCreatedBy() + File.separator;  	
-		System.out.println("ctxpath="+ctxPath);	
+		String ctxPath=request.getSession().getServletContext().getRealPath("/") + File.separator + "importFiles" + File.separator + threeStandardDTO.getCreatedBy() + File.separator;			
 		File file = new File(ctxPath);    	
 		if (!file.exists()) {    	
 			file.mkdirs();    	
 		}	
-		File[] fileList = file.listFiles();
-		boolean flag = false;
 		String fileName = null;    	
 		for (Map.Entry<String, MultipartFile> entity : fileMap.entrySet()) {    	
 			MultipartFile mf = entity.getValue();  	
-			fileName = mf.getOriginalFilename();
-			System.out.println("filename="+fileName);	
+			fileName = mf.getOriginalFilename();	
 			File uploadFile = new File(ctxPath + fileName);	
 			try {
 				FileCopyUtils.copy(mf.getBytes(), uploadFile);
-				for (int i = 0; i < fileList.length; i++) {
-					if(fileName.equals(fileList[i].getName())){
-						flag = true;
-						break;
-					}
+				BufferedReader br = new BufferedReader(new InputStreamReader(new FileInputStream(ctxPath + fileName)));  
+				String line = br.readLine();				
+				String[] threeStandards = line.split(",");
+				if(threeStandards.length!=3||!threeStandards[0].equals("\"姓名\"")||!threeStandards[1].equals("\"证件类型\"")||!threeStandards[2].equals("\"证件号码\"")){
+					System.out.println(threeStandards[0]+":"+threeStandards[1]+":"+threeStandards[0]+"?"+threeStandards.length);
+					br.close();
+					uploadFile.delete();
+					response.setHeader("Content-type", "text/html;charset=UTF-8");
+				    response.setCharacterEncoding("UTF-8");
+					response.getWriter().write("文件第1行应为''姓名','证件类型','证件号码''");
+					return null;
 				}
-				if(flag){
-					//threeStandardFacade.updateImportThreeStandard(fileName, ctxPath);
-					responseStr="上传成功";
-				}else{
-					threeStandardFacade.importThreeStandard(threeStandardDTO, fileName, ctxPath);
-					responseStr="上传成功";
-				}				  	   
-			} catch (IOException e) {  	   	
-				responseStr="上传失败";  	       
+				String temp = "";
+				int lineNumber = 2;
+				while((temp=br.readLine())!=null){
+					System.out.println("!!!!!!!!"+temp);
+					if(temp.split(",").length!=3){
+						br.close();
+						uploadFile.delete();
+						response.setHeader("Content-type", "text/html;charset=UTF-8");
+					    response.setCharacterEncoding("UTF-8");
+						response.getWriter().write("文件第"+lineNumber+"行不符合格式规范");						
+						return null;
+					}
+					lineNumber++;
+				}
+				br.close();
+				threeStandardFacade.importThreeStandard(threeStandardDTO, fileName, ctxPath);				  	   
+			} catch (IOException e) {  	   	 	       
 				e.printStackTrace();  	       
 			}	
 		}   	
-		return responseStr;    
+		response.setHeader("Content-type", "text/html;charset=UTF-8");
+        response.setCharacterEncoding("UTF-8");
+		response.getWriter().write("上传成功!");
+		return null;    
 	}
 		
 	@ResponseBody
 	@RequestMapping("/downloadCSV")
-	public void downloadCSV(HttpServletRequest request, HttpServletResponse response) {
+	public void downloadCSV(HttpServletRequest request, HttpServletResponse response, @RequestParam String createdBy) {
 		
-		String downloadCSV = threeStandardFacade.downloadCSV();
+		String downloadCSV = threeStandardFacade.downloadCSV(createdBy);
 		response.setContentType("application/csv;charset=UTF-8");
 		response.setHeader("Content-Disposition", "attachment; filename=" + new Date().getTime() + ".csv");
 		response.setCharacterEncoding("UTF-8");

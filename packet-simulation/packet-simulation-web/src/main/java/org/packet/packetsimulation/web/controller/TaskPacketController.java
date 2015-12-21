@@ -124,15 +124,15 @@ public class TaskPacketController {
 	
 	@ResponseBody
 	@RequestMapping("/checkExisting")
-	public InvokeResult checkExisting(HttpServletRequest request, @RequestParam String fileName, @RequestParam String taskId){
+	public int checkExisting(HttpServletRequest request, @RequestParam String taskId, @RequestParam String filename){
 		File file = new File(request.getSession().getServletContext().getRealPath("/") + File.separator + "uploadFiles" + File.separator + taskId + File.separator + "outsideFiles" + File.separator);
 		File[] fileList = file.listFiles();
 		for (int i = 0; i < fileList.length; i++) {
-			if(fileName.equals(fileList[i].getName())){
-				return InvokeResult.failure("报文名称"+fileName+"已存在");
+			if(filename.equals(fileList[i].getName())){
+				return 1;
 			}
 		}
-		return InvokeResult.success();
+		return 0;
 	}
 	
 	@ResponseBody
