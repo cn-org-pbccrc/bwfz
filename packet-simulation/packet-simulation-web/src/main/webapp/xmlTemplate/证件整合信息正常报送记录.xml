@@ -1,0 +1,19 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<Document>
+	<CtfItgInf>
+    	<CtfcItgInfSgmt>
+        	<InfRecTp>信息记录类型</InfRecTp>
+            <FinanCode>数据提供机构代码</FinanCode>
+            <Name>姓名</Name>
+            <IDType>证件类型</IDType>
+            <IDNum>证件号码</IDNum>
+            <Alias>其他姓名</Alias>
+            <OthIdType>其他证件类型</OthIdType>
+            <OthIdNum>其他证件号码</OthIdNum>
+            <OthIdAffType>其他证件认定类型</OthIdAffType>
+            <OthIdAffDesc>其他证件认定说明</OthIdAffDesc>
+            <OthIdRelaFlag>其他证件关联标识</OthIdRelaFlag>
+            <RptDate>信息报告日期</RptDate>
+        </CtfcItgInfSgmt>
+	</CtfItgInf>
+</Document>

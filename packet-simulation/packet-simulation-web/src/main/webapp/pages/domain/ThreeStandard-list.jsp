@@ -100,7 +100,7 @@ function initFun(){
 	                         	                         	                             { title: '操作', width: 120, render: function (rowdata, name, index)
 	                                 {
 	                                     var param = '"' + rowdata.id + '"';
-	                                     var h = "<a href='javascript:openDetailsPage(" + param + ")'>查看</a> ";
+	                                     var h = "<a href='javascript:openDetailsPageOfThreeStandard(" + param + ")'>查看</a> ";
 	                                     return h;
 	                                 }
 	                             }
@@ -349,7 +349,7 @@ function initFun(){
         });
 }
 
-var openDetailsPage = function(id){
+var openDetailsPageOfThreeStandard = function(id){
         var dialog = $('<div class="modal fade"><div class="modal-dialog"><div class="modal-content"><div class="modal-header"><button type="button" class="close" data-dismiss="modal" aria-hidden="true">&times;</button><h4 class="modal-title">查看</h4></div><div class="modal-body"><p>One fine body&hellip;</p></div><div class="modal-footer"><button type="button" class="btn btn-info" data-dismiss="modal">返回</button></div></div></div></div>');
         $.get('<%=path%>/ThreeStandard-view.jsp').done(function(html){
                dialog.find('.modal-body').html(html);

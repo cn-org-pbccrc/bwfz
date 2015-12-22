@@ -1,12 +1,12 @@
 <?xml version="1.0" encoding="UTF-8" ?>
-<Document> 
-	<BsInfIdCagsInf>
-		<BsInfIdCagsSgmt>
+<Document>
+	<AcctInfIdCagsInf>
+		<AcctInfIdCagsSgmt>
 			<InfRecTp>信息记录类型</InfRecTp>
 			<Old_Finan_Code>原数据提供机构代码</Old_Finan_Code>
-			<Old_Cst_Code>原客户资料标识号</Old_Cst_Code>
+			<OdBnesId>原业务标识号</OdBnesId>
 			<New_Finan_Code>新数据提供机构代码</New_Finan_Code>
-			<New_Cst_Code>新客户资料标识号</New_Cst_Code>
-		</BsInfIdCagsSgmt>
-	</BsInfIdCagsInf>
+			<NwBnesId>新业务标识号</NwBnesId>
+		</AcctInfIdCagsSgmt>
+	</AcctInfIdCagsInf>
 </Document>

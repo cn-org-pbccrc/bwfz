@@ -42,6 +42,8 @@ import javax.xml.parsers.ParserConfigurationException;
 
 
 
+
+
 //import org.openkoala.security.shiro.CurrentUser;
 import org.dayatang.domain.InstanceFactory;
 import org.dayatang.querychannel.QueryChannelService;
@@ -190,6 +192,55 @@ public class PacketFacadeImpl implements PacketFacade {
 		packet.setPacketName(frontPosition+"0"+sn);
 		application.updatePacket(packet);
 		return InvokeResult.success();
+	}
+	
+	public InvokeResult saveAsPacket(PacketDTO packetDTO, String idOfPacket){
+		packetDTO.setPackId(new Date().getTime()+"");
+		Packet packet = PacketAssembler.toEntity(packetDTO);
+		DateFormat dateFormat = new SimpleDateFormat("yyyyMMdd");
+		Integer serialNumber = 1;
+		String sn;
+		String frontPosition = packet.getOrigSender() + dateFormat.format(packet.getOrigSendDate()) + packet.getRecordType() + packet.getDataType();
+		packet.setFrontPosition(frontPosition);
+		if(findPacketsByFrontPositionAndCreatedBy(frontPosition,packetDTO.getCreatedBy())==null){			
+			packet.setSerialNumber(serialNumber);
+		}else{
+			Integer max = findMaxSerialNumberByFrontPosition(frontPosition, packetDTO.getCreatedBy());
+			serialNumber = max + 1;
+			packet.setSerialNumber(serialNumber);
+		}
+		sn = ""+serialNumber; 
+		if(sn.length()>4){
+			return InvokeResult.failure("流水号最大值为9999!");
+		}
+		int size = 4-sn.length(); 
+		for(int j=0; j<size; j++){ 
+			sn="0"+sn; 
+		}
+		packet.setPacketName(frontPosition+"0"+sn);
+		application.updatePacket(packet);
+		List<Mesg> mesgsOfSourcePacket = findMesgsByIdOfPacket(Long.valueOf(idOfPacket));
+		List<Mesg> mesgs= new ArrayList<Mesg>();
+		for(int i = 0; i < mesgsOfSourcePacket.size(); i++){
+			Mesg mesg = new Mesg();
+			mesg.setMesgType(mesgsOfSourcePacket.get(i).getMesgType());
+			mesg.setPacket(packet);
+			mesg.setContent(mesgsOfSourcePacket.get(i).getContent());
+			mesgs.add(mesg);
+		}
+		mesgApplication.creatMesgs(mesgs);
+		return InvokeResult.success();
+	}
+	
+	public List<Mesg> findMesgsByIdOfPacket(Long idOfPacket){
+		List<Object> conditionVals = new ArrayList<Object>();
+	   	StringBuilder jpql = new StringBuilder("select _mesg from Mesg _mesg  where 1=1 ");
+	   	if (idOfPacket != null ) {
+	   		jpql.append(" and _mesg.packet.id = ? ");
+	   		conditionVals.add(idOfPacket);
+	   	}
+	   	List<Mesg> mesgs = (List<Mesg>) getQueryChannelService().createJpqlQuery(jpql.toString()).setParameters(conditionVals).list();
+	   	return mesgs;
 	}
 	
 	public InvokeResult removePacket(Long id) {
@@ -460,11 +511,41 @@ public class PacketFacadeImpl implements PacketFacade {
 			System.out.println("firstChild:"+root.getFirstChild().getNodeName());
 			String filePath = null;
 			if(root.getFirstChild().getNodeName().equals("AcctInf")){
-				filePath = "账户信息记录";
+				filePath = "账户信息正常报送记录";
 			}else if(root.getFirstChild().getNodeName().equals("BaseInf")){
-				filePath = "基本信息记录";
+				filePath = "基本信息正常报送记录";
 			}else if(root.getFirstChild().getNodeName().equals("CtrctInf")){
-				filePath = "合同信息记录";
+				filePath = "合同信息正常报送记录";
+			}else if(root.getFirstChild().getNodeName().equals("MotgaCltalCtrctInf")){
+				filePath = "抵质押合同信息正常报送记录";
+			}else if(root.getFirstChild().getNodeName().equals("CtfItgInf")){
+				filePath = "证件整合信息正常报送记录";
+			}else if(root.getFirstChild().getNodeName().equals("FalMmbsInf")){
+				filePath = "家族成员信息正常报送记录";
+			}else if(root.getFirstChild().getNodeName().equals("BsInfIdCagsInf")){
+				filePath = "基本信息标识变更信息记录";
+			}else if(root.getFirstChild().getNodeName().equals("CtrctInfIdCagsInf")){
+				filePath = "合同信息标识变更信息记录";
+			}else if(root.getFirstChild().getNodeName().equals("AcctInfIdCagsInf")){
+				filePath = "账户信息标识变更信息记录";
+			}else if(root.getFirstChild().getNodeName().equals("MotgaCltalCtrctInfIdCagsInf")){
+				filePath = "抵质押合同信息标识变更信息记录";
+			}else if(root.getFirstChild().getNodeName().equals("BsInfDlt")){
+				filePath = "基本信息删除请求记录";
+			}else if(root.getFirstChild().getNodeName().equals("CtrctInfDlt")){
+				filePath = "合同信息按段删除请求记录";
+			}else if(root.getFirstChild().getNodeName().equals("AcctInfDlt")){
+				filePath = "账户信息按段删除请求记录";
+			}else if(root.getFirstChild().getNodeName().equals("CtrctInfEntDlt")){
+				filePath = "合同信息整笔删除请求记录";
+			}else if(root.getFirstChild().getNodeName().equals("AcctInfEntDlt")){
+				filePath = "账户信息整笔删除请求记录";
+			}else if(root.getFirstChild().getNodeName().equals("MotgaCltalCtrctInfEntDlt")){
+				filePath = "抵质押合同信息整笔删除请求记录";
+			}else if(root.getFirstChild().getNodeName().equals("ActMdfc")){
+				filePath = "账户修改请求记录";
+			}else if(root.getFirstChild().getNodeName().equals("CtrctMdfc")){
+				filePath = "合同修改请求记录";
 			}
 			MesgType mesgType = findMesgTypeByFilePath(filePath);
 			Mesg mesg = new Mesg();

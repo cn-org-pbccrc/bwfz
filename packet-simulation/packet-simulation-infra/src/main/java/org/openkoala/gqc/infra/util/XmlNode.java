@@ -191,21 +191,21 @@ public class XmlNode implements Serializable, Cloneable{
 			String htmlStr = "";
 			for(XmlNode xmlNode : nodes){
 				List<XmlNode> childNode = xmlNode.getNodes();
-				System.out.println("胡梅尔斯哈哈:"+xmlNode.getTagName()+";瓦拉内哈哈:"+xmlNode.getValue());
+				//System.out.println("胡梅尔斯哈哈:"+xmlNode.getTagName()+";瓦拉内哈哈:"+xmlNode.getValue());
 				//if(xmlNode.getRowspan()==1 && childNode.size()<=0){
 				if(childNode.size()<=0){
 					List<XmlNode> peerNodes = xmlNode.getPeerNodes();
 					if(null!=peerNodes && peerNodes.size()>0){
-						System.out.println("name1:"+PropertiesManager.getProperties(xmlNode.getTagName(),templateName)+";value1:"+xmlNode.getValue());
+						//System.out.println("name1:"+PropertiesManager.getProperties(xmlNode.getTagName(),templateName)+";value1:"+xmlNode.getValue());
 						htmlStr = htmlStr + "<p><label class='rgt'>"+PropertiesManager.getProperties(xmlNode.getTagName(),templateName)+" :</label><label class='lft'>" + xmlNode.getValue() + "</label></p>";
 						htmlStr = htmlStr + getTabContents(peerNodes,xmlNode.getTagName(),templateName);	
 					}else{
 						String value = xmlNode.getValue();
-						System.out.println("value:"+value);
+						//System.out.println("value:"+value);
 						if(value==null){
 							value="";
 						}
-						System.out.println("name2:"+PropertiesManager.getProperties(xmlNode.getTagName(),templateName)+";value2:"+value);
+						//System.out.println("name2:"+PropertiesManager.getProperties(xmlNode.getTagName(),templateName)+";value2:"+value);
 						htmlStr = htmlStr + "<p><label class='rgt'>"+PropertiesManager.getProperties(xmlNode.getTagName(),templateName)+" :</label><label class='lft'>" + value + "</label></p>";
 					}
 				}else if(null!= childNode && childNode.size()>0){
@@ -213,10 +213,10 @@ public class XmlNode implements Serializable, Cloneable{
 					for (XmlNode node:childNode) {
 						List<XmlNode> childNodes = node.getNodes();
 						if(null!= childNodes && childNodes.size()>0){
-							System.out.println("name3:"+PropertiesManager.getProperties(xmlNode.getTagName(),templateName)+";value3:"+xmlNode.getValue());
+							//System.out.println("name3:"+PropertiesManager.getProperties(xmlNode.getTagName(),templateName)+";value3:"+xmlNode.getValue());
 							htmlStr = htmlStr + getTabContents(childNodes,null,templateName);
 						}else{
-							System.out.println("name4:"+PropertiesManager.getProperties(xmlNode.getTagName(),templateName)+";value4:"+xmlNode.getValue());
+							//System.out.println("name4:"+PropertiesManager.getProperties(xmlNode.getTagName(),templateName)+";value4:"+xmlNode.getValue());
 							htmlStr = htmlStr + "<p><label class='rgt'>"+PropertiesManager.getProperties(node.getTagName(),templateName)+" :</label><label class='lft'>" + node.getValue() + "</label></p>";
 						}
 					}
@@ -479,7 +479,7 @@ public class XmlNode implements Serializable, Cloneable{
 				if(childNode.size()<=0){
 					List<XmlNode> peerNodes = xmlNode.getPeerNodes();
 					if(null!=peerNodes && peerNodes.size()>0){
-						System.out.println("name01:"+PropertiesManager.getProperties(xmlNode.getTagName(),templateName)+";value01:"+xmlNode.getValue());
+						//System.out.println("name01:"+PropertiesManager.getProperties(xmlNode.getTagName(),templateName)+";value01:"+xmlNode.getValue());
 						htmlStr = htmlStr + "<p><label class='rgt'>"+PropertiesManager.getProperties(xmlNode.getTagName(),templateName)+" :</label><label class='lft'><input type='text' value='" + xmlNode.getValue() + "' name='"+xmlNode.getTagName()+ "' class='form-control' readonly id='"+ xmlNode.getTagName() +"' /></label>";
 						htmlStr = htmlStr + "<button type='button' style='padding:2px 4px;' class='btn btn-primary' onclick='cloneHtml(this,\"" + xmlNode.getTagName() + "\");'><span class='glyphicon glyphicon-plus'><span></button></p><div id='"+ xmlNode.getTagName() +"_div'>";
 						htmlStr = htmlStr + getEditTabContents(peerNodes,true,xmlNode.getTagName(),templateName) + "</div>";
@@ -488,7 +488,7 @@ public class XmlNode implements Serializable, Cloneable{
 						if(value==null){
 							value="";
 						}
-						System.out.println("name02:"+PropertiesManager.getProperties(xmlNode.getTagName(),templateName)+";value02:"+value);
+						//System.out.println("name02:"+PropertiesManager.getProperties(xmlNode.getTagName(),templateName)+";value02:"+value);
 						htmlStr = htmlStr + "<p><label class='rgt'>"+PropertiesManager.getProperties(xmlNode.getTagName(),templateName)+" :</label><label class='lft'><input type='text' value='" + value + "' name='"+xmlNode.getTagName()+ "' class='form-control' /></label></p>";
 					}
 				}else if(null!= childNode && childNode.size()>0){
@@ -504,10 +504,10 @@ public class XmlNode implements Serializable, Cloneable{
 					for (XmlNode node:childNode) {
 						List<XmlNode> childNodes = node.getNodes();
 						if(null!= childNodes && childNodes.size()>0){
-							System.out.println("name03:"+PropertiesManager.getProperties(xmlNode.getTagName(),templateName)+";value03:"+xmlNode.getValue());
+							//System.out.println("name03:"+PropertiesManager.getProperties(xmlNode.getTagName(),templateName)+";value03:"+xmlNode.getValue());
 							htmlStr = htmlStr + getEditTabContents(childNodes,false,null,templateName);
 						}else{
-							System.out.println("name04:"+PropertiesManager.getProperties(xmlNode.getTagName(),templateName)+";value04:"+xmlNode.getValue());
+							//System.out.println("name04:"+PropertiesManager.getProperties(xmlNode.getTagName(),templateName)+";value04:"+xmlNode.getValue());
 							htmlStr = htmlStr + "<p><label class='rgt'>"+PropertiesManager.getProperties(node.getTagName(),templateName)+" :</label><label class='lft'><input type='text' value='" + node.getValue() + "' subName='"+node.getTagName()+ "' class='form-control' /></label></p>";
 						}
 					}

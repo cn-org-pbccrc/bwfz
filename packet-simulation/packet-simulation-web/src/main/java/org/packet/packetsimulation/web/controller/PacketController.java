@@ -120,6 +120,12 @@ public class PacketController {
 		return packetFacade.updatePacket(packetDTO);
 	}
 	
+	@ResponseBody
+	@RequestMapping("/saveAs")
+	public InvokeResult saveAs(PacketDTO packetDTO, @RequestParam String idOfPacket) {
+		return packetFacade.saveAsPacket(packetDTO, idOfPacket);
+	}
+	
 	@SuppressWarnings("rawtypes")
 	@ResponseBody
 	@RequestMapping("/pageJson/{currentUserId}")

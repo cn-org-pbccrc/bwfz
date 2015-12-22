@@ -157,7 +157,7 @@ function initFun(){
 	                         	                         	                             { title: '操作', width: 100, render: function (rowdata, name, index)
 	                                 {
 	                                     var param = '"' + rowdata.id + '"';	 
-	                                     var h = "<a href='javascript:openPacketView(" + param + ")'>查看发送报文</a> ";
+	                                     var h = "<a href='javascript:openTaskPacketView(" + param + ")'>查看发送报文</a> ";
 	                                     return h;
 	                                 }	                         	                         	         
 	                             }
@@ -847,7 +847,7 @@ function initFun(){
 //});
 }
 
-var openPacketView = function(id){
+var openTaskPacketView = function(id){
 	var dialog = $('<div class="modal fade"><div class="modal-dialog" style="width:900px;"><div class="modal-content"><div class="modal-header"><button type="button" class="close" data-dismiss="modal" aria-hidden="true">&times;</button><h4 class="modal-title">查看源数据</h4></div><div class="modal-body"><p>One fine body&hellip;</p></div><div class="modal-footer"><button type="button" class="btn btn-info" data-dismiss="modal">返回</button></div></div></div></div>');
     $.get('<%=path%>/TaskPacket-view.jsp').done(function(html){
           dialog.find('.modal-body').html(html);

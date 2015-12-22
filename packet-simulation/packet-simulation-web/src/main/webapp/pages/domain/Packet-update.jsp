@@ -8,7 +8,7 @@
 </head>
 <body>
 <form class="form-horizontal">
-	<input type="hidden" id="idID" name="id" /> 
+<!-- 	<input type="hidden" id="idID" name="id" />  -->
 	<input type="hidden" id="versionID" name="version" /> 
 	<input type="hidden" id="packIdID" name="packId" /> 
 <!-- 	<div class="form-group"> -->

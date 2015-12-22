@@ -1,0 +1,13 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<Document>
+	<CtrctInfDlt>
+		<CtrctInfDltSgmt>
+        	<InfRecTp>信息记录类型</InfRecTp>
+            <FinanCode>数据提供机构代码</FinanCode>
+       	    <Del_Rec_Id>待删除记录标识</Del_Rec_Id>
+        	<Del_Sgmt_Id>待删除段段标</Del_Sgmt_Id>
+        	<Del_Start_Date>信息报告开始日期</Del_Start_Date>
+        	<Del_End_Date>信息报告结束日期</Del_End_Date>
+		</CtrctInfDltSgmt>
+	</CtrctInfDlt>
+</Document>

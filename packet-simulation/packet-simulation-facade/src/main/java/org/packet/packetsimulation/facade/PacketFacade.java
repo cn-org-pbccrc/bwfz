@@ -26,6 +26,8 @@ public interface PacketFacade {
 	
 	public InvokeResult updatePacket(PacketDTO packet);
 	
+	public InvokeResult saveAsPacket(PacketDTO packet, String idOfPacket);
+	
 	public InvokeResult removePacket(Long id);
 	
 	public InvokeResult removePackets(Long[] ids, String savePath);

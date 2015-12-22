@@ -118,7 +118,7 @@ function initFun(){
 	                                 {
 	                                     var param = '"' + rowdata.id + '"';
 	                                     var packId = '"' + rowdata.packId + '"';
-	                                     var h = "<a href='javascript:openPacket(" + param + "," + packId + ")'>增加报文明细</a> &nbsp;&nbsp;<a href='javascript:downloadCSV(" + param + ")'>导出csv文件</a> &nbsp;&nbsp;<a href='javascript:downloadENC(" + param + ")'>导出enc文件</a>&nbsp;&nbsp;<a href='javascript:openPacketView(" + param + ")'>显示报文文件</a>";
+	                                     var h = "<a href='javascript:openPacket(" + param + "," + packId + ")'>编辑报文</a> &nbsp;&nbsp;<a href='javascript:downloadCSV(" + param + ")'>导出csv文件</a> &nbsp;&nbsp;<a href='javascript:downloadENC(" + param + ")'>导出enc文件</a>&nbsp;&nbsp;<a href='javascript:openPacketView(" + param + ")'>显示报文</a>";
 	                                     return h;
 	                                 }
 	                             }
@@ -279,7 +279,7 @@ function initFun(){
 	    },
 	    modify: function(id, grid){
 	        var self = this;
-	        var dialog = $('<div class="modal fade"><div class="modal-dialog"><div class="modal-content"><div class="modal-header"><button type="button" class="close" data-dismiss="modal" aria-hidden="true">&times;</button><h4 class="modal-title">修改</h4></div><div class="modal-body"><p>One fine body&hellip;</p></div><div class="modal-footer"><button type="button" class="btn btn-default" data-dismiss="modal">取消</button><button type="button" class="btn btn-success" id="save">保存</button></div></div></div></div>');
+	        var dialog = $('<div class="modal fade"><div class="modal-dialog"><div class="modal-content"><div class="modal-header"><button type="button" class="close" data-dismiss="modal" aria-hidden="true">&times;</button><h4 class="modal-title">修改</h4></div><div class="modal-body"><p>One fine body&hellip;</p></div><div class="modal-footer"><button type="button" class="btn btn-default" data-dismiss="modal">取消</button><button type="button" class="btn btn-success" id="save">保存</button><button type="button" class="btn btn-warning" id="saveAs">另存为</button></div></div></div></div>');
 	        $.get('<%=path%>/Packet-update.jsp').done(function(html){
 	               dialog.find('.modal-body').html(html);
 	               self.initPage(dialog.find('form'));
@@ -332,17 +332,37 @@ function initFun(){
 	                            dialog.modal('hide');
 	                            e.data.grid.data('koala.grid').refresh();
 	                            e.data.grid.message({
-	                            type: 'success',
-	                            content: '保存成功'
+	                            	type: 'success',
+	                            	content: '保存成功'
 	                            });
 	                        }else{
 	                            dialog.find('.modal-content').message({
-	                            type: 'error',
-	                            content: result.actionError
+	                            	type: 'error',
+	                            	content: result.actionError
 	                            });
 	                        }
 	                    });
 	                });
+	                
+	                dialog.find('#saveAs').on('click',{grid: grid}, function(e){
+	                    if(!Validator.Validate(dialog.find('form')[0],3))return;	                         
+	                    $.post('${pageContext.request.contextPath}/Packet/saveAs.koala?idOfPacket='+id+'&createdBy='+currentUserId, dialog.find('form').serialize()).done(function(result){
+	                        if(result.success){
+	                            dialog.modal('hide');
+	                            e.data.grid.data('koala.grid').refresh();
+	                            e.data.grid.message({
+	                            	type: 'success',
+	                            	content: '另存为成功'
+	                            });
+	                        }else{
+	                            dialog.find('.modal-content').message({
+	                            	type: 'error',
+	                            	content: result.actionError
+	                            });
+	                        }
+	                    });
+	                });
+	                
 	        });
 	    },
 

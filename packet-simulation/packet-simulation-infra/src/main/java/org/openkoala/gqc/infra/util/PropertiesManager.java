@@ -17,10 +17,16 @@ public final class PropertiesManager {
 	 private static Properties pros816 = new Properties();
 	 private static Properties pros821 = new Properties();
 	 private static Properties pros822 = new Properties();
+	 private static Properties pros823 = new Properties();
+	 private static Properties pros824 = new Properties();
 	 private static Properties pros831 = new Properties();
 	 private static Properties pros832 = new Properties();
 	 private static Properties pros833 = new Properties();
+	 private static Properties pros834 = new Properties();
+	 private static Properties pros835 = new Properties();
+	 private static Properties pros836 = new Properties();
 	 private static Properties pros841 = new Properties();
+	 private static Properties pros842 = new Properties();
 	
 	 static{
 		 try {
@@ -35,10 +41,16 @@ public final class PropertiesManager {
 	         pros816.load(PropertiesManager.class.getClassLoader().getResourceAsStream("translate8.1.6.properties"));
 	         pros821.load(PropertiesManager.class.getClassLoader().getResourceAsStream("translate8.2.1.properties"));
 	         pros822.load(PropertiesManager.class.getClassLoader().getResourceAsStream("translate8.2.2.properties"));
+	         pros823.load(PropertiesManager.class.getClassLoader().getResourceAsStream("translate8.2.3.properties"));
+	         pros824.load(PropertiesManager.class.getClassLoader().getResourceAsStream("translate8.2.4.properties"));
 	         pros831.load(PropertiesManager.class.getClassLoader().getResourceAsStream("translate8.3.1.properties"));
 	         pros832.load(PropertiesManager.class.getClassLoader().getResourceAsStream("translate8.3.2.properties"));
 	         pros833.load(PropertiesManager.class.getClassLoader().getResourceAsStream("translate8.3.3.properties"));
+	         pros834.load(PropertiesManager.class.getClassLoader().getResourceAsStream("translate8.3.4.properties"));
+	         pros835.load(PropertiesManager.class.getClassLoader().getResourceAsStream("translate8.3.5.properties"));
+	         pros836.load(PropertiesManager.class.getClassLoader().getResourceAsStream("translate8.3.6.properties"));
 	         pros841.load(PropertiesManager.class.getClassLoader().getResourceAsStream("translate8.4.1.properties"));
+	         pros842.load(PropertiesManager.class.getClassLoader().getResourceAsStream("translate8.4.2.properties"));
 	         //读取properties文件 这里是将文件从classpath里读取出来!因为在eclispe里src里的文件最后编译后都会放入bin文件夹下,也就是classpath下面,这样可以保证能找到文件
 	     } catch (IOException e) {
 	    	 e.printStackTrace();
@@ -48,7 +60,7 @@ public final class PropertiesManager {
 	 private PropertiesManager(){};
 	 
 	 public static final String getProperties(String key, String templateName){
-		 if(templateName.equals("基本信息记录")){
+		 if(templateName.equals("基本信息正常报送记录")){
 			 String cnName=PropertiesManager.pros811.getProperty(key);
 			 if(cnName!=null){
 				 return changeChineseCode(PropertiesManager.pros811.getProperty(key));
@@ -56,7 +68,7 @@ public final class PropertiesManager {
 				 System.out.println(key);
 				 return key;
 			 }
-		 }else if(templateName.equals("账户信息记录")){
+		 }else if(templateName.equals("账户信息正常报送记录")){
 			 String cnName=PropertiesManager.pros812.getProperty(key);
 			 if(cnName!=null){
 				 return changeChineseCode(PropertiesManager.pros812.getProperty(key));
@@ -64,7 +76,7 @@ public final class PropertiesManager {
 				 System.out.println(key);
 				 return key;
 			 }
-		 }else if(templateName.equals("合同信息记录")){
+		 }else if(templateName.equals("合同信息正常报送记录")){
 			 String cnName=PropertiesManager.pros813.getProperty(key);
 			 if(cnName!=null){
 				 return changeChineseCode(PropertiesManager.pros813.getProperty(key));
@@ -72,7 +84,7 @@ public final class PropertiesManager {
 				 System.out.println(key);
 				 return key;
 			 }
-		 }else if(templateName.equals("抵质押合同信息记录")){
+		 }else if(templateName.equals("抵质押合同信息正常报送记录")){
 			 String cnName=PropertiesManager.pros814.getProperty(key);
 			 if(cnName!=null){
 				 return changeChineseCode(PropertiesManager.pros814.getProperty(key));
@@ -80,7 +92,7 @@ public final class PropertiesManager {
 				 System.out.println(key);
 				 return key;
 			 }
-		 }else if(templateName.equals("证件整合信息记录")){
+		 }else if(templateName.equals("证件整合信息正常报送记录")){
 			 String cnName=PropertiesManager.pros815.getProperty(key);
 			 if(cnName!=null){
 				 return changeChineseCode(PropertiesManager.pros815.getProperty(key));
@@ -88,7 +100,7 @@ public final class PropertiesManager {
 				 System.out.println(key);
 				 return key;
 			 }
-		 }else if(templateName.equals("家族成员信息记录")){
+		 }else if(templateName.equals("家族成员信息正常报送记录")){
 			 String cnName=PropertiesManager.pros816.getProperty(key);
 			 if(cnName!=null){
 				 return changeChineseCode(PropertiesManager.pros816.getProperty(key));
@@ -104,10 +116,26 @@ public final class PropertiesManager {
 				 System.out.println(key);
 				 return key;
 			 }
-		 }else if(templateName.equals("信贷信息标识变更信息记录")){
+		 }else if(templateName.equals("合同信息标识变更信息记录")){
 			 String cnName=PropertiesManager.pros822.getProperty(key);
 			 if(cnName!=null){
 				 return changeChineseCode(PropertiesManager.pros822.getProperty(key));
+			 }else{
+				 System.out.println(key);
+				 return key;
+			 }
+		 }else if(templateName.equals("账户信息标识变更信息记录")){
+			 String cnName=PropertiesManager.pros823.getProperty(key);
+			 if(cnName!=null){
+				 return changeChineseCode(PropertiesManager.pros823.getProperty(key));
+			 }else{
+				 System.out.println(key);
+				 return key;
+			 }
+		 }else if(templateName.equals("抵质押合同信息标识变更信息记录")){
+			 String cnName=PropertiesManager.pros824.getProperty(key);
+			 if(cnName!=null){
+				 return changeChineseCode(PropertiesManager.pros824.getProperty(key));
 			 }else{
 				 System.out.println(key);
 				 return key;
@@ -120,7 +148,7 @@ public final class PropertiesManager {
 				 System.out.println(key);
 				 return key;
 			 }
-		 }else if(templateName.equals("信贷信息删除请求记录")){
+		 }else if(templateName.equals("合同信息按段删除请求记录")){
 			 String cnName=PropertiesManager.pros832.getProperty(key);
 			 if(cnName!=null){
 				 return changeChineseCode(PropertiesManager.pros832.getProperty(key));
@@ -128,10 +156,34 @@ public final class PropertiesManager {
 				 System.out.println(key);
 				 return key;
 			 }
-		 }else if(templateName.equals("信贷信息整比删除请求记录")){
+		 }else if(templateName.equals("账户信息按段删除请求记录")){
 			 String cnName=PropertiesManager.pros833.getProperty(key);
 			 if(cnName!=null){
 				 return changeChineseCode(PropertiesManager.pros833.getProperty(key));
+			 }else{
+				 System.out.println(key);
+				 return key;
+			 }
+		 }else if(templateName.equals("合同信息整笔删除请求记录")){
+			 String cnName=PropertiesManager.pros834.getProperty(key);
+			 if(cnName!=null){
+				 return changeChineseCode(PropertiesManager.pros834.getProperty(key));
+			 }else{
+				 System.out.println(key);
+				 return key;
+			 }
+		 }else if(templateName.equals("账户信息整笔删除请求记录")){
+			 String cnName=PropertiesManager.pros835.getProperty(key);
+			 if(cnName!=null){
+				 return changeChineseCode(PropertiesManager.pros835.getProperty(key));
+			 }else{
+				 System.out.println(key);
+				 return key;
+			 }
+		 }else if(templateName.equals("抵质押合同信息整笔删除请求记录")){
+			 String cnName=PropertiesManager.pros836.getProperty(key);
+			 if(cnName!=null){
+				 return changeChineseCode(PropertiesManager.pros836.getProperty(key));
 			 }else{
 				 System.out.println(key);
 				 return key;
@@ -144,9 +196,16 @@ public final class PropertiesManager {
 				 System.out.println(key);
 				 return key;
 			 }
+		 }else if(templateName.equals("合同修改请求记录")){
+			 String cnName=PropertiesManager.pros842.getProperty(key);
+			 if(cnName!=null){
+				 return changeChineseCode(PropertiesManager.pros842.getProperty(key));
+			 }else{
+				 System.out.println(key);
+				 return key;
+			 }
 		 }
 		return key;
-
 	 }
 	 
 	 

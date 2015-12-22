@@ -1,0 +1,20 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<Document>
+	<FalMmbsInf>
+		<FalMmbsInfSgmt>
+			<InfRecTp>信息记录类型</InfRecTp>
+			<FinanCode>数据提供机构代码</FinanCode>
+			<Name>姓名</Name>
+			<IDType>证件类型</IDType>
+			<IDNum>证件号码</IDNum>
+			<FamRel>家族关系</FamRel>
+			<FamMemName>家族成员姓名</FamMemName>
+			<FamMemCertType>家族成员证件类型</FamMemCertType>
+			<FamMemCertNum>家族成员证件号码</FamMemCertNum>
+			<FamMemAffType>家族成员认定类型</FamMemAffType>
+			<FamMemAffDesc>家族成员认定说明</FamMemAffDesc>
+			<FamRelaAssFlag>家族成员关联标识</FamRelaAssFlag>
+			<InfoUpDate>认定日期</InfoUpDate>
+		</FalMmbsInfSgmt>
+	</FalMmbsInf>
+</Document>

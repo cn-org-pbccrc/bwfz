@@ -1,0 +1,12 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<Document>
+	<CtrctInfIdCagsInf>
+		<CtrctInfIdCagsSgmt>
+			<InfRecTp>信息记录类型</InfRecTp>
+			<Old_Finan_Code>原数据提供机构代码</Old_Finan_Code>
+			<OdBnesId>原业务标识号</OdBnesId>
+			<New_Finan_Code>新数据提供机构代码</New_Finan_Code>
+			<NwBnesId>新业务标识号</NwBnesId>
+		</CtrctInfIdCagsSgmt>
+	</CtrctInfIdCagsInf>
+</Document>

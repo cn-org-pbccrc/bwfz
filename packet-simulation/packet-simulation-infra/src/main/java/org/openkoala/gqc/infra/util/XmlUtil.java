@@ -97,11 +97,11 @@ public class XmlUtil {
 			if (null != map) {
 				for (int i = 0; i < map.getLength(); i++) {
 					// 获得该元素的每一个属性
-					System.out.println("看看进没进去");
+					//System.out.println("看看进没进去");
 					Attr attr = (Attr) map.item(i);
 					String attrName = attr.getName();
 					String attrValue = attr.getValue();
-					System.out.println("attrName:"+attrName+";attrValue:"+attrValue);
+					//System.out.println("attrName:"+attrName+";attrValue:"+attrValue);
 					prototype = prototype + " " + attrName + "=\"" + attrValue
 							+ "\"";
 				}
@@ -125,7 +125,7 @@ public class XmlUtil {
 		for (int i = 0; i < children.getLength(); i++) {
 			
 			Node node = children.item(i);
-			System.out.println("取所有结点值看一看:"+node.getNodeName()+";它的类型:"+node.getNodeType());
+			//System.out.println("取所有结点值看一看:"+node.getNodeName()+";它的类型:"+node.getNodeType());
 			// 获得结点的类型
 			short nodeType = node.getNodeType();
 
@@ -141,7 +141,7 @@ public class XmlUtil {
 				
 				if(xmlNode.isCountTag() && countIndex<=(xmlNode.getPeerNodeSize())){
 					peerNodes.add(childNode);
-					System.out.println("peerNode:"+childNode.getTagName());
+					//System.out.println("peerNode:"+childNode.getTagName());
 					if((countIndex+1)==xmlNode.getPeerNodeSize()){
 						xmlNode.setCountTag(false);
 					}
@@ -151,7 +151,7 @@ public class XmlUtil {
 					countIndex=countIndex+1;
 				}else{
 					xmlNodes.add(childNode);
-					System.out.println("米米去日本啦!!:"+childNode.getTagName());
+					//System.out.println("米米去日本啦!!:"+childNode.getTagName());
 				}
 				
 				if(null!=countTag){
@@ -174,7 +174,7 @@ public class XmlUtil {
 		}
 		xmlNode.setNodes(xmlNodes);
 		for(int i = 0;i<xmlNodes.size();i++){
-			System.out.println("本泽马哈哈:"+xmlNodes.get(i).getTagName()+";贝尔哈哈:"+xmlNodes.get(i).getValue());
+			//System.out.println("本泽马哈哈:"+xmlNodes.get(i).getTagName()+";贝尔哈哈:"+xmlNodes.get(i).getValue());
 		}
 		return xmlNode;
 	}

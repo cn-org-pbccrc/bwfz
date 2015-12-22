@@ -2,8 +2,9 @@
 <Document>
 	<BsInfDlt>
 		<BsInfDltSgmt>
-			<CdOfDtaPdgOgztn>数据提供机构代码</CdOfDtaPdgOgztn>
-			<IdOfCtmDta>客户资料编号</IdOfCtmDta>
+			<InfRecTp>信息记录类型</InfRecTp>
+			<FinanCode>数据提供机构代码</FinanCode>
+			<CstCode>客户资料编号</CstCode>
 		</BsInfDltSgmt>
 	</BsInfDlt>
 </Document>

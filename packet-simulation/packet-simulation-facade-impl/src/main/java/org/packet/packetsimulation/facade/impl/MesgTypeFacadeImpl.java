@@ -19,6 +19,7 @@ import org.openkoala.gqc.infra.util.XmlUtil;
 import org.openkoala.koala.commons.InvokeResult;
 import org.packet.packetsimulation.application.MesgTypeApplication;
 import org.packet.packetsimulation.core.domain.MesgType;
+import org.packet.packetsimulation.core.domain.Packet;
 import org.packet.packetsimulation.facade.MesgTypeFacade;
 import org.packet.packetsimulation.facade.dto.MesgTypeDTO;
 import org.packet.packetsimulation.facade.impl.assembler.MesgTypeAssembler;
@@ -72,6 +73,14 @@ public class MesgTypeFacadeImpl implements MesgTypeFacade {
 	}
 	
 	@SuppressWarnings("unchecked")
+	public List<MesgType> findMesgTypes(){
+	   	StringBuilder jpql = new StringBuilder("select _mesgType from MesgType _mesgType   where 1=1 ");
+	   	jpql.append("order by _mesgType.sort asc");
+	   	List<MesgType> mesgTypes = getQueryChannelService().createJpqlQuery(jpql.toString()).list();
+	   	return mesgTypes;
+	}
+	
+	@SuppressWarnings("unchecked")
 	public Page<MesgTypeDTO> pageQueryMesgType(MesgTypeDTO queryVo, int currentPage, int pageSize) {
 		List<Object> conditionVals = new ArrayList<Object>();
 	   	StringBuilder jpql = new StringBuilder("select _mesgType from MesgType _mesgType   where 1=1 ");
@@ -83,10 +92,15 @@ public class MesgTypeFacadeImpl implements MesgTypeFacade {
 	   		jpql.append(" and _mesgType.filePath like ?");
 	   		conditionVals.add(MessageFormat.format("%{0}%", queryVo.getFilePath()));
 	   	}		
+//	   	if (queryVo.getSort() != null) {
+//	   		jpql.append(" and _mesgType.sort=?");
+//	   		conditionVals.add(queryVo.getSort());
+//	   	}
 	   	if (queryVo.getSort() != null) {
-	   		jpql.append(" and _mesgType.sort=?");
-	   		conditionVals.add(queryVo.getSort());
-	   	}	
+	   		jpql.append(" and _mesgType.sort like ?");
+	   		conditionVals.add(MessageFormat.format("%{0}%",queryVo.getSort()));
+	   	}
+	   	jpql.append("order by _mesgType.sort asc");
         Page<MesgType> pages = getQueryChannelService()
 		   .createJpqlQuery(jpql.toString())
 		   .setParameters(conditionVals)
@@ -101,8 +115,6 @@ public class MesgTypeFacadeImpl implements MesgTypeFacade {
 		MesgTypeDTO dto = MesgTypeAssembler.toDTO(application.getMesgType(id));
 		try {
 			XmlNode xmlNode = XmlUtil.getXmlNodeByXml(dto.getFilePath(),realPath,dto.getCountTag());
-			System.out.println("痛苦是因为想忘记谁:"+dto.getFilePath());
-			System.out.println(xmlNode.toEditHtmlTabString(dto.getFilePath()));
 			return InvokeResult.success(xmlNode.toEditHtmlTabString(dto.getFilePath()));
 		} catch (SAXException e) {
 			// TODO Auto-generated catch block

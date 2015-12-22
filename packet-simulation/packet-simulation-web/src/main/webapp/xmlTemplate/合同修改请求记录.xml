@@ -1,13 +1,13 @@
 <?xml version="1.0" encoding="UTF-8" ?>
 <Document>
-	<ActMdfc>
-		<ActMdfcSgmt>
+	<CtrctMdfc>
+		<CtrctMdfcSgmt>
 			<InfRecTp>信息记录类型</InfRecTp>
 			<FinanCode>数据提供机构代码</FinanCode>
 			<ModRecId>待修改记录标识</ModRecId>
 			<RptDate>信息报告日期</RptDate>
 			<ModSegMark>待修改段段标</ModSegMark>
 			<MdfcSgmt>待改段全部数据项</MdfcSgmt>
-		</ActMdfcSgmt>
-	</ActMdfc>
+		</CtrctMdfcSgmt>
+	</CtrctMdfc>
 </Document>

@@ -4,7 +4,7 @@
 <head>
 <title></title>
 <meta http-equiv="Content-Type" content="text/html; charset=UTF-8">
-<%-- <%@ include file="/pages/common/header.jsp"%><!--引入权限系统该页面需无须引用header.jsp --> --%>
+<%@ include file="/pages/common/header.jsp"%><!--引入权限系统该页面需无须引用header.jsp -->
 <%@ page import="java.util.Date"%>
 <% String formId = "form_" + new Date().getTime();
    String gridId = "grid_" + new Date().getTime();
@@ -103,7 +103,7 @@ $(function (){
 	                         	                         	                             { title: '操作', width: 120, render: function (rowdata, name, index)
 	                                 {
 	                                     var param = '"' + rowdata.id + '"';
-	                                     var h = "<a href='javascript:openDetailsPage(" + param + ")'>查看</a> ";
+	                                     var h = "<a href='javascript:openDetailsPageOfProject(" + param + ")'>查看</a> ";
 	                                     return h;
 	                                 }
 	                             }
@@ -570,7 +570,7 @@ $(function (){
         });
 });
 
-var openDetailsPage = function(id){
+var openDetailsPageOfProject = function(id){
         var dialog = $('<div class="modal fade"><div class="modal-dialog"><div class="modal-content"><div class="modal-header"><button type="button" class="close" data-dismiss="modal" aria-hidden="true">&times;</button><h4 class="modal-title">查看</h4></div><div class="modal-body"><p>One fine body&hellip;</p></div><div class="modal-footer"><button type="button" class="btn btn-info" data-dismiss="modal">返回</button></div></div></div></div>');
         $.get('<%=path%>/Project-view.jsp').done(function(html){
                dialog.find('.modal-body').html(html);

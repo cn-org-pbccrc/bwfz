@@ -112,7 +112,6 @@ public class ThreeStandardController {
 				String temp = "";
 				int lineNumber = 2;
 				while((temp=br.readLine())!=null){
-					System.out.println("!!!!!!!!"+temp);
 					if(temp.split(",").length!=3){
 						br.close();
 						uploadFile.delete();

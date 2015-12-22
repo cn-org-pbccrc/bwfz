@@ -9,6 +9,7 @@ import javax.servlet.http.HttpServletRequest;
 
 import org.dayatang.utils.Page;
 import org.openkoala.koala.commons.InvokeResult;
+import org.packet.packetsimulation.core.domain.MesgType;
 import org.packet.packetsimulation.facade.MesgTypeFacade;
 import org.packet.packetsimulation.facade.dto.MesgTypeDTO;
 import org.springframework.beans.propertyeditors.CustomDateEditor;
@@ -79,6 +80,12 @@ public class MesgTypeController {
 	@RequestMapping("/findAllMesgType")
 	public List<MesgTypeDTO> findAllMesgType() {
 		return mesgTypeFacade.findAllMesgType();
+	}
+    
+    @ResponseBody
+	@RequestMapping("/findMesgTypes")
+	public List<MesgType> findMesgTypes() {
+		return mesgTypeFacade.findMesgTypes();
 	}
     
     @ResponseBody

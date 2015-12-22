@@ -1,0 +1,10 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<Document>
+	<MotgaCltalCtrctInfEntDlt>
+		<MotgaCltalCtrctInfDltEntSgmt>
+        	<InfRecTp>信息记录类型</InfRecTp>
+        	<FinanCode>数据提供机构代码</FinanCode>
+        	<Del_Rec_Id>待删除记录标识</Del_Rec_Id>
+		</MotgaCltalCtrctInfDltEntSgmt>
+	</MotgaCltalCtrctInfEntDlt>
+</Document>
