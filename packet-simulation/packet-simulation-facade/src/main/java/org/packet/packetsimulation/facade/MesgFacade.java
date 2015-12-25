@@ -12,6 +12,8 @@ public interface MesgFacade {
 	
 	public InvokeResult creatMesg(MesgDTO mesg,String realPath);
 	
+	public InvokeResult verifyMesgType(Long id);
+	
 	public InvokeResult creatMesgs(MesgDTO mesg,String realPath,String[] values);
 	
 	public InvokeResult creatMesgsByInput(MesgDTO mesg,int startOfThreeStandard,int endOfThreeStandard,String currentUserId);

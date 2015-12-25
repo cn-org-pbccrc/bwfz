@@ -34,7 +34,16 @@ public class ThreeStandard extends KoalaAbstractEntity {
 //	@GeneratedValue(strategy = GenerationType.AUTO) 
 //  @Column(name = "CUSTOMER_CODE",nullable=false,insertable=false,updatable=false,columnDefinition="numeric(6,0) IDENTITY")
 	@Column(name = "CUSTOMER_CODE")
-	private String customerCode;
+	private Integer customerCode;
+	
+	@Column(name = "ACCT_CODE")
+	private String acctCode;
+	
+	@Column(name = "CON_CODE")
+	private String conCode;
+	
+	@Column(name = "CCC")
+	private String ccc;
 
 	@Temporal(TemporalType.DATE)
 	@Column(name = "CREATED_DATE")
@@ -43,6 +52,30 @@ public class ThreeStandard extends KoalaAbstractEntity {
 	@Column(name = "CREATED_BY")
 	private String createdBy;
 	
+	public String getAcctCode() {
+		return acctCode;
+	}
+
+	public void setAcctCode(String acctCode) {
+		this.acctCode = acctCode;
+	}
+
+	public String getConCode() {
+		return conCode;
+	}
+
+	public void setConCode(String conCode) {
+		this.conCode = conCode;
+	}
+
+	public String getCcc() {
+		return ccc;
+	}
+
+	public void setCcc(String ccc) {
+		this.ccc = ccc;
+	}
+
 	public String getName() {
 		return name;
 	}
@@ -75,11 +108,11 @@ public class ThreeStandard extends KoalaAbstractEntity {
 		this.organizationCode = organizationCode;
 	}
 
-	public String getCustomerCode() {
+	public Integer getCustomerCode() {
 		return customerCode;
 	}
 
-	public void setCustomerCode(String customerCode) {
+	public void setCustomerCode(Integer customerCode) {
 		this.customerCode = customerCode;
 	}
 

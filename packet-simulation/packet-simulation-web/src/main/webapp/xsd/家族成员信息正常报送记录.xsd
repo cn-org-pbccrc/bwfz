@@ -1,0 +1,32 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<xs:schema xmlns:xs="http://www.w3.org/2001/XMLSchema" elementFormDefault="qualified">
+    <xs:element name="Document" type="Document"/>
+    <!--复杂类型定义-->
+    <xs:complexType name="Document">
+        <xs:sequence>
+            <xs:element name="FalMmbsInf" type="FalMmbsInfTp"/><!-- 家族关系信息 -->
+        </xs:sequence>
+    </xs:complexType>
+    <xs:complexType name="FalMmbsInfTp">
+        <xs:sequence>
+            <xs:element name="FalMmbsInfSgmt" type="FalMmbsInfSgmtTp"/><!-- 家族成员信息段 -->
+        </xs:sequence>
+    </xs:complexType>
+    <xs:complexType name="FalMmbsInfSgmtTp">
+        <xs:sequence>
+            <xs:element name="InfRecTp"/><!-- 信息记录类型 -->
+            <xs:element name="FinanCode"></xs:element><!-- 数据提供机构代码 -->
+            <xs:element name="Name"></xs:element><!-- 姓名 -->
+            <xs:element name="IDType"></xs:element><!-- 证件类型 --><!-- 这个用枚举值 -->
+            <xs:element name="IDNum"></xs:element><!-- 证件号码 -->
+            <xs:element name="FamRel"/><!-- 家族关系 -->
+            <xs:element name="FamMemName"/><!-- 家族成员姓名 -->
+            <xs:element name="FamMemCertType"/><!-- 家族成员证件类型 -->
+            <xs:element name="FamMemCertNum"/><!-- 家族成员证件号码 -->
+            <xs:element name="FamMemAffType"/><!-- 家族成员认定类型 -->
+            <xs:element name="FamMemAffDesc" minOccurs="0"/><!-- 家族成员认定说明 -->
+            <xs:element name="FamRelaAssFlag"/><!-- 家族成员关联标识 -->
+            <xs:element name="InfoUpDate"/><!-- 认定日期 -->
+        </xs:sequence>
+    </xs:complexType>
+</xs:schema>

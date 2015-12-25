@@ -1,0 +1,78 @@
+<?xml version="1.0" encoding="UTF-8"?>
+    <xs:schema xmlns:xs="http://www.w3.org/2001/XMLSchema"  elementFormDefault="qualified">
+        <xs:element name="Document" type="DocumentTp"/>
+        <xs:complexType name="DocumentTp">
+            <xs:sequence>
+                <xs:element name="MotgaCltalCtrctInf" type="MotgaCltalCtrctInfTp"/>    <!-- 抵质押合同信息记录 -->
+            </xs:sequence>
+        </xs:complexType>
+        <xs:complexType name="MotgaCltalCtrctInfTp">
+            <xs:sequence>
+                <xs:element name="MotgaCltalCtrctBsSgmt" type="MotgaCltalCtrctBsSgmtTp"/>      <!-- 抵质押合同基础段 -->
+                <xs:element name="MotgaCltalCtrctBsInfSgmt" type="MotgaCltalCtrctBsInfSgmtTp"/>      <!-- 抵质押基本信息段 -->
+                <xs:element name="MotgaProptInfSgmt" type="MotgaProptInfSgmtTp"/>       <!-- 抵押物信息段 -->
+                <xs:element name="CltalInfSgmt" type="CltalInfSgmtTp"/>        <!-- 质押物信息段 -->
+            </xs:sequence>
+        </xs:complexType>
+        <xs:complexType name="MotgaCltalCtrctBsSgmtTp">
+            <xs:sequence>
+                <xs:element name="InfRecTp"/>      <!-- 信息记录类型 -->
+                <xs:element name="RptDateCode"/>      <!-- 报告时点说明代码 -->
+                <xs:element name="FinanCode"/>       <!-- 数据提供机构代码 -->
+                <xs:element name="Ccc"/>        <!-- 抵质押合同标识号 -->
+                <xs:element name="RptDate"/>      <!-- 信息报告日期 -->
+                <xs:element name="GrtdNum"/>      <!-- 被担保人个数 -->
+                <xs:element name="OtrRec" type="OtrRecTp" minOccurs="0" maxOccurs="unbounded"/>       <!-- 被担保人信息 -->
+                <xs:element name="BusiOrgCode"/>       <!-- 业务发生机构代码 -->
+            </xs:sequence>
+        </xs:complexType>
+        <xs:complexType name="OtrRecTp">
+            <xs:sequence>
+                <xs:element name="InfoIdType"/>      <!-- 身份类别 -->
+                <xs:element name="GuarName"/>      <!-- 被担保人姓名 -->
+                <xs:element name="GuarCertType"/>      <!-- 被担保人证件类型 -->
+                <xs:element name="GuarCertNum"/>       <!-- 被担保人证件号码 -->
+            </xs:sequence>
+        </xs:complexType>
+        <xs:complexType name="MotgaCltalCtrctBsInfSgmtTp">
+            <xs:sequence>
+                <xs:element name="GuarType"/>      <!-- 担保类型 -->
+                <xs:element name="MaxGuar"/>      <!-- 最高额担保标志 -->
+                <xs:element name="CcAmount"/>       <!-- 抵质押合同金额 -->
+                <xs:element name="CcCy"/>      <!-- 币种 -->
+                <xs:element name="CcValDate"/>      <!-- 抵质押合同生效日期 -->
+                <xs:element name="CcExpDate"/>       <!-- 抵质押合同到期日期 -->
+                <xs:element name="CcStatus"/>      <!-- 抵质押合同状态 -->
+                <xs:element name="Ccoc"/>      <!-- 抵质押合同文本编号 -->
+            </xs:sequence>
+        </xs:complexType>
+        <xs:complexType name="MotgaProptInfSgmtTp">
+            <xs:sequence>
+                <xs:element name="PleNum"/>      <!-- 抵押物个数 -->
+                <xs:element name="PleType"/>      <!-- 抵押物种类 -->
+                <xs:element name="PleValue"/>      <!-- 抵押物评估价值 -->
+                <xs:element name="ValOrgType"/>       <!-- 评估机构类型 -->
+                <xs:element name="ValDate"/>      <!-- 抵押物评估日期 -->
+                <xs:element name="MotgaProptIdTp"/>      <!-- 抵押物证件类型 -->
+                <xs:element name="PleCertType"/>       <!-- 抵押物证件号码 -->
+                <xs:element name="PleDistr"/>      <!-- 抵押物所在地行政区划 -->
+                <xs:element name="PleDesc"/>      <!-- 抵押物说明 -->
+                <xs:element name="PledgorName"/>       <!-- 抵押人姓名 -->
+                <xs:element name="PleorCertType"/>      <!-- 抵押人证件类型 -->
+                <xs:element name="PleorCertNum"/>      <!-- 抵押人证件号码 -->
+            </xs:sequence>
+        </xs:complexType>
+        <xs:complexType name="CltalInfSgmtTp">
+            <xs:sequence>
+                <xs:element name="ImpNum"/>      <!-- 质押物个数 -->
+                <xs:element name="ImpType"/>      <!-- 质押物种类 -->
+                <xs:element name="ImpDesc"/>      <!-- 质押物说明 -->
+                <xs:element name="Iro"/>       <!-- 质押物登记机构名称 -->
+                <xs:element name="Ippc"/>      <!-- 质押品权属人范畴 -->
+                <xs:element name="PawnName"/>      <!-- 质押人姓名 -->
+                <xs:element name="PawnCertType"/>       <!-- 质押人证件类型 -->
+                <xs:element name="PawnCertNum"/>      <!-- 质押人证件号码 -->
+            </xs:sequence>
+        </xs:complexType>
+</xs:schema>
+

@@ -1,0 +1,31 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<xs:schema xmlns:xs="http://www.w3.org/2001/XMLSchema" elementFormDefault="qualified">
+    <xs:element name="Document" type="Document"/>
+    <!--复杂类型定义-->
+    <xs:complexType name="Document">
+        <xs:sequence>
+            <xs:element name="CtfItgInf" type="CtfItgInfTp"/><!-- 证件整合信息 -->
+        </xs:sequence>
+    </xs:complexType>
+    <xs:complexType name="CtfItgInfTp">
+        <xs:sequence>
+            <xs:element name="CtfcItgInfSgmt" type="CtfcItgInfSgmtTp"/><!-- 证件整合信息段 -->
+        </xs:sequence>
+    </xs:complexType>
+    <xs:complexType name="CtfcItgInfSgmtTp">
+        <xs:sequence>
+            <xs:element name="InfRecTp"/><!-- 信息记录类型 -->
+            <xs:element name="FinanCode"/><!-- 数据提供机构代码 -->
+            <xs:element name="Name"/><!-- 姓名 -->
+            <xs:element name="IDType"/><!-- 证件类型 --><!-- 这个用枚举值 -->
+            <xs:element name="IDNum"/><!-- 证件号码 -->
+            <xs:element name="Alias"/><!-- 其他姓名 -->
+            <xs:element name="OthIdType"/><!-- 其他证件类型 -->
+            <xs:element name="OthIdNum"/><!-- 其他证件号码 -->
+            <xs:element name="OthIdAffType"/><!-- 其他证件认定类型 -->
+            <xs:element name="OthIdAffDesc" minOccurs="0"/><!-- 其他证件认定说明 -->
+            <xs:element name="OthIdRelaFlag"/><!-- 其他证件关联标识 -->
+            <xs:element name="RptDate"/><!-- 认定日期 -->
+        </xs:sequence>
+    </xs:complexType>
+</xs:schema>

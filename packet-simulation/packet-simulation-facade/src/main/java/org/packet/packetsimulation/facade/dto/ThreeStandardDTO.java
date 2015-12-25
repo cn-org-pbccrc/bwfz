@@ -3,6 +3,8 @@ package org.packet.packetsimulation.facade.dto;
 import java.util.Date;
 import java.io.Serializable;
 
+//import javax.persistence.Column;
+
 public class ThreeStandardDTO implements Serializable {
 
 	private Long id;
@@ -19,8 +21,13 @@ public class ThreeStandardDTO implements Serializable {
 		private String createdBy;
 		
 				
-		private String customerCode;
+		private Integer customerCode;
 		
+		private String acctCode;
+		
+		private String conCode;
+		
+		private String ccc;
 				
 		private String name;
 		
@@ -33,6 +40,30 @@ public class ThreeStandardDTO implements Serializable {
 		private Date createdDateEnd;
 			
 	
+	public String getAcctCode() {
+			return acctCode;
+		}
+
+		public void setAcctCode(String acctCode) {
+			this.acctCode = acctCode;
+		}
+
+		public String getConCode() {
+			return conCode;
+		}
+
+		public void setConCode(String conCode) {
+			this.conCode = conCode;
+		}
+
+		public String getCcc() {
+			return ccc;
+		}
+
+		public void setCcc(String ccc) {
+			this.ccc = ccc;
+		}
+
 	public void setOrganizationCode(String organizationCode) { 
 		this.organizationCode = organizationCode;
 	}
@@ -63,11 +94,11 @@ public class ThreeStandardDTO implements Serializable {
 		
 			
 	
-	public void setCustomerCode(String customerCode) { 
+	public void setCustomerCode(Integer customerCode) { 
 		this.customerCode = customerCode;
 	}
 
-	public String getCustomerCode() {
+	public Integer getCustomerCode() {
 		return this.customerCode;
 	}
 		

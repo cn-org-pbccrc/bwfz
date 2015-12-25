@@ -1,0 +1,21 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<xs:schema xmlns:xs="http://www.w3.org/2001/XMLSchema"  elementFormDefault="qualified">
+    <xs:element name="Document" type="Document"/>
+    <xs:complexType name="Document">
+        <xs:sequence>
+            <xs:element name="CtrctInfEntDlt" type="CtrctInfEntDltTp"/>         <!-- 个人合同信息整笔删除记录 -->
+        </xs:sequence>
+    </xs:complexType>
+    <xs:complexType name="CtrctInfEntDltTp">
+        <xs:sequence>
+            <xs:element name="CtrctInfDltEntSgmt" type="CtrctInfDltEntSgmtTp"/>
+        </xs:sequence>
+    </xs:complexType>
+    <xs:complexType name="CtrctInfDltEntSgmtTp">
+        <xs:sequence>
+            <xs:element name="InfRecTp"/>           <!-- 信息记录类型 -->
+            <xs:element name="FinanCode"/>       <!-- 数据提供机构代码 -->
+            <xs:element name="Del_Rec_Id"/>      <!-- 待删除记录标识 -->
+        </xs:sequence>
+    </xs:complexType>   
+</xs:schema>

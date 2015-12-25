@@ -61,8 +61,12 @@ public class ThreeStandardFacadeImpl implements ThreeStandardFacade {
 			threeStandardDTO.setOrganizationCode(employeeUser.getDepartment().getSn());
 		}
 		ThreeStandard threeStandard = ThreeStandardAssembler.toEntity(threeStandardDTO);
-		String uuid = UUID.randomUUID().toString().substring(0,8);
-		threeStandard.setCustomerCode(uuid);
+		//String uuid = UUID.randomUUID().toString().substring(0,8);
+		Integer max = findMaxCustomerCode(threeStandardDTO.getCreatedBy());
+		threeStandard.setCustomerCode(max+1);
+		threeStandard.setAcctCode("AcCode"+getShortUuid());
+		threeStandard.setConCode("Cc"+getShortUuid());
+		threeStandard.setCcc("Ccc"+getShortUuid());
 		Date date = new Date(); 
 		SimpleDateFormat sdf=new SimpleDateFormat("yyyy-MM-dd");
 		String dateFormat = sdf.format(date);  
@@ -75,6 +79,38 @@ public class ThreeStandardFacadeImpl implements ThreeStandardFacade {
 		threeStandard.setCreatedDate(time);
 		application.creatThreeStandard(threeStandard);
 		return InvokeResult.success();
+	}
+	
+	public static String[] chars = new String[]{
+		"a", "b", "c", "d", "e", "f", "g", "h", "i", "j", "k", "l", "m", "n", "o", "p", "q", "r", "s", "t", "u", "v", "w", "x", "y", "z",
+	    "0", "1", "2", "3", "4", "5", "6", "7", "8", "9",
+	    "A", "B", "C", "D", "E", "F", "G", "H", "I", "J", "K", "L", "M", "N", "O", "P", "Q", "R", "S", "T", "U", "V","W", "X", "Y", "Z"
+	}; 
+	 
+	public static String getShortUuid(){ 
+		StringBuffer stringBuffer = new StringBuffer(); 
+	    String uuid = UUID.randomUUID().toString().replace("-", ""); 
+	    for (int i = 0; i < 8; i++){ 
+	    	String str = uuid.substring(i * 4, i * 4 + 4); 
+	        int strInteger  = Integer.parseInt(str, 16); 
+	        stringBuffer.append(chars[strInteger % 0x3E]); 
+	    } 
+	    return stringBuffer.toString(); 
+	}
+	
+	private Integer findMaxCustomerCode(String createdBy){
+		List<Object> conditionVals = new ArrayList<Object>();
+	   	StringBuilder jpql = new StringBuilder("select max(_threeStandard.customerCode) from ThreeStandard _threeStandard  where 1=1 ");
+	   	
+	   	if (createdBy != null ) {
+	   		jpql.append(" and _threeStandard.createdBy = ? ");
+	   		conditionVals.add(createdBy);
+	   	}
+	   	if((getQueryChannelService().createJpqlQuery(jpql.toString()).setParameters(conditionVals).singleResult()==null)){
+	   		return 0;
+	   	}
+	   	Integer max = (Integer) getQueryChannelService().createJpqlQuery(jpql.toString()).setParameters(conditionVals).singleResult();
+	   	return max;
 	}
 	
 	public InvokeResult updateThreeStandard(ThreeStandardDTO threeStandardDTO){
@@ -121,8 +157,20 @@ public class ThreeStandardFacadeImpl implements ThreeStandardFacade {
 	   	}		
 	   	if (queryVo.getCustomerCode() != null && !"".equals(queryVo.getCustomerCode())) {
 	   		jpql.append(" and _threeStandard.customerCode like ?");
-	   		conditionVals.add(MessageFormat.format("%{0}%", queryVo.getCustomerCode()));
-	   	}		
+	   		conditionVals.add(queryVo.getCustomerCode());
+	   	}
+	   	if (queryVo.getAcctCode() != null && !"".equals(queryVo.getAcctCode())) {
+	   		jpql.append(" and _threeStandard.acctCode like ?");
+	   		conditionVals.add(MessageFormat.format("%{0}%", queryVo.getAcctCode()));
+	   	}
+	   	if (queryVo.getConCode() != null && !"".equals(queryVo.getConCode())) {
+	   		jpql.append(" and _threeStandard.conCode like ?");
+	   		conditionVals.add(MessageFormat.format("%{0}%", queryVo.getConCode()));
+	   	}
+	   	if (queryVo.getCcc() != null && !"".equals(queryVo.getCcc())) {
+	   		jpql.append(" and _threeStandard.ccc like ?");
+	   		conditionVals.add(MessageFormat.format("%{0}%", queryVo.getCcc()));
+	   	}
 	   	if (queryVo.getCreatedDate() != null) {
 	   		jpql.append(" and _threeStandard.createdDate between ? and ? ");
 	   		conditionVals.add(queryVo.getCreatedDate());
@@ -149,7 +197,7 @@ public class ThreeStandardFacadeImpl implements ThreeStandardFacade {
 	@Override
 	public InvokeResult importThreeStandard(ThreeStandardDTO threeStandardDTO, String path, String ctxPath) throws IOException, ParseException {	
 		String[] temp = new String[3];
-		Set<ThreeStandard> threeStandards= new HashSet<ThreeStandard>();
+		List<ThreeStandard> threeStandards= new ArrayList<ThreeStandard>();
 		int totalLines = ReadAppointedLine.getTotalLines(new File(ctxPath+path));
 		String flag = null;
 		EmployeeUser employeeUser = findEmployeeUserByCreatedBy(threeStandardDTO.getCreatedBy());
@@ -159,6 +207,8 @@ public class ThreeStandardFacadeImpl implements ThreeStandardFacade {
 		}else{
 			threeStandardDTO.setOrganizationCode(employeeUser.getDepartment().getSn());
 		}
+		Integer max = findMaxCustomerCode(threeStandardDTO.getCreatedBy());
+		Integer a = max + 1;
 		for(int i = 1; i < totalLines; i++){
 			ThreeStandard threeStandard = ThreeStandardAssembler.toEntity(threeStandardDTO);
 			String appointedLine = ReadAppointedLine.readAppointedLineNumber(new File(ctxPath+path),i+1,totalLines);			
@@ -174,8 +224,13 @@ public class ThreeStandardFacadeImpl implements ThreeStandardFacade {
 			}
 			threeStandard.setCredentialType(flag);
 			threeStandard.setCredentialNumber(temp[2].substring(1,temp[2].length()-1));
-			String uuid = UUID.randomUUID().toString().substring(0,8);
-			threeStandard.setCustomerCode(uuid);
+			//String uuid = UUID.randomUUID().toString().substring(0,8);
+			
+			threeStandard.setCustomerCode(a);
+			a++;
+			threeStandard.setAcctCode("AcCode"+getShortUuid());
+			threeStandard.setConCode("Cc"+getShortUuid());
+			threeStandard.setCcc("Ccc"+getShortUuid());
 			Date date = new Date(); 
 			SimpleDateFormat sdf=new SimpleDateFormat("yyyy-MM-dd");
 			String dateFormat = sdf.format(date);  
@@ -186,7 +241,7 @@ public class ThreeStandardFacadeImpl implements ThreeStandardFacade {
 				e.printStackTrace();
 			}
 			threeStandard.setCreatedDate(time);
-			threeStandards.add(threeStandard);
+			threeStandards.add(threeStandard);			
 		}
 		new File(ctxPath+path).delete();
 		application.creatThreeStandards(threeStandards);
@@ -225,7 +280,7 @@ public class ThreeStandardFacadeImpl implements ThreeStandardFacade {
 	   		}
 	   		return result;
 	   	}
-		return null;
+		return "";
 	}
 	
 	@SuppressWarnings("unchecked")

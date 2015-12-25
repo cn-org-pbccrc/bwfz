@@ -22,7 +22,7 @@ public class ThreeStandardApplicationImpl implements ThreeStandardApplication {
 		threeStandard.save();
 	}
 	
-	public void creatThreeStandards(Set<ThreeStandard> threeStandards) {
+	public void creatThreeStandards(List<ThreeStandard> threeStandards) {
 		for (ThreeStandard threeStandard : threeStandards) {
 			threeStandard.save();
 		}

@@ -13,7 +13,7 @@ public interface ThreeStandardApplication {
 	
 	public void creatThreeStandard(ThreeStandard threeStandard);
 	
-	public void creatThreeStandards(Set<ThreeStandard> threeStandards);
+	public void creatThreeStandards(List<ThreeStandard> threeStandards);
 	
 	public void updateThreeStandard(ThreeStandard threeStandard);
 	

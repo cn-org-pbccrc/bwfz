@@ -1,0 +1,140 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<xs:schema xmlns:xs="http://www.w3.org/2001/XMLSchema" elementFormDefault="qualified"> 
+    <xs:element name="Document" type="Document"/>
+    <xs:complexType name="Document">
+        <xs:sequence>
+            <xs:element name="BaseInf" type="BaseInfTp"></xs:element><!-- 基本信息 -->
+        </xs:sequence>
+    </xs:complexType>
+    <!-- 复杂类型定义 -->
+    <xs:complexType name="BaseInfTp">
+    <xs:sequence>
+        <xs:element name="BsSgmt" type="BsSgmtTp"/><!-- 基础段 -->
+        <xs:element name="IDSgmt" type="IDSgmtTp" minOccurs="0"/><!-- 标识信息段 -->
+        <xs:element name="AcctIDInfSgmt" type="AcctIDInfSgmtTp"/><!-- 开户证件信息段 --><!-- 文档里没有定义 -->
+        <xs:element name="FcsInfSgmt" type="FcsInfSgmtTp"  minOccurs="0"/><!-- 基本概况信息段 -->
+        <xs:element name="EduInfSgmt" type="EduInfSgmtTp"  minOccurs="0"/><!-- 教育信息段 -->
+        <xs:element name="OctpnInfSgmt" type="OctpnInfSgmtTp"  minOccurs="0"/><!-- 职业信息段 -->
+        <xs:element name="RedncInfSgmt" type="RedncInfSgmtTp" minOccurs="0"/><!-- 居住信息段 -->
+        <xs:element name="MlgInfSgmt" type="MlgInfSgmtTp"  minOccurs="0"/><!-- 通讯信息段 -->
+        <xs:element name="SpsInfSgmt" type="SpsInfSgmtTp"  minOccurs="0"/><!-- 配偶信息段 -->
+        <xs:element name="IncInfSgmt" type="IncInfSgmtTp"  minOccurs="0"/><!-- 收入信息段 -->
+    </xs:sequence>
+</xs:complexType>
+    
+    <xs:complexType name="BsSgmtTp">
+        <xs:sequence>
+            <xs:element name="InfRecTp"></xs:element><!-- 信息记录类型 -->
+            <xs:element name="RptDateCode"></xs:element><!-- 报告时点说明代码 -->
+            <xs:element name="RptDate"></xs:element><!-- 信息报告日期 -->
+            <xs:element name="FinanCode"></xs:element><!-- 数据提供机构代码 -->
+            <xs:element name="CstCode"></xs:element><!-- 客户资料标识号 -->
+            <xs:element name="Name"></xs:element><!-- 姓名 -->
+            <xs:element name="IDType"></xs:element><!-- 证件类型 --><!-- 这个用枚举值 -->
+            <xs:element name="IDNum"></xs:element><!-- 证件号码 -->
+            <xs:element name="Cimoc"></xs:element><!-- 客户资料维护机构代码 -->
+            <xs:element name="CustomerType"></xs:element><!-- 客户资料类型 -->
+        </xs:sequence>
+    </xs:complexType>
+    <xs:complexType name="IDSgmtTp">
+        <xs:sequence>
+            <xs:element name="IDNm"></xs:element><!-- 标识个数 -->
+            <xs:element name="IDRec" type="IDRecTp" maxOccurs="unbounded"></xs:element><!-- 其他证件信息 --><!-- 出现次数怎么定 -->
+        </xs:sequence>
+    </xs:complexType>
+    <xs:complexType name="IDRecTp">
+        <xs:sequence>
+            <xs:element name="Alias"></xs:element><!-- 其他姓名 -->
+            <xs:element name="OthIdType"></xs:element><!-- 其他证件类型 -->
+            <xs:element name="OthIdNum"></xs:element><!-- 其他证件号码 -->
+            <xs:element name="InfoUpDate"></xs:element><!-- 信息更新日期 -->
+        </xs:sequence>
+    </xs:complexType>
+    <xs:complexType name="AcctIDInfSgmtTp">
+        <xs:sequence>
+            <xs:element name="CertAut" minOccurs="0"></xs:element><!-- 证件签发机关 -->
+            <xs:element name="CertAutDist" minOccurs="0"></xs:element><!-- 证件签发机关所在地行政区划 -->
+            <xs:element name="CertStartDate" minOccurs="0"></xs:element><!-- 证件有效期起始日期 -->
+            <xs:element name="CertExpDate" minOccurs="0"></xs:element><!-- 证件有效期到期日期 -->
+            <xs:element name="InfoUpDate"></xs:element><!-- 信息更新日期 -->
+        </xs:sequence>
+    </xs:complexType>
+    <xs:complexType name="FcsInfSgmtTp">
+        <xs:sequence>
+            <xs:element name="Sex"></xs:element><!-- 性别 -->
+            <xs:element name="DOB"></xs:element><!-- 出生日期 -->
+            <xs:element name="Nation"></xs:element><!-- 国籍 -->
+            <xs:element name="HouseAdd" minOccurs="0"></xs:element><!-- 户籍地详细地址 -->
+            <xs:element name="HhDist" minOccurs="0"></xs:element><!-- 户籍地行政区划 -->
+            <xs:element name="EmpStatus"></xs:element><!-- 就业状况 -->
+            <xs:element name="MariStatus"></xs:element><!-- 婚姻状况 -->
+            <xs:element name="InfoUpDate"></xs:element><!-- 信息更新日期 -->
+        </xs:sequence>
+    </xs:complexType>
+    <xs:complexType name="EduInfSgmtTp">
+        <xs:sequence>
+            <xs:element name="EduLevel"></xs:element><!-- 学历 -->
+            <xs:element name="AcaDegree"></xs:element><!-- 学位 -->
+            <xs:element name="InfoUpDate"></xs:element><!-- 信息更新日期 -->
+        </xs:sequence>
+    </xs:complexType>    
+    <xs:complexType name="OctpnInfSgmtTp">
+        <xs:sequence>
+            <xs:element name="Occupation"></xs:element><!-- 职业分类 -->
+            <xs:element name="CpnName"></xs:element><!-- 单位名称 -->
+            <xs:element name="Title"></xs:element><!-- 职务 -->
+            <xs:element name="TechTitle"></xs:element><!-- 职称 -->
+            <xs:element name="WorkStartDate" minOccurs="0"></xs:element><!-- 本单位工作起始年份 -->
+            <xs:element name="CpnType"></xs:element><!-- 单位性质 -->
+            <xs:element name="Industry"></xs:element><!-- 单位所属行业 -->
+            <xs:element name="CpnAddr" minOccurs="0"></xs:element><!-- 单位详细地址 -->
+            <xs:element name="CpnPc" minOccurs="0"></xs:element><!-- 单位所在地邮编 -->
+            <xs:element name="CpnDist" minOccurs="0"></xs:element><!-- 单位所在地行政区划 -->
+            <xs:element name="CpnTEL" minOccurs="0"></xs:element><!-- 单位电话 -->
+            <xs:element name="InfoUpDate"></xs:element><!-- 信息更新日期 -->
+        </xs:sequence>
+    </xs:complexType>
+    <xs:complexType name="RedncInfSgmtTp">
+        <xs:sequence>
+            <xs:element name="ResiStatus"></xs:element><!-- 居住状况 -->
+            <xs:element name="ResiAddr"></xs:element><!-- 居住地详细地址 -->
+            <xs:element name="ResiPc"></xs:element><!-- 居住地邮编 -->
+            <xs:element name="ResiDist"></xs:element><!-- 居住地行政区划 -->
+            <xs:element name="HomeTel" minOccurs="0"></xs:element><!-- 住宅电话 -->
+            <xs:element name="InfoUpDate"></xs:element><!-- 信息更新日期 -->
+        </xs:sequence>
+    </xs:complexType>
+    <xs:complexType name="MlgInfSgmtTp">
+        <xs:sequence>
+            <xs:element name="MailAddr"></xs:element><!-- 通讯地址 -->
+            <xs:element name="MailPc"></xs:element><!-- 通讯地邮编 -->
+            <xs:element name="MailDist"></xs:element><!-- 通讯地行政区划 -->
+            <xs:element name="CellPhone" minOccurs="0"></xs:element><!-- 手机号码 -->
+            <xs:element name="Email" minOccurs="0"></xs:element><!-- 电子邮箱 -->
+            <xs:element name="InfoUpDate"></xs:element><!-- 信息更新日期 -->
+        </xs:sequence>
+    </xs:complexType>
+    <xs:complexType name="SpsInfSgmtTp">
+        <xs:sequence>
+            <xs:element name="SpoName"></xs:element><!-- 配偶姓名 -->
+            <xs:element name="SpoIDType"></xs:element><!-- 配偶证件类型 -->
+            <xs:element name="SpoIDNum"></xs:element><!-- 配偶证件号码 -->
+            <xs:element name="SpoTel"></xs:element><!-- 配偶联系电话 -->
+            <xs:element name="SpsCmpyNm" minOccurs="0"></xs:element><!-- 配偶工作单位 -->
+            <xs:element name="SpoCpnAddr" minOccurs="0"></xs:element><!-- 配偶工作单位详细地址 -->
+            <xs:element name="SpoCpnPostCd" minOccurs="0"></xs:element><!-- 配偶单位所在地邮编 -->
+            <xs:element name="SpoCpnDist" minOccurs="0"></xs:element><!-- 配偶单位所在地行政区划 -->
+            <xs:element name="InfoUpDate"></xs:element><!-- 信息更新日期 -->
+        </xs:sequence>
+    </xs:complexType>
+    <xs:complexType name="IncInfSgmtTp">
+        <xs:sequence>
+            <xs:element name="AnnlInc"></xs:element><!-- 自报年收入 -->
+            <xs:element name="TaxIncome"></xs:element><!-- 纳税年收入 -->
+            <xs:element name="InfoUpDate"></xs:element><!-- 信息更新日期 -->
+        </xs:sequence>
+    </xs:complexType>
+</xs:schema>
+
+
+

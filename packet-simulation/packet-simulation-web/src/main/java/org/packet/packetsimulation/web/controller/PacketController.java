@@ -10,6 +10,7 @@ import java.io.IOException;
 import java.io.InputStream;
 import java.io.InputStreamReader;
 import java.io.OutputStream;
+import java.io.Reader;
 import java.io.StringReader;
 import java.io.StringWriter;
 import java.net.URLDecoder;
@@ -35,6 +36,11 @@ import javax.servlet.http.HttpServletResponse;
 import javax.xml.parsers.DocumentBuilder;
 import javax.xml.parsers.DocumentBuilderFactory;
 import javax.xml.parsers.ParserConfigurationException;
+import javax.xml.transform.Source;
+import javax.xml.transform.stream.StreamSource;
+import javax.xml.validation.Schema;
+import javax.xml.validation.SchemaFactory;
+import javax.xml.validation.Validator;
 
 import org.apache.commons.codec.binary.Base64;
 import org.dayatang.utils.Page;
@@ -78,6 +84,7 @@ import org.w3c.dom.Document;
 import org.w3c.dom.Element;
 import org.xml.sax.InputSource;
 import org.xml.sax.SAXException;
+import org.xml.sax.SAXParseException;
 
 import java.security.InvalidKeyException;
 import java.security.NoSuchAlgorithmException;
@@ -267,9 +274,11 @@ public class PacketController {
 		System.out.println("哈哈哈哈收到啦！！！！！！！！！");
 		MultipartHttpServletRequest multipartRequest = (MultipartHttpServletRequest) request;	
 		Map<String, MultipartFile> fileMap = multipartRequest.getFileMap();
-		String ctxPath=request.getSession().getServletContext().getRealPath("/")+File.separator+"loadFiles";		
-		ctxPath += File.separator + packetDTO.getCreatedBy() + File.separator;  	
+		String ctxPath=request.getSession().getServletContext().getRealPath("/")+File.separator+"loadFiles" + File.separator + packetDTO.getCreatedBy() + File.separator;	
 		System.out.println("ctxpath="+ctxPath);	
+		String xsdPath = request.getSession().getServletContext().getRealPath("/")+File.separator+"xsd" + File.separator;
+		File xsdFile = new File(xsdPath);    	
+		File[] xsdFileList = xsdFile.listFiles();
 		File file = new File(ctxPath);    	
 		if (!file.exists()) {    	
 			file.mkdirs();    	
@@ -286,7 +295,7 @@ public class PacketController {
 //				return InvokeResult.failure("报文名称已经存在");
 //			}
 			File uploadFile = new File(ctxPath + fileName);	
-			try {				
+//			try {				
 				FileCopyUtils.copy(mf.getBytes(), uploadFile);
 				BufferedReader br = new BufferedReader(new InputStreamReader(new FileInputStream(ctxPath + fileName)));  
 				String line = br.readLine();	
@@ -366,16 +375,117 @@ public class PacketController {
 					response.getWriter().write("信息记录数和文件中记录行数不一致!");					
 					return null;
 				}
+				String record;
+				int n = 1;
+				while((record=br.readLine())!=null){
+					DocumentBuilderFactory dbf = DocumentBuilderFactory.newInstance();
+					DocumentBuilder db = dbf.newDocumentBuilder();
+					Document doc;
+					try{
+						doc = (Document) db.parse(new InputSource(new ByteArrayInputStream(record.getBytes("utf-8"))));
+					}catch(Exception e){
+						e.printStackTrace();
+						br.close();
+						uploadFile.delete();
+						response.setHeader("Content-type", "text/html;charset=UTF-8");
+					    response.setCharacterEncoding("UTF-8");
+						response.getWriter().write("第"+n+"条记录xml格式不正确:"+e.getMessage());					
+						return null;
+					}
+					Element root = ((org.w3c.dom.Document) doc).getDocumentElement();
+					String filePath = null;
+					if(root.getFirstChild().getNodeName().equals("AcctInf")){
+						filePath = "账户信息正常报送记录";
+					}else if(root.getFirstChild().getNodeName().equals("BaseInf")){
+						filePath = "基本信息正常报送记录";
+					}else if(root.getFirstChild().getNodeName().equals("CtrctInf")){
+						filePath = "合同信息正常报送记录";
+					}else if(root.getFirstChild().getNodeName().equals("MotgaCltalCtrctInf")){
+						filePath = "抵质押合同信息正常报送记录";
+					}else if(root.getFirstChild().getNodeName().equals("CtfItgInf")){
+						filePath = "证件整合信息正常报送记录";
+					}else if(root.getFirstChild().getNodeName().equals("FalMmbsInf")){
+						filePath = "家族成员信息正常报送记录";
+					}else if(root.getFirstChild().getNodeName().equals("BsInfIdCagsInf")){
+						filePath = "基本信息标识变更信息记录";
+					}else if(root.getFirstChild().getNodeName().equals("CtrctInfIdCagsInf")){
+						filePath = "合同信息标识变更信息记录";
+					}else if(root.getFirstChild().getNodeName().equals("AcctInfIdCagsInf")){
+						filePath = "账户信息标识变更信息记录";
+					}else if(root.getFirstChild().getNodeName().equals("MotgaCltalCtrctInfIdCagsInf")){
+						filePath = "抵质押合同信息标识变更信息记录";
+					}else if(root.getFirstChild().getNodeName().equals("BsInfDlt")){
+						filePath = "基本信息删除请求记录";
+					}else if(root.getFirstChild().getNodeName().equals("CtrctInfDlt")){
+						filePath = "合同信息按段删除请求记录";
+					}else if(root.getFirstChild().getNodeName().equals("AcctInfDlt")){
+						filePath = "账户信息按段删除请求记录";
+					}else if(root.getFirstChild().getNodeName().equals("CtrctInfEntDlt")){
+						filePath = "合同信息整笔删除请求记录";
+					}else if(root.getFirstChild().getNodeName().equals("AcctInfEntDlt")){
+						filePath = "账户信息整笔删除请求记录";
+					}else if(root.getFirstChild().getNodeName().equals("MotgaCltalCtrctInfEntDlt")){
+						filePath = "抵质押合同信息整笔删除请求记录";
+					}else if(root.getFirstChild().getNodeName().equals("ActMdfc")){
+						filePath = "账户修改请求记录";
+					}else if(root.getFirstChild().getNodeName().equals("CtrctMdfc")){
+						filePath = "合同修改请求记录";
+					}
+					try{
+						Validatexml(xsdPath+filePath+".xsd",record);
+					}catch(Exception e){
+						e.printStackTrace();
+						br.close();
+						uploadFile.delete();
+						response.setHeader("Content-type", "text/html;charset=UTF-8");
+					    response.setCharacterEncoding("UTF-8");
+						response.getWriter().write("第"+n+"条记录schema校验不通过:"+e.getMessage());					
+						return null;
+					}
+//					if(!Validatexml(xsdPath+filePath+".xsd",record)){
+//						br.close();
+//						uploadFile.delete();
+//						response.setHeader("Content-type", "text/html;charset=UTF-8");
+//					    response.setCharacterEncoding("UTF-8");
+//						response.getWriter().write("第"+n+"条记录schema校验不通过!");					
+//						return null;
+//					}
+					n++;
+				}
 				br.close();
 				packetFacade.uploadPacket(packetDTO, fileName, ctxPath);			  	    
-			} catch (IOException e) {  	   	  	       
-				e.printStackTrace();  	       
-			}	
+//			} catch (IOException e) {  	   	  	       
+//				e.printStackTrace();  	       
+//			}	
 		}
 		response.setHeader("Content-type", "text/html;charset=UTF-8");
         response.setCharacterEncoding("UTF-8");
 		response.getWriter().write("上传并解析成功!");
 		return null;
+	}
+	
+	public static void Validatexml(String xsdpath, String xml)
+			throws SAXException, IOException {
+		// 建立schema工厂
+		SchemaFactory schemaFactory = SchemaFactory
+				.newInstance("http://www.w3.org/2001/XMLSchema");
+		// 建立验证文档文件对象，利用此文件对象所封装的文件进行schema验证
+		File schemaFile = new File(xsdpath);
+		// 利用schema工厂，接收验证文档文件对象生成Schema对象
+		Schema schema = schemaFactory.newSchema(schemaFile);
+		// 通过Schema产生针对于此Schema的验证器，利用schenaFile进行验证
+		Validator validator = schema.newValidator();
+		// 得到验证的数据源
+		Reader reader  = new StringReader(xml);
+		Source source = new StreamSource(reader);
+		// 开始验证，成功输出success!!!，失败输出fail
+//		try {
+			validator.validate(source);
+//		} catch (Exception ex) {
+//			ex.printStackTrace();
+//			return false;
+//		}
+//		return true;
 	}
 	
 	//压缩

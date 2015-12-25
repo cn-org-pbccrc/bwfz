@@ -12,7 +12,7 @@
 <link rel="stylesheet" href="${contextPath}/css/organisation.css"/>
 <link rel="stylesheet" href="${contextPath}/lib/validateForm/css/style.css"/>
 <link rel="stylesheet" href="${contextPath}/css/gqc.css"/>
-<link rel="stylesheet" type="text/css" href="${contextPath}/lib/uploadify.css">  
+<%-- <link rel="stylesheet" type="text/css" href="${contextPath}/lib/uploadify.css">   --%>
 
 <%-- js 默认就有 type="text/javascript" --%>
 <script  src="${contextPath}/lib/jquery-1.11.3.min.js"></script>
@@ -27,7 +27,7 @@
 <script  src="${contextPath}/js/security/user.js" ></script>
 <script  src="${contextPath}/js/main.js" ></script>
 <script  src="${contextPath}/lib/validateForm/validateForm.js"></script>
-<script type="text/javascript" src="${contextPath}/lib/jquery.uploadify.min.js"></script>  
+<%-- <script type="text/javascript" src="${contextPath}/lib/jquery.uploadify.min.js"></script>   --%>
 
 <script>
 	$.ajaxSetup({cache:false});

@@ -1,0 +1,43 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<xs:schema xmlns:xs="http://www.w3.org/2001/XMLSchema"  elementFormDefault="qualified">
+    <xs:element name="Document" type="Document"/>
+    <xs:complexType name="Document">
+        <xs:sequence>
+            <xs:element name="CtrctInf" type="CtrctInfTp"/>
+        </xs:sequence>
+    </xs:complexType>
+    <xs:complexType name="CtrctInfTp">
+        <xs:sequence>
+            <xs:element name="CtrctInfSgmt" type="CtrctInfSgmtTp"/>
+        </xs:sequence>
+    </xs:complexType>
+    <xs:complexType name="CtrctInfSgmtTp">
+        <xs:sequence>
+            <xs:element name="InfRecTp"/>       <!-- 信息记录类型 -->
+            <xs:element name="RptDateCode"/>       <!-- 报告时点说明代码 -->
+            <xs:element name="FinanCode"/>      <!-- 数据提供机构代码 -->
+            <xs:element name="ConCode"/>           <!-- 合同标识号 -->
+            <xs:element name="RptDate"/>     <!-- 信息报告日期 -->
+            <xs:element name="BrerNm"/>       <!-- 借款人数 -->
+            <xs:element name="CtrctCertRel" type="CtrctCertRelTp" minOccurs="0" maxOccurs="unbounded"/>       <!-- 合同与三标关系 -->
+            <xs:element name="CreditLim"/>         <!-- 授信额度 -->
+            <xs:element name="Cy"/>       <!-- 币种 -->
+            <xs:element name="CreLimUses"/>        <!-- 授信额度用途 -->
+            <xs:element name="LimLoopFlg"/>        <!-- 额度循环标志 -->
+            <xs:element name="LimAdjDate"/>        <!-- 额度调整日期 -->
+            <xs:element name="ConEffDate"/>        <!-- 合同生效日期 -->
+            <xs:element name="ConExpDate"/>        <!-- 合同到期日期 -->
+            <xs:element name="ConStatus"/>        <!-- 合同状态 -->
+            <xs:element name="ConStaChDate"/>        <!-- 合同状态变化日期 -->
+            <xs:element name="ConTxtCode"/>        <!-- 合同文本编号 -->
+            <xs:element name="BusiOrgCode"/>        <!-- 业务发生机构代码 --> 
+        </xs:sequence>
+    </xs:complexType>
+    <xs:complexType name="CtrctCertRelTp">
+        <xs:sequence>
+            <xs:element name="Name"/>
+            <xs:element name="IDType"/>
+            <xs:element name="IDNum"/>
+        </xs:sequence>
+    </xs:complexType>
+</xs:schema>

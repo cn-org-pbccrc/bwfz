@@ -1,0 +1,24 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<xs:schema xmlns:xs="http://www.w3.org/2001/XMLSchema"  elementFormDefault="qualified">
+    <xs:element name="Document" type="Document"/>
+    <xs:complexType name="Document">
+        <xs:sequence>
+            <xs:element name="CtrctInfDlt" type="CtrctInfDltTp"/>         <!-- 个人合同信息按段删除记录 -->
+        </xs:sequence>
+    </xs:complexType>
+    <xs:complexType name="CtrctInfDltTp">
+        <xs:sequence>
+            <xs:element name="CtrctInfDltSgmt" type="CtrctInfDltSgmtTp"/>
+        </xs:sequence>
+    </xs:complexType>
+    <xs:complexType name="CtrctInfDltSgmtTp">
+        <xs:sequence>
+            <xs:element name="InfRecTp"/>       <!-- 信息记录类型 -->
+            <xs:element name="FinanCode"/>       <!-- 数据提供机构代码 -->
+            <xs:element name="Del_Rec_Id"/>      <!-- 待删除记录标识 -->
+            <xs:element name="Del_Sgmt_Id"/>           <!-- 待删除段段标 -->
+            <xs:element name="Del_Start_Date"/>     <!-- 信息报告开始日期 -->
+            <xs:element name="Del_End_Date"/>     <!-- 信息报告结束日期 -->
+        </xs:sequence>
+    </xs:complexType>        
+</xs:schema>

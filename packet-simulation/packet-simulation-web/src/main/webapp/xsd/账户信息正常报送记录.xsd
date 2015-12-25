@@ -1,0 +1,177 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<xs:schema xmlns:xs="http://www.w3.org/2001/XMLSchema"  elementFormDefault="qualified">
+    <xs:element name="Document" type="DocumentTp"/>
+    <xs:complexType name="DocumentTp">
+        <xs:sequence>
+            <xs:element name="AcctInf" type="AcctInfTp"/>    <!-- 账户信息记录 -->
+        </xs:sequence>
+    </xs:complexType>
+    <xs:complexType name="AcctInfTp">
+        <xs:sequence>
+            <xs:element name="AcctBsSgmt" type="AcctBsSgmtTp"/>      <!-- 账户基础段 -->
+            <xs:element name="AcctBsInfSgmt" type="AcctBsInfSgmtTp" minOccurs="0"/>      <!-- 账户基本信息段 -->
+            <xs:element name="MiCtrctInfSgmt" type="MiCtrctInfSgmtTp" minOccurs="0"/>        <!-- 主合同标识段 --> 
+            <xs:element name="MotgaCltalCtrctInfSgmt" type="MotgaCltalCtrctInfSgmtTp" minOccurs="0"/>       <!-- 抵质押合同标识段 -->
+            <xs:element name="RltRepymtInfSgmt" type="RltRepymtInfSgmtTp" minOccurs="0"/>        <!-- 关联还款责任人信息段 -->
+            <xs:element name="RtInfSgmt" type="RtInfSgmtTp" minOccurs="0"/>       <!-- 利率信息段 -->
+            <xs:element name="AcctDbtInfSgmt" type="AcctDbtInfSgmtTp"/>          <!-- 账户负债信息段 -->
+            <xs:element name="AcctMthlyBlgInfSgmt" type="AcctMthlyBlgInfSgmtTp" minOccurs="0"/>        <!-- 账户月度结算信息段 -->
+            <xs:element name="AcctPymtInfSgmt" type="AcctPymtInfSgmtTp" minOccurs="0"/>          <!-- 还款信息段 -->
+            <xs:element name="AcctSpecTrstDspnSgmt" type="AcctSpecTrstDspnSgmtTp" minOccurs="0"/>          <!-- 特定交易说明段 -->
+            <xs:element name="LSStageSegment" type="LSStageInfSgmtTp" minOccurs="0"/>          <!-- 信用卡大额专项分期信息段 -->
+            <xs:element name="CrdtCrdIdSgmt" type="CrdtCrdIdSgmtTp" minOccurs="0"/>           <!-- 信用卡卡片标识段 -->
+            <xs:element name="OrigCreditorInfSgmt" type="OrigCreditorInfSgmtTp" minOccurs="0"/>          <!-- 原债权人说明段 -->
+        </xs:sequence>
+    </xs:complexType>
+    <xs:complexType name="AcctBsSgmtTp">
+        <xs:sequence>
+            <xs:element name="InfRecTp"/>      <!-- 信息记录类型 -->
+            <xs:element name="AcctType"/>      <!-- 账户类型 -->
+            <xs:element name="RptDateCode"/>       <!-- 报告时点说明代码 -->
+            <xs:element name="FinanCode"/>        <!-- 数据提供机构代码 -->
+            <xs:element name="BusiOrgCode"/>       <!-- 业务发生机构代码 -->
+            <xs:element name="AcctCode"/>        <!-- 账户标识号 -->
+            <xs:element name="RptDate"/>          <!-- 信息报告日期 -->
+            <xs:element name="BrwNm"/>        <!-- 借款人数 -->
+            <xs:element name="AcctCertRel" type="AcctCertRelTp" minOccurs="0" maxOccurs="unbounded"/>          <!-- 账户与三标关系信息 -->
+        </xs:sequence>
+    </xs:complexType>
+    <xs:complexType name="AcctCertRelTp">
+        <xs:sequence>
+            <xs:element name="Name"/>      <!-- 姓名 -->
+            <xs:element name="IDType"/>      <!-- 证件类型 -->
+            <xs:element name="IDNum"/>       <!-- 证件号码 -->
+        </xs:sequence>
+    </xs:complexType>
+    <xs:complexType name="AcctBsInfSgmtTp">
+        <xs:sequence>
+            <xs:element name="BusiLines"/>      <!-- 业务种类 -->
+            <xs:element name="AcctCredLine"/>      <!-- 账户授信额度 -->
+            <xs:element name="LoanAmt"/>       <!-- 借款金额 -->
+            <xs:element name="AcctCy"/>        <!-- 币种 -->
+            <xs:element name="OpenDate"/>       <!-- 开户日期 -->
+            <xs:element name="CloseDate"/>        <!-- 账户关闭日期 -->
+            <xs:element name="FstDueDate"/>          <!-- 初始到期日期 -->
+            <xs:element name="DueDate"/>        <!-- 到期日期 -->
+            <xs:element name="TmCgLg"/>        <!-- 期限变更标识 -->
+            <xs:element name="RepayMode"/>          <!-- 还款方式 -->
+            <xs:element name="RepayFreqcy"/>      <!-- 还款频率 -->
+            <xs:element name="RepayPrd"/>      <!-- 还款期数 -->
+            <xs:element name="ApplyBusiDist"/>       <!-- 业务申请地行政区划 -->
+            <xs:element name="GuarMode"/>       <!-- 担保方式 -->
+            <xs:element name="OthRepyGuarWay"/>       <!-- 其他还款保证方式 -->
+            <xs:element name="NA"/>        <!-- 资产转让标识 -->
+            <xs:element name="FundSou"/>          <!-- 资金来源 -->
+        </xs:sequence>
+    </xs:complexType>
+    <xs:complexType name="MiCtrctInfSgmtTp">
+        <xs:sequence>
+            <xs:element name="Mcc"/>      <!-- 主合同标识号 -->
+        </xs:sequence>
+    </xs:complexType>
+    <xs:complexType name="MotgaCltalCtrctInfSgmtTp">
+        <xs:sequence>
+            <xs:element name="Ccc"/>      <!-- 抵质押合同标识号 -->
+            <xs:element name="CcNum"/>      <!-- 抵质押合同个数 -->
+        </xs:sequence>
+    </xs:complexType>
+    <xs:complexType name="RltRepymtInfSgmtTp">
+        <xs:sequence>
+            <xs:element name="RltRepymtNum"/>      <!-- 关联还款责任人数 -->
+            <xs:element name="RltRepymtInf" type="RltRepymtInfTp" minOccurs="0" maxOccurs="unbounded"/>      <!-- 关联还款责任人信息 -->
+        </xs:sequence>
+    </xs:complexType>
+    <xs:complexType name="RltRepymtInfTp">
+        <xs:sequence>
+            <xs:element name="InfoIdType"/>      <!-- 身份类别 -->
+            <xs:element name="ArlpName"/>      <!-- 关联还款责任人名称 -->
+            <xs:element name="ArlpCertType"/>       <!-- 关联还款责任人证件类型 -->
+            <xs:element name="ArlpCertNum"/>        <!-- 关联还款责任人证件号码 -->
+            <xs:element name="ARLPType"/>       <!-- 还款责任人类型 -->
+            <xs:element name="ARLPAmt"/>        <!-- 还款责任金额 -->
+        </xs:sequence>
+    </xs:complexType>
+    <xs:complexType name="RtInfSgmtTp">
+        <xs:sequence>
+            <xs:element name="FixRateFlg"/>      <!-- 利率固定标志 -->
+            <xs:element name="BmarkRateType"/>      <!-- 基准利率类型 -->
+            <xs:element name="FloatRateScale"/>       <!-- 利率浮动比例 -->
+            <xs:element name="ExeRateAdjFreq"/>        <!-- 执行利率调整频率 -->
+            <xs:element name="ExeRate"/>        <!-- 执行利率 -->
+            <xs:element name="ExeRateVdDate"/>       <!-- 执行利率生效日期 -->
+            <xs:element name="CompEffRate"/>        <!-- 综合有效利率 -->
+            <xs:element name="CompEffVdDate"/>          <!-- 综合有效利率生效日期 -->
+        </xs:sequence>
+    </xs:complexType>
+    
+    <xs:complexType name="AcctDbtInfSgmtTp">
+        <xs:sequence>
+            <xs:element name="AcctStatus"/>      <!-- 账户状态 -->
+            <xs:element name="AcctBal"/>      <!-- 余额 -->
+            <xs:element name="FiveCate"/>       <!-- 五级分类 -->
+            <xs:element name="FiveCateAdjDate"/>        <!-- 五级分类调整日期 -->
+            <xs:element name="RemRepPrd"/>       <!-- 剩余还款期数 -->
+            <xs:element name="RpyStatus"/>        <!-- 当前还款状态 -->
+            <xs:element name="OverdPrd"/>          <!-- 当前逾期期数 -->
+            <xs:element name="TotOverd"/>      <!-- 当前逾期总额 -->
+            <xs:element name="OverdPrinc"/>      <!-- 当前逾期本金 -->
+            <xs:element name="Oved31_60Princ"/>       <!-- 逾期31-60天未归还贷款本金 -->
+            <xs:element name="Oved61_90Princ"/>        <!-- 逾期61-90天未归还贷款本金 -->
+            <xs:element name="Oved91_180Princ"/>       <!-- 逾期91-180天未归还贷款本金 -->
+            <xs:element name="OvedPrinc180"/>        <!-- 逾期180天以上未归还贷款本金 -->
+            <xs:element name="OvedrawBaOve180"/>          <!-- 透支180天以上未还余额 -->
+        </xs:sequence>
+    </xs:complexType>
+    <xs:complexType name="AcctMthlyBlgInfSgmtTp">
+        <xs:sequence>
+            <xs:element name="SettDate"/>      <!-- 结算/应还款日期 -->
+            <xs:element name="CurRpyAmt"/>      <!-- 本月应还款金额 -->
+            <xs:element name="ActRpyAmt"/>       <!-- 本月实际还款金额 -->
+            <xs:element name="LatRpyDate"/>        <!-- 最近一次实际还款日期 -->
+            <xs:element name="BillAmt"/>       <!-- 账单金额 -->
+        </xs:sequence>
+    </xs:complexType>
+    <xs:complexType name="AcctPymtInfSgmtTp">
+        <xs:sequence>
+            <xs:element name="RpyDate"/>      <!-- 还款日 -->
+            <xs:element name="RpyAmt"/>      <!-- 应还金额 -->
+            <xs:element name="ActRpyAmt"/>       <!-- 还款金额 -->
+        </xs:sequence>
+    </xs:complexType>
+    <xs:complexType name="AcctSpecTrstDspnSgmtTp">
+        <xs:sequence>
+            <xs:element name="CagOfTrdNum"/>      <!-- 交易个数 -->
+            <xs:element name="CagOfTrdInf" type="CagOfTrdInfTp" minOccurs="0" maxOccurs="unbounded"/>       <!-- 交易信息 -->
+        </xs:sequence>
+    </xs:complexType>
+    <xs:complexType name="CagOfTrdInfTp">
+        <xs:sequence>
+            <xs:element name="ChanTranType"/>      <!-- 变更交易类型 -->
+            <xs:element name="TranDate"/>      <!-- 交易日期 -->
+            <xs:element name="TranAmt"/>      <!-- 交易金额 -->
+            <xs:element name="DetInfo"/>      <!-- 明细信息 -->
+        </xs:sequence>
+    </xs:complexType>
+    <xs:complexType name="LSStageInfSgmtTp">
+        <xs:sequence>
+            <xs:element name="SpecLine"/>      <!-- 专项额度 -->
+            <xs:element name="SpecStaDate"/>      <!-- 专项分期起始日期 -->
+            <xs:element name="SpecEndDate"/>       <!-- 专项分期到期日期 -->
+            <xs:element name="InstAmt"/>        <!-- 分期金额 -->
+            <xs:element name="EchInstAmt"/>       <!-- 每期分期金额 -->
+            <xs:element name="InstBal"/>        <!-- 分期余额 -->
+            <xs:element name="RemInstPrd"/>          <!-- 剩余分期期数 -->
+        </xs:sequence>
+    </xs:complexType>
+    <xs:complexType name="CrdtCrdIdSgmtTp">
+        <xs:sequence>
+            <xs:element name="CreditID"/>      <!-- 卡片标识号 -->
+        </xs:sequence>
+    </xs:complexType>
+    <xs:complexType name="OrigCreditorInfSgmtTp">
+        <xs:sequence>
+            <xs:element name="InitCredName"/>      <!-- 原债权人名称 -->
+            <xs:element name="InitRpySts"/>      <!-- 原账户还款状态 -->
+        </xs:sequence>
+    </xs:complexType>
+</xs:schema>

@@ -10,6 +10,9 @@
 	<input type="hidden" id="customerCodeID" name="customerCode" /> 
 	<input type="hidden" id="createdDateID" name="createdDate" /> 
 	<input type="hidden" id="versionID" name="version" /> 
+	<input type="hidden" id="acctCodeID" name="acctCode" /> 
+	<input type="hidden" id="conCodeID" name="conCode" /> 
+	<input type="hidden" id="cccID" name="ccc" /> 
 	
 	           <div class="form-group">
                     <label class="col-lg-3 control-label">姓名:</label>

@@ -25,9 +25,27 @@
                     </div>
                 </div>
 	           <div class="form-group">
-                    <label class="col-lg-3 control-label">客户编号:</label>
+                    <label class="col-lg-3 control-label">客户资料标识号:</label>
                     <div class="col-lg-9">
                            <p class="form-control-static" id="customerCodeID"></p>
+                    </div>
+                </div>
+                <div class="form-group">
+                    <label class="col-lg-3 control-label">账户标识号:</label>
+                    <div class="col-lg-9">
+                           <p class="form-control-static" id="acctCodeID"></p>
+                    </div>
+                </div>
+                <div class="form-group">
+                    <label class="col-lg-3 control-label">合同标识号:</label>
+                    <div class="col-lg-9">
+                           <p class="form-control-static" id="conCodeID"></p>
+                    </div>
+                </div>
+                <div class="form-group">
+                    <label class="col-lg-3 control-label">抵质押合同标识号:</label>
+                    <div class="col-lg-9">
+                           <p class="form-control-static" id="cccID"></p>
                     </div>
                 </div>
 	           <div class="form-group">

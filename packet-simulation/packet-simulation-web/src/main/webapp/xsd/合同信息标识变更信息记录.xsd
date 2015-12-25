@@ -1,0 +1,24 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<xs:schema xmlns:xs="http://www.w3.org/2001/XMLSchema"  elementFormDefault="qualified">
+    <xs:element name="Document" type="Document"/>
+    <xs:complexType name="Document">
+        <xs:sequence>
+            <xs:element name="CtrctInfIdCagsInf" type="CtrctInfIdCagsInfTp"/>        <!-- 个人合同信息标识变更信息记录 -->
+        </xs:sequence>
+    </xs:complexType>
+    <xs:complexType name="CtrctInfIdCagsInfTp">
+        <xs:sequence>
+            <xs:element name="CtrctInfIdCagsSgmt" type="CtrctInfIdCagsSgmtTp"/>
+        </xs:sequence>
+    </xs:complexType>
+    <xs:complexType name="CtrctInfIdCagsSgmtTp">
+        <xs:sequence>
+            <xs:element name="InfRecTp"/>       <!-- 信息记录类型 -->
+            <xs:element name="Old_Finan_Code"/>       <!-- 原数据提供机构代码 -->
+            <xs:element name="OdBnesId"/>      <!-- 原业务标识号 -->
+            <xs:element name="New_Finan_Code"/>           <!-- 新数据提供机构代码 -->
+            <xs:element name="NwBnesId"/>     <!-- 新业务标识号 -->
+        </xs:sequence>
+    </xs:complexType>  
+</xs:schema>
+

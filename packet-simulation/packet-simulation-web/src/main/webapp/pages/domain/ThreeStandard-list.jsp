@@ -73,8 +73,8 @@ function initFun(){
 	                        {content: '<button class="btn btn-primary" type="button"><span class="glyphicon glyphicon-plus"><span>添加</button>', action: 'add'},
 	                        {content: '<button class="btn btn-success" type="button"><span class="glyphicon glyphicon-edit"><span>修改</button>', action: 'modify'},
 	                        {content: '<button class="btn btn-danger" type="button"><span class="glyphicon glyphicon-remove"><span>删除</button>', action: 'delete'},
-	                        {content: '<button class="btn btn-inverse" type="button"><span class="glyphicon glyphicon-upload"><span>导入三标信息</button>', action: 'importFile'},
-	                        {content: '<button class="btn btn-inverse" type="button"><span class="glyphicon glyphicon-download"><span>导出三标信息</button>', action: 'exportFile'},
+	                        {content: '<button class="btn btn-inverse" type="button"><span class="glyphicon glyphicon-import"><span>导入三标信息</button>', action: 'importFile'},
+	                        {content: '<button class="btn btn-inverse" type="button"><span class="glyphicon glyphicon-export"><span>导出三标信息</button>', action: 'exportFile'},
 	                        {content: '<button class="btn btn-success" type="button"><span class="glyphicon glyphicon-search"><span>高级搜索<span class="caret"></span></button>', action: 'search'}
 	                    ],
 	                url:"${pageContext.request.contextPath}/ThreeStandard/pageJson/" + currentUserId + ".koala",
@@ -94,7 +94,10 @@ function initFun(){
 	                     	                         	                         								 },
 	                         	                         	                         	                         { title: '证件号', name: 'credentialNumber', width: width},
 	                         	                         	                         	                         { title: '机构代码', name: 'organizationCode', width: width},
-	                         	                         	                         	                         { title: '客户编号', name: 'customerCode', width: 2*width/3},
+	                         	                         	                         	                         { title: '客户资料标识号', name: 'customerCode', width: 2*width/3},
+	                         	                         	                         	                      	 { title: '账户标识号', name: 'acctCode', width: 3*width/4},
+	                         	                         	                         	                   		 { title: '合同标识号', name: 'conCode', width: 2*width/3},
+	                         	                         	                         	                		 { title: '抵质押合同标识号', name: 'ccc', width: width},
 	                         	                         	                         	                         { title: '创建日期', name: 'createdDate', width: 2*width/3},
 	                         	                         	                         	                         { title: '创建者', name: 'createdBy', width: width/2},
 	                         	                         	                             { title: '操作', width: 120, render: function (rowdata, name, index)
@@ -388,24 +391,24 @@ var openDetailsPageOfThreeStandard = function(id){
   <tr>
     <td>
           <div class="form-group">
-          <label class="control-label" style="width:100px;float:left;">姓名:&nbsp;</label>
+          <label class="control-label" style="width:120px;float:left;">姓名:&nbsp;</label>
             <div style="margin-left:15px;float:left;">
             <input name="name" class="form-control" type="text" style="width:180px;" id="nameID"  />
         </div>
-        <label class="control-label" style="width:100px;float:left;">证件类型:&nbsp;</label>
+        <label class="control-label" style="width:120px;float:left;">证件类型:&nbsp;</label>
     	  <div style="margin-left:15px;float:left;">
 	      <div class="btn-group select" id="credentialType_SELECT"></div>
 	        <input type="hidden" id="credentialTypeID_" name="credentialType" />
 	      </div>
 	  </div>
 	  <div class="form-group">
-                      <label class="control-label" style="width:100px;float:left;">证件号:&nbsp;</label>
+                      <label class="control-label" style="width:120px;float:left;">证件号:&nbsp;</label>
             <div style="margin-left:15px;float:left;">
             <input name="credentialNumber" class="form-control" type="text" style="width:180px;" id="credentialNumberID"  />
         </div>
 
                   
-          <label class="control-label" style="width:100px;float:left;">创建日期:&nbsp;</label>
+          <label class="control-label" style="width:120px;float:left;">创建日期:&nbsp;</label>
            <div style="margin-left:15px;float:left;">
             <div class="input-group date form_datetime" style="width:140px;float:left;" >
                 <input type="text" class="form-control" style="width:140px;" name="createdDate" id="createdDateID_start" >
@@ -419,11 +422,11 @@ var openDetailsPageOfThreeStandard = function(id){
        </div> 
        </div>                  
                   <div class="form-group">
-          <label class="control-label" style="width:100px;float:left;">客户编号:&nbsp;</label>
+          <label class="control-label" style="width:120px;float:left;">客户资料标识号:&nbsp;</label>
             <div style="margin-left:15px;float:left;">
             <input name="customerCode" class="form-control" type="text" style="width:180px;" id="customerCodeID"  />
         </div>
-                      <label class="control-label" style="width:100px;float:left;">机构代码:&nbsp;</label>
+                      <label class="control-label" style="width:120px;float:left;">机构代码:&nbsp;</label>
             <div style="margin-left:15px;float:left;">
             <input name="organizationCode" class="form-control" type="text" style="width:180px;" id="organizationCodeID"  />
         </div>

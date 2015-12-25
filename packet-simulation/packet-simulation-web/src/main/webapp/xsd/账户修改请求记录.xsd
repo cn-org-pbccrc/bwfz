@@ -1,0 +1,24 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<xs:schema xmlns:xs="http://www.w3.org/2001/XMLSchema"  elementFormDefault="qualified">
+    <xs:element name="Document" type="Document"/>
+    <xs:complexType name="Document">
+        <xs:sequence>
+            <xs:element name="ActMdfc" type="ActMdfcTp"/>             <!-- 个人账户信息修改记录 -->
+        </xs:sequence>
+    </xs:complexType>
+    <xs:complexType name="ActMdfcTp">
+        <xs:sequence>
+            <xs:element name="ActMdfcSgmt" type="ActMdfcSgmtTp"/>
+        </xs:sequence>
+    </xs:complexType>
+    <xs:complexType name="ActMdfcSgmtTp">
+        <xs:sequence>
+            <xs:element name="InfRecTp"/>       <!-- 信息记录类型 -->
+            <xs:element name="FinanCode"/>       <!-- 数据提供机构代码 -->
+            <xs:element name="ModRecId"/>      <!-- 待修改记录标识 -->
+            <xs:element name="RptDate"/>           <!-- 信息报告日期 -->
+            <xs:element name="ModSegMark"/>     <!-- 待修改段段标 -->
+            <xs:element name="MdfcSgmt"/>     <!-- 待改段全部数据项 -->
+        </xs:sequence>
+    </xs:complexType>  
+</xs:schema>

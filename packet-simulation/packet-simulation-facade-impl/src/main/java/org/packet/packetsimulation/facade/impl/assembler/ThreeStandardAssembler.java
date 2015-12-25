@@ -24,6 +24,9 @@ public class ThreeStandardAssembler {
      	    	result.setCredentialNumber (threeStandard.getCredentialNumber());
      	    	result.setOrganizationCode (threeStandard.getOrganizationCode());
      	    	result.setCustomerCode (threeStandard.getCustomerCode());
+     	    	result.setAcctCode(threeStandard.getAcctCode());
+     	    	result.setConCode(threeStandard.getConCode());
+     	    	result.setCcc(threeStandard.getCcc());
      	    	result.setCreatedDate (threeStandard.getCreatedDate());
      	    	result.setCreatedBy (threeStandard.getCreatedBy());
      	    return result;
@@ -52,6 +55,9 @@ public class ThreeStandardAssembler {
          result.setCredentialNumber (threeStandardDTO.getCredentialNumber());
          result.setOrganizationCode (threeStandardDTO.getOrganizationCode());
          result.setCustomerCode (threeStandardDTO.getCustomerCode());
+         result.setAcctCode(threeStandardDTO.getAcctCode());
+         result.setConCode(threeStandardDTO.getConCode());
+         result.setCcc(threeStandardDTO.getCcc());
          result.setCreatedDate (threeStandardDTO.getCreatedDate());
          result.setCreatedBy (threeStandardDTO.getCreatedBy());
  	  	return result;

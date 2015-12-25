@@ -34,6 +34,12 @@ public class MesgController {
 	}
 	
 	@ResponseBody
+	@RequestMapping("/verifyMesgType")
+	public InvokeResult verifyMesgType(@RequestParam String id) {		
+		return mesgFacade.verifyMesgType(Long.parseLong(id));
+	}
+	
+	@ResponseBody
 	@RequestMapping("/batch")
 	public InvokeResult batch(MesgDTO mesgDTO,HttpServletRequest request,@RequestParam String ids,@RequestParam String start,@RequestParam String end,@RequestParam String currentUserId) {
 		String realPath = request.getSession().getServletContext().getRealPath("/");
@@ -46,7 +52,7 @@ public class MesgController {
 				return mesgFacade.creatMesgsByInput(mesgDTO,startOfThreeStandard,endOfThreeStandard,currentUserId);
 			}
 			else if(startOfThreeStandard<1 || startOfThreeStandard>endOfThreeStandard || endOfThreeStandard>countOfThreeStandard){
-				return InvokeResult.failure("起始值不能小于1,结束值不能大于数据库记录总数,且起始值不能大于结束值");
+				return InvokeResult.failure("起始值不能小于1,结束值不能大于三标总个数,且起始值不能大于结束值");
 			}
 		}else if((start == null || "".equals(start)) && (end == null || "".equals(end))){
 			System.out.println("start:"+start);
