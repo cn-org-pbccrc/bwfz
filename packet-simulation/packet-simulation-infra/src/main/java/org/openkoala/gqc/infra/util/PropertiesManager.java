@@ -27,6 +27,7 @@ public final class PropertiesManager {
 	 private static Properties pros836 = new Properties();
 	 private static Properties pros841 = new Properties();
 	 private static Properties pros842 = new Properties();
+	 private static Properties pros811_ = new Properties();
 	
 	 static{
 		 try {
@@ -51,6 +52,7 @@ public final class PropertiesManager {
 	         pros836.load(PropertiesManager.class.getClassLoader().getResourceAsStream("translate8.3.6.properties"));
 	         pros841.load(PropertiesManager.class.getClassLoader().getResourceAsStream("translate8.4.1.properties"));
 	         pros842.load(PropertiesManager.class.getClassLoader().getResourceAsStream("translate8.4.2.properties"));
+	         pros811_.load(PropertiesManager.class.getClassLoader().getResourceAsStream("translate8.1.1_.properties"));
 	         //读取properties文件 这里是将文件从classpath里读取出来!因为在eclispe里src里的文件最后编译后都会放入bin文件夹下,也就是classpath下面,这样可以保证能找到文件
 	     } catch (IOException e) {
 	    	 e.printStackTrace();
@@ -58,7 +60,18 @@ public final class PropertiesManager {
 	     //以上是加载类时将 Properties 的 load方法去加载配置文件
 	 }
 	 private PropertiesManager(){};
-	 
+	 public static final String verify(String key, String templateName){
+		 if(templateName.equals("基本信息正常报送记录")){
+			 String cnName=PropertiesManager.pros811_.getProperty(key);
+			 if(cnName!=null){
+				 return changeChineseCode(PropertiesManager.pros811_.getProperty(key));
+			 }else{
+				 System.out.println(key);
+				 return key;
+			 }
+		 }
+		 return "haha";
+	 }
 	 public static final String getProperties(String key, String templateName){
 		 if(templateName.equals("基本信息正常报送记录")){
 			 String cnName=PropertiesManager.pros811.getProperty(key);

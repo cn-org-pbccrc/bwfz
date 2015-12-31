@@ -2,7 +2,7 @@
 <html lang="zh-CN">
 <head>
     <meta http-equiv="Content-Type" content="text/html; charset=UTF-8">
-    
+<%--     <link href="${contextPath}/lib/bootstrap/css/bootstrap.min.css" rel="stylesheet"/> --%>
     <style>
 #content li a{
 	font-size:13px;
@@ -83,13 +83,19 @@ legend {
 					</div>
 	</div>
 	</form>
+<%-- <script src="${contextPath}/lib/jquery-1.11.3.min.js"></script> --%>
+<script src="${contextPath}/lib/Koala_ToolTip.js"></script>
 <script type="text/javascript">
     var selectItems = {};
+//     $(function(){         
+// 		$('[data-toggle="tooltip"]').tooltip();     
+// 	});
     function addContent(id){
     	//alert(id)
     	$("#content").empty();
     	$.get( '${pageContext.request.contextPath}/MesgType/getEditHtmlByMesgType/' + id + '.koala').done(function(data){
-            $("#content").append(data.data);
+    		//alert(data.data)
+            $("#content").append(data.data);           
      	});
     }
     

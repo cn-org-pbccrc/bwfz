@@ -2,6 +2,7 @@
 <div class="mesgDetail" id="mesgDetail">
 <html lang="zh-CN">
 <head>
+<%-- <link href="${contextPath}/lib/bootstrap/css/bootstrap.min.css" rel="stylesheet"/> --%>
 <style>
 #contentID li a{
 	font-size:13px;
@@ -66,7 +67,8 @@ legend {
 <!-- grid -->
 <div id=<%=gridId%>></div>
 </div>
-
+<%-- <script src="${contextPath}/lib/jquery-1.11.3.min.js"></script> --%>
+<script src="${contextPath}/lib/Koala_ToolTip.js"></script>
 <script type="text/javascript">
 
     var selectItems = {};
@@ -216,7 +218,6 @@ legend {
     	                    $(this).remove();
     	                }
     	            }).find('.modal-body').html(html);
-    	            
     	            self.initPage(dialog.find('form'));
     	            
     	            dialog.find("#mesgTypeID").append(mesgTypeOption);
@@ -225,6 +226,7 @@ legend {
     	        });
     	     
     	        dialog.find('#save').on('click',{grid: grid}, function(e){
+    	        	//alert(dialog.find($(".tab-content")).html())
     	        	//alert(1);
 //     	        	var reg = /^[0-9a-zA-Z_-]{6,20}$/;
 //     	        	var mesgPriorityID = $("#mesgPriorityID").val();
@@ -304,6 +306,7 @@ legend {
 // 							  alert("保存失败")
 // 						  }
 // 				});
+				//alert(xml)
  				if(!Validator.Validate(dialog.find('form')[0],3))return;
  				var data = [{ name: 'nodeValues', value: xml },
  				            { name: 'mesgType', value: dialog.find("#mesgTypeID").val()},
@@ -755,9 +758,9 @@ legend {
     	if(brother.get(0).tagName=="FIELDSET"){
     		var countNum = $("#"+countTagId).val();
         	$("#"+countTagId).val(parseInt(countNum) + 1);
-        //	console.debug(obj);
-        	var html = $($(obj).parent().next().children("FIELDSET:first").get(0)).clone(true);
+        	var html = $($(obj).parent().next().children("FIELDSET:first").get(0)).clone();
         	$(obj).parent().next().append(html);
+        	html.find($('[data-toggle="tooltip"]')).tooltip();
     	}
     }
     

@@ -92,6 +92,7 @@ public class MesgTypeController {
 	@RequestMapping("/getEditHtmlByMesgType/{id}")
 	public InvokeResult getEditHtmlByMesgType(@PathVariable Long id,HttpServletRequest request) {
     	String realPath = request.getSession().getServletContext().getRealPath("/");
+    	//System.out.println("米米二狗哇哈哈:"+realPath);
     	return mesgTypeFacade.getEditHtmlByMesgType(id,realPath);
 	}
     

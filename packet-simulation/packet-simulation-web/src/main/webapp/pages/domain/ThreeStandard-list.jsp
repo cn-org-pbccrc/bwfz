@@ -422,10 +422,10 @@ var openDetailsPageOfThreeStandard = function(id){
        </div> 
        </div>                  
                   <div class="form-group">
-          <label class="control-label" style="width:120px;float:left;">客户资料标识号:&nbsp;</label>
-            <div style="margin-left:15px;float:left;">
-            <input name="customerCode" class="form-control" type="text" style="width:180px;" id="customerCodeID"  />
-        </div>
+<!--           <label class="control-label" style="width:120px;float:left;">客户资料标识号:&nbsp;</label> -->
+<!--             <div style="margin-left:15px;float:left;"> -->
+<!--             <input name="customerCode" class="form-control" type="text" style="width:180px;" id="customerCodeID"  /> -->
+<!--         </div> -->
                       <label class="control-label" style="width:120px;float:left;">机构代码:&nbsp;</label>
             <div style="margin-left:15px;float:left;">
             <input name="organizationCode" class="form-control" type="text" style="width:180px;" id="organizationCodeID"  />
