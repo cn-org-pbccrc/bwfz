@@ -15,7 +15,7 @@ public interface TaskFacade {
 	
 	public InvokeResult removeTask(Long id);
 	
-	public InvokeResult removeTasks(Long[] ids);
+	public InvokeResult removeTasks(Long[] ids, String savePath);
 	
 	public List<TaskDTO> findAllTask();
 	

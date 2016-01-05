@@ -6,8 +6,8 @@
 <meta http-equiv="Content-Type" content="text/html; charset=UTF-8">
 <title>Insert title here</title>
 <%--     <%@include file="/commons/statics.jsp"%> --%>
-<script type="text/javascript" src="${contextPath}/lib/jquery.uploadify.min.js"></script>
-<link rel="stylesheet" type="text/css" href="${contextPath}/lib/uploadify.css">
+<%-- <script type="text/javascript" src="${contextPath}/lib/jquery.uploadify.min.js"></script> --%>
+<%-- <link rel="stylesheet" type="text/css" href="${contextPath}/lib/uploadify.css"> --%>
 <script type="text/javascript">
 	 $(document).ready(function(){
 		$("#uploadify").uploadify({

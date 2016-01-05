@@ -1,9 +1,11 @@
 package org.packet.packetsimulation.web.controller;
 
 import javax.inject.Inject;
+import javax.servlet.http.HttpServletRequest;
 
 import org.springframework.web.bind.WebDataBinder;
 
+import java.io.File;
 import java.text.SimpleDateFormat;
 import java.util.Date;
 
@@ -47,13 +49,14 @@ public class TaskController {
 	
 	@ResponseBody
 	@RequestMapping("/delete")
-	public InvokeResult remove(@RequestParam String ids) {
+	public InvokeResult remove(@RequestParam String ids, HttpServletRequest request) {
 		String[] value = ids.split(",");
         Long[] idArrs = new Long[value.length];
+        String savePath = request.getSession().getServletContext().getRealPath("/")+File.separator+"uploadFiles"+File.separator;
         for (int i = 0; i < value.length; i ++) {
         	        					idArrs[i] = Long.parseLong(value[i]);
 						        }
-        return taskFacade.removeTasks(idArrs);
+        return taskFacade.removeTasks(idArrs, savePath);
 	}
 	
 	@ResponseBody

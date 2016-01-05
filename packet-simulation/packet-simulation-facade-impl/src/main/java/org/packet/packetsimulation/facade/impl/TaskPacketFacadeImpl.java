@@ -295,8 +295,7 @@ public class TaskPacketFacadeImpl implements TaskPacketFacade {
 			}else{
 				packetFrom = "outsideFiles";
 				new File(savePath+application.getTaskPacket(id).getTask().getId()+File.separator+packetFrom+File.separator+application.getTaskPacket(id).getSelectedPacketName()).delete();
-			}
-			
+			}			
 		}
 		application.removeTaskPackets(taskPackets);
 		return InvokeResult.success();

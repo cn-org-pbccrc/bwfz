@@ -84,7 +84,7 @@ legend {
 	</div>
 	</form>
 <%-- <script src="${contextPath}/lib/jquery-1.11.3.min.js"></script> --%>
-<script src="${contextPath}/lib/Koala_ToolTip.js"></script>
+<%-- <script src="${contextPath}/lib/Koala_ToolTip.js"></script> --%>
 <script type="text/javascript">
     var selectItems = {};
 //     $(function(){         
