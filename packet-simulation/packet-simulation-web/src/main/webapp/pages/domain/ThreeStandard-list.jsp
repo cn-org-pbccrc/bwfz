@@ -75,12 +75,13 @@ function initFun(){
 	                        {content: '<button class="btn btn-danger" type="button"><span class="glyphicon glyphicon-remove"><span>删除</button>', action: 'delete'},
 	                        {content: '<button class="btn btn-inverse" type="button"><span class="glyphicon glyphicon-import"><span>导入三标信息</button>', action: 'importFile'},
 	                        {content: '<button class="btn btn-inverse" type="button"><span class="glyphicon glyphicon-export"><span>导出三标信息</button>', action: 'exportFile'},
+	                        {content: '<button class="btn btn-info" type="button"><span class="glyphicon glyphicon-expand"><span>随机生成三标</button>', action: 'expand'},
 	                        {content: '<button class="btn btn-success" type="button"><span class="glyphicon glyphicon-search"><span>高级搜索<span class="caret"></span></button>', action: 'search'}
 	                    ],
 	                url:"${pageContext.request.contextPath}/ThreeStandard/pageJson/" + currentUserId + ".koala",
 	                isShowIndexCol:true,
 	                columns: [
-	                     	                         	                         { title: '姓名', name: 'name', width: width/2},
+	                     	                         	                         { title: '姓名', name: 'name', width: 2*width/3},
 	                         	                         	                         	                         { title: '证件类型', name: 'credentialType', width: width/2,
 	                     	                         	                        								 	render: function(item, name, index){
                      	                         						                 								if(item[name] == '0'){
@@ -131,6 +132,9 @@ function initFun(){
 	                        }
 	                       self.modify(indexs[0], $this);
 	                    },
+	                   'expand': function(){
+	                	   self.expand($(this));
+	                   },
 	                   'delete': function(event, data){
 	                        var indexs = data.data;
 	                        var $this = $(this);
@@ -282,6 +286,39 @@ function initFun(){
 	                    });
 	                });
 	        });
+	    },
+	    expand: function(){
+	    	var self = this;
+	        var dialog = $('<div class="modal fade"><div class="modal-dialog" style="width:900px;"><div class="modal-content"><div class="modal-header"><button type="button" class="close" data-dismiss="modal" aria-hidden="true">&times;</button><h4 class="modal-title">随机生成三标</h4></div><div class="modal-body"><p>One fine body&hellip;</p></div><div class="modal-footer"><button type="button" class="btn btn-default" data-dismiss="modal">取消</button><button type="button" class="btn btn-success" id="save">保存</button></div></div></div></div>');   	    	      
+	        $.get('<%=path%>/ThreeStandard-generate.jsp').done(function(html){
+	        	dialog.find('.modal-body').html(html);
+				dialog.modal({
+	            	keyboard:false
+	            }).on({
+	                'hidden.bs.modal': function(){
+	                	$(this).remove();
+	                }
+	            });
+	        });
+	        dialog.find('#save').on('click',{grid: grid}, function(e){
+                if(!Validator.Validate(dialog.find('form')[0],3))return;
+                dialog.find('.modal-footer').html("<html><body><img src='${pageContext.request.contextPath}/images/loading.gif'  alt='上海鲜花港 - 郁金香' /></body></html>");
+                $.post('${pageContext.request.contextPath}/ThreeStandard/generate.koala?createdBy='+currentUserId, dialog.find('form').serialize()).done(function(result){
+                    if(result.success){
+                        dialog.modal('hide');
+                        e.data.grid.data('koala.grid').refresh();
+                        e.data.grid.message({
+                        	type: 'success',
+                        	content: '保存成功'
+                        });
+                    }else{
+                        dialog.find('.modal-content').message({
+                        	type: 'error',
+                        	content: result.actionError
+                        });
+                    }
+                });
+            });
 	    },
 	    initPage: function(form){
 	              form.find('.form_datetime').datetimepicker({

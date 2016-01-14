@@ -55,15 +55,12 @@ public class MesgController {
 				return InvokeResult.failure("起始值不能小于1,结束值不能大于三标总个数,且起始值不能大于结束值");
 			}
 		}else if((start == null || "".equals(start)) && (end == null || "".equals(end))){
-			System.out.println("start:"+start);
-			System.out.println("三标数目来啦哈哈:"+count);
-			System.out.println("三标数目来的更猛烈!!!!!:"+countOfThreeStandard);
 			String[] values = ids.split(",");
 			return mesgFacade.creatMesgs(mesgDTO,realPath,values);
 		}else if((start == null || "".equals(start)) && (end != null || !"".equals(end))){			
-			return InvokeResult.failure("不能起始为空，结束不为空");
+			return InvokeResult.failure("不能起始为空,结束不为空");
 		}else if((start != null || !"".equals(start)) && (end == null || "".equals(end))){
-			return InvokeResult.failure("不能结束为空，起始不为空");
+			return InvokeResult.failure("不能起始不为空,结束为空");
 		}else{
 			return InvokeResult.failure("批量失败");
 		}

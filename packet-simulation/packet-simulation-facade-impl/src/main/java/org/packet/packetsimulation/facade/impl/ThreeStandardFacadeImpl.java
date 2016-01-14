@@ -6,6 +6,10 @@ import java.util.List;
 import java.util.ArrayList;
 import java.util.Set;
 import java.util.UUID;
+import java.util.concurrent.ExecutionException;
+import java.util.concurrent.ForkJoinPool;
+import java.util.concurrent.Future;
+import java.util.concurrent.RecursiveTask;
 import java.io.BufferedReader;
 import java.io.File;
 import java.io.FileInputStream;
@@ -26,6 +30,7 @@ import org.openkoala.gqc.infra.util.ReadAppointedLine;
 import org.openkoala.koala.commons.InvokeResult;
 import org.openkoala.security.org.core.domain.EmployeeUser;
 import org.packet.packetsimulation.facade.dto.*;
+import org.packet.packetsimulation.facade.impl.MesgFacadeImpl.BaseTask;
 import org.packet.packetsimulation.facade.impl.assembler.PacketAssembler;
 import org.packet.packetsimulation.facade.impl.assembler.TaskPacketAssembler;
 import org.packet.packetsimulation.facade.impl.assembler.ThreeStandardAssembler;
@@ -67,9 +72,9 @@ public class ThreeStandardFacadeImpl implements ThreeStandardFacade {
 		threeStandard.setAcctCode("AcCode"+getShortUuid());
 		threeStandard.setConCode("Cc"+getShortUuid());
 		threeStandard.setCcc("Ccc"+getShortUuid());
-		Date date = new Date(); 
+		//Date date = new Date(); 
 		SimpleDateFormat sdf=new SimpleDateFormat("yyyy-MM-dd");
-		String dateFormat = sdf.format(date);  
+		//String dateFormat = sdf.format(date);  
 		java.util.Date time=null;
 		try {
 			time= sdf.parse(sdf.format(new Date()));
@@ -80,6 +85,128 @@ public class ThreeStandardFacadeImpl implements ThreeStandardFacade {
 		application.creatThreeStandard(threeStandard);
 		return InvokeResult.success();
 	}
+	
+	public InvokeResult generateThreeStandard(ThreeStandardDTO threeStandardDTO, String threeStandardNumber){
+		Long start = new Date().getTime();
+		SimpleDateFormat sdf_ = new SimpleDateFormat("yyyy-MM-dd hh:mm:ss"); 
+		String s = sdf_.format(start);
+		String createdBy = threeStandardDTO.getCreatedBy();
+		EmployeeUser employeeUser = findEmployeeUserByCreatedBy(threeStandardDTO.getCreatedBy());
+		if(employeeUser.getOrganization().equals("1")){
+			threeStandardDTO.setOrganizationCode(employeeUser.getCompany().getSn());
+		}else{
+			threeStandardDTO.setOrganizationCode(employeeUser.getDepartment().getSn());
+		}
+		threeStandardDTO.setCredentialType("0");
+		SimpleDateFormat sdf=new SimpleDateFormat("yyyy-MM-dd");
+//		List<ThreeStandard> threeStandards = new ArrayList<ThreeStandard>();
+//		Integer max = findMaxCustomerCode(threeStandardDTO.getCreatedBy());
+//		Integer a = max + 1;
+//		for(int i = 0; i < Integer.parseInt(threeStandardNumber); i++){
+//			ThreeStandard threeStandard = ThreeStandardAssembler.toEntity(threeStandardDTO);
+//			String uuid = UUID.randomUUID().toString();
+//			threeStandard.setName(uuid.substring(0,8)+uuid.substring(9,13)+uuid.substring(14,16));
+//			threeStandard.setCredentialNumber(uuid.substring(16,18)+uuid.substring(19,23)+uuid.substring(24));
+//			threeStandard.setCustomerCode(a);
+//			a++;
+//			threeStandard.setAcctCode("AcCode"+getShortUuid());
+//			threeStandard.setConCode("Cc"+getShortUuid());
+//			threeStandard.setCcc("Ccc"+getShortUuid());
+//			java.util.Date time=null;
+//			try {
+//				time= sdf.parse(sdf.format(new Date()));
+//			} catch (ParseException e) {
+//				e.printStackTrace();
+//			}
+//			threeStandard.setCreatedDate(time);
+//			threeStandards.add(threeStandard);
+//		}
+		List<ThreeStandard> threeStandards = new ArrayList<ThreeStandard>();
+		ForkJoinPool pool = new ForkJoinPool(5);
+		Task task = new Task(Integer.parseInt(threeStandardNumber), createdBy);
+        Future<List> result =  pool.submit(task);
+        try {
+        	threeStandards = result.get();
+        } catch (InterruptedException e) {
+            e.printStackTrace();
+        } catch (ExecutionException e) {
+            e.printStackTrace();
+        }
+        Long insertstart=System.currentTimeMillis();
+		application.creatThreeStandards(threeStandards);
+		Long insertend=System.currentTimeMillis();
+		Long end = new Date().getTime();
+		String e = sdf_.format(end);
+		System.out.println("插入耗时:"+(insertend-insertstart));
+		System.out.println("开始时间:"+s);
+		System.out.println("结束时间:"+e);
+		return InvokeResult.success();
+	}
+	
+	class Task extends RecursiveTask<List>{
+        private int size = 20000;       
+        private int threeStandardNumber;
+        private String createdBy;
+        public Task(int threeStandardNumber, String createdBy){
+            this.threeStandardNumber = threeStandardNumber;
+            this.createdBy = createdBy;
+        }
+        @Override
+        protected List<ThreeStandard> compute() {
+        	List<ThreeStandard> threeStandards = new ArrayList<ThreeStandard>();
+            if(threeStandardNumber <= size){
+                EmployeeUser employeeUser = findEmployeeUserByCreatedBy(createdBy);
+                String organizationCode;
+        		if(employeeUser.getOrganization().equals("1")){
+        			organizationCode = employeeUser.getCompany().getSn();
+        		}else{
+        			organizationCode = employeeUser.getDepartment().getSn();
+        		}
+        		SimpleDateFormat sdf=new SimpleDateFormat("yyyy-MM-dd");       		
+        		Integer max = findMaxCustomerCode(createdBy);
+        		Integer a = max + 1;
+        		for(int i = 0; i < threeStandardNumber; i++){
+        			ThreeStandard threeStandard = new ThreeStandard();
+        			String uuid = UUID.randomUUID().toString();
+        			threeStandard.setOrganizationCode(organizationCode);
+        			threeStandard.setCreatedBy(createdBy);
+        			threeStandard.setName(uuid.substring(0,8)+uuid.substring(9,13)+uuid.substring(14,16));
+        			threeStandard.setCredentialType("0");
+        			threeStandard.setCredentialNumber(uuid.substring(16,18)+uuid.substring(19,23)+uuid.substring(24));
+        			threeStandard.setCustomerCode(a);
+        			a++;
+        			threeStandard.setAcctCode("AcCode"+getShortUuid());
+        			threeStandard.setConCode("Cc"+getShortUuid());
+        			threeStandard.setCcc("Ccc"+getShortUuid());
+        			java.util.Date time=null;
+        			try {
+        				time= sdf.parse(sdf.format(new Date()));
+        			} catch (ParseException e) {
+        				e.printStackTrace();
+        			}
+        			threeStandard.setCreatedDate(time);
+        			threeStandards.add(threeStandard);
+        		}
+            }else{
+                //细分成小任务
+                List<Task> tasks = new ArrayList<ThreeStandardFacadeImpl.Task>();
+                for (int index = 0; index * size < threeStandardNumber; index++) {
+                	Task task;
+                    if((index + 1) * size > threeStandardNumber){
+                        task = new Task(threeStandardNumber-index*size, createdBy);
+                    }else{
+                        task = new Task(size, createdBy);
+                    }
+                    task.fork();
+                    tasks.add(task);
+                }
+                for (Task task : tasks) {
+                	threeStandards.addAll(task.join());
+                }
+            }            
+            return threeStandards;
+        }      
+    }
 	
 	public static String[] chars = new String[]{
 		"a", "b", "c", "d", "e", "f", "g", "h", "i", "j", "k", "l", "m", "n", "o", "p", "q", "r", "s", "t", "u", "v", "w", "x", "y", "z",
@@ -231,9 +358,9 @@ public class ThreeStandardFacadeImpl implements ThreeStandardFacade {
 			threeStandard.setAcctCode("AcCode"+getShortUuid());
 			threeStandard.setConCode("Cc"+getShortUuid());
 			threeStandard.setCcc("Ccc"+getShortUuid());
-			Date date = new Date(); 
+			//Date date = new Date(); 
 			SimpleDateFormat sdf=new SimpleDateFormat("yyyy-MM-dd");
-			String dateFormat = sdf.format(date);  
+			//String dateFormat = sdf.format(date);  
 			java.util.Date time=null;
 			try {
 				time= sdf.parse(sdf.format(new Date()));

@@ -116,6 +116,7 @@ function initFun(){
 	                        {content: '<button class="btn btn-info" type="button"><span class="glyphicon glyphicon-arrow-up"><span>上移</button>', action: 'up'},
 	                        {content: '<button class="btn btn-info" type="button"><span class="glyphicon glyphicon-arrow-down"><span>下移</button>', action: 'down'},
 	                        {content: '<button class="btn btn-warning" type="button"><span class="glyphicon glyphicon-refresh"><span>刷新</button>', action: 'fresh'},
+	                        {content: '<button class="btn btn-primary" type="button"><span class="glyphicon glyphicon-log-out"><span>发送</button>', action: 'send'},
 	                        {content: '<button class="btn btn-success" type="button"><span class="glyphicon glyphicon-search"><span>高级搜索<span class="caret"></span></button>', action: 'search'}
 	                    ],
 	                url:"${pageContext.request.contextPath}/TaskPacket/pageJson/" + taskId + ".koala",
@@ -247,6 +248,9 @@ function initFun(){
 	                    },
 	                    'fresh' : function() {
 	                    	grid.data('koala.grid').refresh();
+	                    },
+	                    'send' : function() {
+	                    	self.send($(this));
 	                    },
 	                    'search' : function() {						
 	       					$("#taskPacketQueryDiv").slideToggle("slow");						 
@@ -827,6 +831,9 @@ function initFun(){
 	                });
 	            }
 	    	});
+	    },
+	    send: function(){
+	    	
 	    }
 	}
 	PageLoader.initSearchPanel();

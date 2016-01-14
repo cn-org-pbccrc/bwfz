@@ -5,7 +5,6 @@ import java.io.ByteArrayInputStream;
 import java.io.ByteArrayOutputStream;
 import java.io.File;
 import java.io.FileInputStream;
-import java.io.FileNotFoundException;
 import java.io.IOException;
 import java.io.InputStream;
 import java.io.InputStreamReader;
@@ -13,16 +12,11 @@ import java.io.OutputStream;
 import java.io.Reader;
 import java.io.StringReader;
 import java.io.StringWriter;
-import java.net.URLDecoder;
 import java.security.SecureRandom;
 import java.text.ParseException;
 import java.text.SimpleDateFormat;
-import java.util.ArrayList;
 import java.util.Date;
-import java.util.HashSet;
-import java.util.List;
 import java.util.Map;
-import java.util.Set;
 import java.util.zip.GZIPInputStream;
 import java.util.zip.GZIPOutputStream;
 
@@ -48,27 +42,10 @@ import org.dom4j.DocumentHelper;
 import org.dom4j.io.OutputFormat;
 import org.dom4j.io.XMLWriter;
 import org.openkoala.gqc.infra.util.ReadAppointedLine;
-import org.openkoala.gqc.infra.util.XmlNode;
-import org.openkoala.gqc.infra.util.XmlUtil;
 import org.openkoala.koala.commons.InvokeResult;
-import org.openkoala.security.core.PacketHeadFormatException;
-import org.openkoala.security.core.PacketNameIsExistedException;
-import org.packet.packetsimulation.application.MesgApplication;
-import org.packet.packetsimulation.application.MesgTypeApplication;
-import org.packet.packetsimulation.application.PacketApplication;
-import org.packet.packetsimulation.core.domain.FileName;
-import org.packet.packetsimulation.core.domain.Mesg;
-import org.packet.packetsimulation.core.domain.MesgType;
 import org.packet.packetsimulation.core.domain.Packet;
 import org.packet.packetsimulation.facade.PacketFacade;
-import org.packet.packetsimulation.facade.dto.MesgDTO;
 import org.packet.packetsimulation.facade.dto.PacketDTO;
-import org.packet.packetsimulation.facade.dto.TaskPacketDTO;
-import org.packet.packetsimulation.facade.impl.PacketFacadeImpl;
-import org.packet.packetsimulation.facade.impl.assembler.MesgAssembler;
-import org.packet.packetsimulation.facade.impl.assembler.PacketAssembler;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
 import org.springframework.beans.propertyeditors.CustomDateEditor;
 import org.springframework.stereotype.Controller;
 import org.springframework.util.FileCopyUtils;
@@ -84,21 +61,12 @@ import org.w3c.dom.Document;
 import org.w3c.dom.Element;
 import org.xml.sax.InputSource;
 import org.xml.sax.SAXException;
-import org.xml.sax.SAXParseException;
-
 import java.security.InvalidKeyException;
 import java.security.NoSuchAlgorithmException;
-import java.security.SecureRandom;
-import java.security.spec.InvalidKeySpecException;
-
 import javax.crypto.BadPaddingException;
-import javax.crypto.Cipher;
 import javax.crypto.IllegalBlockSizeException;
 import javax.crypto.KeyGenerator;
 import javax.crypto.NoSuchPaddingException;
-import javax.crypto.SecretKey;
-import javax.crypto.SecretKeyFactory;
-import javax.crypto.spec.DESKeySpec;
 
 
 
@@ -107,7 +75,7 @@ import javax.crypto.spec.DESKeySpec;
 public class PacketController {
 	private final static String DES = "DES";
 	public final static String PWD_KEY = "MZTHPWDJM";
-	private static final Logger LOGGER = LoggerFactory.getLogger(PacketController.class);
+	//private static final Logger LOGGER = LoggerFactory.getLogger(PacketController.class);
 	
 	@Inject
 	private PacketFacade packetFacade;
@@ -271,14 +239,12 @@ public class PacketController {
 	@RequestMapping("/load")
 	public InvokeResult load(PacketDTO packetDTO, HttpServletRequest request, HttpServletResponse response) throws IOException, ParseException, ParserConfigurationException, SAXException {
 		request.setCharacterEncoding("utf-8"); 
-		System.out.println("哈哈哈哈收到啦！！！！！！！！！");
+		//System.out.println("哈哈哈哈收到啦！！！！！！！！！");
 		MultipartHttpServletRequest multipartRequest = (MultipartHttpServletRequest) request;	
 		Map<String, MultipartFile> fileMap = multipartRequest.getFileMap();
 		String ctxPath=request.getSession().getServletContext().getRealPath("/")+File.separator+"loadFiles" + File.separator + packetDTO.getCreatedBy() + File.separator;	
 		System.out.println("ctxpath="+ctxPath);	
-		String xsdPath = request.getSession().getServletContext().getRealPath("/")+File.separator+"xsd" + File.separator;
-		File xsdFile = new File(xsdPath);    	
-		File[] xsdFileList = xsdFile.listFiles();
+		String xsdPath = request.getSession().getServletContext().getRealPath("/")+File.separator+"xsd" + File.separator;   	
 		File file = new File(ctxPath);    	
 		if (!file.exists()) {    	
 			file.mkdirs();    	

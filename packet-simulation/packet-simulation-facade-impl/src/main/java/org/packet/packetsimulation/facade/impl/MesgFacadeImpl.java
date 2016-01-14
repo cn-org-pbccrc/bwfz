@@ -2,11 +2,18 @@ package org.packet.packetsimulation.facade.impl;
 
 import java.io.IOException;
 import java.text.MessageFormat;
+import java.text.SimpleDateFormat;
 import java.util.ArrayList;
 import java.util.Date;
 import java.util.HashSet;
+import java.util.Iterator;
 import java.util.List;
 import java.util.Set;
+import java.util.concurrent.CopyOnWriteArrayList;
+import java.util.concurrent.ExecutionException;
+import java.util.concurrent.ForkJoinPool;
+import java.util.concurrent.Future;
+import java.util.concurrent.RecursiveTask;
 
 import javax.inject.Inject;
 import javax.inject.Named;
@@ -15,6 +22,10 @@ import javax.xml.parsers.ParserConfigurationException;
 import org.dayatang.domain.InstanceFactory;
 import org.dayatang.querychannel.QueryChannelService;
 import org.dayatang.utils.Page;
+import org.dom4j.Document;
+import org.dom4j.DocumentException;
+import org.dom4j.DocumentHelper;
+import org.dom4j.Element;
 import org.openkoala.gqc.infra.util.XmlNode;
 import org.openkoala.gqc.infra.util.XmlUtil;
 import org.openkoala.koala.commons.InvokeResult;
@@ -29,6 +40,7 @@ import org.packet.packetsimulation.core.domain.ThreeStandard;
 import org.packet.packetsimulation.facade.MesgFacade;
 import org.packet.packetsimulation.facade.dto.MesgDTO;
 import org.packet.packetsimulation.facade.impl.assembler.MesgAssembler;
+import org.springframework.scheduling.concurrent.ThreadPoolTaskExecutor;
 import org.springframework.transaction.annotation.Transactional;
 import org.springframework.dao.DataAccessException;
 import org.xml.sax.SAXException;
@@ -63,7 +75,7 @@ public class MesgFacadeImpl implements MesgFacade {
 		try {
 			XmlNode xmlNode = XmlUtil.getXmlNodeByXmlContent(dto.getContent(),mesgType.getCountTag());
 			dto.setContent(xmlNode.toHtmlTabString(mesgType.getFilePath()));
-			System.out.println("巨头现身吧:"+xmlNode.toHtmlTabString(mesgType.getFilePath()));
+			//System.out.println("巨头现身吧:"+xmlNode.toHtmlTabString(mesgType.getFilePath()));
 		} catch (SAXException e) {
 			// TODO Auto-generated catch block
 			e.printStackTrace();
@@ -78,52 +90,12 @@ public class MesgFacadeImpl implements MesgFacade {
 	}
 	
 	public InvokeResult creatMesg(MesgDTO mesgDTO,String realPath) {
-//		Mesg mesg = MesgAssembler.toEntity(mesgDTO);
-//		mesg.setMesgId(new Date().getTime()+"");
-//		
-//		MesgType mesgType = mesgTypeApplication.getMesgType(mesgDTO.getMesgType());
-//		mesg.setMesgType(mesgType);
-//		Packet packet = packetApplication.getPacket(mesgDTO.getPacketId());
-//		mesg.setPacket(packet);
-//		
-//		String[] nodeValues = mesgDTO.getNodeValues();
-//		try {
-//			XmlNode xmlNode = XmlUtil.getXmlNodeByXml(mesgType.getFilePath(), realPath,mesgType.getCountTag());
-//			try {
-//				xmlNode.setValues(nodeValues);
-//			} catch (CloneNotSupportedException e) {
-//				// TODO Auto-generated catch block
-//				e.printStackTrace();
-//			}
-//			
-//			String errors = XmlUtil.validateXMLByXSD(mesgType.getFilePath(), realPath,xmlNode.toXMLString());
-//			if(null!=errors){
-//				return InvokeResult.failure(errors);
-//			}
-//			mesg.setContent(xmlNode.toXMLString());
-//		} catch (SAXException e) {
-//			// TODO Auto-generated catch block
-//			e.printStackTrace();
-//		} catch (IOException e) {
-//			// TODO Auto-generated catch block
-//			e.printStackTrace();
-//		} catch (ParserConfigurationException e) {
-//			// TODO Auto-generated catch block
-//			e.printStackTrace();
-//		}
-//		
-//		application.creatMesg(mesg);
-//		return InvokeResult.success();
-		
 		Mesg mesg = MesgAssembler.toEntity(mesgDTO);
-		mesg.setMesgId(new Date().getTime()+"");
-		
 		MesgType mesgType = mesgTypeApplication.getMesgType(mesgDTO.getMesgType());
 		mesg.setMesgType(mesgType);
 		Packet packet = packetApplication.getPacket(mesgDTO.getPacketId());
 		mesg.setPacket(packet);
 		mesg.setContent(mesgDTO.getNodeValues());
-		System.out.println("O(∩_∩)O哈！O(∩_∩)O哈！"+mesgDTO.getNodeValues());
 		application.creatMesg(mesg);
 		return InvokeResult.success();
 	}
@@ -141,7 +113,6 @@ public class MesgFacadeImpl implements MesgFacade {
 	public InvokeResult creatBatch(MesgDTO mesgDTO,String realPath,int batchNumber) {
 		for(int i = 0; i<batchNumber; i++){
 			Mesg mesg = MesgAssembler.toEntity(mesgDTO);
-			mesg.setMesgId(new Date().getTime()+"");
 			MesgType mesgType = mesgTypeApplication.getMesgType(mesgDTO.getMesgType());
 			mesg.setMesgType(mesgType);
 			Packet packet = packetApplication.getPacket(mesgDTO.getPacketId());
@@ -154,37 +125,22 @@ public class MesgFacadeImpl implements MesgFacade {
 	
 	public InvokeResult creatMesgs(MesgDTO mesgDTO,String realPath,String[] values) {		
 		List<Mesg> mesgs= new ArrayList<Mesg>();
-		String flag = null;
-		//System.out.println(values.length);
 		Mesg mesgById = application.getMesg(mesgDTO.getId());
 		String content = mesgById.getContent();
-		System.out.println("啊哈哈哈哈米米变驴啦:"+mesgById.getContent());
 		if(mesgById.getMesgType().getFilePath().equals("基本信息正常报送记录")){
 			for(int i = 0; i < values.length; i++){
 				Mesg mesg = new Mesg();
-				//Mesg mesg = application.getMesg(mesgDTO.getId());
 				String name = content.substring(content.indexOf("<Name>")+6,content.indexOf("</Name>"));
 				String credentialType = content.substring(content.indexOf("<IDType>")+8,content.indexOf("</IDType>"));
 				String credentialNumber = content.substring(content.indexOf("<IDNum>")+7,content.indexOf("</IDNum>"));
 				String customerCode = content.substring(content.indexOf("<CstCode>")+9,content.indexOf("</CstCode>"));
 				ThreeStandard threeStandard = threeStandardApplication.getThreeStandard(Long.parseLong(values[i]));			
-				if(threeStandard.getCredentialType().equals("0")){
-					flag = "身份证";
-				}else if(threeStandard.getCredentialType().equals("1")){
-					flag = "军官证";
-				}else if(threeStandard.getCredentialType().equals("2")){
-					flag = "护照";
-				}
 				content = content.replace("<Name>"+name+"</Name>","<Name>"+threeStandard.getName()+"</Name>");
-				content = content.replace("<IDType>"+credentialType+"</IDType>","<IDType>"+flag+"</IDType>");
+				content = content.replace("<IDType>"+credentialType+"</IDType>","<IDType>"+threeStandard.getCredentialType()+"</IDType>");
 				content = content.replace("<IDNum>"+credentialNumber+"</IDNum>","<IDNum>"+threeStandard.getCredentialNumber()+"</IDNum>");
 				content = content.replace("<CstCode>"+customerCode+"</CstCode>","<CstCode>"+threeStandard.getCustomerCode()+"</CstCode>");
-				System.out.println("变驴啦:"+content);
-				mesg.setMesgId(new Date().getTime()+"");
-				MesgType mesgType = mesgTypeApplication.getMesgType(mesgDTO.getMesgType());
-				mesg.setMesgType(mesgType);
-				Packet packet = packetApplication.getPacket(mesgDTO.getPacketId());
-				mesg.setPacket(packet);
+				mesg.setMesgType(mesgById.getMesgType());
+				mesg.setPacket(mesgById.getPacket());
 				mesg.setContent(content);
 				mesgs.add(mesg);
 			}
@@ -198,110 +154,63 @@ public class MesgFacadeImpl implements MesgFacade {
 				String conCode = content.substring(content.indexOf("<Mcc>")+5,content.indexOf("</Mcc>"));
 				String ccc = content.substring(content.indexOf("<Ccc>")+5,content.indexOf("</Ccc>"));
 				ThreeStandard threeStandard = threeStandardApplication.getThreeStandard(Long.parseLong(values[i]));			
-				if(threeStandard.getCredentialType().equals("0")){
-					flag = "身份证";
-				}else if(threeStandard.getCredentialType().equals("1")){
-					flag = "军官证";
-				}else if(threeStandard.getCredentialType().equals("2")){
-					flag = "护照";
-				}
 				content = content.replace("<Name>"+name+"</Name>","<Name>"+threeStandard.getName()+"</Name>");
-				content = content.replace("<IDType>"+credentialType+"</IDType>","<IDType>"+flag+"</IDType>");
+				content = content.replace("<IDType>"+credentialType+"</IDType>","<IDType>"+threeStandard.getCredentialType()+"</IDType>");
 				content = content.replace("<IDNum>"+credentialNumber+"</IDNum>","<IDNum>"+threeStandard.getCredentialNumber()+"</IDNum>");
 				content = content.replace("<AcctCode>"+acctCode+"</AcctCode>","<AcctCode>"+threeStandard.getAcctCode()+"</AcctCode>");
 				content = content.replace("<Mcc>"+conCode+"</Mcc>","<Mcc>"+threeStandard.getConCode()+"</Mcc>");
 				content = content.replace("<Ccc>"+ccc+"</Ccc>","<Ccc>"+threeStandard.getCcc()+"</Ccc>");
-				System.out.println("变驴啦:"+content);
-				mesg.setMesgId(new Date().getTime()+"");
-				MesgType mesgType = mesgTypeApplication.getMesgType(mesgDTO.getMesgType());
-				mesg.setMesgType(mesgType);
-				Packet packet = packetApplication.getPacket(mesgDTO.getPacketId());
-				mesg.setPacket(packet);
+				mesg.setMesgType(mesgById.getMesgType());
+				mesg.setPacket(mesgById.getPacket());
 				mesg.setContent(content);
 				mesgs.add(mesg);
 			}
 		}else if(mesgById.getMesgType().getFilePath().equals("合同信息正常报送记录")){
 			for(int i = 0; i < values.length; i++){
 				Mesg mesg = new Mesg();
-				//Mesg mesg = application.getMesg(mesgDTO.getId());
 				String name = content.substring(content.indexOf("<Name>")+6,content.indexOf("</Name>"));
 				String credentialType = content.substring(content.indexOf("<IDType>")+8,content.indexOf("</IDType>"));
 				String credentialNumber = content.substring(content.indexOf("<IDNum>")+7,content.indexOf("</IDNum>"));
 				String conCode = content.substring(content.indexOf("<ConCode>")+9,content.indexOf("</ConCode>"));
 				ThreeStandard threeStandard = threeStandardApplication.getThreeStandard(Long.parseLong(values[i]));			
-				if(threeStandard.getCredentialType().equals("0")){
-					flag = "身份证";
-				}else if(threeStandard.getCredentialType().equals("1")){
-					flag = "军官证";
-				}else if(threeStandard.getCredentialType().equals("2")){
-					flag = "护照";
-				}
 				content = content.replace("<Name>"+name+"</Name>","<Name>"+threeStandard.getName()+"</Name>");
-				content = content.replace("<IDType>"+credentialType+"</IDType>","<IDType>"+flag+"</IDType>");
+				content = content.replace("<IDType>"+credentialType+"</IDType>","<IDType>"+threeStandard.getCredentialType()+"</IDType>");
 				content = content.replace("<IDNum>"+credentialNumber+"</IDNum>","<IDNum>"+threeStandard.getCredentialNumber()+"</IDNum>");
 				content = content.replace("<ConCode>"+conCode+"</ConCode>","<ConCode>"+threeStandard.getConCode()+"</ConCode>");
-				System.out.println("变驴啦:"+content);
-				mesg.setMesgId(new Date().getTime()+"");
-				MesgType mesgType = mesgTypeApplication.getMesgType(mesgDTO.getMesgType());
-				mesg.setMesgType(mesgType);
-				Packet packet = packetApplication.getPacket(mesgDTO.getPacketId());
-				mesg.setPacket(packet);
+				mesg.setMesgType(mesgById.getMesgType());
+				mesg.setPacket(mesgById.getPacket());
 				mesg.setContent(content);
 				mesgs.add(mesg);
 			}
 		}else if(mesgById.getMesgType().getFilePath().equals("抵质押合同信息正常报送记录")){
 			for(int i = 0; i < values.length; i++){
 				Mesg mesg = new Mesg();
-				//Mesg mesg = application.getMesg(mesgDTO.getId());
 				String name = content.substring(content.indexOf("<GuarName>")+10,content.indexOf("</GuarName>"));
 				String credentialType = content.substring(content.indexOf("<GuarCertType>")+14,content.indexOf("</GuarCertType>"));
 				String credentialNumber = content.substring(content.indexOf("<GuarCertNum>")+13,content.indexOf("</GuarCertNum>"));
 				String ccc = content.substring(content.indexOf("<Ccc>")+5,content.indexOf("</Ccc>"));
 				ThreeStandard threeStandard = threeStandardApplication.getThreeStandard(Long.parseLong(values[i]));			
-				if(threeStandard.getCredentialType().equals("0")){
-					flag = "身份证";
-				}else if(threeStandard.getCredentialType().equals("1")){
-					flag = "军官证";
-				}else if(threeStandard.getCredentialType().equals("2")){
-					flag = "护照";
-				}
 				content = content.replace("<GuarName>"+name+"</GuarName>","<GuarName>"+threeStandard.getName()+"</GuarName>");
-				content = content.replace("<GuarCertType>"+credentialType+"</GuarCertType>","<GuarCertType>"+flag+"</GuarCertType>");
+				content = content.replace("<GuarCertType>"+credentialType+"</GuarCertType>","<GuarCertType>"+threeStandard.getCredentialType()+"</GuarCertType>");
 				content = content.replace("<GuarCertNum>"+credentialNumber+"</GuarCertNum>","<GuarCertNum>"+threeStandard.getCredentialNumber()+"</GuarCertNum>");
 				content = content.replace("<Ccc>"+ccc+"</Ccc>","<Ccc>"+threeStandard.getCcc()+"</Ccc>");
-				System.out.println("变驴啦:"+content);
-				mesg.setMesgId(new Date().getTime()+"");
-				MesgType mesgType = mesgTypeApplication.getMesgType(mesgDTO.getMesgType());
-				mesg.setMesgType(mesgType);
-				Packet packet = packetApplication.getPacket(mesgDTO.getPacketId());
-				mesg.setPacket(packet);
+				mesg.setMesgType(mesgById.getMesgType());
+				mesg.setPacket(mesgById.getPacket());
 				mesg.setContent(content);
 				mesgs.add(mesg);
 			}
 		}else{
 			for(int i = 0; i < values.length; i++){
 				Mesg mesg = new Mesg();
-				//Mesg mesg = application.getMesg(mesgDTO.getId());
 				String name = content.substring(content.indexOf("<Name>")+6,content.indexOf("</Name>"));
 				String credentialType = content.substring(content.indexOf("<IDType>")+8,content.indexOf("</IDType>"));
 				String credentialNumber = content.substring(content.indexOf("<IDNum>")+7,content.indexOf("</IDNum>"));				
 				ThreeStandard threeStandard = threeStandardApplication.getThreeStandard(Long.parseLong(values[i]));			
-				if(threeStandard.getCredentialType().equals("0")){
-					flag = "身份证";
-				}else if(threeStandard.getCredentialType().equals("1")){
-					flag = "军官证";
-				}else if(threeStandard.getCredentialType().equals("2")){
-					flag = "护照";
-				}
 				content = content.replace("<Name>"+name+"</Name>","<Name>"+threeStandard.getName()+"</Name>");
-				content = content.replace("<IDType>"+credentialType+"</IDType>","<IDType>"+flag+"</IDType>");
+				content = content.replace("<IDType>"+credentialType+"</IDType>","<IDType>"+threeStandard.getCredentialType()+"</IDType>");
 				content = content.replace("<IDNum>"+credentialNumber+"</IDNum>","<IDNum>"+threeStandard.getCredentialNumber()+"</IDNum>");				
-				System.out.println("变驴啦:"+content);
-				mesg.setMesgId(new Date().getTime()+"");
-				MesgType mesgType = mesgTypeApplication.getMesgType(mesgDTO.getMesgType());
-				mesg.setMesgType(mesgType);
-				Packet packet = packetApplication.getPacket(mesgDTO.getPacketId());
-				mesg.setPacket(packet);
+				mesg.setMesgType(mesgById.getMesgType());
+				mesg.setPacket(mesgById.getPacket());
 				mesg.setContent(content);
 				mesgs.add(mesg);
 			}
@@ -309,221 +218,372 @@ public class MesgFacadeImpl implements MesgFacade {
 		application.creatMesgs(mesgs);
 		return InvokeResult.success();
 	}
+	
+	class BaseTask extends RecursiveTask<List>{
+        private int size = 2000;       
+        private List<ThreeStandard> data;
+        private Mesg tmpMesg;
+        private String content;
+        public BaseTask(List<ThreeStandard> data, Mesg tmpMesg){
+            this.data = data;
+            this.tmpMesg = tmpMesg;
+            this.content = tmpMesg.getContent();
+        }
+        @Override
+        protected List<Mesg> compute() {
+        	List<Mesg> mesgs = new ArrayList<Mesg>();
+            if(data.size() <= size){
+                System.out.println("******************************** size:" + data.size());
+                for (ThreeStandard threeStandard : data) {
+    				Mesg mesg = new Mesg();
+    				String name = content.substring(content.indexOf("<Name>")+6,content.indexOf("</Name>"));
+    				String credentialType = content.substring(content.indexOf("<IDType>")+8,content.indexOf("</IDType>"));
+    				String credentialNumber = content.substring(content.indexOf("<IDNum>")+7,content.indexOf("</IDNum>"));
+    				String customerCode = content.substring(content.indexOf("<CstCode>")+9,content.indexOf("</CstCode>"));
+    				content = content.replaceFirst("<Name>"+name+"</Name>","<Name>"+threeStandard.getName()+"</Name>");
+    				content = content.replaceFirst("<IDType>"+credentialType+"</IDType>","<IDType>"+threeStandard.getCredentialType()+"</IDType>");
+    				content = content.replaceFirst("<IDNum>"+credentialNumber+"</IDNum>","<IDNum>"+threeStandard.getCredentialNumber()+"</IDNum>");
+    				content = content.replaceFirst("<CstCode>"+customerCode+"</CstCode>","<CstCode>"+threeStandard.getCustomerCode()+"</CstCode>");   				
+    				mesg.setMesgType(tmpMesg.getMesgType());
+    				mesg.setPacket(tmpMesg.getPacket());
+    				mesg.setContent(content);
+    				mesgs.add(mesg);
+    			}
+            }else{
+                //细分成小任务
+                List<BaseTask> tasks = new ArrayList<MesgFacadeImpl.BaseTask>();
+                for (int index = 0; index * size < data.size(); index++) {
+                	BaseTask task;
+                    if((index + 1) * size > data.size()){
+                        task = new BaseTask(data.subList(index * size, data.size()), tmpMesg);
+                    }else{
+                        task = new BaseTask(data.subList(index * size, (index + 1) * size), tmpMesg);
+                    }
+                    task.fork();
+                    tasks.add(task);
+                }
+                for (BaseTask task : tasks) {
+                	mesgs.addAll(task.join());
+                }
+            }            
+            return mesgs;
+        }      
+    }
+	
+	class AcctTask extends RecursiveTask<List>{
+        private int size = 2000;       
+        private List<ThreeStandard> data;
+        private Mesg tmpMesg;
+        private String content;
+        public AcctTask(List<ThreeStandard> data, Mesg tmpMesg){
+            this.data = data;
+            this.tmpMesg = tmpMesg;
+            this.content = tmpMesg.getContent();
+        }
+        @Override
+        protected List<Mesg> compute() {
+        	List<Mesg> mesgs = new ArrayList<Mesg>();
+            if(data.size() <= size){
+                System.out.println("******************************** size:" + data.size());
+                for (ThreeStandard threeStandard : data) {
+    				Mesg mesg = new Mesg();
+    				String name = content.substring(content.indexOf("<Name>")+6,content.indexOf("</Name>"));
+    				String credentialType = content.substring(content.indexOf("<IDType>")+8,content.indexOf("</IDType>"));
+    				String credentialNumber = content.substring(content.indexOf("<IDNum>")+7,content.indexOf("</IDNum>"));
+    				String acctCode = content.substring(content.indexOf("<AcctCode>")+10,content.indexOf("</AcctCode>"));
+    				String conCode = content.substring(content.indexOf("<Mcc>")+5,content.indexOf("</Mcc>"));
+    				String ccc = content.substring(content.indexOf("<Ccc>")+5,content.indexOf("</Ccc>"));		
+    				content = content.replace("<Name>"+name+"</Name>","<Name>"+threeStandard.getName()+"</Name>");
+    				content = content.replace("<IDType>"+credentialType+"</IDType>","<IDType>"+threeStandard.getCredentialType()+"</IDType>");
+    				content = content.replace("<IDNum>"+credentialNumber+"</IDNum>","<IDNum>"+threeStandard.getCredentialNumber()+"</IDNum>");
+    				content = content.replace("<AcctCode>"+acctCode+"</AcctCode>","<AcctCode>"+threeStandard.getAcctCode()+"</AcctCode>");
+    				content = content.replace("<Mcc>"+conCode+"</Mcc>","<Mcc>"+threeStandard.getConCode()+"</Mcc>");
+    				content = content.replace("<Ccc>"+ccc+"</Ccc>","<Ccc>"+threeStandard.getCcc()+"</Ccc>");
+    				mesg.setMesgType(tmpMesg.getMesgType());
+    				mesg.setPacket(tmpMesg.getPacket());
+    				mesg.setContent(content);
+    				mesgs.add(mesg);
+    			}
+            }else{
+                //细分成小任务
+                List<AcctTask> tasks = new ArrayList<MesgFacadeImpl.AcctTask>();
+                for (int index = 0; index * size < data.size(); index++) {
+                	AcctTask task;
+                    if((index + 1) * size > data.size()){
+                        task = new AcctTask(data.subList(index * size, data.size()), tmpMesg);
+                    }else{
+                        task = new AcctTask(data.subList(index * size, (index + 1) * size), tmpMesg);
+                    }
+                    task.fork();
+                    tasks.add(task);
+                }
+                for (AcctTask task : tasks) {
+                	mesgs.addAll(task.join());
+                }
+            }            
+            return mesgs;
+        }      
+    }
+	
+	class ConTask extends RecursiveTask<List>{
+        private int size = 2000;       
+        private List<ThreeStandard> data;
+        private Mesg tmpMesg;
+        private String content;
+        public ConTask(List<ThreeStandard> data, Mesg tmpMesg){
+            this.data = data;
+            this.tmpMesg = tmpMesg;
+            this.content = tmpMesg.getContent();
+        }
+        @Override
+        protected List<Mesg> compute() {
+        	List<Mesg> mesgs = new ArrayList<Mesg>();
+            if(data.size() <= size){
+                System.out.println("******************************** size:" + data.size());
+                for (ThreeStandard threeStandard : data) {
+    				Mesg mesg = new Mesg();
+    				String name = content.substring(content.indexOf("<Name>")+6,content.indexOf("</Name>"));
+    				String credentialType = content.substring(content.indexOf("<IDType>")+8,content.indexOf("</IDType>"));
+    				String credentialNumber = content.substring(content.indexOf("<IDNum>")+7,content.indexOf("</IDNum>"));
+    				String conCode = content.substring(content.indexOf("<ConCode>")+9,content.indexOf("</ConCode>"));		
+    				content = content.replace("<Name>"+name+"</Name>","<Name>"+threeStandard.getName()+"</Name>");
+    				content = content.replace("<IDType>"+credentialType+"</IDType>","<IDType>"+threeStandard.getCredentialType()+"</IDType>");
+    				content = content.replace("<IDNum>"+credentialNumber+"</IDNum>","<IDNum>"+threeStandard.getCredentialNumber()+"</IDNum>");
+    				content = content.replace("<ConCode>"+conCode+"</ConCode>","<ConCode>"+threeStandard.getConCode()+"</ConCode>");
+    				mesg.setMesgType(tmpMesg.getMesgType());
+    				mesg.setPacket(tmpMesg.getPacket());
+    				mesg.setContent(content);
+    				mesgs.add(mesg);
+    			}
+            }else{
+                //细分成小任务
+                List<ConTask> tasks = new ArrayList<MesgFacadeImpl.ConTask>();
+                for (int index = 0; index * size < data.size(); index++) {
+                	ConTask task;
+                    if((index + 1) * size > data.size()){
+                        task = new ConTask(data.subList(index * size, data.size()), tmpMesg);
+                    }else{
+                        task = new ConTask(data.subList(index * size, (index + 1) * size), tmpMesg);
+                    }
+                    task.fork();
+                    tasks.add(task);
+                }
+                for (ConTask task : tasks) {
+                	mesgs.addAll(task.join());
+                }
+            }            
+            return mesgs;
+        }      
+    }
+	
+	class CccTask extends RecursiveTask<List>{
+        private int size = 2000;       
+        private List<ThreeStandard> data;
+        private Mesg tmpMesg;
+        private String content;
+        public CccTask(List<ThreeStandard> data, Mesg tmpMesg){
+            this.data = data;
+            this.tmpMesg = tmpMesg;
+            this.content = tmpMesg.getContent();
+        }
+        @Override
+        protected List<Mesg> compute() {
+        	List<Mesg> mesgs = new ArrayList<Mesg>();
+            if(data.size() <= size){
+                System.out.println("******************************** size:" + data.size());
+                for (ThreeStandard threeStandard : data) {
+    				Mesg mesg = new Mesg();
+    				String name = content.substring(content.indexOf("<GuarName>")+10,content.indexOf("</GuarName>"));
+    				String credentialType = content.substring(content.indexOf("<GuarCertType>")+14,content.indexOf("</GuarCertType>"));
+    				String credentialNumber = content.substring(content.indexOf("<GuarCertNum>")+13,content.indexOf("</GuarCertNum>"));
+    				String ccc = content.substring(content.indexOf("<Ccc>")+5,content.indexOf("</Ccc>"));
+    				content = content.replace("<GuarName>"+name+"</GuarName>","<GuarName>"+threeStandard.getName()+"</GuarName>");
+    				content = content.replace("<GuarCertType>"+credentialType+"</GuarCertType>","<GuarCertType>"+threeStandard.getCredentialType()+"</GuarCertType>");
+    				content = content.replace("<GuarCertNum>"+credentialNumber+"</GuarCertNum>","<GuarCertNum>"+threeStandard.getCredentialNumber()+"</GuarCertNum>");
+    				content = content.replace("<Ccc>"+ccc+"</Ccc>","<Ccc>"+threeStandard.getCcc()+"</Ccc>");
+    				mesg.setMesgType(tmpMesg.getMesgType());
+    				mesg.setPacket(tmpMesg.getPacket());
+    				mesg.setContent(content);
+    				mesgs.add(mesg);
+    			}
+            }else{
+                //细分成小任务
+                List<CccTask> tasks = new ArrayList<MesgFacadeImpl.CccTask>();
+                for (int index = 0; index * size < data.size(); index++) {
+                	CccTask task;
+                    if((index + 1) * size > data.size()){
+                        task = new CccTask(data.subList(index * size, data.size()), tmpMesg);
+                    }else{
+                        task = new CccTask(data.subList(index * size, (index + 1) * size), tmpMesg);
+                    }
+                    task.fork();
+                    tasks.add(task);
+                }
+                for (CccTask task : tasks) {
+                	mesgs.addAll(task.join());
+                }
+            }            
+            return mesgs;
+        }      
+    }
+	
+	class OthTask extends RecursiveTask<List>{
+        private int size = 2000;       
+        private List<ThreeStandard> data;
+        private Mesg tmpMesg;
+        private String content;
+        public OthTask(List<ThreeStandard> data, Mesg tmpMesg){
+            this.data = data;
+            this.tmpMesg = tmpMesg;
+            this.content = tmpMesg.getContent();
+        }
+        @Override
+        protected List<Mesg> compute() {
+        	List<Mesg> mesgs = new ArrayList<Mesg>();
+            if(data.size() <= size){
+                System.out.println("******************************** size:" + data.size());
+                for (ThreeStandard threeStandard : data) {
+    				Mesg mesg = new Mesg();
+    				String name = content.substring(content.indexOf("<Name>")+6,content.indexOf("</Name>"));
+    				String credentialType = content.substring(content.indexOf("<IDType>")+8,content.indexOf("</IDType>"));
+    				String credentialNumber = content.substring(content.indexOf("<IDNum>")+7,content.indexOf("</IDNum>"));				
+    				content = content.replace("<Name>"+name+"</Name>","<Name>"+threeStandard.getName()+"</Name>");
+    				content = content.replace("<IDType>"+credentialType+"</IDType>","<IDType>"+threeStandard.getCredentialType()+"</IDType>");
+    				content = content.replace("<IDNum>"+credentialNumber+"</IDNum>","<IDNum>"+threeStandard.getCredentialNumber()+"</IDNum>");	
+    				mesg.setMesgType(tmpMesg.getMesgType());
+    				mesg.setPacket(tmpMesg.getPacket());
+    				mesg.setContent(content);
+    				mesgs.add(mesg);
+    			}
+            }else{
+                //细分成小任务
+                List<OthTask> tasks = new ArrayList<MesgFacadeImpl.OthTask>();
+                for (int index = 0; index * size < data.size(); index++) {
+                	OthTask task;
+                    if((index + 1) * size > data.size()){
+                        task = new OthTask(data.subList(index * size, data.size()), tmpMesg);
+                    }else{
+                        task = new OthTask(data.subList(index * size, (index + 1) * size), tmpMesg);
+                    }
+                    task.fork();
+                    tasks.add(task);
+                }
+                for (OthTask task : tasks) {
+                	mesgs.addAll(task.join());
+                }
+            }            
+            return mesgs;
+        }      
+    }
 	
 	public InvokeResult creatMesgsByInput(MesgDTO mesgDTO,int startOfThreeStandard,int endOfThreeStandard,String currentUserId){
-		List<ThreeStandard> list= queryThreeStandardByInput(startOfThreeStandard,endOfThreeStandard,currentUserId);
+		Long start = new Date().getTime();
+		SimpleDateFormat sdf = new SimpleDateFormat("yyyy-MM-dd hh:mm:ss"); 
+		String s = sdf.format(start);		
+		List<ThreeStandard> list= queryThreeStandardByInput(startOfThreeStandard,endOfThreeStandard,currentUserId);		
 		List<Mesg> mesgs= new ArrayList<Mesg>();
-		String flag = null;
-		Mesg mesgById = application.getMesg(mesgDTO.getId());
-		String content = mesgById.getContent();
-//		for(int i = 0; i < list.size(); i++){
-//			Mesg mesg = new Mesg();
-//			//Mesg mesg = application.getMesg(mesgDTO.getId());
-//			String name = content.substring(content.indexOf("<Nm>")+4,content.indexOf("</Nm>"));
-//			String credentialType = content.substring(content.indexOf("<IdTp>")+6,content.indexOf("</IdTp>"));
-//			String credentialNumber = content.substring(content.indexOf("<IdNb>")+6,content.indexOf("</IdNb>"));
-//			String customerCode = content.substring(content.indexOf("<AcctId>")+8,content.indexOf("</AcctId>"));
-//			ThreeStandard threeStandard = threeStandardApplication.getThreeStandard(list.get(i).getId());			
-//			if(threeStandard.getCredentialType().equals("0")){
-//				flag = "身份证";
-//			}else if(threeStandard.getCredentialType().equals("1")){
-//				flag = "军官证";
-//			}else if(threeStandard.getCredentialType().equals("2")){
-//				flag = "护照";
+		Mesg mesg = application.getMesg(mesgDTO.getId());
+		if(mesg.getMesgType().getFilePath().equals("基本信息正常报送记录")){
+//			for(int i = 0; i < list.size(); i++){
+//				Mesg mesg = new Mesg();
+//				ThreeStandard threeStandard = threeStandardApplication.getThreeStandard(list.get(i).getId());
+//				Document document=null;
+//				try {
+//					document = DocumentHelper.parseText(content);
+//					Element root = document.getRootElement();
+//					Element bsSgmt = root.element("BaseInf").element("BsSgmt");
+//					Element name =bsSgmt.element("Name");
+//					name.setText(threeStandard.getName());
+//					Element iDType = bsSgmt.element("IDType");
+//					iDType.setText(threeStandard.getCredentialType());
+//					Element iDNum = bsSgmt.element("IDNum");
+//					iDNum.setText(threeStandard.getCredentialNumber());
+//					Element cstCode = bsSgmt.element("CstCode");
+//					cstCode.setText(String.valueOf(threeStandard.getCustomerCode()));
+//					MesgType mesgType = mesgTypeApplication.getMesgType(mesgDTO.getMesgType());
+//					mesg.setMesgType(mesgType);
+//					Packet packet = packetApplication.getPacket(mesgDTO.getPacketId());
+//					mesg.setPacket(packet);
+//					mesg.setContent(document.asXML().toString());
+//					mesgs.add(mesg);
+//				} catch (DocumentException e1) {
+//					// TODO Auto-generated catch block
+//					e1.printStackTrace();
+//				}			
 //			}
-//			content = content.replace("<Nm>"+name+"</Nm>","<Nm>"+threeStandard.getName()+"</Nm>");
-//			content = content.replace("<IdTp>"+credentialType+"</IdTp>","<IdTp>"+flag+"</IdTp>");
-//			content = content.replace("<IdNb>"+credentialNumber+"</IdNb>","<IdNb>"+threeStandard.getCredentialNumber()+"</IdNb>");
-//			content = content.replace("<AcctId>"+customerCode+"</AcctId>","<AcctId>"+threeStandard.getCustomerCode()+"</AcctId>");
-//			System.out.println("变驴啦:"+content);
-//			mesg.setMesgId(new Date().getTime()+"");
-//			MesgType mesgType = mesgTypeApplication.getMesgType(mesgDTO.getMesgType());
-//			mesg.setMesgType(mesgType);
-//			Packet packet = packetApplication.getPacket(mesgDTO.getPacketId());
-//			mesg.setPacket(packet);
-//			mesg.setContent(content);
-//			mesgs.add(mesg);
-//		}
-		if(mesgById.getMesgType().getFilePath().equals("基本信息正常报送记录")){
-			for(int i = 0; i < list.size(); i++){
-				Mesg mesg = new Mesg();
-				String name = content.substring(content.indexOf("<Name>")+6,content.indexOf("</Name>"));
-				String credentialType = content.substring(content.indexOf("<IDType>")+8,content.indexOf("</IDType>"));
-				String credentialNumber = content.substring(content.indexOf("<IDNum>")+7,content.indexOf("</IDNum>"));
-				String customerCode = content.substring(content.indexOf("<CstCode>")+9,content.indexOf("</CstCode>"));
-				ThreeStandard threeStandard = threeStandardApplication.getThreeStandard(list.get(i).getId());			
-				if(threeStandard.getCredentialType().equals("0")){
-					flag = "身份证";
-				}else if(threeStandard.getCredentialType().equals("1")){
-					flag = "军官证";
-				}else if(threeStandard.getCredentialType().equals("2")){
-					flag = "护照";
-				}
-				content = content.replace("<Name>"+name+"</Name>","<Name>"+threeStandard.getName()+"</Name>");
-				content = content.replace("<IDType>"+credentialType+"</IDType>","<IDType>"+flag+"</IDType>");
-				content = content.replace("<IDNum>"+credentialNumber+"</IDNum>","<IDNum>"+threeStandard.getCredentialNumber()+"</IDNum>");
-				content = content.replace("<CstCode>"+customerCode+"</CstCode>","<CstCode>"+threeStandard.getCustomerCode()+"</CstCode>");
-				System.out.println("变驴啦:"+content);
-				mesg.setMesgId(new Date().getTime()+"");
-				MesgType mesgType = mesgTypeApplication.getMesgType(mesgDTO.getMesgType());
-				mesg.setMesgType(mesgType);
-				Packet packet = packetApplication.getPacket(mesgDTO.getPacketId());
-				mesg.setPacket(packet);
-				mesg.setContent(content);
-				mesgs.add(mesg);
-			}
-		}else if(mesgById.getMesgType().getFilePath().equals("账户信息正常报送记录")){
-			for(int i = 0; i < list.size(); i++){
-				Mesg mesg = new Mesg();
-				String name = content.substring(content.indexOf("<Name>")+6,content.indexOf("</Name>"));
-				String credentialType = content.substring(content.indexOf("<IDType>")+8,content.indexOf("</IDType>"));
-				String credentialNumber = content.substring(content.indexOf("<IDNum>")+7,content.indexOf("</IDNum>"));
-				String acctCode = content.substring(content.indexOf("<AcctCode>")+10,content.indexOf("</AcctCode>"));
-				String conCode = content.substring(content.indexOf("<Mcc>")+5,content.indexOf("</Mcc>"));
-				String ccc = content.substring(content.indexOf("<Ccc>")+5,content.indexOf("</Ccc>"));
-				ThreeStandard threeStandard = threeStandardApplication.getThreeStandard(list.get(i).getId());			
-				if(threeStandard.getCredentialType().equals("0")){
-					flag = "身份证";
-				}else if(threeStandard.getCredentialType().equals("1")){
-					flag = "军官证";
-				}else if(threeStandard.getCredentialType().equals("2")){
-					flag = "护照";
-				}
-				content = content.replace("<Name>"+name+"</Name>","<Name>"+threeStandard.getName()+"</Name>");
-				content = content.replace("<IDType>"+credentialType+"</IDType>","<IDType>"+flag+"</IDType>");
-				content = content.replace("<IDNum>"+credentialNumber+"</IDNum>","<IDNum>"+threeStandard.getCredentialNumber()+"</IDNum>");
-				content = content.replace("<AcctCode>"+acctCode+"</AcctCode>","<AcctCode>"+threeStandard.getAcctCode()+"</AcctCode>");
-				content = content.replace("<Mcc>"+conCode+"</Mcc>","<Mcc>"+threeStandard.getConCode()+"</Mcc>");
-				content = content.replace("<Ccc>"+ccc+"</Ccc>","<Ccc>"+threeStandard.getCcc()+"</Ccc>");
-				System.out.println("变驴啦:"+content);
-				mesg.setMesgId(new Date().getTime()+"");
-				MesgType mesgType = mesgTypeApplication.getMesgType(mesgDTO.getMesgType());
-				mesg.setMesgType(mesgType);
-				Packet packet = packetApplication.getPacket(mesgDTO.getPacketId());
-				mesg.setPacket(packet);
-				mesg.setContent(content);
-				mesgs.add(mesg);
-			}
-		}else if(mesgById.getMesgType().getFilePath().equals("合同信息正常报送记录")){
-			for(int i = 0; i < list.size(); i++){
-				Mesg mesg = new Mesg();
-				String name = content.substring(content.indexOf("<Name>")+6,content.indexOf("</Name>"));
-				String credentialType = content.substring(content.indexOf("<IDType>")+8,content.indexOf("</IDType>"));
-				String credentialNumber = content.substring(content.indexOf("<IDNum>")+7,content.indexOf("</IDNum>"));
-				String conCode = content.substring(content.indexOf("<ConCode>")+9,content.indexOf("</ConCode>"));
-				ThreeStandard threeStandard = threeStandardApplication.getThreeStandard(list.get(i).getId());			
-				if(threeStandard.getCredentialType().equals("0")){
-					flag = "身份证";
-				}else if(threeStandard.getCredentialType().equals("1")){
-					flag = "军官证";
-				}else if(threeStandard.getCredentialType().equals("2")){
-					flag = "护照";
-				}
-				content = content.replace("<Name>"+name+"</Name>","<Name>"+threeStandard.getName()+"</Name>");
-				content = content.replace("<IDType>"+credentialType+"</IDType>","<IDType>"+flag+"</IDType>");
-				content = content.replace("<IDNum>"+credentialNumber+"</IDNum>","<IDNum>"+threeStandard.getCredentialNumber()+"</IDNum>");
-				content = content.replace("<ConCode>"+conCode+"</ConCode>","<ConCode>"+threeStandard.getConCode()+"</ConCode>");
-				System.out.println("变驴啦:"+content);
-				mesg.setMesgId(new Date().getTime()+"");
-				MesgType mesgType = mesgTypeApplication.getMesgType(mesgDTO.getMesgType());
-				mesg.setMesgType(mesgType);
-				Packet packet = packetApplication.getPacket(mesgDTO.getPacketId());
-				mesg.setPacket(packet);
-				mesg.setContent(content);
-				mesgs.add(mesg);
-			}
-		}else if(mesgById.getMesgType().getFilePath().equals("抵质押合同信息正常报送记录")){
-			for(int i = 0; i < list.size(); i++){
-				Mesg mesg = new Mesg();
-				String name = content.substring(content.indexOf("<GuarName>")+10,content.indexOf("</GuarName>"));
-				String credentialType = content.substring(content.indexOf("<GuarCertType>")+14,content.indexOf("</GuarCertType>"));
-				String credentialNumber = content.substring(content.indexOf("<GuarCertNum>")+13,content.indexOf("</GuarCertNum>"));
-				String ccc = content.substring(content.indexOf("<Ccc>")+5,content.indexOf("</Ccc>"));
-				ThreeStandard threeStandard = threeStandardApplication.getThreeStandard(list.get(i).getId());			
-				if(threeStandard.getCredentialType().equals("0")){
-					flag = "身份证";
-				}else if(threeStandard.getCredentialType().equals("1")){
-					flag = "军官证";
-				}else if(threeStandard.getCredentialType().equals("2")){
-					flag = "护照";
-				}
-				content = content.replace("<GuarName>"+name+"</GuarName>","<GuarName>"+threeStandard.getName()+"</GuarName>");
-				content = content.replace("<GuarCertType>"+credentialType+"</GuarCertType>","<GuarCertType>"+flag+"</GuarCertType>");
-				content = content.replace("<GuarCertNum>"+credentialNumber+"</GuarCertNum>","<GuarCertNum>"+threeStandard.getCredentialNumber()+"</GuarCertNum>");
-				content = content.replace("<Ccc>"+ccc+"</Ccc>","<Ccc>"+threeStandard.getCcc()+"</Ccc>");
-				System.out.println("变驴啦:"+content);
-				mesg.setMesgId(new Date().getTime()+"");
-				MesgType mesgType = mesgTypeApplication.getMesgType(mesgDTO.getMesgType());
-				mesg.setMesgType(mesgType);
-				Packet packet = packetApplication.getPacket(mesgDTO.getPacketId());
-				mesg.setPacket(packet);
-				mesg.setContent(content);
-				mesgs.add(mesg);
-			}
+			ForkJoinPool pool = new ForkJoinPool(5);
+			BaseTask task = new BaseTask(list, mesg);
+	        Future<List> result =  pool.submit(task);
+	        try {
+	            mesgs = result.get();
+	        } catch (InterruptedException e) {
+	            e.printStackTrace();
+	        } catch (ExecutionException e) {
+	            e.printStackTrace();
+	        }
+		}else if(mesg.getMesgType().getFilePath().equals("账户信息正常报送记录")){
+			ForkJoinPool pool = new ForkJoinPool(5);
+			AcctTask task = new AcctTask(list, mesg);
+	        Future<List> result =  pool.submit(task);
+	        try {
+	            mesgs = result.get();
+	        } catch (InterruptedException e) {
+	            e.printStackTrace();
+	        } catch (ExecutionException e) {
+	            e.printStackTrace();
+	        }
+		}else if(mesg.getMesgType().getFilePath().equals("合同信息正常报送记录")){
+			ForkJoinPool pool = new ForkJoinPool(5);
+			ConTask task = new ConTask(list, mesg);
+	        Future<List> result =  pool.submit(task);
+	        try {
+	            mesgs = result.get();
+	        } catch (InterruptedException e) {
+	            e.printStackTrace();
+	        } catch (ExecutionException e) {
+	            e.printStackTrace();
+	        }
+		}else if(mesg.getMesgType().getFilePath().equals("抵质押合同信息正常报送记录")){
+			ForkJoinPool pool = new ForkJoinPool(5);
+			CccTask task = new CccTask(list, mesg);
+	        Future<List> result =  pool.submit(task);
+	        try {
+	            mesgs = result.get();
+	        } catch (InterruptedException e) {
+	            e.printStackTrace();
+	        } catch (ExecutionException e) {
+	            e.printStackTrace();
+	        }
 		}else{
-			for(int i = 0; i < list.size(); i++){
-				Mesg mesg = new Mesg();
-				String name = content.substring(content.indexOf("<Name>")+6,content.indexOf("</Name>"));
-				String credentialType = content.substring(content.indexOf("<IDType>")+8,content.indexOf("</IDType>"));
-				String credentialNumber = content.substring(content.indexOf("<IDNum>")+7,content.indexOf("</IDNum>"));				
-				ThreeStandard threeStandard = threeStandardApplication.getThreeStandard(list.get(i).getId());			
-				if(threeStandard.getCredentialType().equals("0")){
-					flag = "身份证";
-				}else if(threeStandard.getCredentialType().equals("1")){
-					flag = "军官证";
-				}else if(threeStandard.getCredentialType().equals("2")){
-					flag = "护照";
-				}
-				content = content.replace("<Name>"+name+"</Name>","<Name>"+threeStandard.getName()+"</Name>");
-				content = content.replace("<IDType>"+credentialType+"</IDType>","<IDType>"+flag+"</IDType>");
-				content = content.replace("<IDNum>"+credentialNumber+"</IDNum>","<IDNum>"+threeStandard.getCredentialNumber()+"</IDNum>");				
-				System.out.println("变驴啦:"+content);
-				mesg.setMesgId(new Date().getTime()+"");
-				MesgType mesgType = mesgTypeApplication.getMesgType(mesgDTO.getMesgType());
-				mesg.setMesgType(mesgType);
-				Packet packet = packetApplication.getPacket(mesgDTO.getPacketId());
-				mesg.setPacket(packet);
-				mesg.setContent(content);
-				mesgs.add(mesg);
-			}
+			ForkJoinPool pool = new ForkJoinPool(5);
+			OthTask task = new OthTask(list, mesg);
+	        Future<List> result =  pool.submit(task);
+	        try {
+	            mesgs = result.get();
+	        } catch (InterruptedException e) {
+	            e.printStackTrace();
+	        } catch (ExecutionException e) {
+	            e.printStackTrace();
+	        }
 		}
+		Long insertstart=System.currentTimeMillis();
 		application.creatMesgs(mesgs);
+		Long insertend=System.currentTimeMillis();
+		Long end = new Date().getTime();
+		String e = sdf.format(end);
+		System.out.println("插入耗时:"+(insertend-insertstart));
+		System.out.println("开始时间:"+s);
+		System.out.println("结束时间:"+e);
 		return InvokeResult.success();
 	}
 	
-	public InvokeResult updateMesg(MesgDTO mesgDTO,String realPath) {
-		
-		Mesg mesg = MesgAssembler.toEntity(mesgDTO);
-		
+	public InvokeResult updateMesg(MesgDTO mesgDTO,String realPath) {		
+		Mesg mesg = MesgAssembler.toEntity(mesgDTO);		
 		MesgType mesgType = mesgTypeApplication.getMesgType(mesgDTO.getMesgType());
 		mesg.setMesgType(mesgType);
 		Packet packet = packetApplication.getPacket(mesgDTO.getPacketId());
 		mesg.setPacket(packet);
 		mesg.setContent(mesgDTO.getNodeValues());
-		
-//		try {
-//			XmlNode xmlNode = XmlUtil.getXmlNodeByXml(mesgType.getFilePath(), realPath,mesgType.getCountTag());
-//			xmlNode.setValues(nodeValues);
-//			
-//			String errors = XmlUtil.validateXMLByXSD(mesgType.getFilePath(), realPath,xmlNode.toXMLString());
-//			if(null!=errors){
-//				return InvokeResult.failure(errors);
-//			}
-//			
-//			mesg.setContent(xmlNode.toXMLString());
-//		} catch (SAXException e) {
-//			// TODO Auto-generated catch block
-//			e.printStackTrace();
-//		} catch (IOException e) {
-//			// TODO Auto-generated catch block
-//			e.printStackTrace();
-//		} catch (ParserConfigurationException e) {
-//			// TODO Auto-generated catch block
-//			e.printStackTrace();
-//		} catch (CloneNotSupportedException e) {
-//			// TODO Auto-generated catch block
-//			e.printStackTrace();
-//		}
 		application.updateMesg(mesg);
 		return InvokeResult.success();
 	}
@@ -595,8 +655,6 @@ public class MesgFacadeImpl implements MesgFacade {
 	@Override
 	public InvokeResult getMesgForBatch(Long id) {
 		MesgDTO dto = MesgAssembler.toDTO(application.getMesg(id));
-		//Mesg mesg = application.getMesg(id);
-		System.out.println("mimimimimimimimi:::"+dto.getContent());
 		return InvokeResult.success(dto);
 	}
 	
@@ -626,12 +684,12 @@ public class MesgFacadeImpl implements MesgFacade {
 	
 	public List<ThreeStandard> queryThreeStandardByInput(int startOfThreeStandard,int endOfThreeStandard,String currentUserId){
 		List<Object> conditionVals = new ArrayList<Object>();
-		StringBuilder jpql = new StringBuilder("select _threeStandard from ThreeStandard _threeStandard where 1=1");
+		StringBuilder jpql = new StringBuilder("select _threeStandard from ThreeStandard _threeStandard  where 1=1");
 		if (currentUserId != null ) {
 	   		jpql.append(" and _threeStandard.createdBy = ? ");
 	   		conditionVals.add(currentUserId);
 	   	}
-		List<ThreeStandard> result = getQueryChannelService().createJpqlQuery(jpql.toString()).setParameters(conditionVals).list();
-		return result.subList(startOfThreeStandard-1, endOfThreeStandard);
+		List<ThreeStandard> result = getQueryChannelService().createJpqlQuery(jpql.toString()).setFirstResult(startOfThreeStandard-1).setPageSize(endOfThreeStandard-startOfThreeStandard+1).setParameters(conditionVals).list();
+		return result;
 	}
 }

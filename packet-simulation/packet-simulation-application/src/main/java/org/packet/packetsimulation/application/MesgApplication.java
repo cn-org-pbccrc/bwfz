@@ -6,6 +6,8 @@ import java.util.Set;
 import  org.packet.packetsimulation.core.domain.Mesg;
 
 public interface MesgApplication {
+	
+	public void batchInsert(List<Mesg> list);
 
 	public Mesg getMesg(Long id);
 	

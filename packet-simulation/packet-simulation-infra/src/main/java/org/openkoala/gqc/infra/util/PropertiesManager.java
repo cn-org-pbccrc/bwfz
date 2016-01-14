@@ -45,6 +45,8 @@ public final class PropertiesManager {
 	 private static Properties pros836_ = new Properties();
 	 private static Properties pros841_ = new Properties();
 	 private static Properties pros842_ = new Properties();
+	 private static Properties pros817 = new Properties();
+	 private static Properties pros817_ = new Properties();
 	
 	 static{
 		 try {
@@ -87,6 +89,8 @@ public final class PropertiesManager {
 	         pros836_.load(PropertiesManager.class.getClassLoader().getResourceAsStream("translate8.3.6_.properties"));
 	         pros841_.load(PropertiesManager.class.getClassLoader().getResourceAsStream("translate8.4.1_.properties"));
 	         pros842_.load(PropertiesManager.class.getClassLoader().getResourceAsStream("translate8.4.2_.properties"));
+	         pros817.load(PropertiesManager.class.getClassLoader().getResourceAsStream("translate8.1.2.properties"));
+	         pros817_.load(PropertiesManager.class.getClassLoader().getResourceAsStream("translate8.1.2_.properties"));
 	         //读取properties文件 这里是将文件从classpath里读取出来!因为在eclispe里src里的文件最后编译后都会放入bin文件夹下,也就是classpath下面,这样可以保证能找到文件
 	     } catch (IOException e) {
 	    	 e.printStackTrace();
@@ -239,6 +243,14 @@ public final class PropertiesManager {
 				 System.out.println(key);
 				 return key;
 			 }
+		 }else if(templateName.equals("一般贷款账户-开户日首次报送")){
+			 String cnName=PropertiesManager.pros817_.getProperty(key);
+			 if(cnName!=null){
+				 return changeChineseCode(PropertiesManager.pros817_.getProperty(key));
+			 }else{
+				 System.out.println(key);
+				 return key;
+			 }
 		 }
 		 return key;
 	 }
@@ -383,6 +395,14 @@ public final class PropertiesManager {
 			 String cnName=PropertiesManager.pros842.getProperty(key);
 			 if(cnName!=null){
 				 return changeChineseCode(PropertiesManager.pros842.getProperty(key));
+			 }else{
+				 System.out.println(key);
+				 return key;
+			 }
+		 }else if(templateName.equals("一般贷款账户-开户日首次报送")){
+			 String cnName=PropertiesManager.pros817.getProperty(key);
+			 if(cnName!=null){
+				 return changeChineseCode(PropertiesManager.pros817.getProperty(key));
 			 }else{
 				 System.out.println(key);
 				 return key;

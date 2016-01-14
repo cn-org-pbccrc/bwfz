@@ -15,6 +15,8 @@ public interface ThreeStandardFacade {
 	
 	public InvokeResult creatThreeStandard(ThreeStandardDTO threeStandard);
 	
+	public InvokeResult generateThreeStandard(ThreeStandardDTO threeStandardDTO, String threeStandardNumber);
+	
 	public InvokeResult importThreeStandard(ThreeStandardDTO threeStandardDTO, String path, String ctxPath) throws FileNotFoundException, IOException, ParseException;
 	
 	public InvokeResult updateThreeStandard(ThreeStandardDTO threeStandard);

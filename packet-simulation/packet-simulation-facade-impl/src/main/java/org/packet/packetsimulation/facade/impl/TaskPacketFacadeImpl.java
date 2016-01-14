@@ -127,19 +127,12 @@ public class TaskPacketFacadeImpl implements TaskPacketFacade {
 			//System.out.println("值:"+values[i]+"加压"+coms[i]+"加密"+encs[i]);
 			taskPackets.add(taskPacket);
 			
-	   		DateFormat dateFormat = new SimpleDateFormat("yyyyMMddHHmmss");  
-	   		String counter;
-	   		String result;
+	   		String result = "";
 		   	List<Mesg> mesgList = findMesgsByPacketId(Long.parseLong(flags[i]));
-		   	if(null!=mesgList && mesgList.size()>0){
-		   		counter = fillStringToHead(10,""+mesgList.size(),"0");
-		   		result = "A" + packet.getFileVersion() + packet.getOrigSender() + dateFormat.format(packet.getOrigSendDate()) + packet.getRecordType() + packet.getDataType() + counter + "                              " + "\r\n";
+		   	if(null!=mesgList && mesgList.size()>0){	   	
 		   		for(Mesg mesg : mesgList){  			
 					result = result + mesg.getContent() + "\r\n";
 		   		}
-		   	}else{
-		   		counter = fillStringToHead(10,"0","0");
-		   		result = "A" + packet.getFileVersion() + packet.getOrigSender() + dateFormat.format(packet.getOrigSendDate()) + packet.getRecordType() + packet.getDataType() + counter + "                              " + "\r\n";
 		   	}
 		    File f = new File(ctxPath+packet.getPacketName()+".csv");//新建一个文件对象
 	        FileWriter fw;

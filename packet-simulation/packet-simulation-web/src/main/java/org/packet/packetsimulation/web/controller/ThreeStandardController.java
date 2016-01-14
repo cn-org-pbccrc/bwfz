@@ -50,6 +50,12 @@ public class ThreeStandardController {
 	}
 	
 	@ResponseBody
+	@RequestMapping("/generate")
+	public InvokeResult generate(ThreeStandardDTO threeStandardDTO, @RequestParam String threeStandardNumber) {
+		return threeStandardFacade.generateThreeStandard(threeStandardDTO, threeStandardNumber);
+	}
+	
+	@ResponseBody
 	@RequestMapping("/update")
 	public InvokeResult update(ThreeStandardDTO threeStandardDTO) {
 		return threeStandardFacade.updateThreeStandard(threeStandardDTO);
@@ -90,7 +96,7 @@ public class ThreeStandardController {
 		if (!file.exists()) {    	
 			file.mkdirs();    	
 		}	
-		String fileName = null;    	
+		String fileName = null;
 		for (Map.Entry<String, MultipartFile> entity : fileMap.entrySet()) {    	
 			MultipartFile mf = entity.getValue();  	
 			fileName = mf.getOriginalFilename();	
@@ -101,7 +107,7 @@ public class ThreeStandardController {
 				String line = br.readLine();				
 				String[] threeStandards = line.split(",");
 				if(threeStandards.length!=3||!threeStandards[0].equals("\"姓名\"")||!threeStandards[1].equals("\"证件类型\"")||!threeStandards[2].equals("\"证件号码\"")){
-					System.out.println(threeStandards[0]+":"+threeStandards[1]+":"+threeStandards[0]+"?"+threeStandards.length);
+					//System.out.println(threeStandards[0]+":"+threeStandards[1]+":"+threeStandards[0]+"?"+threeStandards.length);
 					br.close();
 					uploadFile.delete();
 					response.setHeader("Content-type", "text/html;charset=UTF-8");

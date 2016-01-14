@@ -1,0 +1,106 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<Document>
+	<AcctInf>
+		<AcctBsSgmt>
+			<InfRecTp>05</InfRecTp>
+			<AcctType>11</AcctType>
+			<!-- 账户类型，11代表一般贷款账户-->	
+			<RptDateCode>10</RptDateCode>
+			<!-- 报告时点，10代表开户日/首次上报-->	
+			<FinanCode>10000000000001</FinanCode>
+			<BusiOrgCode>10000000000001</BusiOrgCode>
+			<AcctCode>ZH0000000000001</AcctCode>
+			<RptDate>2016-01-02</RptDate>
+		<!-- 信息报告日期-->	
+			<BrwNm>1</BrwNm>
+			<AcctCertRel>
+				<Name>借款人一</Name>
+				<IDType>0</IDType>
+				<IDNum>110100198012202222</IDNum>
+			</AcctCertRel>
+		</AcctBsSgmt>
+		<AcctBsInfSgmt>
+			<BusiLines>10</BusiLines>
+			<AcctCredLine>100000</AcctCredLine>
+			<LoanAmt>100000</LoanAmt>
+			<AcctCy>CNY</AcctCy>
+			<OpenDate>2016-01-01</OpenDate>
+    <!-- 开户日期 -->
+			<CloseDate></CloseDate>
+			<!-- 非必填，账户关闭日期-->	
+			<FstDueDate>2026-02-01</FstDueDate>
+		<!-- 初始规定的借款人（或受信人）归还所借资金的截止日期-->	
+			<DueDate>20260201</DueDate>
+			<!-- 必填，账户发生延期或者缩期后的到期日期-->	
+			<TmCgLg>0</TmCgLg>
+				<!--必填， 期限变更标志.此值是自编的，元数据无说明-->	
+			<RepayMode>11</RepayMode>
+			<!-- 还款方式，11-分期等额本息-->	
+			<RepayFreqcy>03</RepayFreqcy>
+			<!-- 还款频率，03-月-->	
+			<RepayPrd>120</RepayPrd>
+			<ApplyBusiDist>110101</ApplyBusiDist>
+			<GuarMode>2</GuarMode>
+			<!-- 担保方式，2-抵押-->	
+			<OthRepyGuarWay>0</OthRepyGuarWay>
+			<NA>0</NA>
+			<FundSou>1</FundSou>
+		</AcctBsInfSgmt>
+		<!--	<MiCtrctInfSgmt>
+			<Mcc>主合同标识号</Mcc>
+		</MiCtrctInfSgmt> -->
+		<MotgaCltalCtrctInfSgmt>
+			<Ccc>DZY100000000001</Ccc>
+			<CcNum>1</CcNum>
+		</MotgaCltalCtrctInfSgmt>
+		<RltRepymtInfSgmt>
+			<RltRepymtNum>1</RltRepymtNum>
+			<RltRepymtInf>
+				<InfoIdType>1</InfoIdType>
+				<ArlpName>GTHKR000000001</ArlpName>
+				<ArlpCertType>0</ArlpCertType>
+				<ArlpCertNum>110100198012201111</ArlpCertNum>
+				<ARLPType>1</ARLPType>
+				<ARLPAmt>100000</ARLPAmt>
+			</RltRepymtInf>
+		</RltRepymtInfSgmt>
+		<RtInfSgmt>
+			<FixRateFlg>0</FixRateFlg>
+			<BmarkRateType>105</BmarkRateType>
+			<FloatRateScale>100%</FloatRateScale>
+			<ExeRateAdjFreq>6</ExeRateAdjFreq>
+			<ExeRate>4.90</ExeRate>
+			<ExeRateVdDate>2016-01-01</ExeRateVdDate>
+			<CompEffRate>4.90</CompEffRate>
+			<CompEffVdDate>2016-01-01</CompEffVdDate>
+		</RtInfSgmt>
+		<AcctDbtInfSgmt>
+			<AcctStatus>1</AcctStatus>
+			<AcctBal>100000</AcctBal>
+			<FiveCate>1</FiveCate>
+			<FiveCateAdjDate>2016-01-01</FiveCateAdjDate>
+			<RemRepPrd>120</RemRepPrd>
+			<RpyStatus>N</RpyStatus>
+			<OverdPrd>0</OverdPrd>
+			<TotOverd>0</TotOverd>
+			<OverdPrinc>0</OverdPrinc>
+			<Oved31_60Princ>0</Oved31_60Princ>
+			<Oved61_90Princ>0</Oved61_90Princ>
+			<Oved91_180Princ>0</Oved91_180Princ>
+			<OvedPrinc180>0</OvedPrinc180>
+			<!--	<OvedrawBaOve180>0</OvedrawBaOve180> -->
+		</AcctDbtInfSgmt>
+		<AcctMthlyBlgInfSgmt>
+			<SettDate>2016-01-15</SettDate>
+			<CurRpyAmt>1055.77</CurRpyAmt>
+			<ActRpyAmt>0</ActRpyAmt>
+			<LatRpyDate>2016-01-01</LatRpyDate>
+			<!--<BillAmt>账单金额</BillAmt>-->
+		</AcctMthlyBlgInfSgmt>
+		<AcctPymtInfSgmt>
+			<RpyDate>2016-01-16</RpyDate>
+			<RpyAmt>1055.77</RpyAmt>
+			<ActRpyAmt>0</ActRpyAmt>
+		</AcctPymtInfSgmt>
+	</AcctInf>
+</Document>

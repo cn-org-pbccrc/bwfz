@@ -467,7 +467,7 @@ public class XmlNode implements Serializable, Cloneable{
 		contentStr=contentStr+DIV_ENDTAG;
 		//contentStr=contentStr+DIV_ENDTAG+"<script src='"+realPath+"/lib/jquery-1.11.3.min.js'></script><script src='"+realPath+"/lib/Koala_ToolTip.js'></script><script>$(function(){$('[data-toggle=\"tooltip\"]').tooltip();});</script></body></html>";
 		contentStr=contentStr+DIV_ENDTAG+"<script>$(function(){$('[data-toggle=\"tooltip\"]').tooltip();});</script>";
-		System.out.println("臭米米33333333333333333333333:"+result+contentStr);
+		//System.out.println("臭米米33333333333333333333333:"+result+contentStr);
 		return result+contentStr;
 	}
 	
@@ -514,7 +514,7 @@ public class XmlNode implements Serializable, Cloneable{
 						}else{
 							//System.out.println("name04:"+PropertiesManager.getProperties(xmlNode.getTagName(),templateName)+";value04:"+xmlNode.getValue());
 							htmlStr = htmlStr + "<p><label class='rgt'>"+PropertiesManager.getProperties(node.getTagName(),templateName)+" :</label><label class='lft'><input type='text' value='" + node.getValue() + "' subName='"+node.getTagName()+ "' class='form-control' data-toggle='tooltip' data-placement='right' title='"+PropertiesManager.verify(node.getTagName(),templateName)+"' onFocus='if (value ==\""+node.getValue()+"\"){value =\"\"}' onBlur='if (value ==\"\"){value=\""+node.getValue()+"\"}'/></label></p>";
-							System.out.println("擦擦擦:"+htmlStr);
+							//System.out.println("擦擦擦:"+htmlStr);
 						}
 					}
 					htmlStr = htmlStr +"</fieldset>";

@@ -103,7 +103,6 @@ legend {
      	});
     	$('#packIdSpan').text(packId);
     	$('#pacId').val(packetId);
-    	//alert(mesgTypeOption)
         grid = $("#<%=gridId%>");
         form = $("#<%=formId%>");
     	PageLoader = {
@@ -221,49 +220,19 @@ legend {
     	            self.initPage(dialog.find('form'));
     	            
     	            dialog.find("#mesgTypeID").append(mesgTypeOption);
-    	            //alert(mesgTypeOption)
     	            dialog.find("#packetIdID").val(packetId);
     	        });
-    	     
     	        dialog.find('#save').on('click',{grid: grid}, function(e){
-    	        	//alert(dialog.find($(".tab-content")).html())
-    	        	//alert(1);
-//     	        	var reg = /^[0-9a-zA-Z_-]{6,20}$/;
-//     	        	var mesgPriorityID = $("#mesgPriorityID").val();
-//     	        	if(!reg.test(mesgPriorityID)){
-//     	        		alert("no");
-//     	        	}
-// var haha = $("input[name='Nm']").parent().parent().parent().attr('id')
-// alert(haha);
-
 					var info = dialog.find($(".tab-content")).attr('id');
 					var xml = '<?xml version="1.0" encoding="UTF-8"?><Document><'+info+'>';
-					dialog.find($(".tab-pane")).each(function(){
-    					
+					dialog.find($(".tab-pane")).each(function(){   					
     					var id = $(this).attr('id');
     					xml += '<' + id + '>';
     					var flag = '';
     					$('#'+id).find($("[name]")).each(function(){
-    						
-    						
-//     						alert($(this).parent().parent()[0].tagName == 'FIELDSET')
-    					
-//     						if(value != ''){
-//     							xml += '<' + name + '>' + value + '</' + name + '>';	
-//     						}
-//     						else{
-//     							xml += flag + '<' + name + '>';
-//     							flag = '</' + name + '>';
-//     						}
-    						
-//   					});
-//     					xml += flag;
-//     					xml += '</' + id + '>';
-    					
 							if($(this).parent().parent()[0].tagName != 'FIELDSET'){
 								var name = ($(this).attr('name'));
 	    						var value = ($(this).val());
-	    						//alert(value)
 								xml += '<' + name + '>' + value + '</' + name + '>';
 							}
 							else{
@@ -280,33 +249,6 @@ legend {
     					xml += '</' + id + '>';
   					});
 					xml += '</'+info+'></Document>';
-					//alert(xml);
-// 					dialog.find($("[name]")).each(function(){
-//     					alert($(this).attr('value'))
-//   				});
-// 				var div=$("#AcctBsSgmt");
-// 				div.find($('[name]')).each(function(){
-// 					alert($(this).attr('name'))
-// 				});
-    	        
-
-// 				$.ajax({
-// 					      type : "post",
-// 						  url : '${pageContext.request.contextPath}/Mesg/add.koala',
-// 						  async : false,
-// 						  data : {
-// 						  	  "xml" : xml
-// 		                  },
-// 						  cache : false,
-// 						  dataType : "json",
-// 						  success : function(msg) {
-// 						      alert("保存成功")	  
-// 						  },
-// 						  error : function(msg) {
-// 							  alert("保存失败")
-// 						  }
-// 				});
-				//alert(xml)
  				if(!Validator.Validate(dialog.find('form')[0],3))return;
  				var data = [{ name: 'nodeValues', value: xml },
  				            { name: 'mesgType', value: dialog.find("#mesgTypeID").val()},
@@ -326,40 +268,12 @@ legend {
 						alert(result.errorMessage);
    	                    dialog.find('.modal-dialog').append('<div class="errMsg" style="float:left;position:absolute;max-width:500px;min-height:200px;bottom:20px;left:20px;background-color:#4cae4c;color:white;">'+result.errorMessage+ '</div>');
   				    }
-      	        });
-    	        	
-//     	              if(!Validator.Validate(dialog.find('form')[0],3))return;
-//     	              $.post('${pageContext.request.contextPath}/Mesg/add.koala', dialog.find('form').serialize()).done(function(result){
-//     	                   if(result.success ){
-//     	                        dialog.modal('hide');
-//     	                        e.data.grid.data('koala.grid').refresh();
-//     	                        e.data.grid.message({
-//     	                            type: 'success',
-//     	                            content: '保存成功'
-//     	                         });
-//     	                    }else{
-    	                    	
-    	                    	//alert(result.errorMessage);
-     	                    	//dialog.find('.modal-dialog').append('<div class="errMsg" style="float:left;position:absolute;max-width:500px;min-height:200px;bottom:20px;left:20px;background-color:#4cae4c;color:white;">'+result.errorMessage+ '</div>');
-// //     	                    	e.data.grid.message({
-// //     	                            type: 'error',
-// //     	                            content: result.errorMessage
-// //     	                         });
-    	                    	
-// //     	                    	dialog.find('.errMsg').text(result.errorMessage);
-// //     	                    	dialog.find('.errMsg').css("display","inline");
-// //     	                        dialog.find('.modal-content').message({
-// //     	                            type: 'error',
-// //     	                            content: result.errorMessage
-// //     	                        });
-//      	                     }
-//      	              });
+      	        });    	        
     	        });
    	    },
     	    modify: function(id, grid){
 	        var self = this;
-	        var dialog = $('<div class="modal fade"><div class="modal-dialog" style="width:900px;"><div class="modal-content"><div class="modal-header"><button type="button" class="close" data-dismiss="modal" aria-hidden="true">&times;</button><h4 class="modal-title">修改</h4></div><div class="modal-body"><p>One fine body&hellip;</p></div><div class="modal-footer"><button type="button" class="btn btn-default" data-dismiss="modal">取消</button><button type="button" class="btn btn-success" id="save">保存</button></div></div></div></div>');
-	      
+	        var dialog = $('<div class="modal fade"><div class="modal-dialog" style="width:900px;"><div class="modal-content"><div class="modal-header"><button type="button" class="close" data-dismiss="modal" aria-hidden="true">&times;</button><h4 class="modal-title">修改</h4></div><div class="modal-body"><p>One fine body&hellip;</p></div><div class="modal-footer"><button type="button" class="btn btn-default" data-dismiss="modal">取消</button><button type="button" class="btn btn-success" id="save">保存</button></div></div></div></div>');	      
 	        $.get('<%=path%>/Mesg-update.jsp').done(function(html){
 	               dialog.find('.modal-body').html(html);
 	               self.initPage(dialog.find('form'));
@@ -378,8 +292,6 @@ legend {
 		                            }
 	                        	}
 	                        }
-	                        //mesgType = json['mesgType'];
-	    				    //packetId = json['packetId'];
 	                });
 	                dialog.modal({
 	                    keyboard:false
@@ -389,23 +301,6 @@ legend {
 	                    }
 	                });
 	                dialog.find('#save').on('click',{grid: grid}, function(e){
-	                    //if(!Validator.Validate(dialog.find('form')[0],3))return;
-	                    //$.post('${pageContext.request.contextPath}/Mesg/update.koala?id='+id, dialog.find('form').serialize()).done(function(result){
-	                        //if(result.success){
-	                            //dialog.modal('hide');
-	                            //e.data.grid.data('koala.grid').refresh();
-	                            //e.data.grid.message({
-	                            //type: 'success',
-	                            //content: '保存成功'
-	                            //});
-	                        //}else{
-	                        	//alert(result.errorMessage);
-// 	                            dialog.find('.modal-content').message({
-// 	                            type: 'error',
-// 	                            content: result.actionError
-// 	                            });
-	                        //}
-	                    //});
 	                	var info = dialog.find($(".tab-content")).attr('id');
 						var xml = '<?xml version="1.0" encoding="UTF-8"?><Document><'+info+'>';
 						dialog.find($(".tab-pane")).each(function(){
@@ -432,8 +327,7 @@ legend {
 	    					});
 	    					xml += '</' + id + '>';
 	  					});
-						xml += '</'+info+'></Document>';
-						//alert(xml);	           
+						xml += '</'+info+'></Document>';           
 	                if(!Validator.Validate(dialog.find('form')[0],3))return;
 	 				var data = [{ name: 'nodeValues', value: xml },
 	 				            { name: 'mesgType', value: dialog.find("#mesgTypeID").val()},
@@ -497,224 +391,115 @@ legend {
     	    	});
     	    },
     	    batch: function(id, grid){
-  	            var data = [{ name: 'id', value: id}
- 				           ];
-    	    	$.post('${pageContext.request.contextPath}/Mesg/verifyMesgType.koala', data).done(function(result){
-    	    		if(result.success ){
-    	    			<%--     	        var self = this;
-    	    	        var dialog = $('<div class="modal fade"><div class="modal-dialog" style="width:900px;"><div class="modal-content"><div class="modal-header"><button type="button" class="close" data-dismiss="modal" aria-hidden="true">&times;</button><h4 class="modal-title">批量添加</h4></div><div class="modal-body"><p>One fine body&hellip;</p></div><div class="modal-footer"><button type="button" class="btn btn-default" data-dismiss="modal">取消</button><button type="button" class="btn btn-success" id="save">保存</button></div></div></div></div>');   	    	      
-    	    	        $.get('<%=path%>/Mesg-batch.jsp').done(function(html){
-    	    	               dialog.find('.modal-body').html(html);
-    	    	               self.initPage(dialog.find('form'));
-    	    	                //alert(dialog.find('#batchNumberId').val())
-    	    	                $.get( '${pageContext.request.contextPath}/Mesg/initBatch/' + id + '.koala').done(function(json){
-    		                       json = json.data;
-    		                        var elm;
-    		                        for(var index in json){
-    		                        	elm = dialog.find('#'+ index + 'ID');
-    		                        	
-    			                            if(elm.hasClass('select')){
-    			                                elm.setValue(json[index]);
-    			                            }else{
-    			                                elm.val(json[index]);
-    			                            }    		                        	
-    		                        }
-    		                });
-    	    	                dialog.modal({
-    	    	                    keyboard:false
-    	    	                }).on({
-    	    	                    'hidden.bs.modal': function(){
-    	    	                        $(this).remove();
-    	    	                    }
-    	    	                }); --%>
-    	    	                var width = 180;
-    	    	                $.get(contextPath + '/pages/auth/three-standard-select.jsp').done(function(data) {	    		
-    	    	 	    	 	   var dialog = $(data);
-    	<%--     	 	    	 	   dialog.find('.modal-query').html(document.getElementById("<%=formId2%>").innerHTML); --%>
-    								$.get( '${pageContext.request.contextPath}/Mesg/initBatch/' + id + '.koala').done(function(json){
-    	    							json = json.data;
-    	     							var elm;
-    	     							for(var index in json){
-    	     								elm = dialog.find('#'+ index + 'ID');
-    	     								if(elm.hasClass('select')){
-    	                 						elm.setValue(json[index]);
-    	             						}else{
-    	                 						elm.val(json[index]);
-    	             						}   	     	
-    	     							}
-//    	      							batchContent = json["content"];
-    	     							mesgType = json["mesgType"];
-    	     							packetId = json["packetId"];
-    	     							mesgId = json["mesgId"];
-    	     							version = json["version"];
-    								});
-    	    	 	    	        //显示对话框数据
-    	    	 	    	        dialog.modal({
-    	    	 	    	            keyboard: false,
-    	    	 	    	            backdrop: false // 指定当前页为静态页面，如果不写后台页面就是黑色。
-    	    	 	    	        }).on({
-    	    	 	    	            'hidden.bs.modal': function(){
-    	    	 	    	                $(this).remove();
-    	    	 	    	            },
-    	    	 	    	            'shown.bs.modal': function(){
-    	    	 	    	                var columns = [
-    	    	 	    	                    { title:'姓名', name:'name' , width: width/2},
-    	    	 	    	                    { title:'证件类型', name:'credentialType', width: width/2,
-    	    	 	    	                    	render: function(item, name, index){
-    		                 								if(item[name] == '0'){
-    		                     								return '身份证';
-    		                 								}else if(item[name] == '1'){
-    		                     								return '军官证';
-    		                 								}else if(item[name] == '2'){
-    		                	 								return '护照';
-    		                 								}
-    		             								}		
-    	    	 	    	                    },
-    	    	 	    	                    { title:'证件号', name:'credentialNumber', width: width},
-    	    	 	    	                    { title:'机构代码', name:'organizationCode', width: width},
-    	    	 	    	                    { title:'客户资料标识号', name:'customerCode', width: 2*width/3},
-    	    	 	    	                    { title: '账户标识号', name: 'acctCode', width: 3*width/4},
-                     	                   		{ title: '合同标识号', name: 'conCode', width: 2*width/3},
-                     	                		{ title: '抵质押合同标识号', name: 'ccc', width: width},
-    	    	 	    	                    { title:'创建日期', name:'createdDate', width: 2*width/3},
-    	    	 	    	                    { title:'创建者', name:'createdBy', width: width/2}
-    	    	 	    	                ];//<!-- definition columns end -->
-
-    	    	 	    	                //查询出当前表单所需要得数据。
-    	    	 	    	                dialog.find('.selectThreeStandardGrid').grid({
-    	    	 	    	                    identity: 'id',
-    	    	 	    	                    columns: columns,
-    	    	 	    	                    url: contextPath + '/ThreeStandard/pageJson/' + currentUserId + '.koala'
-    	    	 	    	                    //url: contextPath + '/Packet/pageJson.koala'
-    	    	 	    	                });
-
-    	    	 	    	            }
-    	    	 	    	        });//<!-- 显示对话框数据结束-->
-//    	     	                dialog.find('#save').on('click',{grid: grid}, function(e){
-//    	     	                	//alert(dialog.find('#batchNumberID').val())
-    	    	            
-//    	     	                if(!Validator.Validate(dialog.find('form')[0],3))return;
-//    	     	 				var data = [{ name: 'nodeValues', value: dialog.find('#contentID').val()},
-//    	     	 				            { name: 'mesgType', value: dialog.find("#mesgTypeID").val()},
-//    	     	 				            { name: 'packetId', value: dialog.find("#packetIdID").val()},		        
-//    	     	 				            { name: 'mesgId', value: dialog.find("#mesgIdID").val()},
-//    	     	 				            { name: 'version', value: dialog.find("#versionID").val()},
-//    	     	 				            { name: 'batchNumber', value: dialog.find("#batchNumberID").val()}
-//    	     	 				           ];
-//    	     	 			alert(dialog.find('#contentID').val())
-//    	     	    	        $.post('${pageContext.request.contextPath}/Mesg/batch.koala', data).done(function(result){
-//    	     	     	        	if(result.success ){
-//    	     	     	            	dialog.modal('hide');
-//    	     	     	                e.data.grid.data('koala.grid').refresh();
-//    	     	     	                e.data.grid.message({
-//    	     	     	                	type: 'success',
-//    	     	     	                	content: '保存成功'
-//    	     	                		});
-//    	     	     	            }else{
-//    	     							//alert(result.errorMessage);
-//    	     	   	                    dialog.find('.modal-dialog').append('<div class="errMsg" style="float:left;position:absolute;max-width:500px;min-height:200px;bottom:20px;left:20px;background-color:#4cae4c;color:white;">'+result.errorMessage+ '</div>');
-//    	     	  				    }
-//    	     	      	        });
-//    	     	            });
-    	    	 	    	       dialog.find('#selectThreeStandardGridSave').on('click',{grid: grid}, function(e){
-    	    	 	    	    	   //alert(dialog.find('#startID').val())
-    	    	 	    	       	   if (!Validation.number(dialog, dialog.find('#startID'), dialog.find('#startID').val(), '批量起始行号应为数字')) {
-    	    	 			    	       return false;
-    	    	 			    	   }
-    	    	 	    	    	   if (!Validation.number(dialog, dialog.find('#endID'), dialog.find('#endID').val(), '批量结束行号应为数字')) {
-    	 	 			    		       return false;
-    	 	 			    	  	   }
-    	    		    	            var items = dialog.find('.selectThreeStandardGrid').data('koala.grid').selectedRowsIndex();   
-    	    		    	            if(items.length == 0 && (dialog.find('#startID').val()==null||dialog.find('#startID').val()=="") && (dialog.find('#endID').val()==null||dialog.find('#endID').val()=="")){
-    	    		    	            	//alert("狗狗")
-    	    		    	                dialog.find('.selectThreeStandardGrid').message({
-    	    		    	                    type: 'warning',
-    	    		    	                    content: '请选择需要关联的三标信息！'
-    	    		    	                });
-    	    		    	            }
-//    	     		    	            var ids = new Array();
-//    	     		    	            for(var i = 0; i < items.length; i++){
-//    	     		    	            	ids[i] = items.id;
-//    	     		    	            	alert(ids[i])
-//    	     		    	            }
-//    	     							var Names = new Array();
-//    	     							var credentialTypes = new Array();
-//    	     							var credentialNumbers = new Array();
-//    	     							var customerCodes = new Array();
-//    	     							var batchContents = new Array();
-//    	     							for(var i = 0; i < items.length; i++){
-//    	     								Names[i] = items[i].name;							
-//    	     								credentialTypes[i] = items[i].credentialType;
-//    	     								if(credentialTypes[i] == '0'){
-//    	     									credentialTypes[i] = "身份证";
-//    	      								}else if(credentialTypes[i] == '1'){
-//    	      									credentialTypes[i] = "军官证";
-//    	      								}else if(credentialTypes[i] == '2'){
-//    	      									credentialTypes[i] = "护照";
-//    	      								}
-//    	     								credentialNumbers[i] = items[i].credentialNumber;
-//    	     								customerCodes[i] = items[i].customerCode;  
-//    	     								var name = batchContent.substring(batchContent.indexOf("<Nm>")+4,batchContent.indexOf("</Nm>"));
-//    	     								var credentialType = batchContent.substring(batchContent.indexOf("<IdTp>")+6,batchContent.indexOf("</IdTp>"));
-//    	     								var credentialNumber = batchContent.substring(batchContent.indexOf("<IdNb>")+6,batchContent.indexOf("</IdNb>"));
-//    	     								var customerCode = batchContent.substring(batchContent.indexOf("<AcctId>")+8,batchContent.indexOf("</AcctId>"));
-//    	     								batchContent = batchContent.replace("<Nm>"+name+"</Nm>","<Nm>"+Names[i]+"</Nm>");
-//    	     								batchContent = batchContent.replace("<IdTp>"+credentialType+"</IdTp>","<IdTp>"+credentialTypes[i]+"</IdTp>");
-//    	     								batchContent = batchContent.replace("<IdNb>"+credentialNumber+"</IdNb>","<IdNb>"+credentialNumbers[i]+"</IdNb>");
-//    	     								batchContent = batchContent.replace("<AcctId>"+customerCode+"</AcctId>","<AcctId>"+customerCodes[i]+"</AcctId>");
-//    	         							batchContents[i] = batchContent;
-//    	     								//alert(batchContents[i])
-//    	     							}     
-//    	 								alert(ids.length)
-//    	    							alert(currentUserId)
-    	    		    	            var data = [{ name: 'id', value: id},
-    	    		    	                        { name: 'ids', value: items.join(',')},
-    	    		    	                        { name: 'start', value: dialog.find('#startID').val()},
-    	    		    	                        { name: 'end', value: dialog.find('#endID').val()},
-    	    		    	                        { name: 'currentUserId', value: currentUserId},
-//    	     		    	                        { name: 'batchContents', value: batchContents.join(',')},
-    	    		    	                        { name: 'mesgType', value: mesgType},
-    	   	     	 				            	{ name: 'packetId', value:packetId},		        
-    	   	     	 				            	{ name: 'mesgId', value: mesgId},
-    	   	     	 				            	{ name: 'version', value: version}
-    	    		     				           ];
-    	    		    	            $.post('${pageContext.request.contextPath}/Mesg/batch.koala', data).done(function(result){
-    	    		 	                   if(result.success ){
-    	    		 	                        dialog.modal('hide');
-    	    		 	                        e.data.grid.data('koala.grid').refresh();
-    	    		 	                        e.data.grid.message({
-    	    		 	                            type: 'success',
-    	    		 	                            content: '批量成功'
-    	    		 	                         });
-    	    		 	                    }else{
-    	    		 	                        dialog.find('.modal-content').message({
-    	    		 	                            type: 'error',
-    	    		 	                            content: result.errorMessage
-    	    		 	                        });
-    	    		 	                     }
-    	    		 	              });                        
-    	    		    	        });
-
-    	    		    	        //兼容IE8 IE9
-    	    		    	        if(window.ActiveXObject){
-    	    		    	            if(parseInt(navigator.userAgent.toLowerCase().match(/msie ([\d.]+)/)[1]) < 10){
-    	    		    	                dialog.trigger('shown.bs.modal');
-    	    		    	            }
-    	    		    	        }    	  
-    	     	        });
+    	    	$.get( '${pageContext.request.contextPath}/Mesg/initBatch/' + id + '.koala').done(function(json){
+	    			json = json.data;
+	     			mesgType = json["mesgType"];
+	     			if(mesgType==1||mesgType==2||mesgType==3||mesgType==4||mesgType==5||mesgType==6){
+	     				packetId = json["packetId"];
+    	    	        var width = 180;
+    	    	        $.get(contextPath + '/pages/auth/three-standard-select.jsp').done(function(data) {	    		
+    	    	 	    	var dialog = $(data);
+    	    	 	    	//显示对话框数据
+    	    	 	    	dialog.modal({
+    	    	 	    		keyboard: false,
+    	    	 	    	    backdrop: false // 指定当前页为静态页面，如果不写后台页面就是黑色。
+    	    	 	    	}).on({
+    	    	 	    	    'hidden.bs.modal': function(){
+    	    	 	    	    	$(this).remove();
+    	    	 	    	    },
+    	    	 	    	    'shown.bs.modal': function(){
+    	    	 	    	        var columns = [
+    	    	 	    	        	{ title:'姓名', name:'name' , width: 2*width/3},
+    	    	 	    	            { title:'证件类型', name:'credentialType', width: width/2,
+    	    	 	    	            	render: function(item, name, index){
+    		                 					if(item[name] == '0'){
+    		                     					return '身份证';
+    		                 					}else if(item[name] == '1'){
+    		                     					return '军官证';
+    		                 					}else if(item[name] == '2'){
+    		                	 					return '护照';
+    		                 					}
+    		             					}		
+    	    	 	    	             },
+    	    	 	    	             { title:'证件号', name:'credentialNumber', width: width},
+    	    	 	    	             { title:'机构代码', name:'organizationCode', width: width},
+    	    	 	    	             { title:'客户资料标识号', name:'customerCode', width: 2*width/3},
+    	    	 	    	             { title: '账户标识号', name: 'acctCode', width: 3*width/4},
+                     	                 { title: '合同标识号', name: 'conCode', width: 2*width/3},
+                     	                 { title: '抵质押合同标识号', name: 'ccc', width: width},
+    	    	 	    	             { title:'创建日期', name:'createdDate', width: 2*width/3},
+    	    	 	    	             { title:'创建者', name:'createdBy', width: width/2}
+    	    	 	    	        ];//<!-- definition columns end -->
+    	    	 	    	        //查询出当前表单所需要得数据。
+    	    	 	    	        dialog.find('.selectThreeStandardGrid').grid({
+    	    	 	    	        	identity: 'id',
+    	    	 	    	            columns: columns,
+    	    	 	    	            url: contextPath + '/ThreeStandard/pageJson/' + currentUserId + '.koala'
+    	    	 	    	        });
+								}
+    	    	 	    	});//<!-- 显示对话框数据结束-->
+							dialog.find('#selectThreeStandardGridSave').on('click',{grid: grid}, function(e){   	    	 	    		
+								var reg = new RegExp(/^[0-9]*$/);
+								if (!reg.test(dialog.find('#startID').val()) || !reg.test(dialog.find('#endID').val())) {
+    	    	 	    			dialog.find('.modal-content').message({
+	    		 	                	type: 'error',
+	    		 	                	content: "批量起始或结束行号应为数字"
+	    		 	            	});
+    	    	 	    			return false;
+    	    	 			    }
+    	    		    	    var items = dialog.find('.selectThreeStandardGrid').data('koala.grid').selectedRowsIndex();   
+    	    		    	    if(items.length == 0 && (dialog.find('#startID').val()==null||dialog.find('#startID').val()=="") && (dialog.find('#endID').val()==null||dialog.find('#endID').val()=="")){
+									dialog.find('.selectThreeStandardGrid').message({
+    	    		    	    		type: 'warning',
+    	    		    	        	content: '请选择需要关联的三标信息！'
+    	    		    	    	});
+    	    		    		}
+    	    		    		var data = [{ name: 'id', value: id},
+    	    		    			{ name: 'ids', value: items.join(',')},
+    	    		    	    	{ name: 'start', value: dialog.find('#startID').val()},
+    	    		    	    	{ name: 'end', value: dialog.find('#endID').val()},
+    	    		    	    	{ name: 'currentUserId', value: currentUserId},
+    	    		    	    	{ name: 'mesgType', value: mesgType},
+    	   	     	 				{ name: 'packetId', value:packetId},		        
+    	    		     		];
+    	    		    		document.getElementById("selectThreeStandardGridSave").disabled = true;
+    	    		    		dialog.find('.modal-progress').html("<html><body><img src='${pageContext.request.contextPath}/images/loading.gif'  alt='上海鲜花港 - 郁金香' /></body></html>");
+    	    		    		$.post('${pageContext.request.contextPath}/Mesg/batch.koala', data).done(function(result){
+    	    		 	        	if(result.success ){
+    	    		 	        		dialog.modal('hide');
+    	    		 	            	e.data.grid.data('koala.grid').refresh();
+    	    		 	            	e.data.grid.message({
+    	    		 	            		type: 'success',
+    	    		 	                	content: '批量成功'
+    	    		 	            	});
+    	    		 	        	}else{
+    	    		 	        		dialog.find('.modal-progress').empty();
+    	    		 	        		document.getElementById("selectThreeStandardGridSave").disabled = false;
+    	    		 	            	dialog.find('.modal-content').message({
+    	    		 	                	type: 'error',
+    	    		 	                	content: result.errorMessage
+    	    		 	            	});
+    	    		 	        	}
+    	    		 	    	});                        
+    	    		    	});
+							//兼容IE8 IE9
+    	    		    	if(window.ActiveXObject){
+    	    		    		if(parseInt(navigator.userAgent.toLowerCase().match(/msie ([\d.]+)/)[1]) < 10){
+    	    		    			dialog.trigger('shown.bs.modal');
+    	    		    		}
+    	    		    	}    	  
+    	     	    	});            	    	                
     	    		}else{
 						grid.message({
-	                        type: 'error',
-	                        content: result.errorMessage
-	                    });
-	                }
+	                		type: 'error',
+	                    	content: "只有正常报送记录才能进行批量"
+	                	});
+	            	}
     	    	});
-
     	    },
     	}
     	PageLoader.initGridPanel();
-//    });
-}
+	}
     var openDetailsPageOfMesg = function(id){
             var dialog = $('<div class="modal fade"><div class="modal-dialog" style="width:900px;"><div class="modal-content"><div class="modal-header"><button type="button" class="close" data-dismiss="modal" aria-hidden="true">&times;</button><h4 class="modal-title">查看</h4></div><div class="modal-body"><p>One fine body&hellip;</p></div><div class="modal-footer"><button type="button" class="btn btn-info" data-dismiss="modal">返回</button></div></div></div></div>');
             $.get('<%=path%>/Mesg-view.jsp').done(function(html){

@@ -332,48 +332,16 @@ public class PacketFacadeImpl implements PacketFacade {
 	
 	@Override
 	public String downloadCSV(Long packetId) {
-		Packet packet = application.getPacket(packetId);
-		Date origSendDate = packet.getOrigSendDate();
-   		DateFormat dateFormat = new SimpleDateFormat("yyyyMMddHHmmss");  
-   		String counter;
-   		String result;
+   		String result = "";
 	   	List<Mesg> mesgList = findMesgsByPacketId(packetId);
 	   	if(null!=mesgList && mesgList.size()>0){
-	   		counter = fillStringToHead(10,""+mesgList.size(),"0");
-	   		result = "A" + packet.getFileVersion() + packet.getOrigSender() + dateFormat.format(origSendDate) + packet.getRecordType() + packet.getDataType() + counter + "                              " + "\r\n";
-	   		for(Mesg mesg : mesgList){
-	   			//XmlNode xmlNode;
-				//try {
-					//xmlNode = XmlUtil.getXmlNodeByXmlContent(mesg.getContent(),mesg.getMesgType().getCountTag());
-//					result = result + "{H:02" + packet.getOrigSender() + dateFormat.format(origSendDate) 
-//							+ timeFormat.format(origSendDate) + mesg.getMesgType().getCode() + mesg.getMesgId()
-//							+ mesg.getMesgPriority() + mesg.getMesgDirection() + mesg.getReserve() + ":}";
-					
-					//String uuid = UUID.randomUUID().toString().replaceAll("-", "");
-					//result = result + "{H:123456789012345" + uuid + "0000000000000}";	   			
+	   		for(Mesg mesg : mesgList){			
 				result = result + mesg.getContent() + "\r\n";
-					
-				//} catch (SAXException e) {
-					// TODO Auto-generated catch block
-					//e.printStackTrace();
-				//} catch (IOException e) {
-					// TODO Auto-generated catch block
-					//e.printStackTrace();
-				//} catch (ParserConfigurationException e) {
-					// TODO Auto-generated catch block
-					//e.printStackTrace();
-				//}
 	   		}
-	   		//return result;
-	   	}else{
-	   		counter = fillStringToHead(10,"0","0");
-	   		result = "A" + packet.getFileVersion() + packet.getOrigSender() + dateFormat.format(origSendDate) + packet.getRecordType() + packet.getDataType() + counter + "                              " + "\r\n";
-	   	}
+	   	}	
 		return result;
 	}
-	
-	
-	
+		
 	@SuppressWarnings("unchecked")
 	private List<Mesg> findMesgsByPacketId(Long packetId){
 		List<Object> conditionVals = new ArrayList<Object>();
