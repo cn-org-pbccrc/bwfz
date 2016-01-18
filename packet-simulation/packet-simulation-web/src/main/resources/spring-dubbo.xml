@@ -1,0 +1,14 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<beans xmlns="http://www.springframework.org/schema/beans"
+	xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+	xmlns:dubbo="http://code.alibabatech.com/schema/dubbo"
+	xsi:schemaLocation="http://www.springframework.org/schema/beans http://www.springframework.org/schema/beans/spring-beans.xsd
+		http://code.alibabatech.com/schema/dubbo http://code.alibabatech.com/schema/dubbo/dubbo.xsd">
+
+     <dubbo:application name="basicInfo-consumer"/>
+     
+     <dubbo:protocol name="dubbo" port="20882"/>
+     <dubbo:registry address="zookeeper://10.128.146.28:2182" client="curator" />
+     
+     <dubbo:reference id="baseInfoService" interface="org.pbccrc.ld.service.nature.customer.api.service.IBiBaseInfoService" timeout="100000"/>
+</beans>

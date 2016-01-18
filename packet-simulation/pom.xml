@@ -31,6 +31,31 @@
         <!--DB实现以及MVC模型的实现支持，不要修改这两个值-->
         <dbProtocol>JPA</dbProtocol>
         <mvcProtocol>SpringMVC</mvcProtocol>
+        
+        
+        <maven.compiler.encoding>UTF-8</maven.compiler.encoding>
+		<maven.compiler.target>1.7</maven.compiler.target>
+		<maven.compiler.source>1.7</maven.compiler.source>
+		<ld_common.version>0.0.1-SNAPSHOT</ld_common.version>
+
+		<logging.version>1.1.3</logging.version>
+		<lang3.version>3.4</lang3.version>
+		<log4j.version>1.2.17</log4j.version>
+		<slf4j.version>1.7.12</slf4j.version>
+		<spring.version>3.2.9.RELEASE</spring.version>
+		<dubbo.version>2.8.4</dubbo.version>
+		<cglib.version>3.1</cglib.version>
+		<mybatis.version>3.3.0</mybatis.version>
+		<mybatis-spring.version>1.2.3</mybatis-spring.version>
+		<druid.version>1.0.14</druid.version>
+		<zookeeper.version>3.4.6</zookeeper.version>
+		<netty.version>3.7.0.Final</netty.version>
+		<javassist.version>3.17.1-GA</javassist.version>
+		<guava.version>16.0.1</guava.version>
+		<asm.version>3.3.1</asm.version>
+		<curator.version>2.5.0</curator.version>
+		<mysqlDriver.version>5.1.10</mysqlDriver.version>
+		<dataSource.version>0.0.1-SNAPSHOT</dataSource.version>
 
     </properties>
 
@@ -214,10 +239,146 @@
     </profiles>
 
 
-    <dependencyManagement>
-
+    <dependencyManagement>	
         <dependencies>
           <!-- DDDLIB -->
+          <dependency>
+			<groupId>org.pbccrc</groupId>
+			<artifactId>ld_service_nature_customer_api</artifactId>
+			<version>0.0.1-SNAPSHOT</version>
+		</dependency>
+            <dependency>
+				<groupId>org.pbccrc</groupId>
+				<artifactId>component-datasource</artifactId>
+				<version>${dataSource.version}</version>
+			</dependency>
+			<dependency>
+				<groupId>org.pbccrc</groupId>
+				<artifactId>ld_common</artifactId>
+				<version>${ld_common.version}</version>
+			</dependency>
+			<dependency>
+				<groupId>mysql</groupId>
+				<artifactId>mysql-connector-java</artifactId>
+				<version>${mysqlDriver.version}</version>
+			</dependency>
+			<dependency>
+				<groupId>commons-logging</groupId>
+				<artifactId>commons-logging</artifactId>
+				<version>${logging.version}</version>
+			</dependency>
+			<dependency>
+				<groupId>org.apache.commons</groupId>
+				<artifactId>commons-lang3</artifactId>
+				<version>${lang3.version}</version>
+			</dependency>
+			<dependency>
+				<groupId>log4j</groupId>
+				<artifactId>log4j</artifactId>
+				<version>${log4j.version}</version>
+			</dependency>
+			<dependency>
+				<groupId>org.slf4j</groupId>
+				<artifactId>slf4j-api</artifactId>
+				<version>${slf4j.version}</version>
+			</dependency>
+			<dependency>
+				<groupId>org.slf4j</groupId>
+				<artifactId>slf4j-log4j12</artifactId>
+				<version>${slf4j.version}</version>
+			</dependency>
+			<dependency>
+				<groupId>org.springframework</groupId>
+				<artifactId>spring-beans</artifactId>
+				<version>${spring.version}</version>
+			</dependency>
+			<dependency>
+				<groupId>org.springframework</groupId>
+				<artifactId>spring-context</artifactId>
+				<version>${spring.version}</version>
+			</dependency>
+			<dependency>
+				<groupId>org.springframework</groupId>
+				<artifactId>spring-context-support</artifactId>
+				<version>${spring.version}</version>
+			</dependency>
+			<dependency>
+				<groupId>org.springframework</groupId>
+				<artifactId>spring-core</artifactId>
+				<version>${spring.version}</version>
+			</dependency>
+			<dependency>
+				<groupId>org.springframework</groupId>
+				<artifactId>spring-orm</artifactId>
+				<version>${spring.version}</version>
+			</dependency>
+			<dependency>
+				<groupId>org.springframework</groupId>
+				<artifactId>spring-tx</artifactId>
+				<version>${spring.version}</version>
+			</dependency>
+			<dependency>
+				<groupId>com.alibaba</groupId>
+				<artifactId>dubbo</artifactId>
+				<version>${dubbo.version}</version>
+			</dependency>
+			<dependency>
+				<groupId>cglib</groupId>
+				<artifactId>cglib</artifactId>
+				<version>${cglib.version}</version>
+			</dependency>
+			<dependency>
+				<groupId>org.mybatis</groupId>
+				<artifactId>mybatis</artifactId>
+				<version>${mybatis.version}</version>
+			</dependency>
+			<dependency>
+				<groupId>org.mybatis</groupId>
+				<artifactId>mybatis-spring</artifactId>
+				<version>${mybatis-spring.version}</version>
+			</dependency>
+			<dependency>
+				<groupId>com.alibaba</groupId>
+				<artifactId>druid</artifactId>
+				<version>${druid.version}</version>
+			</dependency>
+			<dependency>
+				<groupId>org.apache.zookeeper</groupId>
+				<artifactId>zookeeper</artifactId>
+				<version>${zookeeper.version}</version>
+			</dependency>
+			<dependency>
+				<groupId>org.apache.curator</groupId>
+				<artifactId>curator-client</artifactId>
+				<version>${curator.version}</version>
+			</dependency>
+			<dependency>
+				<groupId>org.apache.curator</groupId>
+				<artifactId>curator-framework</artifactId>
+				<version>${curator.version}</version>
+			</dependency>
+			<dependency>
+				<groupId>asm</groupId>
+				<artifactId>asm</artifactId>
+				<version>${asm.version}</version>
+			</dependency>
+			<dependency>
+				<groupId>com.google.guava</groupId>
+				<artifactId>guava</artifactId>
+				<version>${guava.version}</version>
+			</dependency>
+			<dependency>
+				<groupId>org.javassist</groupId>
+				<artifactId>javassist</artifactId>
+				<version>${javassist.version}</version>
+			</dependency>
+			<dependency>
+				<groupId>io.netty</groupId>
+				<artifactId>netty</artifactId>
+				<version>${netty.version}</version>
+			</dependency>
+			
+			
             <dependency>
                 <groupId>org.dayatang.dddlib</groupId>
                 <artifactId>dddlib-utils</artifactId>

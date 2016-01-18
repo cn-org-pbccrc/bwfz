@@ -120,15 +120,10 @@ legend {
     	                    ],
     	                url:"${pageContext.request.contextPath}/Mesg/pageJson/" + packetId + ".koala",
     	                columns: [
-																							//{ title: '流水号', name: 'mesgId', width: width},
-																							 { title: '备注', name: 'remark', width: width},
-    	                         	                         	                         	 { title: '报文类型', name: 'mesgTypeStr', width: width},
-    	                         	                         	                         	 
-//     	                         	                         	                         	{ title: '优先级', name: 'mesgPriority', width: width},
-//     	                         	                         	                         	{ title: '传输方向', name: 'mesgDirection', width: width},
-//     	                         	                         	                         	{ title: '保留域', name: 'reserve', width: width},
-    	                         	                         	                         	
-    	                         	                         	                             { title: '操作', width: 120, render: function (rowdata, name, index)
+								 	{ title: '备注', name: 'remark', width: width},
+    	                         	{ title: '报文类型', name: 'mesgTypeStr', width: width},
+    	                         	{ title: '信息标识Id', name: 'uniqueIdentification', width: width},
+    	                         	{ title: '操作', width: 120, render: function (rowdata, name, index)
     	                                 {
     	                                     var param = '"' + rowdata.id + '"';
     	                                     var h = "<a href='javascript:openDetailsPageOfMesg(" + param + ")'>查看</a> ";

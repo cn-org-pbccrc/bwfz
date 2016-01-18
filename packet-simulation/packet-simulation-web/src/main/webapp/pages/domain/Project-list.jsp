@@ -176,8 +176,7 @@ $(function (){
 	            //employeeId = projectManagerID.find('input');
 	            userId = projectManagerID.find('input');
 	            //var a = getReposiory().get(User,userId).userName;
-	            //alert(a);
-	            
+	            //alert(a);	            
 	        });
 	        dialog.find('#save').on('click',{grid: grid}, function(e){	        	  
 	              //alert(userId.val());

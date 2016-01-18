@@ -9,7 +9,6 @@
 	<input type="hidden" id="versionID" name="version" /> 
 	<input type="hidden" id="packetIdID" name="packetId" />
 	<input type="hidden" id="mesgTypeID" name="mesgType" />
-	<input type="hidden" id="mesgIdID" name="mesgId" />
 	<input type="hidden" id="remarkID" name="remark" />
 		<div class="form-group">
                     <label class="col-lg-3 control-label">备注:</label>

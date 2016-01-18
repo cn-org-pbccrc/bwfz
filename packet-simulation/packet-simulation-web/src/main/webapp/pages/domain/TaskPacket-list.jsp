@@ -579,12 +579,13 @@ function initFun(){
 	                });
 	                dialog.find('#save').on('click',{grid: grid}, function(e){
 	                	if(packetFrom == '外部报文'){
-	                		alert("不能对外部报文进行修改！")
-	                		dialog.modal('hide');
+	                		//alert("不能对外部报文进行修改！")
+	                		//dialog.modal('hide');
 	                		dialog.find('.modal-content').message({
 	                            type: 'error',
-	                            content: result.actionError
+	                            content: "不能对外部报文进行修改！"
 	                        });
+	                		return false;
 	                		//dialog.modal('hide');
 	                	}
 	                    if(!Validator.Validate(dialog.find('form')[0],3))return;
@@ -832,8 +833,37 @@ function initFun(){
 	            }
 	    	});
 	    },
-	    send: function(){
-	    	
+	    send: function(grid){
+	    	var self = this;
+	        var dialog = $('<div class="modal fade"><div class="modal-dialog"><div class="modal-content"><div class="modal-header"><button type="button" class="close" data-dismiss="modal" aria-hidden="true">&times;</button><h4 class="modal-title">修改</h4></div><div class="modal-body"><p>One fine body&hellip;</p></div><div class="modal-footer"><button type="button" class="btn btn-default" data-dismiss="modal">取消</button><button type="button" class="btn btn-success" id="save">发送</button></div></div></div></div>');
+	        $.get('<%=path%>/TaskPacket-send.jsp').done(function(html){
+	        	dialog.find('.modal-body').html(html);
+	            dialog.modal({
+	            	keyboard:false
+	            }).on({
+	                'hidden.bs.modal': function(){
+	                	$(this).remove();
+	                }
+	            });
+	        });
+	        dialog.find('#save').on('click',{grid: grid}, function(e){	
+	        	if(!Validator.Validate(dialog.find('form')[0],3))return;
+	            $.post('${pageContext.request.contextPath}/TaskPacket/send.koala', dialog.find('form').serialize()).done(function(result){
+	            	if(result.success){
+	                	dialog.modal('hide');
+	                    e.data.grid.data('koala.grid').refresh();
+	                    e.data.grid.message({
+	                    	type: 'success',
+	                        content: '发送成功'
+	                    });
+	                }else{
+	                    dialog.find('.modal-content').message({
+	                    	type: 'error',
+	                        content: result.actionError
+	                	});
+	            	}
+	        	});
+	        });
 	    }
 	}
 	PageLoader.initSearchPanel();

@@ -3,6 +3,8 @@
  */
 package org.packet.packetsimulation.core.domain;
 
+import java.math.BigInteger;
+
 import javax.persistence.Column;
 import javax.persistence.Entity;
 import javax.persistence.JoinColumn;
@@ -19,15 +21,6 @@ import org.openkoala.koala.commons.domain.KoalaAbstractEntity;
 @Entity 
 @Table(name = "MESG") 
 public class Mesg extends KoalaAbstractEntity{
-
-	public String getRemark() {
-		return remark;
-	}
-
-	public void setRemark(String remark) {
-		this.remark = remark;
-	}
-
 	/**
 	 * 
 	 */
@@ -47,9 +40,11 @@ public class Mesg extends KoalaAbstractEntity{
 	@Column(name = "REMARK")
 	private String remark;
 	
-	@Column(name = "MESGID")
-	private String mesgId;
-//	
+//	@Column(name = "MESGID")
+//	private String mesgId;
+	
+	@Column(name = "UNIQUEIDENTIFICATION")
+	private BigInteger uniqueIdentification;
 //	@Column(name = "MESG_PRIORITY")
 //	private String mesgPriority;
 //	
@@ -59,13 +54,21 @@ public class Mesg extends KoalaAbstractEntity{
 //	@Column(name = "RESERVE")
 //	private String reserve;
 	
-	public String getMesgId() {
-		return mesgId;
+	public BigInteger getUniqueIdentification() {
+		return uniqueIdentification;
 	}
 
-	public void setMesgId(String mesgId) {
-		this.mesgId = mesgId;
+	public void setUniqueIdentification(BigInteger uniqueIdentification) {
+		this.uniqueIdentification = uniqueIdentification;
 	}
+
+//	public String getMesgId() {
+//		return mesgId;
+//	}
+//
+//	public void setMesgId(String mesgId) {
+//		this.mesgId = mesgId;
+//	}
 
 //	public String getMesgPriority() {
 //		return mesgPriority;
@@ -118,6 +121,14 @@ public class Mesg extends KoalaAbstractEntity{
 
 	public void setContent(String content) {
 		this.content = content;
+	}
+	
+	public String getRemark() {
+		return remark;
+	}
+
+	public void setRemark(String remark) {
+		this.remark = remark;
 	}
 
 }

@@ -15,16 +15,11 @@ public class MesgAssembler {
 		}
     	MesgDTO result  = new MesgDTO();
 	    	result.setId (mesg.getId());
-     	    	result.setVersion (mesg.getVersion());
-     	    	result.setPacketId(mesg.getPacket().getId());
-     	    	result.setContent(mesg.getContent());
-     	    	result.setMesgType(mesg.getMesgType().getId());
-     	    	result.setMesgTypeStr(mesg.getMesgType().getMesgType());
-     	    	result.setRemark(mesg.getRemark());
-//     	    	result.setMesgDirection(mesg.getMesgDirection());
-//     	    	result.setMesgPriority(mesg.getMesgPriority());
-//     	    	result.setReserve(mesg.getReserve());
-     	    	result.setMesgId(mesg.getMesgId());
+     	    result.setVersion (mesg.getVersion());
+     	    result.setPacketId(mesg.getPacket().getId());
+     	    result.setContent(mesg.getContent());
+     	    result.setMesgType(mesg.getMesgType().getId());
+     	    result.setRemark(mesg.getRemark());
      	    return result;
 	 }
 	
@@ -47,11 +42,7 @@ public class MesgAssembler {
         result.setId (mesgDTO.getId());
         result.setVersion (mesgDTO.getVersion());
         result.setRemark(mesgDTO.getRemark());
-//        result.setMesgDirection(mesgDTO.getMesgDirection());
-//	    result.setMesgPriority(mesgDTO.getMesgPriority());
-//	    result.setReserve(mesgDTO.getReserve());
-	    result.setMesgId(mesgDTO.getMesgId());	
-	    
+        //result.setUniqueIdentification(mesgDTO.getUniqueIdentification());	
  	  	return result;
 	 }
 	

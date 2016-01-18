@@ -18,6 +18,7 @@ import java.util.List;
 import java.util.Map;
 
 import org.springframework.beans.propertyeditors.CustomDateEditor;
+import org.springframework.context.support.ClassPathXmlApplicationContext;
 import org.springframework.stereotype.Controller;
 import org.springframework.web.bind.annotation.InitBinder;
 import org.springframework.web.bind.annotation.RequestMapping;
@@ -38,6 +39,7 @@ import org.packet.packetsimulation.core.domain.MesgType;
 import org.packet.packetsimulation.core.domain.TaskPacket;
 import org.packet.packetsimulation.facade.dto.*;
 import org.packet.packetsimulation.facade.TaskPacketFacade;
+import org.pbccrc.ld.service.nature.customer.api.service.IBiBaseInfoService;
 import org.openkoala.koala.commons.InvokeResult;
 
 
@@ -120,6 +122,14 @@ public class TaskPacketController {
 	@RequestMapping("/down")
 	public InvokeResult down(@RequestParam String sourceId, @RequestParam String destId){
 		return taskPacketFacade.downTaskPacket(sourceId, destId);
+	}
+	
+	@ResponseBody
+	@RequestMapping("/send")
+	public InvokeResult send(@RequestParam String threadNumber){
+		ClassPathXmlApplicationContext context =new ClassPathXmlApplicationContext("spring-dubbo.xml");
+	    final IBiBaseInfoService baseInfo=(IBiBaseInfoService) context.getBean("baseInfoService");
+		return InvokeResult.success();
 	}
 	
 	@ResponseBody

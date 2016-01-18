@@ -1,6 +1,7 @@
 package org.packet.packetsimulation.facade.impl;
 
 import java.io.IOException;
+import java.math.BigInteger;
 import java.text.MessageFormat;
 import java.text.SimpleDateFormat;
 import java.util.ArrayList;
@@ -92,12 +93,23 @@ public class MesgFacadeImpl implements MesgFacade {
 	public InvokeResult creatMesg(MesgDTO mesgDTO,String realPath) {
 		Mesg mesg = MesgAssembler.toEntity(mesgDTO);
 		MesgType mesgType = mesgTypeApplication.getMesgType(mesgDTO.getMesgType());
+		BigInteger max = findMaxCustomerCode();
+		mesg.setUniqueIdentification(max.add(BigInteger.valueOf(1)));
 		mesg.setMesgType(mesgType);
 		Packet packet = packetApplication.getPacket(mesgDTO.getPacketId());
 		mesg.setPacket(packet);
 		mesg.setContent(mesgDTO.getNodeValues());
 		application.creatMesg(mesg);
 		return InvokeResult.success();
+	}
+	
+	private BigInteger findMaxCustomerCode(){
+	   	StringBuilder jpql = new StringBuilder("select max(_mesg.uniqueIdentification) from Mesg _mesg  where 1=1 ");
+	   	if((getQueryChannelService().createJpqlQuery(jpql.toString()).singleResult()==null)){
+	   		return BigInteger.valueOf(0);
+	   	}
+	   	BigInteger max = (BigInteger) getQueryChannelService().createJpqlQuery(jpql.toString()).singleResult();
+	   	return max;
 	}
 	
 	public InvokeResult verifyMesgType(Long id){
