@@ -93,7 +93,6 @@ public class TaskPacketFacadeImpl implements TaskPacketFacade {
 		jpql.append(" and _taskPacket.packetFrom = ? ");
 		conditionVals.add("外部报文");
 		TaskPacket taskPacket = (TaskPacket) getQueryChannelService().createJpqlQuery(jpql.toString()).setParameters(conditionVals).singleResult();
-		System.out.println("111啊哈哈哈哈"+taskPacket.getId());
 		//taskPacketDTO.setId(taskPacket.getId());
 		SimpleDateFormat sdf = new SimpleDateFormat("yyyy-MM-dd HH:mm:ss");
 		String dateString = sdf.format(new Date());
