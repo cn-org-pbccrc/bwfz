@@ -19,10 +19,20 @@ public class MesgTypeDTO implements Serializable {
 	private String filePath;
 
 	private String mesgType;
+	
+	private String mesgTypeStr;
 
 	private String code;
 	
 	private String countTag;
+
+	public String getMesgTypeStr() {
+		return mesgTypeStr;
+	}
+
+	public void setMesgTypeStr(String mesgTypeStr) {
+		this.mesgTypeStr = mesgTypeStr;
+	}
 
 	public String getCountTag() {
 		return countTag;

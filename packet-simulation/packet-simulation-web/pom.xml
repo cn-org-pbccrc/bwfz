@@ -17,14 +17,14 @@
         <base.package>org.packet.packetsimulation.web.controller</base.package> 
     </properties>  
     <dependencies> 
-       <dependency>
-			<groupId>org.pbccrc</groupId>
-			<artifactId>ld_service_nature_customer_api</artifactId>
-		</dependency>
-		<dependency>
-				<groupId>com.alibaba</groupId>
-				<artifactId>dubbo</artifactId>
-		</dependency>
+<!--        <dependency> -->
+<!-- 			<groupId>org.pbccrc</groupId> -->
+<!-- 			<artifactId>ld_service_nature_customer_api</artifactId> -->
+<!-- 		</dependency> -->
+<!-- 		<dependency> -->
+<!-- 				<groupId>com.alibaba</groupId> -->
+<!-- 				<artifactId>dubbo</artifactId> -->
+<!-- 		</dependency> -->
         <dependency> 
             <groupId>org.packet</groupId>  
             <artifactId>packet-simulation-facade</artifactId>  

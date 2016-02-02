@@ -242,21 +242,21 @@
     <dependencyManagement>	
         <dependencies>
           <!-- DDDLIB -->
-          <dependency>
-			<groupId>org.pbccrc</groupId>
-			<artifactId>ld_service_nature_customer_api</artifactId>
-			<version>0.0.1-SNAPSHOT</version>
-		</dependency>
-            <dependency>
-				<groupId>org.pbccrc</groupId>
-				<artifactId>component-datasource</artifactId>
-				<version>${dataSource.version}</version>
-			</dependency>
-			<dependency>
-				<groupId>org.pbccrc</groupId>
-				<artifactId>ld_common</artifactId>
-				<version>${ld_common.version}</version>
-			</dependency>
+<!--           <dependency> -->
+<!-- 			<groupId>org.pbccrc</groupId> -->
+<!-- 			<artifactId>ld_service_nature_customer_api</artifactId> -->
+<!-- 			<version>0.0.1-SNAPSHOT</version> -->
+<!-- 		</dependency> -->
+<!--             <dependency> -->
+<!-- 				<groupId>org.pbccrc</groupId> -->
+<!-- 				<artifactId>component-datasource</artifactId> -->
+<!-- 				<version>${dataSource.version}</version> -->
+<!-- 			</dependency> -->
+<!-- 			<dependency> -->
+<!-- 				<groupId>org.pbccrc</groupId> -->
+<!-- 				<artifactId>ld_common</artifactId> -->
+<!-- 				<version>${ld_common.version}</version> -->
+<!-- 			</dependency> -->
 			<dependency>
 				<groupId>mysql</groupId>
 				<artifactId>mysql-connector-java</artifactId>

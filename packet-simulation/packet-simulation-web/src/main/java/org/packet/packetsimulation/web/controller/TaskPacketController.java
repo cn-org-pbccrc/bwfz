@@ -39,7 +39,7 @@ import org.packet.packetsimulation.core.domain.MesgType;
 import org.packet.packetsimulation.core.domain.TaskPacket;
 import org.packet.packetsimulation.facade.dto.*;
 import org.packet.packetsimulation.facade.TaskPacketFacade;
-import org.pbccrc.ld.service.nature.customer.api.service.IBiBaseInfoService;
+//import org.pbccrc.ld.service.nature.customer.api.service.IBiBaseInfoService;
 import org.openkoala.koala.commons.InvokeResult;
 
 
@@ -128,7 +128,7 @@ public class TaskPacketController {
 	@RequestMapping("/send")
 	public InvokeResult send(@RequestParam String threadNumber){
 		ClassPathXmlApplicationContext context =new ClassPathXmlApplicationContext("spring-dubbo.xml");
-	    final IBiBaseInfoService baseInfo=(IBiBaseInfoService) context.getBean("baseInfoService");
+	    //final IBiBaseInfoService baseInfo=(IBiBaseInfoService) context.getBean("baseInfoService");
 		return InvokeResult.success();
 	}
 	

@@ -3,7 +3,7 @@
 	<AcctInf>
 		<AcctBsSgmt>
 			<InfRecTp>信息记录类型</InfRecTp>
-			<AcctType>信息记录类型</AcctType>
+			<AcctType>账户类型</AcctType>
 			<RptDateCode>报告时点说明代码</RptDateCode>
 			<FinanCode>数据提供机构代码</FinanCode>
 			<BusiOrgCode>业务发生机构代码</BusiOrgCode>

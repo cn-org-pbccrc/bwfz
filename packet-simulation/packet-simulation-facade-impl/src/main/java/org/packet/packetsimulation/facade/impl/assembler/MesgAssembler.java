@@ -19,7 +19,9 @@ public class MesgAssembler {
      	    result.setPacketId(mesg.getPacket().getId());
      	    result.setContent(mesg.getContent());
      	    result.setMesgType(mesg.getMesgType().getId());
+     	    result.setMesgTypeStr(mesg.getMesgType().getMesgType());
      	    result.setRemark(mesg.getRemark());
+     	    result.setUniqueIdentification(mesg.getUniqueIdentification());
      	    return result;
 	 }
 	

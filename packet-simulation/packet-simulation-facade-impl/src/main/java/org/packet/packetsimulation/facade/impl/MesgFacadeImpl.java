@@ -634,7 +634,11 @@ public class MesgFacadeImpl implements MesgFacade {
 	   	if (queryVo.getContent() != null && !"".equals(queryVo.getContent())) {
 	   		jpql.append(" and _mesg.content like ?");
 	   		conditionVals.add(MessageFormat.format("%{0}%", queryVo.getContent()));
-	   	}		
+	   	}
+	   	if (queryVo.getUniqueIdentification() != null && !"".equals(queryVo.getUniqueIdentification())) {
+	   		jpql.append(" and _mesg.uniqueIdentification like ?");
+	   		conditionVals.add(MessageFormat.format("%{0}%", queryVo.getUniqueIdentification()));
+	   	}	
         Page<Mesg> pages = getQueryChannelService()
 		   .createJpqlQuery(jpql.toString())
 		   .setParameters(conditionVals)
