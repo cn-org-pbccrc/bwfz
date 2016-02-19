@@ -14,9 +14,21 @@
 	<bean id="customAuthoringRealm" class="org.openkoala.security.shiro.realm.CustomAuthoringRealm">
 		<property name="cachingEnabled" value="false" />
 	</bean>
+	
+	<!--  ldap realm -->
+	<bean id="myLdapContextFactory" class="org.apache.shiro.realm.ldap.JndiLdapContextFactory">
+		<property name="url" value="ldap://localhost:389"/>
+		<property name="systemUsername" value="cn=Manager,dc=example,dc=com"/>
+		<property name="systemPassword" value="secret"/>
+	</bean>
+	<bean id="customJNDIRealm" class="org.openkoala.security.shiro.realm.CustomJNDIRealm">
+				<property name="contextFactory" ref="myLdapContextFactory"/>
+				<property name="userDnTemplate" value="cn={0},dc=example,dc=com"/>
+				<property name="rootDn" value="dc=example,dc=com"/>
+	</bean>
 
 	<bean id="securityManager" class="org.apache.shiro.web.mgt.DefaultWebSecurityManager">
-		<property name="realm" ref="customAuthoringRealm" />
+		<property name="realm" ref="customJNDIRealm" />
 	</bean>
 	
 	 <bean class="org.springframework.beans.factory.config.MethodInvokingFactoryBean">
