@@ -13,7 +13,7 @@
 			    </div>
 	</div>
 		           <div class="form-group">
-                    <label class="col-lg-3 control-label">模版名称:</label>
+                    <label class="col-lg-3 control-label">模板名称:</label>
 	                    <div class="col-lg-9">
                            <input name="filePath" style="display:inline; width:94%;" class="form-control"  type="text"  id="filePathID" />
 			    </div>
@@ -36,7 +36,14 @@
                            <input name="sort" style="display:inline; width:94%;" class="form-control"  type="text"  id="sortID" />
 			    </div>
 	</div>
-	</form>
+			           <div class="form-group">
+                    <label class="col-lg-3 control-label">基础模板:</label>
+	                    <div class="col-lg-9">
+                           <textarea name="xml" style="display:inline; width:94%;" class="form-control" id="xmlID">
+						   </textarea>
+				</div>
+	</div>
+</form>
 <script type="text/javascript">
     var selectItems = {};
                             </script>

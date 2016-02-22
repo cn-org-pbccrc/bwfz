@@ -93,23 +93,12 @@ public class MesgFacadeImpl implements MesgFacade {
 	public InvokeResult creatMesg(MesgDTO mesgDTO,String realPath) {
 		Mesg mesg = MesgAssembler.toEntity(mesgDTO);
 		MesgType mesgType = mesgTypeApplication.getMesgType(mesgDTO.getMesgType());
-		BigInteger max = findMaxCustomerCode();
-		mesg.setUniqueIdentification(max.add(BigInteger.valueOf(1)));
 		mesg.setMesgType(mesgType);
 		Packet packet = packetApplication.getPacket(mesgDTO.getPacketId());
 		mesg.setPacket(packet);
 		mesg.setContent(mesgDTO.getNodeValues());
 		application.creatMesg(mesg);
 		return InvokeResult.success();
-	}
-	
-	private BigInteger findMaxCustomerCode(){
-	   	StringBuilder jpql = new StringBuilder("select max(_mesg.uniqueIdentification) from Mesg _mesg  where 1=1 ");
-	   	if((getQueryChannelService().createJpqlQuery(jpql.toString()).singleResult()==null)){
-	   		return BigInteger.valueOf(0);
-	   	}
-	   	BigInteger max = (BigInteger) getQueryChannelService().createJpqlQuery(jpql.toString()).singleResult();
-	   	return max;
 	}
 	
 	public InvokeResult verifyMesgType(Long id){
@@ -635,10 +624,6 @@ public class MesgFacadeImpl implements MesgFacade {
 	   		jpql.append(" and _mesg.content like ?");
 	   		conditionVals.add(MessageFormat.format("%{0}%", queryVo.getContent()));
 	   	}
-	   	if (queryVo.getUniqueIdentification() != null && !"".equals(queryVo.getUniqueIdentification())) {
-	   		jpql.append(" and _mesg.uniqueIdentification like ?");
-	   		conditionVals.add(MessageFormat.format("%{0}%", queryVo.getUniqueIdentification()));
-	   	}	
         Page<Mesg> pages = getQueryChannelService()
 		   .createJpqlQuery(jpql.toString())
 		   .setParameters(conditionVals)

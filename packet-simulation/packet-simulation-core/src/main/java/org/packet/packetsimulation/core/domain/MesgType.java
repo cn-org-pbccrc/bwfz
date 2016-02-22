@@ -38,9 +38,26 @@ public class MesgType extends KoalaAbstractEntity{
 	@Column(name = "COUNT_TAG") 
 	private String countTag;
 	
-	@Override
-	public String[] businessKeys() {
-		return new String[] { "mesgType"};
+	@Column(name = "XML",length=20000) 
+	private String xml;
+	
+	@Column(name = "CREATED_BY") 
+	private String createdBy;
+
+	public String getXml() {
+		return xml;
+	}
+
+	public void setXml(String xml) {
+		this.xml = xml;
+	}
+
+	public String getCreatedBy() {
+		return createdBy;
+	}
+
+	public void setCreatedBy(String createdBy) {
+		this.createdBy = createdBy;
 	}
 
 	public String getMesgType() {
@@ -83,4 +100,8 @@ public class MesgType extends KoalaAbstractEntity{
 		this.countTag = countTag;
 	}
 
+	@Override
+	public String[] businessKeys() {
+		return new String[] { "mesgType"};
+	}
 }

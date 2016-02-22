@@ -43,8 +43,6 @@ public class Mesg extends KoalaAbstractEntity{
 //	@Column(name = "MESGID")
 //	private String mesgId;
 	
-	@Column(name = "UNIQUEIDENTIFICATION")
-	private BigInteger uniqueIdentification;
 //	@Column(name = "MESG_PRIORITY")
 //	private String mesgPriority;
 //	
@@ -53,14 +51,6 @@ public class Mesg extends KoalaAbstractEntity{
 //	
 //	@Column(name = "RESERVE")
 //	private String reserve;
-	
-	public BigInteger getUniqueIdentification() {
-		return uniqueIdentification;
-	}
-
-	public void setUniqueIdentification(BigInteger uniqueIdentification) {
-		this.uniqueIdentification = uniqueIdentification;
-	}
 
 //	public String getMesgId() {
 //		return mesgId;

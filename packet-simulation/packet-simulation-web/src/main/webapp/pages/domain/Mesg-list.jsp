@@ -120,10 +120,9 @@ legend {
     	                    ],
     	                url:"${pageContext.request.contextPath}/Mesg/pageJson/" + packetId + ".koala",
     	                columns: [
-								 	{ title: '备注', name: 'remark', width: width},
-    	                         	{ title: '报文类型', name: 'mesgTypeStr', width: width},
-    	                         	{ title: '信息标识Id', name: 'uniqueIdentification', width: width},
-    	                         	{ title: '操作', width: 120, render: function (rowdata, name, index)
+								 	{ title: '备注', name: 'remark', width: 300},
+    	                         	{ title: '报文类型', name: 'mesgTypeStr', width: 300},
+    	                         	{ title: '操作', width: 180, render: function (rowdata, name, index)
     	                                 {
     	                                     var param = '"' + rowdata.id + '"';
     	                                     var h = "<a href='javascript:openDetailsPageOfMesg(" + param + ")'>查看</a> ";

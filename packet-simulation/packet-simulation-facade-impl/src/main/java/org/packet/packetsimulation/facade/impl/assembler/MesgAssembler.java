@@ -21,7 +21,6 @@ public class MesgAssembler {
      	    result.setMesgType(mesg.getMesgType().getId());
      	    result.setMesgTypeStr(mesg.getMesgType().getMesgType());
      	    result.setRemark(mesg.getRemark());
-     	    result.setUniqueIdentification(mesg.getUniqueIdentification());
      	    return result;
 	 }
 	

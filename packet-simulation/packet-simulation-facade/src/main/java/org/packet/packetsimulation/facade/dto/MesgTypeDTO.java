@@ -25,6 +25,26 @@ public class MesgTypeDTO implements Serializable {
 	private String code;
 	
 	private String countTag;
+	
+	private String xml;
+	
+	private String createdBy;
+
+	public String getXml() {
+		return xml;
+	}
+
+	public void setXml(String xml) {
+		this.xml = xml;
+	}
+
+	public String getCreatedBy() {
+		return createdBy;
+	}
+
+	public void setCreatedBy(String createdBy) {
+		this.createdBy = createdBy;
+	}
 
 	public String getMesgTypeStr() {
 		return mesgTypeStr;

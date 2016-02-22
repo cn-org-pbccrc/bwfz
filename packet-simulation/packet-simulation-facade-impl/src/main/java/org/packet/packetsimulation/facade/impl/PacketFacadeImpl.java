@@ -112,7 +112,6 @@ public class PacketFacadeImpl implements PacketFacade {
 	}
 	
 	public InvokeResult creatPacket(PacketDTO packetDTO) {
-		packetDTO.setPackId(new Date().getTime()+"");
 		Packet packet = PacketAssembler.toEntity(packetDTO);
 		DateFormat dateFormat = new SimpleDateFormat("yyyyMMdd");
 		Integer serialNumber = 1;
@@ -167,7 +166,6 @@ public class PacketFacadeImpl implements PacketFacade {
 	}
 	
 	public InvokeResult updatePacket(PacketDTO packetDTO) {
-		packetDTO.setPackId(new Date().getTime()+"");
 		Packet packet = PacketAssembler.toEntity(packetDTO);
 		DateFormat dateFormat = new SimpleDateFormat("yyyyMMdd");
 		Integer serialNumber = 1;
@@ -195,7 +193,6 @@ public class PacketFacadeImpl implements PacketFacade {
 	}
 	
 	public InvokeResult saveAsPacket(PacketDTO packetDTO, String idOfPacket){
-		packetDTO.setPackId(new Date().getTime()+"");
 		Packet packet = PacketAssembler.toEntity(packetDTO);
 		DateFormat dateFormat = new SimpleDateFormat("yyyyMMdd");
 		Integer serialNumber = 1;
@@ -331,14 +328,23 @@ public class PacketFacadeImpl implements PacketFacade {
 	}
 	
 	@Override
-	public String downloadCSV(Long packetId) {
-   		String result = "";
+	public String downloadCSV(Long packetId) {	
+		Packet packet = application.getPacket(packetId);
+		Date origSendDate = packet.getOrigSendDate();
+   		DateFormat dateFormat = new SimpleDateFormat("yyyyMMddHHmmss");  
+   		String counter;
+   		String result;
 	   	List<Mesg> mesgList = findMesgsByPacketId(packetId);
 	   	if(null!=mesgList && mesgList.size()>0){
-	   		for(Mesg mesg : mesgList){			
+	   		counter = fillStringToHead(10,""+mesgList.size(),"0");
+	   		result = "A" + packet.getFileVersion() + packet.getOrigSender() + dateFormat.format(origSendDate) + packet.getRecordType() + packet.getDataType() + counter + "                              " + "\r\n";
+	   		for(Mesg mesg : mesgList){  			
 				result = result + mesg.getContent() + "\r\n";
 	   		}
-	   	}	
+	   	}else{
+	   		counter = fillStringToHead(10,"0","0");
+	   		result = "A" + packet.getFileVersion() + packet.getOrigSender() + dateFormat.format(origSendDate) + packet.getRecordType() + packet.getDataType() + counter + "                              " + "\r\n";
+	   	}
 		return result;
 	}
 		
@@ -420,10 +426,10 @@ public class PacketFacadeImpl implements PacketFacade {
 		String line = br.readLine();
 		//packetDTO.setPacketName(path);	
 		Packet packet=PacketAssembler.toEntity(packetDTO);
-		System.out.println("第一名:"+line.substring(0,1));
-		System.out.println("第二名:"+line.substring(1,4));
+		//System.out.println("第一名:"+line.substring(0,1));
+		//System.out.println("第二名:"+line.substring(1,4));
 		packet.setFileVersion(line.substring(1,4));
-		System.out.println("``````````````"+line.substring(1,4));
+		//System.out.println("``````````````"+line.substring(1,4));
 		packet.setOrigSender(line.substring(4,18));
 		String date = line.substring(18,32);
 		String dateFormat = date.substring(0,4)+"-"+date.substring(4,6)+"-"+date.substring(6,8)+" "+date.substring(8,10)+":"+date.substring(10,12)+":"+date.substring(12,14);
@@ -458,7 +464,7 @@ public class PacketFacadeImpl implements PacketFacade {
 		br.close();
 		int totalLines = ReadAppointedLine.getTotalLines(new File(ctxPath+path));
 		application.creatPacket(packet);
-		System.out.println("最重要的来啦啊哈哈哈哈"+packet.getId());
+		//System.out.println("最重要的来啦啊哈哈哈哈"+packet.getId());
 		List<Mesg> mesgs= new ArrayList<Mesg>();
 //		List<Object> conditionVals = new ArrayList<Object>();
 //		StringBuilder jpql = new StringBuilder("select _mesgType from MesgType _mesgType  where 1=1 ");

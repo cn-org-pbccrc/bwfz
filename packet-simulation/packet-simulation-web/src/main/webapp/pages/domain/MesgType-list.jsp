@@ -11,10 +11,16 @@
    String path = request.getContextPath()+request.getServletPath().substring(0,request.getServletPath().lastIndexOf("/")+1);
 %>
 <script type="text/javascript">
+var currentUserId;
+$.get('${pageContext.request.contextPath}/auth/currentUser/getUserDetail.koala').done(function(json) {
+	json = json.data;
+ 	currentUserId = json['userAccount']; 	
+ 	initFun();
+});
 var grid;
 var form;
 var _dialog;
-$(function (){
+function initFun(){
     grid = $("#<%=gridId%>");
     form = $("#<%=formId%>");
 	PageLoader = {
@@ -35,9 +41,10 @@ $(function (){
 	                url:"${pageContext.request.contextPath}/MesgType/pageJson.koala",
 	                columns: [
 	                     	                         	                         { title: '报文类型', name: 'mesgType', width: 200},
-	                     	                         	                       { title: '类型代码', name: 'code', width: width},
+	                     	                         	                         { title: '类型代码', name: 'code', width: width},
 	                         	                         	                     { title: '模版名称', name: 'filePath', width: width},
 	                         	                         	                     { title: '显示顺序', name: 'sort', width: width},
+	                         	                         	                     { title: '创建人员', name: 'createdBy', width: width},
 	                         	                         	                     { title: '操作', width: 120, render: function (rowdata, name, index)
 	                                 {
 	                                     var param = '"' + rowdata.id + '"';
@@ -113,8 +120,7 @@ $(function (){
 	            self.initPage(dialog.find('form'));
 	        });
 	        dialog.find('#save').on('click',{grid: grid}, function(e){
-	              if(!Validator.Validate(dialog.find('form')[0],3))return;
-	              
+	              if(!Validator.Validate(dialog.find('form')[0],3))return;	              
 // 	              var codeID = dialog.find("#codeID").val();
 // 	              if('undefined'==codeID || null==codeID || codeID.length!=4){
 // 	            	  alert("报送机构编码为4位,请确认！");
@@ -126,7 +132,7 @@ $(function (){
 	              if (!Validation.notNull(dialog, dialog.find('#sortID'), dialog.find('#sortID').val(), '显示顺序不能为空')) {
 	     		      return false;
 	     		  }
-	              $.post('${pageContext.request.contextPath}/MesgType/add.koala', dialog.find('form').serialize()).done(function(result){
+	              $.post('${pageContext.request.contextPath}/MesgType/add.koala?createdBy='+currentUserId, dialog.find('form').serialize()).done(function(result){
 	                   if(result.success ){
 	                        dialog.modal('hide');
 	                        e.data.grid.data('koala.grid').refresh();
@@ -169,9 +175,8 @@ $(function (){
 	                    }
 	                });
 	                dialog.find('#save').on('click',{grid: grid}, function(e){
-	                    if(!Validator.Validate(dialog.find('form')[0],3))return;
-	                    
-// 	                    var codeID = dialog.find("#codeID").val();
+	                  if(!Validator.Validate(dialog.find('form')[0],3))return;	                    
+// 	                  var codeID = dialog.find("#codeID").val();
 // 	  	              if('undefined'==codeID || null==codeID || codeID.length!=4){
 // 	  	            	  alert("报送机构编码为4位,请确认！");
 // 	  	            	  return;
@@ -252,7 +257,7 @@ $(function (){
             });
             grid.getGrid().search(params);
         });
-});
+}
 
 var openDetailsPageOfMesgType = function(id){
         var dialog = $('<div class="modal fade"><div class="modal-dialog"><div class="modal-content"><div class="modal-header"><button type="button" class="close" data-dismiss="modal" aria-hidden="true">&times;</button><h4 class="modal-title">查看</h4></div><div class="modal-body"><p>One fine body&hellip;</p></div><div class="modal-footer"><button type="button" class="btn btn-info" data-dismiss="modal">返回</button></div></div></div></div>');

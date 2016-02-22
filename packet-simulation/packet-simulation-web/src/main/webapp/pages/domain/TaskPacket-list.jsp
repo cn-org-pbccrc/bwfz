@@ -300,7 +300,6 @@ function initFun(){
 	    	$.get(contextPath + '/pages/auth/packet-select.jsp').done(function(data) {	    		
 	    	 	   var dialog = $(data);
 <%-- 	    	 	   dialog.find('.modal-title').html(document.getElementById("<%=formId2%>").innerHTML); --%>
-
 	    	        //显示对话框数据
 	    	        dialog.modal({
 	    	            keyboard: false,

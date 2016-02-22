@@ -96,9 +96,13 @@ public class MesgTypeFacadeImpl implements MesgTypeFacade {
 //	   		jpql.append(" and _mesgType.sort=?");
 //	   		conditionVals.add(queryVo.getSort());
 //	   	}
-	   	if (queryVo.getSort() != null) {
+	   	if (queryVo.getSort() != null && !"".equals(queryVo.getSort())) {
 	   		jpql.append(" and _mesgType.sort like ?");
 	   		conditionVals.add(MessageFormat.format("%{0}%",queryVo.getSort()));
+	   	}
+	   	if (queryVo.getCreatedBy() != null && !"".equals(queryVo.getCreatedBy())) {
+	   		jpql.append(" and _mesgType.createdBy like ?");
+	   		conditionVals.add(MessageFormat.format("%{0}%",queryVo.getCreatedBy()));
 	   	}
 	   	jpql.append("order by _mesgType.sort asc");
         Page<MesgType> pages = getQueryChannelService()

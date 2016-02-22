@@ -31,6 +31,7 @@ public class MesgTypeController {
 	@ResponseBody
 	@RequestMapping("/add")
 	public InvokeResult add(MesgTypeDTO mesgTypeDTO) {
+		System.out.println("gold!!!!!!!!!!"+mesgTypeDTO.getCreatedBy());
 		return mesgTypeFacade.creatMesgType(mesgTypeDTO);
 	}
 	

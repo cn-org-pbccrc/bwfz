@@ -29,8 +29,6 @@ public class MesgDTO implements Serializable {
 	
 	private String remark;
 	
-	private BigInteger uniqueIdentification;
-	
 	public String getRemark() {
 		return remark;
 	}
@@ -150,13 +148,5 @@ public class MesgDTO implements Serializable {
 		} else if (!id.equals(other.id))
 			return false;
 		return true;
-	}
-
-	public BigInteger getUniqueIdentification() {
-		return uniqueIdentification;
-	}
-
-	public void setUniqueIdentification(BigInteger uniqueIdentification) {
-		this.uniqueIdentification = uniqueIdentification;
 	}
 }
