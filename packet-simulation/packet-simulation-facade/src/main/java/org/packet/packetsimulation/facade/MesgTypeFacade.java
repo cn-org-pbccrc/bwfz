@@ -25,7 +25,9 @@ public interface MesgTypeFacade {
 	
 	public Page<MesgTypeDTO> pageQueryMesgType(MesgTypeDTO mesgType, int currentPage, int pageSize);
 	
-	public InvokeResult getEditHtmlByMesgType(Long id,String realPath);
+//	public InvokeResult getEditHtmlByMesgType(Long id,String realPath);
+	
+	public InvokeResult getEditHtmlByMesgType(Long id);
 	
 }
 

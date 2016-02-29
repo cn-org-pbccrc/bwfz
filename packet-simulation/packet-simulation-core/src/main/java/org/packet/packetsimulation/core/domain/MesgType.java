@@ -17,7 +17,6 @@ import org.openkoala.koala.commons.domain.KoalaAbstractEntity;
 @Entity 
 @Table(name = "MESGTYPE") 
 public class MesgType extends KoalaAbstractEntity{
-
 	/**
 	 * 
 	 */

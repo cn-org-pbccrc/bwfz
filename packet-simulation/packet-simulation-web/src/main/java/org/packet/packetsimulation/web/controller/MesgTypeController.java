@@ -31,7 +31,6 @@ public class MesgTypeController {
 	@ResponseBody
 	@RequestMapping("/add")
 	public InvokeResult add(MesgTypeDTO mesgTypeDTO) {
-		System.out.println("gold!!!!!!!!!!"+mesgTypeDTO.getCreatedBy());
 		return mesgTypeFacade.creatMesgType(mesgTypeDTO);
 	}
 	
@@ -89,12 +88,18 @@ public class MesgTypeController {
 		return mesgTypeFacade.findMesgTypes();
 	}
     
+//  @ResponseBody
+//	@RequestMapping("/getEditHtmlByMesgType/{id}")
+//	public InvokeResult getEditHtmlByMesgType(@PathVariable Long id,HttpServletRequest request) {
+//    	String realPath = request.getSession().getServletContext().getRealPath("/");
+//    	//System.out.println("米米二狗哇哈哈:"+realPath);
+//    	return mesgTypeFacade.getEditHtmlByMesgType(id,realPath);
+//	}
+    
     @ResponseBody
 	@RequestMapping("/getEditHtmlByMesgType/{id}")
-	public InvokeResult getEditHtmlByMesgType(@PathVariable Long id,HttpServletRequest request) {
-    	String realPath = request.getSession().getServletContext().getRealPath("/");
-    	//System.out.println("米米二狗哇哈哈:"+realPath);
-    	return mesgTypeFacade.getEditHtmlByMesgType(id,realPath);
+	public InvokeResult getEditHtmlByMesgType(@PathVariable Long id) {
+    	return mesgTypeFacade.getEditHtmlByMesgType(id);
 	}
     
 }

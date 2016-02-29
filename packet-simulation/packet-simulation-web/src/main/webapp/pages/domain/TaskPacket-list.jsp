@@ -298,239 +298,197 @@ function initFun(){
 	    },
 	    selectPackets:function(grid){
 	    	$.get(contextPath + '/pages/auth/packet-select.jsp').done(function(data) {	    		
-	    	 	   var dialog = $(data);
-<%-- 	    	 	   dialog.find('.modal-title').html(document.getElementById("<%=formId2%>").innerHTML); --%>
-	    	        //显示对话框数据
-	    	        dialog.modal({
-	    	            keyboard: false,
-	    	            backdrop: false // 指定当前页为静态页面，如果不写后台页面就是黑色。
-	    	        }).on({
-	    	            'hidden.bs.modal': function(){
-	    	                $(this).remove();
-	    	            },
-	    	            'shown.bs.modal': function(){
-	    	                var columns = [
-	    	                    { title:'报文名称', name:'packetName' , width: 120},
-	    	                    { title:'文件格式版本号', name:'fileVersion', width: 120},
-	    	                    { title:'数据提供机构代码', name:'origSender', width: 130},
-	    	                    { title:'文件生成时间', name:'origSendDate', width: 100,
-	    	                    	render: function(item, name, index){
-   						                //alert(item[name].getMonth());
-   						                var d = new Date(item[name]);    //根据时间戳生成的时间对象
-										var date = (d.getFullYear()) + "-" + 
-												(d.getMonth() + 1) + "-" +
-												(d.getDate()) + " " + 
-												(d.getHours()) + ":" + 
-												(d.getMinutes()) + ":" + 
-												(d.getSeconds());
-   						                return date;
-   						             }	
-	    	                    },
-	    	                    { title:'记录类型', name:'recordType', width: 90},
-	    	                    { title:'数据类型', name:'dataType', width: 120,
-	    	                    	render: function(item, name, index){
-  						                 if(item[name] == '0'){
-  						                     return '正常';
-  						                 }else if(item[name] == '1'){
-  						                     return '删除且不需重报';
-  						                 }else{
-  						                	 return '删除且需重报';
-  						                 }
-  						             }	
-	    	                    },
-	    	                    { title:'创建人员', name:'createdBy', width: 90},
-	    	                    { title:'是否加压', width: 80, name: "haha", render: function (rowdata, name, index)
-	                                {
-	    	                    		var param = rowdata.id;  	                    		
-                                    	var h = "<label><input id='compressionId" + param + "' name='compression' type='checkbox' value='' checked='checked'/></label>";
-                                    	return h;
-                                	}
-	    	                    },
-	    	                    { title:'是否加密', width: 80,  render: function (rowdata, name, index)
-	                                {
-	    	                    		var param = rowdata.id;
-	    	                    		var h = "<label><input id='encryptionId" + param + "' name='encryption' type='checkbox' value='' checked='checked'/></label>";
-                                    	return h;
-                                	}
-	    	                    }
-	    	                ];//<!-- definition columns end -->
-
-	    	                //查询出当前表单所需要得数据。
-	    	                dialog.find('.selectPacketGrid').grid({
-	    	                    identity: 'id',
-	    	                    columns: columns,
-	    	                    url: contextPath + '/Packet/pageJson/' + currentUserId + '.koala'
-	    	                    //url: contextPath + '/Packet/pageJson.koala'
-	    	                });
-
-	    	            }
-	    	        });//<!-- 显示对话框数据结束-->
-	    	        function initSearch(){	    		    	
-	        	         var startTimeVal = dialog.find('#origSendDateID_start');
-	                     var startTime = startTimeVal.parent();
-	                     var endTimeVal = dialog.find('#origSendDateID_end');
-	                     var endTime = endTimeVal.parent();
-	                     startTime.datetimepicker({
-	                                        language: 'zh-CN',
-	                                        format: "yyyy-mm-dd hh:ii:ss",
-	                                        autoclose: true,
-	                                        todayBtn: true,
-	                                        //minView: 2,
-	                                        pickerPosition: 'bottom-left'
-	                     }).on('changeDate', function(){
-	                                 endTime.datetimepicker('setStartDate', startTimeVal.val());
-	                           });//加载日期选择器
-	                     var yesterday = new Date();
-	                     yesterday.setDate(yesterday.getDate() - 1);
-	                     endTime.datetimepicker({
-	                             language: 'zh-CN',
-	                             format: "yyyy-mm-dd hh:ii:ss",
-	                             autoclose: true,
-	                             todayBtn: true,
-	                             //minView: 2,
-	                             pickerPosition: 'bottom-left'
-	                     }).on('changeDate', function(ev){
-	                                startTime.datetimepicker('setEndDate', endTimeVal.val());
-	                           }).datetimepicker('setDate', new Date()).trigger('changeDate');//加载日期选择器
-	                     startTime.datetimepicker('setDate', yesterday).trigger('changeDate');
-	                     var contents = [{title:'请选择', value: ''}];
- 	                     contents.push({title:'正常' , value:'0'});
- 	                     contents.push({title:'删除且不需重报' , value:'1'});
- 	                     contents.push({title:'删除且需重报' , value:'2'});
- 	                     dialog.find('#dataType_SELECT').select({
-                        title: '请选择',
-                        contents: contents
-                   }).on('change',function(){
-                       dialog.find('#dataTypeID_').val($(this).getValue());
-                   });
-	    }
-	    	        initSearch(); 
-	    	    	dialog.find('#search2').on('click', function(){
-<%-- 	    	            if(!Validator.Validate(document.getElementById("<%=formId2%>"),3))return; --%>
-	    	            var params = {};
-	    	            dialog.find('input').each(function(){
-	    	                var $this = $(this);
-	    	                var name = $this.attr('name');
-	    	                if(name){
-	    	                    params[name] = $this.val();
+	    	    var dialog = $(data);
+<%-- 	    	dialog.find('.modal-title').html(document.getElementById("<%=formId2%>").innerHTML); --%>
+	    	    //显示对话框数据
+	    	    dialog.modal({
+	    	        keyboard: false,
+	    	        backdrop: false // 指定当前页为静态页面，如果不写后台页面就是黑色。
+	    	    }).on({
+	    	        'hidden.bs.modal': function(){
+	    	            $(this).remove();
+	    	        },
+	    	        'shown.bs.modal': function(){
+	    	            var columns = [
+	    	                { title:'报文名称', name:'packetName' , width: 120},
+	    	                { title:'文件格式版本号', name:'fileVersion', width: 120},
+	    	                { title:'数据提供机构代码', name:'origSender', width: 130},
+	    	                { title:'文件生成时间', name:'origSendDate', width: 100,
+	    	                    render: function(item, name, index){
+   						            var d = new Date(item[name]);    //根据时间戳生成的时间对象
+									var date = (d.getFullYear()) + "-" + 
+											   (d.getMonth() + 1) + "-" +
+											   (d.getDate()) + " " + 
+											   (d.getHours()) + ":" + 
+											   (d.getMinutes()) + ":" + 
+											   (d.getSeconds());
+   						            return date;
+   						        }	
+	    	                },
+	    	                { title:'记录类型', name:'recordType', width: 90},
+	    	                { title:'数据类型', name:'dataType', width: 120,
+	    	                    render: function(item, name, index){
+  						            if(item[name] == '0'){
+  						                return '正常';
+  						            }else if(item[name] == '1'){
+  						                return '删除且不需重报';
+  						            }else{
+  						                return '删除且需重报';
+  						            }
+  						        }	
+	    	                },
+	    	                { title:'创建人员', name:'createdBy', width: 90},
+	    	                { title:'是否加压', width: 80, name: "haha", render: function (rowdata, name, index)
+	                            {
+	    	                        var param = rowdata.id;  	                    		
+                                    var h = "<label><input id='compressionId" + param + "' name='compression' type='checkbox' value='' checked='checked'/></label>";
+                                    return h;
+                                }
+	    	                },
+	    	                { title:'是否加密', width: 80,  render: function (rowdata, name, index)
+	                            {
+	    	                    	var param = rowdata.id;
+	    	                    	var h = "<label><input id='encryptionId" + param + "' name='encryption' type='checkbox' value='' checked='checked'/></label>";
+                                    return h;
+                                }
 	    	                }
+	    	            ];//<!-- definition columns end -->
+	    	            //查询出当前表单所需要得数据。
+	    	            dialog.find('.selectPacketGrid').grid({
+	    	                identity: 'id',
+	    	                columns: columns,
+	    	                url: contextPath + '/Packet/pageJson/' + currentUserId + '.koala'
+	    	                //url: contextPath + '/Packet/pageJson.koala'
 	    	            });
-	    	            dialog.find('.selectPacketGrid').getGrid().search(params);
-	    	        });
-	    	        
-	    	          dialog.find('#selectPacketGridSave').on('click',{grid: grid}, function(e){
-	    	            var items = dialog.find('.selectPacketGrid').data('koala.grid').selectedRows();
-	    	            var selectedPacketNames = new Array();
-						for(var i = 0; i < items.length; i++){
-							selectedPacketNames[i] = items[i].packetName;
-						}
-	    	            var data2 = [{ name: 'selectedPacketNames', value: selectedPacketNames.join(',')},
-	    	                         { name: 'taskId', value: taskId}
-	    	            			];
-	    	            $.post('${pageContext.request.contextPath}/TaskPacket/verify.koala', data2).done(function(result){
-	    	            	if(result.success){
-	    	            		creation(items);
-	    	            	}else{
-		                        dialog.find('.modal-content').message({
-		                            type: 'error',
-		                            content: result.errorMessage
-		                        });
-// 								var haha = function(){
-// 									creation(items);
-// 								};
-// 	    	            		dialog.find('.modal-content').confirm({
-// 		                            content: '确定要覆盖报文吗?',
-// 		                            callBack: haha
-// 		                        });
-		                     } 
-	    	            });
-	    	            function creation(items){
-	    	            	var isComs = new Array;
-		    	            var isEncs = new Array;
-		    	            var flagIds = new Array();
-		    	            for(var i = 0; i < items.length; i++){
-		    	            	flagIds[i] = items[i].id;
-								isComs[i] = $("input[id='compressionId"+flagIds[i]+"']").is(':checked');
-								if(isComs[i] == true){
-									isComs[i] = '是';
-								}else if(isComs[i] == false){
-									isComs[i] = '否';
-								}
-								isEncs[i] = $("input[id='encryptionId"+flagIds[i]+"']").is(':checked');
-								if(isEncs[i] == true){
-									isEncs[i] = '是';
-								}else if(isEncs[i] == false){
-									isEncs[i] = '否';
-								}
+	    	        }
+	    	    });//<!-- 显示对话框数据结束-->
+	    	    function initSearch(){	    		    	
+	        	    var startTimeVal = dialog.find('#origSendDateID_start');
+	                var startTime = startTimeVal.parent();
+	                var endTimeVal = dialog.find('#origSendDateID_end');
+	                var endTime = endTimeVal.parent();
+	                startTime.datetimepicker({
+	                	language: 'zh-CN',
+	                    format: "yyyy-mm-dd hh:ii:ss",
+	                    autoclose: true,
+	                    todayBtn: true,
+	                    //minView: 2,
+	                    pickerPosition: 'bottom-left'
+	                }).on('changeDate', function(){
+	                    endTime.datetimepicker('setStartDate', startTimeVal.val());
+	                });//加载日期选择器
+	                var yesterday = new Date();
+	                yesterday.setDate(yesterday.getDate() - 1);
+	                endTime.datetimepicker({
+	                    language: 'zh-CN',
+	                    format: "yyyy-mm-dd hh:ii:ss",
+	                    autoclose: true,
+	                    todayBtn: true,
+	                    //minView: 2,
+	                    pickerPosition: 'bottom-left'
+	                }).on('changeDate', function(ev){
+	                    startTime.datetimepicker('setEndDate', endTimeVal.val());
+	                }).datetimepicker('setDate', new Date()).trigger('changeDate');//加载日期选择器
+	                startTime.datetimepicker('setDate', yesterday).trigger('changeDate');
+	                var contents = [{title:'请选择', value: ''}];
+ 	                contents.push({title:'正常' , value:'0'});
+ 	                contents.push({title:'删除且不需重报' , value:'1'});
+ 	                contents.push({title:'删除且需重报' , value:'2'});
+ 	                dialog.find('#dataType_SELECT').select({
+                    	title: '请选择',
+                        contents: contents
+                    }).on('change',function(){
+                        dialog.find('#dataTypeID_').val($(this).getValue());
+                    });
+	            }
+	    	    initSearch(); 
+	    	    dialog.find('#search2').on('click', function(){
+<%-- 	    		if(!Validator.Validate(document.getElementById("<%=formId2%>"),3))return; --%>
+	    	    	var params = {};
+	    	    	dialog.find('input').each(function(){
+	    	    		var $this = $(this);
+	    	        	var name = $this.attr('name');
+	    	        	if(name){
+	    	        		params[name] = $this.val();
+	    	        	}
+	    	    	});
+	    	   	    dialog.find('.selectPacketGrid').getGrid().search(params);
+	    	    });
+				dialog.find('#selectPacketGridSave').on('click',{grid: grid}, function(e){
+	    			var items = dialog.find('.selectPacketGrid').data('koala.grid').selectedRows();
+	    	    	var selectedPacketNames = new Array();
+					for(var i = 0; i < items.length; i++){
+						selectedPacketNames[i] = items[i].packetName;
+					}
+	    	    	var data2 = [{ name: 'selectedPacketNames', value: selectedPacketNames.join(',')},
+	    	    		{ name: 'taskId', value: taskId}
+	    	    	];
+	    	    	$.post('${pageContext.request.contextPath}/TaskPacket/verify.koala', data2).done(function(result){
+	    	    		if(result.success){
+	    	        		creation(items);
+	    	        	}else{
+		                	dialog.find('.modal-content').message({
+		                		type: 'error',
+		                    	content: result.errorMessage
+		                	});
+		            	} 
+	    	    	});
+	    	    	function creation(items){
+	    	    		var isComs = new Array;
+		    	    	var isEncs = new Array;
+		    	    	var flagIds = new Array();
+		    	    	for(var i = 0; i < items.length; i++){
+		    	    		flagIds[i] = items[i].id;
+							isComs[i] = $("input[id='compressionId"+flagIds[i]+"']").is(':checked');
+							if(isComs[i] == true){
+								isComs[i] = '是';
+							}else if(isComs[i] == false){
+								isComs[i] = '否';
 							}
-		    	            if(items.length == 0){
-		    	                dialog.find('.selectPacketGrid').message({
-		    	                    type: 'warning',
-		    	                    content: '请选择需要关联的报文！'
-		    	                });
-		    	            }
-// 							var packetNames = new Array();
-// 							var fileVersions = new Array();
-// 							var origSenders = new Array();
-// 							var origSendDates = new Array();
-// 							var dataTypes = new Array();
-// 							var recordTypes = new Array();
-// 							for(var i = 0; i < items.length; i++){
-// 								packetNames[i] = items[i].packetName;							
-// 								fileVersions[i] = items[i].fileVersion;
-// 								origSenders[i] = items[i].origSender;
-// 								origSendDates[i] = items[i].origSendDate;
-// 								var d = new Date(origSendDates[i]);    //根据时间戳生成的时间对象
-// 								var date = (d.getFullYear()) + "-" + 
-// 										(d.getMonth() + 1) + "-" +
-// 										(d.getDate()) + " " + 
-// 										(d.getHours()) + ":" + 
-// 										(d.getMinutes()) + ":" + 
-// 										(d.getSeconds());
-// 								origSendDates[i] = date;
-// 								dataTypes[i] = items[i].dataType;
-// 								recordTypes[i] = items[i].recordType;
-// 							}
-//	 	    	            var packetId2 =  items[0].id;
-//	 	    	            var packetName2 = items[0].packetName;	                          
- 		    	            var data = [
-//   		    	                    { name: 'packetNames', value: packetNames.join(',')},
-// 		    	                        { name: 'fileVersions', value: fileVersions.join(',')},
-// 		    	                        { name: 'origSenders', value: origSenders.join(',')},
-// 		    	                        { name: 'origSendDates', value: origSendDates.join(',')},
-// 		    	                        { name: 'dataTypes', value: dataTypes.join(',')},
-// 		    	                        { name: 'recordTypes', value: recordTypes.join(',')},
-										{ name: 'flagIds', value: flagIds.join(',')},
-		     				            { name: 'compressions', value: isComs.join(',')},
-		     				            { name: 'encryptions', value: isEncs.join(',')},
-		     				            { name: 'taskId', value: taskId},
-		     				            { name: 'packetFrom', value: '内部报文'}
-		     				           ];
-		    	            $.post('${pageContext.request.contextPath}/TaskPacket/add.koala', data).done(function(result){
-		 	                	if(result.success ){
-		 	                    	dialog.modal('hide');
-		 	                        e.data.grid.data('koala.grid').refresh();
-		 	                        e.data.grid.message({
-		 	                            type: 'success',
-		 	                            content: '保存成功'
-		 	                         });
-		 	                    }else{
-		 	                        dialog.find('.modal-content').message({
-		 	                            type: 'error',
-		 	                            content: result.actionError
-		 	                        });
-		 	                    }
-		 	                });
-	    	              }
-		    	        });
-	    	          
-		    	        //兼容IE8 IE9
-		    	        if(window.ActiveXObject){
-		    	            if(parseInt(navigator.userAgent.toLowerCase().match(/msie ([\d.]+)/)[1]) < 10){
-		    	                dialog.trigger('shown.bs.modal');
-		    	            }
-		    	        }
-	    	    });   
+							isEncs[i] = $("input[id='encryptionId"+flagIds[i]+"']").is(':checked');
+							if(isEncs[i] == true){
+								isEncs[i] = '是';
+							}else if(isEncs[i] == false){
+								isEncs[i] = '否';
+							}
+						}
+		    	    	if(items.length == 0){
+		    	    		dialog.find('.selectPacketGrid').message({
+		    	        		type: 'warning',
+		    	            	content: '请选择需要关联的报文！'
+		    	        	});
+		    	    	}                          
+ 		    	    	var data = [
+							{ name: 'flagIds', value: flagIds.join(',')},
+		     				{ name: 'compressions', value: isComs.join(',')},
+		     				{ name: 'encryptions', value: isEncs.join(',')},
+		     				{ name: 'taskId', value: taskId},
+		     				{ name: 'packetFrom', value: '内部报文'}
+		     			];
+		    	    	$.post('${pageContext.request.contextPath}/TaskPacket/add.koala', data).done(function(result){
+		 	        		if(result.success ){
+		 	            		dialog.modal('hide');
+		 	                	e.data.grid.data('koala.grid').refresh();
+		 	                	e.data.grid.message({
+		 	                		type: 'success',
+		 	                    	content: '保存成功'
+		 	                	});
+		 	            	}else{
+		 	                	dialog.find('.modal-content').message({
+		 	                    	type: 'error',
+		 	                    	content: result.actionError
+		 	                	});
+		 	            	}
+		 	        	});
+	    	    	}
+		    	});       
+		    	//兼容IE8 IE9
+		    	if(window.ActiveXObject){
+		    		if(parseInt(navigator.userAgent.toLowerCase().match(/msie ([\d.]+)/)[1]) < 10){
+		    			dialog.trigger('shown.bs.modal');
+		    		}
+		    	}
+	    	});   
 	    },
 	    modify: function(id, grid){
 	        var self = this;

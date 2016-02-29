@@ -114,12 +114,31 @@ public class MesgTypeFacadeImpl implements MesgTypeFacade {
         return new Page<MesgTypeDTO>(pages.getStart(), pages.getResultCount(),pageSize, MesgTypeAssembler.toDTOs(pages.getData()));
 	}
 	
+//	@Override
+//	public InvokeResult getEditHtmlByMesgType(Long id,String realPath) {
+//		MesgTypeDTO dto = MesgTypeAssembler.toDTO(application.getMesgType(id));
+//		try {
+//			XmlNode xmlNode = XmlUtil.getXmlNodeByXml(dto.getFilePath(),realPath,dto.getCountTag());
+//			return InvokeResult.success(xmlNode.toEditHtmlTabString(dto.getFilePath()));
+//		} catch (SAXException e) {
+//			// TODO Auto-generated catch block
+//			e.printStackTrace();
+//		} catch (IOException e) {
+//			// TODO Auto-generated catch block
+//			e.printStackTrace();
+//		} catch (ParserConfigurationException e) {
+//			// TODO Auto-generated catch block
+//			e.printStackTrace();
+//		}
+//		return null;
+//	}
+	
 	@Override
-	public InvokeResult getEditHtmlByMesgType(Long id,String realPath) {
-		MesgTypeDTO dto = MesgTypeAssembler.toDTO(application.getMesgType(id));
+	public InvokeResult getEditHtmlByMesgType(Long id) {
+		MesgType mesgType = application.getMesgType(id);
 		try {
-			XmlNode xmlNode = XmlUtil.getXmlNodeByXml(dto.getFilePath(),realPath,dto.getCountTag());
-			return InvokeResult.success(xmlNode.toEditHtmlTabString(dto.getFilePath()));
+			XmlNode xmlNode = XmlUtil.getXmlNodeByXmlContent(mesgType.getXml(),mesgType.getCountTag());
+			return InvokeResult.success(xmlNode.toEditHtmlTabString(mesgType.getFilePath()));
 		} catch (SAXException e) {
 			// TODO Auto-generated catch block
 			e.printStackTrace();

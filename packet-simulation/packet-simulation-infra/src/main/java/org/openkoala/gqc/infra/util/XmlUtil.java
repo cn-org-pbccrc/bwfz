@@ -18,6 +18,8 @@ import javax.xml.validation.Schema;
 import javax.xml.validation.SchemaFactory;
 import javax.xml.validation.Validator;
 
+import org.dom4j.DocumentException;
+import org.dom4j.DocumentHelper;
 import org.dom4j.io.OutputFormat;
 import org.dom4j.io.SAXReader;
 import org.dom4j.io.SAXValidator;
@@ -50,7 +52,7 @@ public class XmlUtil {
 
 	}
 
-	public static XmlNode getXmlNodeByXml(String filePath, String realPath,String countTags)
+	public static XmlNode getXmlNodeByXml(String filePath, String realPath, String countTags)
 			throws SAXException, IOException, ParserConfigurationException {
 		String[] countTag = null;
 		if(null!=countTags && !"".equals(countTags)){
