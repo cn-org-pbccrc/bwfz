@@ -49,7 +49,7 @@ body {
 	float: left;
 	line-height: 60px;
 	margin: 20px 10px;
-	padding: 10px;
+	padding: 0px 10px;
 	border-left: 1px solid #d2d2d2;
 }
 
