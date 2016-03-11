@@ -8,6 +8,31 @@
 	 * KoalaUI的Tab组件，基于Bootstrap Tab改良，增加Close
 	 * @class Tab
 	 * @constructor
+	 * @example
+	 * 	<div class="bs-example bs-example-tabs">
+			<ul class="nav nav-tabs" id="myTab">
+		    	<li class="active"><a data-toggle="tab" href="#home">主页</a></li>
+		    	<li class=""><a data-toggle="tab" href="#user_manage">用户管理<i class="icon-remove tab-close"></i></a></li>
+		    	<li class=""><a data-toggle="tab" href="#role_manage">角色管理<i class="icon-remove tab-close"></i></a></li>
+		    	<li class=""><a data-toggle="tab" href="#resource_manage">资源管理<i class="icon-remove tab-close"></i></a></li>
+		    
+			</ul>
+			<div class="tab-content" id="myTabContent">
+		    	<div id="home" class="tab-pane fade active in">
+		      		测试主页内容
+		      		<button id="btnCloseRM" class="btn btn-success">关闭角色管理</button>
+		    	</div>
+		    	<div id="user_manage" class="tab-pane fade">
+		      		TEST
+		    	</div>
+		    	<div id="role_manage" class="tab-pane fade">
+		      		这个是角色管理页面
+		    	</div>
+		    	<div id="resource_manage" class="tab-pane fade">
+		      		这个是内容管理页面.......
+		    	</div>
+		  	</div>
+		</div>
 	 */
 	var Tab = function(element) {
 		this.element = $(element);

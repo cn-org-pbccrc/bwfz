@@ -10,7 +10,7 @@ public interface MesgFacade {
 
 	public InvokeResult getMesg(Long id);
 	
-	public InvokeResult creatMesg(MesgDTO mesg,String realPath);
+	public InvokeResult creatMesg(MesgDTO mesg);
 	
 	public InvokeResult verifyMesgType(Long id);
 	
@@ -22,7 +22,7 @@ public interface MesgFacade {
 	
 	public InvokeResult creatBatch(MesgDTO mesg,String realPath,int batchNumber);
 	
-	public InvokeResult updateMesg(MesgDTO mesg,String realPath);
+	public InvokeResult updateMesg(MesgDTO mesg);
 	
 	public InvokeResult removeMesg(Long id);
 	

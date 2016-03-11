@@ -6,10 +6,14 @@ import java.util.List;
 import java.util.ArrayList;
 import java.util.Set;
 import java.util.UUID;
+import java.util.concurrent.Callable;
 import java.util.concurrent.ExecutionException;
+import java.util.concurrent.ExecutorService;
+import java.util.concurrent.Executors;
 import java.util.concurrent.ForkJoinPool;
 import java.util.concurrent.Future;
 import java.util.concurrent.RecursiveTask;
+import java.util.concurrent.TimeUnit;
 import java.io.BufferedReader;
 import java.io.File;
 import java.io.FileInputStream;
@@ -84,6 +88,131 @@ public class ThreeStandardFacadeImpl implements ThreeStandardFacade {
 		threeStandard.setCreatedDate(time);
 		application.creatThreeStandard(threeStandard);
 		return InvokeResult.success();
+	}
+	
+	public InvokeResult generateThreeStandard(String createdBy, int threeStandardNumber, int threadNumber){
+		ExecutorService service = Executors.newFixedThreadPool(threadNumber);
+		List<Future<String>> resultList = new ArrayList<Future<String>>();
+		EmployeeUser employeeUser = findEmployeeUserByCreatedBy(createdBy);
+        String organizationCode;
+		if(employeeUser.getOrganization().equals("1")){
+			organizationCode = employeeUser.getCompany().getSn();
+		}else{
+			organizationCode = employeeUser.getDepartment().getSn();
+		}
+		int a = threeStandardNumber / 10000;
+		int b = threeStandardNumber % 10000;
+		Long start = System.currentTimeMillis();
+		if (a != 0){
+			for(int i = 0; i < a; i++){
+				MyThread myThread = new MyThread();
+				myThread.setNumber(10000);
+				myThread.setCreatedBy(createdBy);
+				myThread.setOrganizationCode(organizationCode);
+				Future<String> future = service.submit(myThread);
+	        	resultList.add(future);
+			}
+		} else{
+			MyThread myThread = new MyThread();
+			myThread.setNumber(threeStandardNumber);
+			myThread.setCreatedBy(createdBy);
+			myThread.setOrganizationCode(organizationCode);
+			Future<String> future = service.submit(myThread);
+        	resultList.add(future);
+		}
+		if (a != 0 && b != 0){
+			MyThread myThread = new MyThread();
+			myThread.setNumber(threeStandardNumber - a * 10000);
+			myThread.setCreatedBy(createdBy);
+			myThread.setOrganizationCode(organizationCode);
+			Future<String> future = service.submit(myThread);
+        	resultList.add(future);
+		}
+		service.shutdown();
+		try {
+			service.awaitTermination(Long.MAX_VALUE, TimeUnit.DAYS);
+		} catch (InterruptedException e) {
+			e.printStackTrace();
+    		return InvokeResult.failure(e.getMessage());
+		}
+		for(Future<String> fs : resultList){
+        	try{
+        		fs.get();
+        	} catch (InterruptedException e){
+        		e.printStackTrace();
+        		return InvokeResult.failure(e.getMessage());
+        	} catch (ExecutionException e){
+        		e.printStackTrace();
+        		return InvokeResult.failure(e.getMessage());
+        	}
+        }
+		Long end = System.currentTimeMillis();
+        System.out.println("hahahahahahahahaha:" + (end - start) + "ms");
+		return InvokeResult.success();
+	}
+	
+	public class MyThread implements Callable<String> {
+		private int number;
+		private String createdBy;
+		private String organizationCode;
+		public int getNumber() {
+			return number;
+		}
+		public void setNumber(int number) {
+			this.number = number;
+		}
+		public String getCreatedBy() {
+			return createdBy;
+		}
+		public void setCreatedBy(String createdBy) {
+			this.createdBy = createdBy;
+		}
+		public String getOrganizationCode() {
+			return organizationCode;
+		}
+		public void setOrganizationCode(String organizationCode) {
+			this.organizationCode = organizationCode;
+		}
+		@Override
+		public String call() throws Exception{
+			// TODO Auto-generated method stub		
+    		SimpleDateFormat sdf=new SimpleDateFormat("yyyy-MM-dd");       		
+    		Integer max = findMaxCustomerCode(createdBy);
+    		Integer a = max + 1;
+    		List<ThreeStandard> threeStandards = new ArrayList<ThreeStandard>();
+    		for(int i = 0; i < number; i++){       			
+    			ThreeStandard threeStandard = new ThreeStandard();
+    			String uuid = UUID.randomUUID().toString();
+    			threeStandard.setOrganizationCode(organizationCode);
+    			threeStandard.setCreatedBy(createdBy);
+    			threeStandard.setName(uuid.substring(0,8)+uuid.substring(9,13)+uuid.substring(14,16));
+    			threeStandard.setCredentialType("0");
+    			threeStandard.setCredentialNumber(uuid.substring(16,18)+uuid.substring(19,23)+uuid.substring(24));
+    			threeStandard.setCustomerCode(a);
+    			a++;
+    			threeStandard.setAcctCode("AcCode"+getShortUuid());
+    			threeStandard.setConCode("Cc"+getShortUuid());
+    			threeStandard.setCcc("Ccc"+getShortUuid());
+    			java.util.Date time=null;
+    			try {
+    				time= sdf.parse(sdf.format(new Date()));
+    			} catch (ParseException e) {
+    				e.printStackTrace();
+    			}
+    			threeStandard.setCreatedDate(time);
+    			threeStandards.add(threeStandard);
+    			if(i == (number - 1)){
+    				application.creatThreeStandards(threeStandards);
+    				threeStandards.clear();
+    				System.gc();
+    			}else if(i % 1000 == 0){
+    				application.creatThreeStandards(threeStandards);
+    				threeStandards.clear();
+    				System.gc();
+    			}       			
+    		}
+	        return null;			
+		}	
 	}
 	
 	public InvokeResult generateThreeStandard(ThreeStandardDTO threeStandardDTO, String threeStandardNumber){

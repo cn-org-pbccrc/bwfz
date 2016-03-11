@@ -444,7 +444,7 @@ public class XmlNode implements Serializable, Cloneable{
 		String result = UL_TAG;
 		//String result = "<!DOCTYPE html><html><head lang='en'><meta charset='UTF-8'><link href='"+realPath+"/lib/bootstrap/css/bootstrap.min.css' rel='stylesheet'></head><body>"+UL_TAG;
 		String tabClass="active";
-		String contentClass="tab-pane fade active in";
+		String contentClass="tab-pane fade active in true";
 		//System.out.println("看看到底nodes是多少个:"+nodes.size());
 		//System.out.println("看看到底nodes(0)是啥:"+nodes.get(0).getTagName());
 		List<XmlNode> tabNodes=nodes.get(0).getNodes();
@@ -456,7 +456,7 @@ public class XmlNode implements Serializable, Cloneable{
 				tabClass="";
 				if(null!= childNode && childNode.size()>0){
 					contentStr=contentStr+"<div id='"+xmlNode.getTagName()+"' class='"+contentClass+"'>";
-					contentClass="tab-pane fade";
+					contentClass="tab-pane fade true";
 					contentStr=contentStr+TAB_TABLE_TAG + TR_TAG;
 					contentStr=contentStr+getEditTabContents(childNode,false,null,templateName);
 					contentStr=contentStr+TR_ENDTAG+TABLE_ENDTAG+DIV_ENDTAG;
@@ -464,17 +464,86 @@ public class XmlNode implements Serializable, Cloneable{
 			}
 		}
 		result=result + UL_ENDTAG;
-		contentStr=contentStr+DIV_ENDTAG;
+		//contentStr=contentStr+DIV_ENDTAG;
 		//contentStr=contentStr+DIV_ENDTAG+"<script src='"+realPath+"/lib/jquery-1.11.3.min.js'></script><script src='"+realPath+"/lib/Koala_ToolTip.js'></script><script>$(function(){$('[data-toggle=\"tooltip\"]').tooltip();});</script></body></html>";
 		contentStr=contentStr+DIV_ENDTAG+"<script>$(function(){$('[data-toggle=\"tooltip\"]').tooltip();});</script>";
 		//System.out.println("臭米米33333333333333333333333:"+result+contentStr);
 		return result+contentStr;
 	}
 	
+	public String toEditHtmlTabStringForUpdate(String templateName, XmlNode xmlNodeForUpdate){
+		System.out.println("haaaaaaaaaaaaaaaaaaaaaaaaaa:"+xmlNodeForUpdate.nodes.get(0).getNodes().get(0).getTagName());
+		System.out.println("haaaaaaaaaaaaaaaaaaaaaaaaaa:"+xmlNodeForUpdate.nodes.get(0).getNodes().get(1).getTagName());
+		List<String> tabs = new ArrayList<String>();
+		for(int i = 0; i < xmlNodeForUpdate.nodes.get(0).getNodes().size(); i++){
+			tabs.add(xmlNodeForUpdate.nodes.get(0).getNodes().get(i).getTagName());
+		}
+		String result = UL_TAG;
+		//String result = "<!DOCTYPE html><html><head lang='en'><meta charset='UTF-8'><link href='"+realPath+"/lib/bootstrap/css/bootstrap.min.css' rel='stylesheet'></head><body>"+UL_TAG;
+		String tabClass="active";
+		String contentClass="tab-pane fade active in false";
+		//System.out.println("看看到底nodes是多少个:"+nodes.size());
+		//System.out.println("看看到底nodes(0)是啥:"+nodes.get(0).getTagName());
+		List<XmlNode> tabNodes=nodes.get(0).getNodes();
+		String contentStr="<div class='tab-content' id='"+nodes.get(0).getTagName()+"'>";
+		int j = 0;
+		if(null!=tabNodes && tabNodes.size()>0){
+			if(tabs.contains(tabNodes.get(0).getTagName())){
+				List<XmlNode> childNode = xmlNodeForUpdate.nodes.get(0).getNodes().get(j).getNodes();
+				result = result + "<li class='"+tabClass+"'><a data-toggle='tab' href='#"+xmlNodeForUpdate.nodes.get(0).getNodes().get(j).getTagName()+"'>"+PropertiesManager.getProperties(xmlNodeForUpdate.nodes.get(0).getNodes().get(j).getTagName(),templateName) + "<button type='button' style='padding:2px 4px;' class='btn btn-failure' onclick='removeTab(this,\"" + xmlNodeForUpdate.nodes.get(0).getNodes().get(j).getTagName() + "\");'><span class='glyphicon glyphicon-remove'><span></button></a></li>";
+				tabClass="";
+				if(null != childNode && childNode.size() > 0){
+					contentStr=contentStr+"<div id='"+xmlNodeForUpdate.nodes.get(0).getNodes().get(j).getTagName()+"' class='"+"tab-pane fade active in true"+"'>";
+					contentStr=contentStr+TAB_TABLE_TAG + TR_TAG;
+					contentStr=contentStr+getEditTabContents(childNode,false,null,templateName);
+					contentStr=contentStr+TR_ENDTAG+TABLE_ENDTAG+DIV_ENDTAG;
+				}
+				j++;
+			}else{
+				List<XmlNode> childNode = tabNodes.get(0).getNodes();
+				result = result + "<li class='"+tabClass+"'><a data-toggle='tab' href='#"+tabNodes.get(0).getTagName()+"'>"+PropertiesManager.getProperties(tabNodes.get(0).getTagName(),templateName) + "<button type='button' style='padding:2px 4px;' class='btn btn-failure' onclick='removeTab(this,\"" + tabNodes.get(0).getTagName() + "\");'><span class='glyphicon glyphicon-ok'><span></button></a></li>";
+				tabClass="";
+				if(null != childNode && childNode.size() > 0){
+					contentStr=contentStr+"<div id='"+tabNodes.get(0).getTagName()+"' class='"+contentClass+"'>";
+					contentClass="tab-pane fade false";
+					contentStr=contentStr+TAB_TABLE_TAG + TR_TAG;
+					contentStr=contentStr+getEditTabContents(childNode,false,null,templateName);
+					contentStr=contentStr+TR_ENDTAG+TABLE_ENDTAG+DIV_ENDTAG;
+				}
+			}
+			for(int i = 1; i < tabNodes.size(); i++){				
+				if(tabs.contains(tabNodes.get(i).getTagName())){
+					List<XmlNode> childNode = xmlNodeForUpdate.nodes.get(0).getNodes().get(j).getNodes();
+					result = result + "<li class='"+tabClass+"'><a data-toggle='tab' href='#"+xmlNodeForUpdate.nodes.get(0).getNodes().get(j).getTagName()+"'>"+PropertiesManager.getProperties(xmlNodeForUpdate.nodes.get(0).getNodes().get(j).getTagName(),templateName) + "<button type='button' style='padding:2px 4px;' class='btn btn-failure' onclick='removeTab(this,\"" + xmlNodeForUpdate.nodes.get(0).getNodes().get(j).getTagName() + "\");'><span class='glyphicon glyphicon-remove'><span></button></a></li>";
+					if(null != childNode && childNode.size() > 0){
+						contentStr=contentStr+"<div id='"+xmlNodeForUpdate.nodes.get(0).getNodes().get(j).getTagName()+"' class='"+"tab-pane fade true"+"'>";
+						contentStr=contentStr+TAB_TABLE_TAG + TR_TAG;
+						contentStr=contentStr+getEditTabContents(childNode,false,null,templateName);
+						contentStr=contentStr+TR_ENDTAG+TABLE_ENDTAG+DIV_ENDTAG;
+					}
+					j++;
+				}else{
+					List<XmlNode> childNode = tabNodes.get(i).getNodes();
+					result = result + "<li class='"+tabClass+"'><a data-toggle='tab' href='#"+tabNodes.get(i).getTagName()+"'>"+PropertiesManager.getProperties(tabNodes.get(i).getTagName(),templateName) + "<button type='button' style='padding:2px 4px;' class='btn btn-failure' onclick='removeTab(this,\"" + tabNodes.get(i).getTagName() + "\");'><span class='glyphicon glyphicon-ok'><span></button></a></li>";
+					if(null != childNode && childNode.size() > 0){
+						contentStr=contentStr+"<div id='"+tabNodes.get(i).getTagName()+"' class='"+contentClass+"'>";
+						contentStr=contentStr+TAB_TABLE_TAG + TR_TAG;
+						contentStr=contentStr+getEditTabContents(childNode,false,null,templateName);
+						contentStr=contentStr+TR_ENDTAG+TABLE_ENDTAG+DIV_ENDTAG;
+					}
+				}				
+			}
+		}
+		result=result + UL_ENDTAG;
+		//contentStr=contentStr+DIV_ENDTAG;
+		//contentStr=contentStr+DIV_ENDTAG+"<script src='"+realPath+"/lib/jquery-1.11.3.min.js'></script><script src='"+realPath+"/lib/Koala_ToolTip.js'></script><script>$(function(){$('[data-toggle=\"tooltip\"]').tooltip();});</script></body></html>";
+		contentStr=contentStr+DIV_ENDTAG+"<script>$(function(){$('[data-toggle=\"tooltip\"]').tooltip();});</script>";
+		//System.out.println("臭米米33333333333333333333333:"+result+contentStr);
+		return result+contentStr;
+	}
 	
 	private String getEditTabContents(List<XmlNode> nodes,boolean hasPeerNode,String countTagId,String templateName){
-		if(null!=nodes && nodes.size()>0){
-			
+		if(null!=nodes && nodes.size()>0){			
 			String htmlStr = "";
 			int index = 1;
 			for(XmlNode xmlNode : nodes){

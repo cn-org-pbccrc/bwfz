@@ -18,14 +18,6 @@ public class MesgDTO implements Serializable {
 	private Long mesgType;
 
 	private String mesgTypeStr;
-
-	//private String mesgPriority;
-
-	//private String mesgDirection;
-
-	//private String reserve;
-
-	private String mesgId;
 	
 	private String remark;
 	
@@ -36,38 +28,6 @@ public class MesgDTO implements Serializable {
 	public void setRemark(String remark) {
 		this.remark = remark;
 	}
-
-	public String getMesgId() {
-		return mesgId;
-	}
-
-	public void setMesgId(String mesgId) {
-		this.mesgId = mesgId;
-	}
-
-//	public String getMesgPriority() {
-//		return mesgPriority;
-//	}
-//
-//	public void setMesgPriority(String mesgPriority) {
-//		this.mesgPriority = mesgPriority;
-//	}
-//
-//	public String getMesgDirection() {
-//		return mesgDirection;
-//	}
-//
-//	public void setMesgDirection(String mesgDirection) {
-//		this.mesgDirection = mesgDirection;
-//	}
-//
-//	public String getReserve() {
-//		return reserve;
-//	}
-//
-//	public void setReserve(String reserve) {
-//		this.reserve = reserve;
-//	}
 
 	public void setContent(String content) {
 		this.content = content;

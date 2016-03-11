@@ -51,8 +51,8 @@ public class ThreeStandardController {
 	
 	@ResponseBody
 	@RequestMapping("/generate")
-	public InvokeResult generate(ThreeStandardDTO threeStandardDTO, @RequestParam String threeStandardNumber) {
-		return threeStandardFacade.generateThreeStandard(threeStandardDTO, threeStandardNumber);
+	public InvokeResult generate(@RequestParam String createdBy, @RequestParam int threeStandardNumber, @RequestParam int threadNumber) {
+		return threeStandardFacade.generateThreeStandard(createdBy, threeStandardNumber, threadNumber);
 	}
 	
 	@ResponseBody

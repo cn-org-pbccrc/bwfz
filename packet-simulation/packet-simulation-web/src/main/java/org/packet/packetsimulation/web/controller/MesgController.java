@@ -28,9 +28,8 @@ public class MesgController {
 	
 	@ResponseBody
 	@RequestMapping("/add")
-	public InvokeResult add(MesgDTO mesgDTO,HttpServletRequest request) {
-		String realPath = request.getSession().getServletContext().getRealPath("/");
-		return mesgFacade.creatMesg(mesgDTO,realPath);
+	public InvokeResult add(MesgDTO mesgDTO) {
+		return mesgFacade.creatMesg(mesgDTO);
 	}
 	
 	@ResponseBody
@@ -69,9 +68,8 @@ public class MesgController {
 	
 	@ResponseBody
 	@RequestMapping("/update")
-	public InvokeResult update(MesgDTO mesgDTO,HttpServletRequest request) {
-		String realPath = request.getSession().getServletContext().getRealPath("/");
-		return mesgFacade.updateMesg(mesgDTO,realPath);
+	public InvokeResult update(MesgDTO mesgDTO) {
+		return mesgFacade.updateMesg(mesgDTO);
 	}
 	
 	@SuppressWarnings("rawtypes")

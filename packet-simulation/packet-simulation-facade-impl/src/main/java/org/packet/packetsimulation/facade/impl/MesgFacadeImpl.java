@@ -90,13 +90,12 @@ public class MesgFacadeImpl implements MesgFacade {
 		return InvokeResult.success(dto);
 	}
 	
-	public InvokeResult creatMesg(MesgDTO mesgDTO,String realPath) {
+	public InvokeResult creatMesg(MesgDTO mesgDTO) {
 		Mesg mesg = MesgAssembler.toEntity(mesgDTO);
 		MesgType mesgType = mesgTypeApplication.getMesgType(mesgDTO.getMesgType());
 		mesg.setMesgType(mesgType);
 		Packet packet = packetApplication.getPacket(mesgDTO.getPacketId());
 		mesg.setPacket(packet);
-		mesg.setContent(mesgDTO.getNodeValues());
 		application.creatMesg(mesg);
 		return InvokeResult.success();
 	}
@@ -578,13 +577,12 @@ public class MesgFacadeImpl implements MesgFacade {
 		return InvokeResult.success();
 	}
 	
-	public InvokeResult updateMesg(MesgDTO mesgDTO,String realPath) {		
+	public InvokeResult updateMesg(MesgDTO mesgDTO) {		
 		Mesg mesg = MesgAssembler.toEntity(mesgDTO);		
 		MesgType mesgType = mesgTypeApplication.getMesgType(mesgDTO.getMesgType());
 		mesg.setMesgType(mesgType);
 		Packet packet = packetApplication.getPacket(mesgDTO.getPacketId());
 		mesg.setPacket(packet);
-		mesg.setContent(mesgDTO.getNodeValues());
 		application.updateMesg(mesg);
 		return InvokeResult.success();
 	}
@@ -633,13 +631,35 @@ public class MesgFacadeImpl implements MesgFacade {
         return new Page<MesgDTO>(pages.getStart(), pages.getResultCount(),pageSize, MesgAssembler.toDTOs(pages.getData()));
 	}
 
+//	@Override
+//	public InvokeResult getMesgForUpdate(Long id) {
+//		MesgDTO dto = MesgAssembler.toDTO(application.getMesg(id));
+//		MesgType mesgType = mesgTypeApplication.getMesgType(dto.getMesgType());
+//		try {
+//			XmlNode xmlNode = XmlUtil.getXmlNodeByXmlContent(dto.getContent(),mesgType.getCountTag());
+//			dto.setContent(xmlNode.toEditHtmlTabString(mesgType.getFilePath()));
+//		} catch (SAXException e) {
+//			// TODO Auto-generated catch block
+//			e.printStackTrace();
+//		} catch (IOException e) {
+//			// TODO Auto-generated catch block
+//			e.printStackTrace();
+//		} catch (ParserConfigurationException e) {
+//			// TODO Auto-generated catch block
+//			e.printStackTrace();
+//		}
+//		return InvokeResult.success(dto);
+//	}
+	
 	@Override
 	public InvokeResult getMesgForUpdate(Long id) {
-		MesgDTO dto = MesgAssembler.toDTO(application.getMesg(id));
-		MesgType mesgType = mesgTypeApplication.getMesgType(dto.getMesgType());
+		Mesg mesg = application.getMesg(id);
+		MesgType mesgType = mesgTypeApplication.getMesgType(mesg.getMesgType().getId());
+		String content = null;
 		try {
-			XmlNode xmlNode = XmlUtil.getXmlNodeByXmlContent(dto.getContent(),mesgType.getCountTag());
-			dto.setContent(xmlNode.toEditHtmlTabString(mesgType.getFilePath()));
+			XmlNode xmlNode = XmlUtil.getXmlNodeByXmlContent(mesgType.getXml(),mesgType.getCountTag());
+			XmlNode xmlNodeForUpdate = XmlUtil.getXmlNodeByXmlContent(mesg.getContent(),mesgType.getCountTag());
+			content = xmlNode.toEditHtmlTabStringForUpdate(mesgType.getFilePath(), xmlNodeForUpdate);
 		} catch (SAXException e) {
 			// TODO Auto-generated catch block
 			e.printStackTrace();
@@ -650,7 +670,25 @@ public class MesgFacadeImpl implements MesgFacade {
 			// TODO Auto-generated catch block
 			e.printStackTrace();
 		}
+		MesgDTO dto = MesgAssembler.toDTO(mesg);
+		dto.setContent(content);
 		return InvokeResult.success(dto);
+//		MesgDTO dto = MesgAssembler.toDTO(application.getMesg(id));
+//		MesgType mesgType = mesgTypeApplication.getMesgType(dto.getMesgType());
+//		try {
+//			XmlNode xmlNode = XmlUtil.getXmlNodeByXmlContent(dto.getContent(),mesgType.getCountTag());
+//			dto.setContent(xmlNode.toEditHtmlTabString(mesgType.getFilePath()));
+//		} catch (SAXException e) {
+//			// TODO Auto-generated catch block
+//			e.printStackTrace();
+//		} catch (IOException e) {
+//			// TODO Auto-generated catch block
+//			e.printStackTrace();
+//		} catch (ParserConfigurationException e) {
+//			// TODO Auto-generated catch block
+//			e.printStackTrace();
+//		}
+//		return InvokeResult.success(dto);
 	}
 
 	@Override

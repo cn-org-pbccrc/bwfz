@@ -30,33 +30,7 @@
 
         <!--DB实现以及MVC模型的实现支持，不要修改这两个值-->
         <dbProtocol>JPA</dbProtocol>
-        <mvcProtocol>SpringMVC</mvcProtocol>
-        
-        
-        <maven.compiler.encoding>UTF-8</maven.compiler.encoding>
-		<maven.compiler.target>1.7</maven.compiler.target>
-		<maven.compiler.source>1.7</maven.compiler.source>
-		<ld_common.version>0.0.1-SNAPSHOT</ld_common.version>
-
-		<logging.version>1.1.3</logging.version>
-		<lang3.version>3.4</lang3.version>
-		<log4j.version>1.2.17</log4j.version>
-		<slf4j.version>1.7.12</slf4j.version>
-		<spring.version>3.2.9.RELEASE</spring.version>
-		<dubbo.version>2.8.4</dubbo.version>
-		<cglib.version>3.1</cglib.version>
-		<mybatis.version>3.3.0</mybatis.version>
-		<mybatis-spring.version>1.2.3</mybatis-spring.version>
-		<druid.version>1.0.14</druid.version>
-		<zookeeper.version>3.4.6</zookeeper.version>
-		<netty.version>3.7.0.Final</netty.version>
-		<javassist.version>3.17.1-GA</javassist.version>
-		<guava.version>16.0.1</guava.version>
-		<asm.version>3.3.1</asm.version>
-		<curator.version>2.5.0</curator.version>
-		<mysqlDriver.version>5.1.10</mysqlDriver.version>
-		<dataSource.version>0.0.1-SNAPSHOT</dataSource.version>
-
+        <mvcProtocol>SpringMVC</mvcProtocol>        
     </properties>
 
     <profiles>

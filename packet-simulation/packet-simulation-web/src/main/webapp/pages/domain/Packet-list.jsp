@@ -581,60 +581,55 @@ function downloadENC(id){
 <input type="hidden" name="pagesize" value="10">
 <div id="packetQueryDiv" hidden="true">
 <table border="0" cellspacing="0" cellpadding="0">
-  <tr>
-    <td>
-          <div class="form-group">
+	<tr>
+    	<td>
+        	<div class="form-group">         
+            	<label class="control-label" style="width:160px;float:left;">报文名称:&nbsp;</label>
+            	<div style="margin-left:15px;float:left;">
+            		<input name="packetName" class="form-control" type="text" style="width:160px;" id="packetNameID"  />
+        		</div>
           
-           <label class="control-label" style="width:160px;float:left;">报文名称:&nbsp;</label>
-            <div style="margin-left:15px;float:left;">
-            <input name="packetName" class="form-control" type="text" style="width:160px;" id="packetNameID"  />
-        </div>
-          
-          <label class="control-label" style="width:160px;float:left;">文件格式版本号:&nbsp;</label>
-            <div style="margin-left:15px;float:left;">
-            <input name="fileVersion" class="form-control" type="text" style="width:160px;" id="fileVersionID"  />
-        </div>
-                      <label class="control-label" style="width:160px;float:left;">数据提供机构代码:&nbsp;</label>
-            <div style="margin-left:15px;float:left;">
-            <input name="origSender" class="form-control" type="text" style="width:160px;" id="origSenderID"  />
-        </div>
+            	<label class="control-label" style="width:160px;float:left;">文件格式版本号:&nbsp;</label>
+            	<div style="margin-left:15px;float:left;">
+            		<input name="fileVersion" class="form-control" type="text" style="width:160px;" id="fileVersionID"  />
+        		</div>
+                      
+            	<label class="control-label" style="width:160px;float:left;">数据提供机构代码:&nbsp;</label>
+            	<div style="margin-left:15px;float:left;">
+            		<input name="origSender" class="form-control" type="text" style="width:160px;" id="origSenderID"  />
+        		</div>
             </div>
-                  <div class="form-group">
-          <label class="control-label" style="width:160px;float:left;">文件生成时间:&nbsp;</label>
-           <div style="margin-left:15px;float:left;">
-            <div class="input-group date form_datetime" style="width:160px;float:left;" >
-                <input type="text" class="form-control" style="width:160px;" name="origSendDate" id="origSendDateID_start" >
-                <span class="input-group-addon"><span class="glyphicon glyphicon-th"></span></span>
-            </div>
-            <div style="float:left; width:10px; margin-left:auto; margin-right:auto;">&nbsp;-&nbsp;</div>
-            <div class="input-group date form_datetime" style="width:160px;float:left;" >
-                <input type="text" class="form-control" style="width:160px;" name="origSendDateEnd" id="origSendDateID_end" >
-                <span class="input-group-addon"><span class="glyphicon glyphicon-th"></span></span>
-            </div>
-       </div>
-       
-       </div>
-                  <div class="form-group">
                   
-                 <label class="control-label" style="width:160px;float:left;">记录类型:&nbsp;</label>
-            <div style="margin-left:15px;float:left;">
-            <input name="recordType" class="form-control" type="text" style="width:160px;" id="recordID"  />
-        </div>
-<!--                       <label class="control-label" style="width:160px;float:left;">数据类型:&nbsp;</label> -->
-<!--             <div style="margin-left:15px;float:left;"> -->
-<!--             <input name="dataType" class="form-control" type="text" style="width:160px;" id="dataTypeID"  /> -->
-<!--         </div> -->
+            <div class="form-group">
+            	<label class="control-label" style="width:160px;float:left;">文件生成时间:&nbsp;</label>
+           		<div style="margin-left:15px;float:left;">
+            		<div class="input-group date form_datetime" style="width:160px;float:left;" >
+                		<input type="text" class="form-control" style="width:160px;" name="origSendDate" id="origSendDateID_start" >
+                		<span class="input-group-addon"><span class="glyphicon glyphicon-th"></span></span>
+            		</div>
+            		<div style="float:left; width:10px; margin-left:auto; margin-right:auto;">&nbsp;-&nbsp;</div>
+            		<div class="input-group date form_datetime" style="width:160px;float:left;" >
+                		<input type="text" class="form-control" style="width:160px;" name="origSendDateEnd" id="origSendDateID_end" >
+                		<span class="input-group-addon"><span class="glyphicon glyphicon-th"></span></span>
+            		</div>
+       			</div>       
+       		</div>
+       		
+            <div class="form-group">
+            	<label class="control-label" style="width:160px;float:left;">记录类型:&nbsp;</label>
+            	<div style="margin-left:15px;float:left;">
+            		<input name="recordType" class="form-control" type="text" style="width:160px;" id="recordID"  />
+        		</div>
+
                 <label class="control-label" style="width:160px;float:left;">数据类型:&nbsp;</label>
-    	  <div style="margin-left:15px;float:left;">
-	      <div class="btn-group select" id="dataType_SELECT"></div>
-	        <input type="hidden" id="dataTypeID_" name="dataType" />
-	      </div>
-	  </div>
-        
-            </div>
-            </td>
-       <td style="vertical-align: bottom;"><button id="search" type="button" style="position:relative; margin-left:35px; top: -15px" class="btn btn-primary"><span class="glyphicon glyphicon-search"></span>&nbsp;查询</button></td>
-  </tr>
+    	  		<div style="margin-left:15px;float:left;">
+	      		<div class="btn-group select" id="dataType_SELECT"></div>
+	        		<input type="hidden" id="dataTypeID_" name="dataType" />
+	      		</div>
+	  		</div>
+        </td>
+        <td style="vertical-align: bottom;"><button id="search" type="button" style="position:relative; margin-left:35px; top: -15px" class="btn btn-primary"><span class="glyphicon glyphicon-search"></span>&nbsp;查询</button></td>
+	</tr>
 </table>
 </div>	
 </form>

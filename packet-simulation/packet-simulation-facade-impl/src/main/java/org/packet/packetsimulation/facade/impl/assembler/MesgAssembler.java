@@ -35,7 +35,7 @@ public class MesgAssembler {
 		return results;
 	}
 	
-	 public static Mesg  toEntity(MesgDTO  mesgDTO){
+	 public static Mesg toEntity(MesgDTO mesgDTO){
 	 	if (mesgDTO == null) {
 			return null;
 		}
@@ -43,7 +43,7 @@ public class MesgAssembler {
         result.setId (mesgDTO.getId());
         result.setVersion (mesgDTO.getVersion());
         result.setRemark(mesgDTO.getRemark());
-        //result.setUniqueIdentification(mesgDTO.getUniqueIdentification());	
+        result.setContent(mesgDTO.getContent());
  	  	return result;
 	 }
 	

@@ -39,55 +39,6 @@ public class Mesg extends KoalaAbstractEntity{
 	
 	@Column(name = "REMARK")
 	private String remark;
-	
-//	@Column(name = "MESGID")
-//	private String mesgId;
-	
-//	@Column(name = "MESG_PRIORITY")
-//	private String mesgPriority;
-//	
-//	@Column(name = "MESG_DIRECTION")
-//	private String mesgDirection;
-//	
-//	@Column(name = "RESERVE")
-//	private String reserve;
-
-//	public String getMesgId() {
-//		return mesgId;
-//	}
-//
-//	public void setMesgId(String mesgId) {
-//		this.mesgId = mesgId;
-//	}
-
-//	public String getMesgPriority() {
-//		return mesgPriority;
-//	}
-//
-//	public void setMesgPriority(String mesgPriority) {
-//		this.mesgPriority = mesgPriority;
-//	}
-//
-//	public String getMesgDirection() {
-//		return mesgDirection;
-//	}
-//
-//	public void setMesgDirection(String mesgDirection) {
-//		this.mesgDirection = mesgDirection;
-//	}
-//
-//	public String getReserve() {
-//		return reserve;
-//	}
-//
-//	public void setReserve(String reserve) {
-//		this.reserve = reserve;
-//	}
-
-	@Override
-	public String[] businessKeys() {
-		return null;
-	}
 
 	public Packet getPacket() {
 		return packet;
@@ -120,5 +71,9 @@ public class Mesg extends KoalaAbstractEntity{
 	public void setRemark(String remark) {
 		this.remark = remark;
 	}
-
+	
+	@Override
+	public String[] businessKeys() {
+		return null;
+	}
 }

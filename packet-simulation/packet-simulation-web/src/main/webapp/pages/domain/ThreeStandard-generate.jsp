@@ -14,6 +14,12 @@
         	<input name="threeStandardNumber" style="display:inline; width:94%;" class="form-control"  type="text" id="threeStandardNumberID"/>
 		</div>
 	</div>
+	<div class="form-group">
+    	<label class="col-lg-3 control-label">并发线程数:</label>
+	    <div class="col-lg-9">
+        	<input name="threadNumber" style="display:inline; width:94%;" class="form-control"  type="text" id="threadNumberID"/>
+		</div>
+	</div>
 </form>
 </body>
 </html>

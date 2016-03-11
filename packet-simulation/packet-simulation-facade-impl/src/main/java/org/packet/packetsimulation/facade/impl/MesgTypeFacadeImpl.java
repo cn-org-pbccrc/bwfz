@@ -87,15 +87,15 @@ public class MesgTypeFacadeImpl implements MesgTypeFacade {
 	   	if (queryVo.getMesgType() != null && !"".equals(queryVo.getMesgType())) {
 	   		jpql.append(" and _mesgType.mesgType like ?");
 	   		conditionVals.add(MessageFormat.format("%{0}%", queryVo.getMesgType()));
-	   	}		
+	   	}
+	   	if (queryVo.getCode() != null && !"".equals(queryVo.getCode())) {
+	   		jpql.append(" and _mesgType.code like ?");
+	   		conditionVals.add(MessageFormat.format("%{0}%", queryVo.getCode()));
+	   	}
 	   	if (queryVo.getFilePath() != null && !"".equals(queryVo.getFilePath())) {
 	   		jpql.append(" and _mesgType.filePath like ?");
 	   		conditionVals.add(MessageFormat.format("%{0}%", queryVo.getFilePath()));
 	   	}		
-//	   	if (queryVo.getSort() != null) {
-//	   		jpql.append(" and _mesgType.sort=?");
-//	   		conditionVals.add(queryVo.getSort());
-//	   	}
 	   	if (queryVo.getSort() != null && !"".equals(queryVo.getSort())) {
 	   		jpql.append(" and _mesgType.sort like ?");
 	   		conditionVals.add(MessageFormat.format("%{0}%",queryVo.getSort()));
