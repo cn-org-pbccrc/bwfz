@@ -49,7 +49,7 @@ public class MesgTypeFacadeImpl implements MesgTypeFacade {
 		return InvokeResult.success();
 	}
 	
-	public InvokeResult updateMesgType(MesgTypeDTO mesgTypeDTO) {
+	public InvokeResult updateMesgType(MesgTypeDTO mesgTypeDTO) {		
 		application.updateMesgType(MesgTypeAssembler.toEntity(mesgTypeDTO));
 		return InvokeResult.success();
 	}

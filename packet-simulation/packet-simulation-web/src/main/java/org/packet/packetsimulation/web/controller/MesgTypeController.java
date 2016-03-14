@@ -12,6 +12,7 @@ import org.openkoala.koala.commons.InvokeResult;
 import org.packet.packetsimulation.core.domain.MesgType;
 import org.packet.packetsimulation.facade.MesgTypeFacade;
 import org.packet.packetsimulation.facade.dto.MesgTypeDTO;
+import org.packet.packetsimulation.facade.impl.assembler.MesgTypeAssembler;
 import org.springframework.beans.propertyeditors.CustomDateEditor;
 import org.springframework.stereotype.Controller;
 import org.springframework.web.bind.WebDataBinder;
