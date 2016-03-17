@@ -109,23 +109,6 @@ public class MesgController {
 		return mesgFacade.getMesgForBatch(id);
 	}
 	
-//	@ResponseBody
-//	@RequestMapping("/findPacketByMesg/{id}")
-//	public Map<String, Object> findPacketByMesg(@PathVariable Long id) {
-//		Map<String, Object> result = new HashMap<String, Object>();
-//		result.put("data", mesgFacade.findPacketByMesg(id));
-//		return result;
-//	}
-//
-//	@ResponseBody
-//	@RequestMapping("/findMesgTypeByMesg/{id}")
-//	public Map<String, Object> findMesgTypeByMesg(@PathVariable Long id) {
-//		Map<String, Object> result = new HashMap<String, Object>();
-//		result.put("data", mesgFacade.findMesgTypeByMesg(id));
-//		return result;
-//	}
-
-	
     @InitBinder    
     public void initBinder(WebDataBinder binder) {  
         SimpleDateFormat dateFormat = new SimpleDateFormat("yyyy-MM-dd");    

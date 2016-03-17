@@ -220,20 +220,23 @@ function initFun(){
     				dialog.find($(".true")).each(function(){   					
         				var id = $(this).attr('id');
         				xml += '<' + id + '>';
-        				var flag = '';
         				$('#'+id).find($("[name]")).each(function(){
     						if($(this).parent().parent()[0].tagName != 'FIELDSET'){
-    							var name = ($(this).attr('name'));
-    	    					var value = ($(this).val());
-    							xml += '<' + name + '>' + value + '</' + name + '>';
+    							if($(this).attr('save')=='true'){
+    								var name = ($(this).attr('name'));
+        	    					var value = ($(this).val());
+        							xml += '<' + name + '>' + value + '</' + name + '>';
+    							}
     						}
     						else{
     							var name = ($(this).attr('name')); 
     							xml += '<' + name + '>';
     							$(this).parent().parent().find($("[subName]")).each(function(){
-    								var subName = ($(this).attr('subName'));
-    								var value = ($(this).val());	
-    								xml += '<' + subName + '>' + value + '</' + subName + '>'; 
+    								if($(this).attr('save')=='true'){
+    									var subName = ($(this).attr('subName'));
+        								var value = ($(this).val());	
+        								xml += '<' + subName + '>' + value + '</' + subName + '>';
+    								} 
     							});
     							xml += '</' + name + '>';
     						}
@@ -298,20 +301,23 @@ function initFun(){
 					dialog.find($(".true")).each(function(){	    					
 	    				var id = $(this).attr('id');
 	    				xml += '<' + id + '>';
-	    				var flag = '';
 	    				$('#'+id).find($("[name]")).each(function(){
 							if($(this).parent().parent()[0].tagName != 'FIELDSET'){
-								var name = ($(this).attr('name'));
-		    					var value = ($(this).val());
-								xml += '<' + name + '>' + value + '</' + name + '>';
+								if($(this).attr('save')=='true'){
+									var name = ($(this).attr('name'));
+			    					var value = ($(this).val());
+									xml += '<' + name + '>' + value + '</' + name + '>';
+								}								
 							}
 							else{
 								var name = ($(this).attr('name')); 
 								xml += '<' + name + '>';
 								$(this).parent().parent().find($("[subName]")).each(function(){
-									var subName = ($(this).attr('subName'));
-									var value = ($(this).val());	
-									xml += '<' + subName + '>' + value + '</' + subName + '>'; 
+									if($(this).attr('save')=='true'){
+										var subName = ($(this).attr('subName'));
+										var value = ($(this).val());	
+										xml += '<' + subName + '>' + value + '</' + subName + '>';
+									}									
 								});
 								xml += '</' + name + '>';
 							}
@@ -564,6 +570,15 @@ function removeTab(obj,tabId){
 		var len = $(obj).parent().attr("href").length;
 		var tab = $(obj).parent().attr("href").substring(1,len);
 		$("#"+tab).attr("class","tab-pane fade in active true");
+	    $(obj).children("span").attr("class","glyphicon glyphicon-remove");
+	}
+}
+function removeField(obj){
+	if($(obj).children("span").attr("class")=="glyphicon glyphicon-remove"){
+		$(obj).prev().children("input").attr("save","false");
+	    $(obj).children("span").attr("class","glyphicon glyphicon-ok");
+	}else{
+		$(obj).prev().children("input").attr("save","true");
 	    $(obj).children("span").attr("class","glyphicon glyphicon-remove");
 	}
 }

@@ -123,12 +123,13 @@ legend {
 <!-- 							  <input type="text" class="form-control" name="phone" placeholder="输入6到10位字符"> -->
 <!-- 						</p> -->
 						<div class="form-group">
-						<p>
- 							<label class="rgt">备注 :</label>
- 							<label class="lft">
- 								<input name="remark" class="form-control"  type="text"  id="remarkID" />
- 							</label>
- 					    </p>
+							<p>
+ 								<label class="rgt">备注 :</label>
+ 								<label class="lft">
+ 									<input name="remark" class="form-control"  type="text"  id="remarkID" />
+ 								</label> 								
+ 					    	</p>
+ 					    	<button class="right btn btn-danger" id="delete">删除字段</button>
  					    </div>
 					    <div class="form-group">
 	                        <div class="col-xs-10 g-mainc" style="width: 100%; margin: 0 auto;" id="content">
@@ -139,7 +140,7 @@ legend {
 		                    <button data-toggle="prev" class="left btn btn-default" >&laquo;上一步</button>
 <!-- 		               	   <button data-toggle="next" class="right btn btn-default" >下一步&raquo;</button> -->
 					        <button data-toggle="complete" class="right btn btn-success" id="sub">保存</button>
-		                </div>
+		                </div>					        
 		            </div>
 <!-- 					<div class="page"> -->
 <!-- 		                 <h4>完成注册<br/><em>点击确定完成注册。</em></h4> -->
@@ -183,6 +184,9 @@ legend {
     	$.get( '${pageContext.request.contextPath}/MesgType/getEditHtmlByMesgType/' + items[0].id + '.koala').done(function(data){
             $("#content").append(data.data);
      	});
+    	$("#delete").click(function(){
+    		$("button[class='btn btn-failure']").toggle();
+    	});
 	});
 </script>
 </body>

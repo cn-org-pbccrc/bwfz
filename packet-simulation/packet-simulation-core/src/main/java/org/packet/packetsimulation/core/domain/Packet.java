@@ -44,9 +44,6 @@ public class Packet extends KoalaAbstractEntity{
 	@Column(name = "FILE_VERSION")
 	private String fileVersion;
 
-	@Column(name = "PACKID")
-	private String packId;
-
 	@Column(name = "ORIG_SENDER")
 	private String origSender;
 	
@@ -55,14 +52,9 @@ public class Packet extends KoalaAbstractEntity{
 	@Column(name = "ORIG_SEND_DATE")
 	private Date origSendDate;
 	
-//	@Temporal(TemporalType.DATE)
-//	@Column(name = "CREATEDAT")
-//	private Date createdAt;
-	
 	@Column(name = "CREATEDBY")
 	private String createdBy;
 	
-//	private Set<Mesg> mesgs = new HashSet<Mesg>();
 	@Column(name = "DATATYPE")
 	private String dataType;
 
@@ -80,29 +72,14 @@ public class Packet extends KoalaAbstractEntity{
 	
 	@Column(name = "SERIAL_NUMBER")
 	private Integer serialNumber;
-//	public Date getCreatedAt() {
-//		return createdAt;
-//	}
-//
-//	public void setCreatedAt(Date createdAt) {
-//		this.createdAt = createdAt;
-//	}
 	
 	public Packet() {
 	}
 	  
     public Packet(String packetName) {
-        //checkUserAccount(userAccount);
         isExistPacketName(packetName);
         this.packetName = packetName;
     }
-    
-//    public static Packet getByFrontPosition(String frontPosition) {
-//        return getRepository()
-//                .createCriteriaQuery(FileName.class)
-//                .eq("frontPosition", frontPosition)
-//                .singleResult();
-//    }
 
 	public String getFrontPosition() {
 		return frontPosition;
@@ -124,7 +101,6 @@ public class Packet extends KoalaAbstractEntity{
 		return packetName;
 	}
 
-
 	public void setPacketName(String packetName) {
 		this.packetName = packetName;
 	}
@@ -132,7 +108,6 @@ public class Packet extends KoalaAbstractEntity{
 	public String getCreatedBy() {
 		return createdBy;
 	}
-
 
 	public void setCreatedBy(String createdBy) {
 		this.createdBy = createdBy;
@@ -142,44 +117,17 @@ public class Packet extends KoalaAbstractEntity{
 		return recordType;
 	}
 
-
 	public void setRecordType(String recordType) {
 		this.recordType = recordType;
 	}
-//	public Set<Mesg> getMesgs() {
-//		return mesgs;
-//	}
-//
-//
-//	public void setMesgs(Set<Mesg> mesgs) {
-//		this.mesgs = mesgs;
-//	}
-
-
-//	@Override
-//	public String[] businessKeys() {
-//		return new String[] { "mesgId" };
-//	}
-
-	public String getPackId() {
-		return packId;
-	}
-
-
-	public void setPackId(String packId) {
-		this.packId = packId;
-	}
-
 
 	public String getOrigSender() {
 		return origSender;
 	}
 
-
 	public void setOrigSender(String origSender) {
 		this.origSender = origSender;
 	}
-
 
 	public Date getOrigSendDate() {
 		return origSendDate;
@@ -194,36 +142,29 @@ public class Packet extends KoalaAbstractEntity{
 		return fileVersion;
 	}
 
-
 	public void setFileVersion(String fileVersion) {
 		this.fileVersion = fileVersion;
 	}
-
 
 	public String getDataType() {
 		return dataType;
 	}
 
-
 	public void setDataType(String dataType) {
 		this.dataType = dataType;
 	}
-
 
 	public String getMesgNum() {
 		return mesgNum;
 	}
 
-
 	public void setMesgNum(String mesgNum) {
 		this.mesgNum = mesgNum;
 	}
 
-
 	public String getReserve() {
 		return reserve;
 	}
-
 
 	public void setReserve(String reserve) {
 		this.reserve = reserve;
@@ -249,14 +190,13 @@ public class Packet extends KoalaAbstractEntity{
                 .singleResult();
     }
 	
+	public static Long getMesgCountOfPacket(Packet packet) {
+		return getRepository().createNamedQuery("getMesgCountOfPacket").addParameter("Packet", packet).singleResult();
+	}
+	
 	@Override
 	public String[] businessKeys() {
 		// TODO Auto-generated method stub
 		return null;
 	}
-	
-	public static Long getMesgCountOfPacket(Packet packet) {
-		return getRepository().createNamedQuery("getMesgCountOfPacket").addParameter("Packet", packet).singleResult();
-	}
-
 }

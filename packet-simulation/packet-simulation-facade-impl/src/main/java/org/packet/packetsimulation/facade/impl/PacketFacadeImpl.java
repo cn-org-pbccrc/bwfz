@@ -271,11 +271,7 @@ public class PacketFacadeImpl implements PacketFacade {
 	public Page<PacketDTO> pageQueryPacket(PacketDTO queryVo, int currentPage, int pageSize,String currentUserId) {
 		//String userAccount = CurrentUser.getUserAccount();
 		List<Object> conditionVals = new ArrayList<Object>();
-	   	StringBuilder jpql = new StringBuilder("select _packet from Packet _packet where 1=1 ");
-	   	if (queryVo.getPackId() != null && !"".equals(queryVo.getPackId())) {
-	   		jpql.append(" and _packet.packId like ?");
-	   		conditionVals.add(MessageFormat.format("%{0}%", queryVo.getPackId()));
-	   	}		
+	   	StringBuilder jpql = new StringBuilder("select _packet from Packet _packet where 1=1 ");	
 	   	if (queryVo.getOrigSender() != null && !"".equals(queryVo.getOrigSender())) {
 	   		jpql.append(" and _packet.origSender like ?");
 	   		conditionVals.add(MessageFormat.format("%{0}%", queryVo.getOrigSender()));
@@ -421,7 +417,6 @@ public class PacketFacadeImpl implements PacketFacade {
 	@Transactional
 	@Override
 	public InvokeResult uploadPacket(PacketDTO packetDTO, String path, String ctxPath) throws IOException, ParseException, ParserConfigurationException, SAXException {
-		packetDTO.setPackId(new Date().getTime()+"");
 		BufferedReader br = new BufferedReader(new InputStreamReader(new FileInputStream(ctxPath+path)));  
 		String line = br.readLine();
 		//packetDTO.setPacketName(path);	

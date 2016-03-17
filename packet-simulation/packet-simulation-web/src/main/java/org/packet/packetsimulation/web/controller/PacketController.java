@@ -75,13 +75,9 @@ import javax.crypto.NoSuchPaddingException;
 public class PacketController {
 	private final static String DES = "DES";
 	public final static String PWD_KEY = "MZTHPWDJM";
-	//private static final Logger LOGGER = LoggerFactory.getLogger(PacketController.class);
 	
 	@Inject
 	private PacketFacade packetFacade;
-	
-	//String serialNumber = "0001";
-
 	
 	@ResponseBody
 	@RequestMapping("/add")

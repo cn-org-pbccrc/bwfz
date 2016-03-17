@@ -9,17 +9,11 @@ public class PacketDTO implements Serializable {
 
 	private int version;
 
-	private String packId;
-
 	private String createdBy;
 
 	private String origSender;
 	
 	private String packetName;
-
-	//private Date createdAt;
-
-	//private Date createdAtEnd;
 
 	private Date origSendDate;
 
@@ -67,14 +61,6 @@ public class PacketDTO implements Serializable {
 		this.reserve = reserve;
 	}
 
-	public String getPackId() {
-		return packId;
-	}
-
-	public void setPackId(String packId) {
-		this.packId = packId;
-	}
-
 	public void setCreatedBy(String createdBy) {
 		this.createdBy = createdBy;
 	}
@@ -90,22 +76,6 @@ public class PacketDTO implements Serializable {
 	public String getOrigSender() {
 		return this.origSender;
 	}
-
-//	public void setCreatedAt(Date createdAt) {
-//		this.createdAt = createdAt;
-//	}
-//
-//	public Date getCreatedAt() {
-//		return this.createdAt;
-//	}
-//
-//	public void setCreatedAtEnd(Date createdAtEnd) {
-//		this.createdAtEnd = createdAtEnd;
-//	}
-//
-//	public Date getCreatedAtEnd() {
-//		return this.createdAtEnd;
-//	}
 
 	public void setOrigSendDate(Date origSendDate) {
 		this.origSendDate = origSendDate;
@@ -147,6 +117,14 @@ public class PacketDTO implements Serializable {
 		this.recordType = recordType;
 	}
 	
+	public String getPacketName() {
+		return packetName;
+	}
+
+	public void setPacketName(String packetName) {
+		this.packetName = packetName;
+	}
+	
 	@Override
 	public int hashCode() {
 		final int prime = 31;
@@ -170,13 +148,5 @@ public class PacketDTO implements Serializable {
 		} else if (!id.equals(other.id))
 			return false;
 		return true;
-	}
-
-	public String getPacketName() {
-		return packetName;
-	}
-
-	public void setPacketName(String packetName) {
-		this.packetName = packetName;
 	}
 }

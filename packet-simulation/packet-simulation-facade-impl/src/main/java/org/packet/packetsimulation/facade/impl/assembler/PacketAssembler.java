@@ -26,7 +26,6 @@ public class PacketAssembler {
      	    result.setCreatedBy(packet.getCreatedBy());
      	   	result.setOrigSendDate(new Date(packet.getOrigSendDate().getTime()));
      	    result.setOrigSender(packet.getOrigSender());
-     	    result.setPackId(packet.getPackId());
      	return result;
 	 }
 	
@@ -58,7 +57,6 @@ public class PacketAssembler {
   	    result.setCreatedBy(packetDTO.getCreatedBy());
   	   	result.setOrigSendDate(packetDTO.getOrigSendDate());
   	    result.setOrigSender(packetDTO.getOrigSender());
-  	    result.setPackId(packetDTO.getPackId());
  	  	return result;
 	 }
 	 
