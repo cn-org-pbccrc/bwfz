@@ -71,189 +71,13 @@ public final class PropertiesManager {
 	         pros836.load(PropertiesManager.class.getClassLoader().getResourceAsStream("translate8.3.6.properties"));
 	         pros841.load(PropertiesManager.class.getClassLoader().getResourceAsStream("translate8.4.1.properties"));
 	         pros842.load(PropertiesManager.class.getClassLoader().getResourceAsStream("translate8.4.2.properties"));
-	         pros811_.load(PropertiesManager.class.getClassLoader().getResourceAsStream("translate8.1.1_.properties"));
-	         pros812_.load(PropertiesManager.class.getClassLoader().getResourceAsStream("translate8.1.2_.properties"));
-	         pros813_.load(PropertiesManager.class.getClassLoader().getResourceAsStream("translate8.1.3_.properties"));
-	         pros814_.load(PropertiesManager.class.getClassLoader().getResourceAsStream("translate8.1.4_.properties"));
-	         pros815_.load(PropertiesManager.class.getClassLoader().getResourceAsStream("translate8.1.5_.properties"));
-	         pros816_.load(PropertiesManager.class.getClassLoader().getResourceAsStream("translate8.1.6_.properties"));
-	         pros821_.load(PropertiesManager.class.getClassLoader().getResourceAsStream("translate8.2.1_.properties"));
-	         pros822_.load(PropertiesManager.class.getClassLoader().getResourceAsStream("translate8.2.2_.properties"));
-	         pros823_.load(PropertiesManager.class.getClassLoader().getResourceAsStream("translate8.2.3_.properties"));
-	         pros824_.load(PropertiesManager.class.getClassLoader().getResourceAsStream("translate8.2.4_.properties"));
-	         pros831_.load(PropertiesManager.class.getClassLoader().getResourceAsStream("translate8.3.1_.properties"));
-	         pros832_.load(PropertiesManager.class.getClassLoader().getResourceAsStream("translate8.3.2_.properties"));
-	         pros833_.load(PropertiesManager.class.getClassLoader().getResourceAsStream("translate8.3.3_.properties"));
-	         pros834_.load(PropertiesManager.class.getClassLoader().getResourceAsStream("translate8.3.4_.properties"));
-	         pros835_.load(PropertiesManager.class.getClassLoader().getResourceAsStream("translate8.3.5_.properties"));
-	         pros836_.load(PropertiesManager.class.getClassLoader().getResourceAsStream("translate8.3.6_.properties"));
-	         pros841_.load(PropertiesManager.class.getClassLoader().getResourceAsStream("translate8.4.1_.properties"));
-	         pros842_.load(PropertiesManager.class.getClassLoader().getResourceAsStream("translate8.4.2_.properties"));
-	         pros817.load(PropertiesManager.class.getClassLoader().getResourceAsStream("translate8.1.2.properties"));
-	         pros817_.load(PropertiesManager.class.getClassLoader().getResourceAsStream("translate8.1.2_.properties"));
 	         //读取properties文件 这里是将文件从classpath里读取出来!因为在eclispe里src里的文件最后编译后都会放入bin文件夹下,也就是classpath下面,这样可以保证能找到文件
 	     } catch (IOException e) {
 	    	 e.printStackTrace();
 	     }         
 	     //以上是加载类时将 Properties 的 load方法去加载配置文件
 	 }
-	 private PropertiesManager(){};
-	 public static final String verify(String key, String templateName){
-		 if(templateName.equals("基本信息正常报送记录")){
-			 String cnName=PropertiesManager.pros811_.getProperty(key);
-			 if(cnName!=null){
-				 return changeChineseCode(PropertiesManager.pros811_.getProperty(key));
-			 }else{
-				 System.out.println(key);
-				 return key;
-			 }
-		 }else if(templateName.equals("账户信息正常报送记录")){
-			 String cnName=PropertiesManager.pros812_.getProperty(key);
-			 if(cnName!=null){
-				 return changeChineseCode(PropertiesManager.pros812_.getProperty(key));
-			 }else{
-				 System.out.println(key);
-				 return key;
-			 }
-		 }else if(templateName.equals("合同信息正常报送记录")){
-			 String cnName=PropertiesManager.pros813_.getProperty(key);
-			 if(cnName!=null){
-				 return changeChineseCode(PropertiesManager.pros813_.getProperty(key));
-			 }else{
-				 System.out.println(key);
-				 return key;
-			 }
-		 }else if(templateName.equals("抵质押合同信息正常报送记录")){
-			 String cnName=PropertiesManager.pros814_.getProperty(key);
-			 if(cnName!=null){
-				 return changeChineseCode(PropertiesManager.pros814_.getProperty(key));
-			 }else{
-				 System.out.println(key);
-				 return key;
-			 }
-		 }else if(templateName.equals("证件整合信息正常报送记录")){
-			 String cnName=PropertiesManager.pros815_.getProperty(key);
-			 if(cnName!=null){
-				 return changeChineseCode(PropertiesManager.pros815_.getProperty(key));
-			 }else{
-				 System.out.println(key);
-				 return key;
-			 }
-		 }else if(templateName.equals("家族成员信息正常报送记录")){
-			 String cnName=PropertiesManager.pros816_.getProperty(key);
-			 if(cnName!=null){
-				 return changeChineseCode(PropertiesManager.pros816_.getProperty(key));
-			 }else{
-				 System.out.println(key);
-				 return key;
-			 }
-		 }else if(templateName.equals("基本信息标识变更信息记录")){
-			 String cnName=PropertiesManager.pros821_.getProperty(key);
-			 if(cnName!=null){
-				 return changeChineseCode(PropertiesManager.pros821_.getProperty(key));
-			 }else{
-				 System.out.println(key);
-				 return key;
-			 }
-		 }else if(templateName.equals("合同信息标识变更信息记录")){
-			 String cnName=PropertiesManager.pros822_.getProperty(key);
-			 if(cnName!=null){
-				 return changeChineseCode(PropertiesManager.pros822_.getProperty(key));
-			 }else{
-				 System.out.println(key);
-				 return key;
-			 }
-		 }else if(templateName.equals("账户信息标识变更信息记录")){
-			 String cnName=PropertiesManager.pros823_.getProperty(key);
-			 if(cnName!=null){
-				 return changeChineseCode(PropertiesManager.pros823_.getProperty(key));
-			 }else{
-				 System.out.println(key);
-				 return key;
-			 }
-		 }else if(templateName.equals("抵质押合同信息标识变更信息记录")){
-			 String cnName=PropertiesManager.pros824_.getProperty(key);
-			 if(cnName!=null){
-				 return changeChineseCode(PropertiesManager.pros824_.getProperty(key));
-			 }else{
-				 System.out.println(key);
-				 return key;
-			 }
-		 }else if(templateName.equals("基本信息删除请求记录")){
-			 String cnName=PropertiesManager.pros831_.getProperty(key);
-			 if(cnName!=null){
-				 return changeChineseCode(PropertiesManager.pros831_.getProperty(key));
-			 }else{
-				 System.out.println(key);
-				 return key;
-			 }
-		 }else if(templateName.equals("合同信息按段删除请求记录")){
-			 String cnName=PropertiesManager.pros832_.getProperty(key);
-			 if(cnName!=null){
-				 return changeChineseCode(PropertiesManager.pros832_.getProperty(key));
-			 }else{
-				 System.out.println(key);
-				 return key;
-			 }
-		 }else if(templateName.equals("账户信息按段删除请求记录")){
-			 String cnName=PropertiesManager.pros833_.getProperty(key);
-			 if(cnName!=null){
-				 return changeChineseCode(PropertiesManager.pros833_.getProperty(key));
-			 }else{
-				 System.out.println(key);
-				 return key;
-			 }
-		 }else if(templateName.equals("合同信息整笔删除请求记录")){
-			 String cnName=PropertiesManager.pros834_.getProperty(key);
-			 if(cnName!=null){
-				 return changeChineseCode(PropertiesManager.pros834_.getProperty(key));
-			 }else{
-				 System.out.println(key);
-				 return key;
-			 }
-		 }else if(templateName.equals("账户信息整笔删除请求记录")){
-			 String cnName=PropertiesManager.pros835_.getProperty(key);
-			 if(cnName!=null){
-				 return changeChineseCode(PropertiesManager.pros835_.getProperty(key));
-			 }else{
-				 System.out.println(key);
-				 return key;
-			 }
-		 }else if(templateName.equals("抵质押合同信息整笔删除请求记录")){
-			 String cnName=PropertiesManager.pros836_.getProperty(key);
-			 if(cnName!=null){
-				 return changeChineseCode(PropertiesManager.pros836_.getProperty(key));
-			 }else{
-				 System.out.println(key);
-				 return key;
-			 }
-		 }else if(templateName.equals("账户修改请求记录")){
-			 String cnName=PropertiesManager.pros841_.getProperty(key);
-			 if(cnName!=null){
-				 return changeChineseCode(PropertiesManager.pros841_.getProperty(key));
-			 }else{
-				 System.out.println(key);
-				 return key;
-			 }
-		 }else if(templateName.equals("合同修改请求记录")){
-			 String cnName=PropertiesManager.pros842_.getProperty(key);
-			 if(cnName!=null){
-				 return changeChineseCode(PropertiesManager.pros842_.getProperty(key));
-			 }else{
-				 System.out.println(key);
-				 return key;
-			 }
-		 }else if(templateName.equals("一般贷款账户-开户日首次报送")){
-			 String cnName=PropertiesManager.pros817_.getProperty(key);
-			 if(cnName!=null){
-				 return changeChineseCode(PropertiesManager.pros817_.getProperty(key));
-			 }else{
-				 System.out.println(key);
-				 return key;
-			 }
-		 }
-		 return key;
-	 }
+	 
 	 public static final String getProperties(String key, String templateName){
 		 if(templateName.equals("基本信息正常报送记录")){
 			 String cnName=PropertiesManager.pros811.getProperty(key);
@@ -395,14 +219,6 @@ public final class PropertiesManager {
 			 String cnName=PropertiesManager.pros842.getProperty(key);
 			 if(cnName!=null){
 				 return changeChineseCode(PropertiesManager.pros842.getProperty(key));
-			 }else{
-				 System.out.println(key);
-				 return key;
-			 }
-		 }else if(templateName.equals("一般贷款账户-开户日首次报送")){
-			 String cnName=PropertiesManager.pros817.getProperty(key);
-			 if(cnName!=null){
-				 return changeChineseCode(PropertiesManager.pros817.getProperty(key));
 			 }else{
 				 System.out.println(key);
 				 return key;

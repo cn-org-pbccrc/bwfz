@@ -18,9 +18,9 @@
 			<IDRec>
 				<Alias>其他姓名</Alias>
 				<OthIdType>其他证件类型</OthIdType>
-				<OthIdNum>其他证件号码</OthIdNum>
-				<InfoUpDate>信息更新日期</InfoUpDate>
+				<OthIdNum>其他证件号码</OthIdNum>				
 			</IDRec>
+			<InfoUpDate>信息更新日期222</InfoUpDate>
 		</IDSgmt>
 		<AcctIDInfSgmt>
 			<CertAut>证件签发机关</CertAut>

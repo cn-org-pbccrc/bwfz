@@ -183,10 +183,10 @@ legend {
         $("#content").empty();
     	$.get( '${pageContext.request.contextPath}/MesgType/getEditHtmlByMesgType/' + items[0].id + '.koala').done(function(data){
             $("#content").append(data.data);
-     	});
-    	$("#delete").click(function(){
-    		$("button[class='btn btn-failure']").toggle();
-    	});
+     	});   	
+	});
+    $("#delete").click(function(){
+		$("button[class='btn btn-failure']").toggle();
 	});
 </script>
 </body>
