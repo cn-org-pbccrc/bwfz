@@ -23,6 +23,8 @@ public class EmployeeUserDTO extends UserDTO {
     private String organization;
     
     private String departmentName;
+    
+    private String sn;
 
 	public EmployeeUserDTO() {
 	}
@@ -69,5 +71,13 @@ public class EmployeeUserDTO extends UserDTO {
 
 	public void setDepartmentName(String departmentName) {
 		this.departmentName = departmentName;
+	}
+
+	public String getSn() {
+		return sn;
+	}
+
+	public void setSn(String sn) {
+		this.sn = sn;
 	}
 }

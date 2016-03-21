@@ -426,101 +426,6 @@ function initFun(){
         });
 }
 
-var openTabCust = function(target, title, mark, id, param){
-	var mainc =   $('.g-mainc');
-    var tabs = mainc.find('#navTabs');
-    var contents =  mainc.find('#tabContent');
-    var content = contents.find('#'+mark);
-    if(content.length > 0){
-        content.attr('data-value', id);
-        loadContent(content, target);
-        tabs.find('a[href="#'+mark+'"]').tab('show');
-        tabs.find('a[href="#'+mark+'"]').find('span').html(title);
-        return;
-    }
-    content = $('<div id="'+mark+'" class="tab-pane" data-value="'+id+'"></div>');
-    content.data(param);
-    loadContent(content, target);
-    contents.append(content);
-    var tab =  $('<li>');
-    tab.append($('<a href="#'+mark+'" data-toggle="tab"></a>')).find('a').html('<button type="button" id="close'+mark+'" class="close" data-dismiss="modal" aria-hidden="true">&times;</button><span>'+title+'<span>');
-    var closeBtn = tab.appendTo(tabs).on('click',function(){
-        var $this = $(this);
-        if($this.hasClass('active')){
-            return;
-        }
-        $this.find('a:first').tab('show');
-   		clearMenuEffect();
-   		var $li = $('.g-sidec').find('li[data-mark="'+mark+'"]').addClass('active');
-        if($li.parent().hasClass('collapse')){
-        	var a = $li.parent().prev('a');
-            a.hasClass('collapsed') && a.click();
-        }
-    }).find('a:first')
-        .tab('show')
-        .find('.close');
-    closeBtn.css({position: 'absolute', right: (closeBtn.width()-10) + 'px', top: -1 + 'px'})
-        .on('click',function(){
-            var prev =  tab.prev('li').find('a:first');
-            content.remove() && tab.remove();
-            var herf = prev.tab('show').attr('href').replace("#", '');
-            var $menuLi =  $('.g-sidec').find('li[data-mark="'+herf+'"]');
-            if($menuLi.length){
-                $menuLi.click();
-            }else{
-                clearMenuEffect();
-            }
-        });
-};
-
-/*
-加载DIV内容
-*/
-var loadContent = function(obj, url){
-	$.get(contextPath + url).done(function(data, status, objXMLHttp){
-   	var headers = objXMLHttp.getAllResponseHeaders();
-   	if (headers.indexOf("login: login") >= 0 && window.location.pathname.indexOf("/login.koala") < 0) {
-   		window.location.href = contextPath + "/login.koala";
-   	} else {
-   		obj.html(data);
-           $('#tabContent').trigger('loadContentCompalte', obj);
-   	}
-   }).fail(function(){
-           throw new Error('加载失败');
-   }).always(function(){
-       changeHeight();
-   });
-};
-
-/*
-* 清除菜单效果
-*/
-var clearMenuEffect = function(){
-   $('.first-level-menu').find('li').each(function(){
-       var $menuLi = $(this);
-       $menuLi.hasClass('active') && $menuLi.removeClass('active').parent().parent().removeClass('active');
-   });
-};
-
-/**
- * 根据内容改变高度
- */
-var changeHeight = function(){
-    var sidebar = $('.g-sidec');
-    var sidebarHeight = sidebar.outerHeight();
-    var headerHeight = $('.g-head').outerHeight();
-    var windowHeight = $(window).height();
-    var bodyHeight = $(document).height();
-    if(bodyHeight >  windowHeight){
-        windowHeight =  bodyHeight;
-    }
-    var footHeight = $('#footer').outerHeight();
-    var height =  windowHeight - headerHeight - footHeight;
-    sidebarHeight < height && sidebar.css('height', height);
-   // $('.g-sidec').css('min-height',height);
-    $('.g-mainc').css('min-height', height);
-};
-
 var openPacketView = function(id){
 	var dialog = $('<div class="modal fade"><div class="modal-dialog" style="width:900px;"><div class="modal-content"><div class="modal-header"><button type="button" class="close" data-dismiss="modal" aria-hidden="true">&times;</button><h4 class="modal-title">查看源数据</h4></div><div class="modal-body"><p>One fine body&hellip;</p></div><div class="modal-footer"><button type="button" class="btn btn-info" data-dismiss="modal">返回</button></div></div></div></div>');
     $.get('<%=path%>/Packet-view.jsp').done(function(html){
@@ -543,7 +448,7 @@ var mark;
 function openPacket(id,packId){
     var thiz 	= $(this);
     var  mark 	= thiz.attr('mark');
-    mark = openTabCust("/pages/domain/Mesg-list.jsp", "增加报文明细 ",mark,id);
+    mark = openTab("/pages/domain/Mesg-list.jsp", "增加报文明细 ",'OpenMesgList',id);
     if(mark){
         thiz.attr("mark",mark);
     }

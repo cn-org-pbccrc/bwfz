@@ -1,15 +1,26 @@
 package org.packet.packetsimulation.web.controller;
 
+import java.io.File;
 import java.text.SimpleDateFormat;
 import java.util.Date;
+import java.util.HashMap;
+import java.util.Map;
 
 import javax.inject.Inject;
 import javax.servlet.http.HttpServletRequest;
 
 import org.dayatang.utils.Page;
 import org.openkoala.koala.commons.InvokeResult;
+import org.openkoala.security.org.facade.SecurityOrgAccessFacade;
+import org.openkoala.security.org.facade.dto.EmployeeUserDTO;
+import org.openkoala.security.shiro.CurrentUser;
 import org.packet.packetsimulation.facade.MesgFacade;
+import org.packet.packetsimulation.facade.MesgTypeFacade;
+import org.packet.packetsimulation.facade.TaskFacade;
 import org.packet.packetsimulation.facade.dto.MesgDTO;
+import org.packet.packetsimulation.facade.dto.MesgTypeDTO;
+import org.packet.packetsimulation.facade.dto.TaskDTO;
+import org.packet.packetsimulation.facade.dto.TaskPacketDTO;
 import org.springframework.beans.propertyeditors.CustomDateEditor;
 import org.springframework.stereotype.Controller;
 import org.springframework.web.bind.WebDataBinder;
@@ -26,10 +37,20 @@ public class MesgController {
 	@Inject
 	private MesgFacade mesgFacade;
 	
+	@Inject
+	private SecurityOrgAccessFacade securityOrgAccessFacade;
+	
+	@Inject
+	private MesgTypeFacade mesgTypeFacade;
+	
+	@Inject
+	private TaskFacade taskFacade;
 	@ResponseBody
 	@RequestMapping("/add")
 	public InvokeResult add(MesgDTO mesgDTO,HttpServletRequest request) {
 		String realPath = request.getSession().getServletContext().getRealPath("/");
+		String createBy = CurrentUser.getUserAccount();
+        mesgDTO.setCreateBy(createBy);
 		return mesgFacade.creatMesg(mesgDTO,realPath);
 	}
 	
@@ -82,6 +103,14 @@ public class MesgController {
 		return all;
 	}
 	
+	@SuppressWarnings("rawtypes")
+	@ResponseBody
+	@RequestMapping("/pageJson")
+	public Page pageJson(MesgDTO mesgDTO, @RequestParam int page, @RequestParam int pagesize) {
+		Page<MesgDTO> all = mesgFacade.pageQueryMesg(mesgDTO, page, pagesize,null);
+		return all;
+	}
+	
 	@ResponseBody
 	@RequestMapping("/delete")
 	public InvokeResult remove(@RequestParam String ids) {
@@ -103,6 +132,53 @@ public class MesgController {
 	@RequestMapping("/initUpdate/{id}")
 	public InvokeResult initUpdate(@PathVariable Long id) {
 		return mesgFacade.getMesgForUpdate(id);
+	}
+	
+	/**
+	 * 初始化发送配置界面
+	 * @param ids 记录id
+	 * @param mesgType 记录类型id
+	 * @return
+	 */
+	@SuppressWarnings({ "unchecked", "rawtypes" })
+	@ResponseBody
+	@RequestMapping("/initSend")
+	public InvokeResult initSend(@RequestParam String ids ,@RequestParam Long mesgType) {
+		Map map=new HashMap();
+		String[] value = ids.split(",");
+        Long[] idArrs = new Long[value.length];
+		for (int i = 0; i < value.length; i++) {
+			idArrs[i] = Long.parseLong(value[i]);
+		}
+		MesgTypeDTO mesgTypeCode=(MesgTypeDTO) mesgTypeFacade.getMesgType(mesgType).getData();
+        String mesgContent=mesgFacade.getMesgForSend(idArrs, mesgTypeCode.getCode(),CurrentUser.getUserAccount());
+        map.put("mesgContent", mesgContent);
+        map.put("mesgType", mesgTypeCode.getCode());
+		return InvokeResult.success(map);
+	}
+	
+	/**
+	 * 快速发送
+	 * @param taskDTO
+	 * @param taskPacketDTO
+	 * @param mesgContent 文件内容
+	 * @param request
+	 * @return
+	 */
+	@ResponseBody
+	@RequestMapping("/send")
+	public InvokeResult send(TaskDTO taskDTO,TaskPacketDTO taskPacketDTO,String mesgContent,HttpServletRequest request) {
+		String ctxPath = request.getSession().getServletContext().getRealPath("/") + File.separator + "uploadFiles" + File.separator + "easySendFIles" + File.separator;
+		File file = new File(ctxPath);    	
+		if (!file.exists()) {    	
+			file.mkdirs();    	
+		}	
+		String taskCreator=CurrentUser.getUserAccount();
+		taskDTO.setTaskCreator(taskCreator);
+		taskDTO.setTaskCreatedTime(new Date());
+		taskPacketDTO.setCreatedBy(taskCreator);
+		mesgFacade.createTask(taskDTO, taskPacketDTO, mesgContent,ctxPath);
+		return InvokeResult.success();
 	}
 	
 	@ResponseBody

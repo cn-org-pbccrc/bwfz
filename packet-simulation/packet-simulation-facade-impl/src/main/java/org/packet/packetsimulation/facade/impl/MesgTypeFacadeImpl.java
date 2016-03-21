@@ -17,12 +17,17 @@ import org.dayatang.utils.Page;
 import org.openkoala.gqc.infra.util.XmlNode;
 import org.openkoala.gqc.infra.util.XmlUtil;
 import org.openkoala.koala.commons.InvokeResult;
+import org.openkoala.security.core.domain.MenuResource;
+import org.openkoala.security.facade.dto.MenuResourceDTO;
+import org.openkoala.security.facade.impl.SecurityAccessFacadeImpl;
 import org.packet.packetsimulation.application.MesgTypeApplication;
 import org.packet.packetsimulation.core.domain.MesgType;
 import org.packet.packetsimulation.core.domain.Packet;
 import org.packet.packetsimulation.facade.MesgTypeFacade;
 import org.packet.packetsimulation.facade.dto.MesgTypeDTO;
 import org.packet.packetsimulation.facade.impl.assembler.MesgTypeAssembler;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.xml.sax.SAXException;
 
 @Named
@@ -32,6 +37,8 @@ public class MesgTypeFacadeImpl implements MesgTypeFacade {
 	private MesgTypeApplication  application;
 
 	private QueryChannelService queryChannel;
+	
+	private static final Logger LOGGER = LoggerFactory.getLogger(MesgTypeFacadeImpl.class);
 
     private QueryChannelService getQueryChannelService(){
        if(queryChannel==null){
@@ -150,6 +157,14 @@ public class MesgTypeFacadeImpl implements MesgTypeFacade {
 			e.printStackTrace();
 		}
 		return null;
+	}
+
+	@Override
+	public List<MesgType> findMesgTypesByCreateUser(String userName) {
+	 	StringBuilder jpql = new StringBuilder("select _mesgType from MesgType _mesgType   where 1=1 and _mesgType.createdBy ='"+userName+"'");
+	   	jpql.append(" order by _mesgType.sort asc");
+	   	List<MesgType> mesgTypes = getQueryChannelService().createJpqlQuery(jpql.toString()).list();
+	   	return mesgTypes;
 	}
 	
 }

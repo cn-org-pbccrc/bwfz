@@ -11,26 +11,26 @@ public class TaskDTO implements Serializable {
 	private int version;
 
 			
-		private String setTime;
+	private String setTime;
+	
+			
+	private String sendChannel;
+	
+			
+	private Date taskCreatedTime;
+	
+	private Date taskCreatedTimeEnd;
+			
+	private String taskStatus;
+	
+			
+	private String packetNum;
+	
+			
+	private String taskCreator;
 		
 				
-		private String sendChannel;
-		
-				
-		private Date taskCreatedTime;
-		
-		private Date taskCreatedTimeEnd;
-				
-		private String taskStatus;
-		
-				
-		private String packetNum;
-		
-				
-		private String taskCreator;
-		
-				
-		private String taskName;
+	private String taskName;
 		
 			
 	

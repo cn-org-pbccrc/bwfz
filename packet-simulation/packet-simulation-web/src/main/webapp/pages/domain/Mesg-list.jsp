@@ -17,7 +17,7 @@ form p {
 }
 form p .rgt {
   float: left;
-  width: 22%;
+  width: 26%;
   text-align:right;
   font: "Microsoft Yahei", "宋体", verdana;
 }

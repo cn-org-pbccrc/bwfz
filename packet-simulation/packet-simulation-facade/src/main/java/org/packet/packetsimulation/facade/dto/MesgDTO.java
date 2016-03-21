@@ -18,6 +18,8 @@ public class MesgDTO implements Serializable {
 	private Long mesgType;
 
 	private String mesgTypeStr;
+	
+	private String createBy;
 
 	//private String mesgPriority;
 
@@ -123,6 +125,14 @@ public class MesgDTO implements Serializable {
 
 	public void setNodeValues(String nodeValues) {
 		this.nodeValues = nodeValues;
+	}
+
+	public String getCreateBy() {
+		return createBy;
+	}
+
+	public void setCreateBy(String createBy) {
+		this.createBy = createBy;
 	}
 
 	@Override

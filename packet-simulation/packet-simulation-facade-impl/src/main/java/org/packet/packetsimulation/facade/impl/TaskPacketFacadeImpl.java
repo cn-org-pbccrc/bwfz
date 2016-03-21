@@ -67,7 +67,7 @@ public class TaskPacketFacadeImpl implements TaskPacketFacade {
 		Task task = taskApplication.getTask(taskPacketDTO.getTaskId());			
 		taskPacket.setTask(task);
 		SimpleDateFormat sdf = new SimpleDateFormat("yyyy-MM-dd HH:mm:ss");
-		taskPacket.setPacketFrom("外部报文");
+		taskPacket.setPacketFrom(PACKETCONSTANT.TASKPACKET_PACKETFROM_OUTSIDE);
 		taskPacket.setSelectedPacketName(fileName);
 		taskPacket.setSelectedFileVersion("-");
 		taskPacket.setSelectedOrigSender("-");
@@ -285,16 +285,17 @@ public class TaskPacketFacadeImpl implements TaskPacketFacade {
 		for (Long id : ids) {
 			TaskPacket taskPacket = application.getTaskPacket(id);
 			taskPackets.add(taskPacket);
-			String packetFrom = taskPacket.getPacketFrom();
-			if(packetFrom.equals("内部报文")){
-				packetFrom = "insideFiles";
-				new File(savePath+application.getTaskPacket(id).getTask().getId()+File.separator+packetFrom+File.separator+application.getTaskPacket(id).getSelectedPacketName()+".csv").delete();
+			int packetFrom = (int) taskPacket.getPacketFrom();
+			application.removeTaskPackets(taskPackets);
+			if(packetFrom==PACKETCONSTANT.TASKPACKET_PACKETFROM_INSIDE){
+				new File(savePath+application.getTaskPacket(id).getTask().getId()+File.separator+"insideFiles"+File.separator+taskPacket.getSelectedPacketName()+".csv").delete();
+			}else if(packetFrom==PACKETCONSTANT.TASKPACKET_PACKETFROM_INSIDE){
+				new File(savePath+application.getTaskPacket(id).getTask().getId()+File.separator+"outsideFiles"+File.separator+taskPacket.getSelectedPacketName()).delete();
 			}else{
-				packetFrom = "outsideFiles";
-				new File(savePath+application.getTaskPacket(id).getTask().getId()+File.separator+packetFrom+File.separator+application.getTaskPacket(id).getSelectedPacketName()).delete();
+				new File(savePath+"easySendPacket"+File.separator+taskPacket.getSelectedPacketName()+".csv").delete();
+				taskApplication.removeTask(taskPacket.getTask());
 			}			
 		}
-		application.removeTaskPackets(taskPackets);
 		return InvokeResult.success();
 	}
 	
@@ -326,6 +327,7 @@ public class TaskPacketFacadeImpl implements TaskPacketFacade {
 		return InvokeResult.success();
 	}
 	
+	@SuppressWarnings("unchecked")
 	public Page<TaskPacketDTO> pageQueryTaskPacket(TaskPacketDTO queryVo, int currentPage, int pageSize, Long taskId) {
 		List<Object> conditionVals = new ArrayList<Object>();
 	   	StringBuilder jpql = new StringBuilder("select _taskPacket from TaskPacket _taskPacket   where 1=1");
@@ -379,10 +381,12 @@ public class TaskPacketFacadeImpl implements TaskPacketFacade {
 	   		jpql.append(" and _taskPacket.serialNumber like ?");
 	   		conditionVals.add(queryVo.getSerialNumber());
 	   	}	
-		//if (queryVo.getSerialNumber() != null && !"".equals(queryVo.getSerialNumber())) {
-			jpql.append("order by _taskPacket.serialNumber asc");
-	   		//conditionVals.add(MessageFormat.format("%{0}%", queryVo.getSerialNumber()));
-	   	//}
+		if(queryVo.getCreatedBy()!=null&&!"".equals(queryVo.getCreatedBy())){
+			jpql.append(" and _taskPacket.createdBy = ?");
+			conditionVals.add(queryVo.getCreatedBy());
+			
+		}
+		jpql.append("order by _taskPacket.selectedOrigSendDate desc, _taskPacket.serialNumber asc");
 		
         Page<TaskPacket> pages = getQueryChannelService()
 		   .createJpqlQuery(jpql.toString())

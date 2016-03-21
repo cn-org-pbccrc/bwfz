@@ -40,6 +40,9 @@ public class Mesg extends KoalaAbstractEntity{
 	@Column(name = "REMARK")
 	private String remark;
 	
+	@Column(name = "CREATE_BY")
+	private String createBy;
+	
 //	@Column(name = "MESGID")
 //	private String mesgId;
 	
@@ -83,6 +86,14 @@ public class Mesg extends KoalaAbstractEntity{
 //	public void setReserve(String reserve) {
 //		this.reserve = reserve;
 //	}
+
+	public String getCreateBy() {
+		return createBy;
+	}
+
+	public void setCreateBy(String createBy) {
+		this.createBy = createBy;
+	}
 
 	@Override
 	public String[] businessKeys() {

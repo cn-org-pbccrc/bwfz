@@ -50,6 +50,15 @@
 	
 	Grid.prototype = {
 		Constructor : Grid,
+		_reSize:function(){
+			this.gridBody = this.$element.find('.grid-body').css('width', this.$element.width());
+			this.gridTableHead = this.$element.find('.grid-table-head').css('min-width', this.$element.width());
+			this.gridTableHeadTable = this.gridTableHead.find('table');
+			var width = this.$element.width();
+			this.gridBody.css('width', width);
+			this.gridTableBody = this.$element.find('.grid-table-body').css('width', width);
+			this.gridTableBody.height(this.gridTableBody.height()*$(window).height()/620);
+		},
 		_initLayout : function() {
 			this.table = $(Grid.DEFAULTS.TEMPLATE).appendTo(this.$element);
 			this.buttons = this.$element.find('.buttons');
@@ -231,7 +240,6 @@
 		_initOptions : function() {
 			var self = this;
 			//每页记录数
-			alert(2)
 			this.pageSizeSelect.select({
 				contents : [{
 					value : '5',

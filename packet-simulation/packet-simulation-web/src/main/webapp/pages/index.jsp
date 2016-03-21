@@ -291,7 +291,7 @@
     </script>
 </head>
 
-<body>
+<body style="min-width:1200px;">
 	<input type="hidden" id="roleId" value="${roleId}" />
     <%-- 顶部 --%>
 	<div class="g-head">

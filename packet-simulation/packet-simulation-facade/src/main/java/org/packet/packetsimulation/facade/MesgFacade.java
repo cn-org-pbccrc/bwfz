@@ -38,5 +38,24 @@ public interface MesgFacade {
 	
 	public List<MesgDTO> queryMesgByPacketId(Long packetId);
 	
+	/**
+	 * 获取发送前文件内容
+	 * @param ids
+	 * @param mesgType
+	 * @param userAccount
+	 * @return
+	 */
+	public String getMesgForSend(Long[] ids,String mesgType,String userAccount);
+
+	/**
+	 * 快速创建任务
+	 * @param taskDTO
+	 * @param taskPacketDTO
+	 * @param mesgContent
+	 * @param filePath
+	 * @return
+	 */
+	public InvokeResult createTask(TaskDTO taskDTO, TaskPacketDTO taskPacketDTO, String mesgContent,String filePath);
+	
 }
 

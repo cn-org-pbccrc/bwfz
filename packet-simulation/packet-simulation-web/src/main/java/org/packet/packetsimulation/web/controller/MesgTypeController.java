@@ -18,6 +18,7 @@ import org.springframework.web.bind.WebDataBinder;
 import org.springframework.web.bind.annotation.InitBinder;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.RequestMapping;
+import org.springframework.web.bind.annotation.RequestMethod;
 import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.ResponseBody;
 
@@ -101,5 +102,17 @@ public class MesgTypeController {
 	public InvokeResult getEditHtmlByMesgType(@PathVariable Long id) {
     	return mesgTypeFacade.getEditHtmlByMesgType(id);
 	}
+    
+	/**
+	 * 根据角色ID查询菜单权限资源树带有已经选中项。
+	 *
+	 * @param userName
+	 * @return
+	 */
+	@ResponseBody
+	@RequestMapping(value = "/findMesgTypesByCreateUser")
+	public List<MesgType> findMesgTypesByCreateUser(String userName) {
+		return  mesgTypeFacade.findMesgTypesByCreateUser(userName);
+		}
     
 }
