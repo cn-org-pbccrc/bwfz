@@ -586,7 +586,6 @@
                 var name = $this.attr('name');
                  if(name){
                     params[name] = $this.val();
-                    alert(params[name]);
                 }
             });
             $('[data-role="userGrid"]').getGrid().search(params);

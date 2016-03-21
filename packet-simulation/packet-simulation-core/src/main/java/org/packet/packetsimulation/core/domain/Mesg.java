@@ -40,6 +40,30 @@ public class Mesg extends KoalaAbstractEntity{
 	@Column(name = "REMARK")
 	private String remark;
 
+	
+	@Column(name = "CREATE_BY")
+	private String createBy;
+	
+//	@Column(name = "MESGID")
+//	private String mesgId;
+	
+//	@Column(name = "MESG_PRIORITY")
+//	private String mesgPriority;
+//	
+//	@Column(name = "MESG_DIRECTION")
+//	private String mesgDirection;
+//	
+//	@Column(name = "RESERVE")
+//	private String reserve;
+
+//	public String getMesgId() {
+//		return mesgId;
+//	}
+//
+//	public void setMesgId(String mesgId) {
+//		this.mesgId = mesgId;
+//	}
+
 	public Packet getPacket() {
 		return packet;
 	}

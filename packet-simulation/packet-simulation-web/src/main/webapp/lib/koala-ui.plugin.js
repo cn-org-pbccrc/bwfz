@@ -31,6 +31,9 @@
 				self._loadData();
 			}, 0);
 		}
+		window.onresize=function(){  
+			self._reSize()
+		}
 	};
 	Grid.DEFAULTS = {
 		loadingText : '正在载入...', //数据载入时的提示文字
@@ -50,6 +53,14 @@
 	
 	Grid.prototype = {
 		Constructor : Grid,
+		_reSize:function(){
+			this.gridBody = this.$element.find('.grid-body').css('width', this.$element.width());
+			this.gridTableHead = this.$element.find('.grid-table-head').css('min-width', this.$element.width());
+			var width = this.$element.width();
+			this.gridBody.css('width', width);
+			this.$element.find('.grid-table-body').css('width', width);
+//			this.$element.find('.grid-table-body').height(this.gridTableBody.height()*$(window).height()/620);
+		},
 		_initLayout : function() {
 			this.table = $(Grid.DEFAULTS.TEMPLATE).appendTo(this.$element);
 			this.buttons = this.$element.find('.buttons');

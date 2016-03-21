@@ -3,43 +3,96 @@ package org.packet.packetsimulation.facade.dto;
 import java.io.Serializable;
 import java.util.Date;
 
+import org.packet.packetsimulation.core.domain.Task;
+
 
 public class TaskPacketDTO implements Serializable {
 
 	private Long id;
 	
-
 	private int version;
 	
+	private Task task;
 	
 	private Long taskId;
 
-			
-		private String encryption;
+	private String encryption;
 		
-				
-		private String selectedPacketName;
-		
-		private String packetFrom;
-		
-		private String selectedFileVersion;
-		
-		private String selectedOrigSender;
-		
-		private Date selectedOrigSendDate;
-		
-		private Date selectedOrigSendDateEnd;
-		
-		private String selectedDataType;
-
-		private String selectedRecordType;
-				
-		private String compression;
-		
-		private Integer serialNumber;
-		
-			
+	private String selectedPacketName;
 	
+	private Integer packetFrom;
+	
+	private String selectedFileVersion;
+	
+	private String selectedOrigSender;
+	
+	private Date selectedOrigSendDate;
+	
+	private Date selectedOrigSendDateEnd;
+	
+	private String selectedDataType;
+
+	private String selectedRecordType;
+			
+	private String compression;
+	
+	private Integer serialNumber;
+	
+	/**
+	 * 文件名前缀
+	 */
+	private String frontPosition;
+	
+	/**
+	 * 文件序列号0~9999
+	 */
+	private Integer packetNumber;
+	
+	/**
+	 * 发送状态 0-失败 1-已发送 2-已反馈
+	 */
+	private Integer sendState;
+	
+	/**
+	 * 接收反馈时间
+	 */
+	private Date receiveDate;
+	
+	/**
+	 * 文件类型 0-正常文件 1-快速发送文件
+	 */
+	private Integer taskPacketType;
+	
+	
+    /**
+	 * 创建者
+	 */
+	private String createdBy;
+		
+	public Integer getSendState() {
+		return sendState;
+	}
+
+	public Integer getTaskPacketType() {
+		return taskPacketType;
+	}
+
+	public String getCreatedBy() {
+		return createdBy;
+	}
+
+	public void setSendState(Integer sendState) {
+		this.sendState = sendState;
+	}
+
+	public void setTaskPacketType(Integer taskPacketType) {
+		this.taskPacketType = taskPacketType;
+	}
+
+	public void setCreatedBy(String createdBy) {
+		this.createdBy = createdBy;
+	}
+
 	public Integer getSerialNumber() {
 			return serialNumber;
 		}
@@ -56,11 +109,11 @@ public class TaskPacketDTO implements Serializable {
 			this.selectedOrigSendDateEnd = selectedOrigSendDateEnd;
 		}
 
-	public String getPacketFrom() {
+	public Integer getPacketFrom() {
 			return packetFrom;
 		}
 
-		public void setPacketFrom(String packetFrom) {
+		public void setPacketFrom(Integer packetFrom) {
 			this.packetFrom = packetFrom;
 		}
 
@@ -141,11 +194,11 @@ public class TaskPacketDTO implements Serializable {
 		this.id = id;
 	}
 	
-	public int getVersion() {
+	public Integer getVersion() {
 		return version;
 	}
 
-	public void setVersion(int version) {
+	public void setVersion(Integer version) {
 		this.version = version;
 	}
 
@@ -180,5 +233,37 @@ public class TaskPacketDTO implements Serializable {
 
 	public void setTaskId(Long taskId) {
 		this.taskId = taskId;
+	}
+
+	public Task getTask() {
+		return task;
+	}
+
+	public void setTask(Task task) {
+		this.task = task;
+	}
+
+	public String getFrontPosition() {
+		return frontPosition;
+	}
+
+	public Integer getPacketNumber() {
+		return packetNumber;
+	}
+
+	public Date getReceiveDate() {
+		return receiveDate;
+	}
+
+	public void setFrontPosition(String frontPosition) {
+		this.frontPosition = frontPosition;
+	}
+
+	public void setPacketNumber(Integer packetNumber) {
+		this.packetNumber = packetNumber;
+	}
+
+	public void setReceiveDate(Date receiveDate) {
+		this.receiveDate = receiveDate;
 	}
 }

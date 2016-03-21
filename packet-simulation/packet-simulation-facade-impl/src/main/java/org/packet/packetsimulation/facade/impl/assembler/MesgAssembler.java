@@ -16,11 +16,12 @@ public class MesgAssembler {
     	MesgDTO result  = new MesgDTO();
 	    	result.setId (mesg.getId());
      	    result.setVersion (mesg.getVersion());
-     	    result.setPacketId(mesg.getPacket().getId());
+     	    result.setPacketId(mesg.getPacket()==null?null:mesg.getPacket().getId());
      	    result.setContent(mesg.getContent());
      	    result.setMesgType(mesg.getMesgType().getId());
      	    result.setMesgTypeStr(mesg.getMesgType().getMesgType());
      	    result.setRemark(mesg.getRemark());
+     	    result.setCreateBy(mesg.getCreateBy());
      	    return result;
 	 }
 	
@@ -43,6 +44,7 @@ public class MesgAssembler {
         result.setId (mesgDTO.getId());
         result.setVersion (mesgDTO.getVersion());
         result.setRemark(mesgDTO.getRemark());
+        result.setCreateBy(mesgDTO.getCreateBy());
         result.setContent(mesgDTO.getContent());
  	  	return result;
 	 }

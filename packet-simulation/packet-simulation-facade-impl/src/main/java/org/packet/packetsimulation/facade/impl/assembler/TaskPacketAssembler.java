@@ -13,11 +13,16 @@ public class TaskPacketAssembler {
 			return null;
 		}
     	TaskPacketDTO result  = new TaskPacketDTO();
-	    	result.setId (taskPacket.getId());
+	    		result.setId (taskPacket.getId());
      	    	result.setVersion (taskPacket.getVersion());
-     	    	result.setTaskId(taskPacket.getTask().getId());
+     	    	if(taskPacket.getTask()!=null){
+     	    		result.setTask(taskPacket.getTask());
+     	    		result.setTaskId(taskPacket.getTask().getId());
+     	    	}
      	    	result.setPacketFrom(taskPacket.getPacketFrom());
      	    	result.setSelectedPacketName (taskPacket.getSelectedPacketName());
+     	    	result.setFrontPosition(taskPacket.getFrontPosition());
+     	    	result.setPacketNumber(taskPacket.getPacketNumber());
      	    	result.setSelectedFileVersion(taskPacket.getSelectedFileVersion());
      	    	result.setSelectedOrigSender(taskPacket.getSelectedOrigSender());
      	    	result.setSelectedOrigSendDate(taskPacket.getSelectedOrigSendDate());
@@ -26,6 +31,9 @@ public class TaskPacketAssembler {
      	    	result.setCompression (taskPacket.getCompression());
      	    	result.setEncryption (taskPacket.getEncryption());
      	    	result.setSerialNumber(taskPacket.getSerialNumber());
+     	    	result.setSendState(taskPacket.getSendState());
+     	    	result.setReceiveDate(taskPacket.getReceiveDate());
+     	    	result.setCreatedBy(taskPacket.getCreatedBy());
      	    return result;
 	 }
 	
@@ -46,17 +54,22 @@ public class TaskPacketAssembler {
 		}
 	 	TaskPacket result  = new TaskPacket();
         result.setId (taskPacketDTO.getId());
-         result.setVersion (taskPacketDTO.getVersion());
-         result.setPacketFrom(taskPacketDTO.getPacketFrom());
-         result.setSelectedPacketName (taskPacketDTO.getSelectedPacketName());
-         result.setSelectedFileVersion(taskPacketDTO.getSelectedFileVersion());
-         result.setSelectedOrigSender(taskPacketDTO.getSelectedOrigSender());
-         result.setSelectedOrigSendDate(taskPacketDTO.getSelectedOrigSendDate());
-         result.setSelectedDataType(taskPacketDTO.getSelectedDataType());
-         result.setSelectedRecordType(taskPacketDTO.getSelectedRecordType());
-         result.setCompression (taskPacketDTO.getCompression());
-         result.setEncryption (taskPacketDTO.getEncryption());
-         result.setSerialNumber(taskPacketDTO.getSerialNumber());
+		result.setVersion (taskPacketDTO.getVersion());
+		result.setPacketFrom(taskPacketDTO.getPacketFrom());
+		result.setSelectedPacketName (taskPacketDTO.getSelectedPacketName());
+		result.setFrontPosition(taskPacketDTO.getFrontPosition());
+	    result.setPacketNumber(taskPacketDTO.getPacketNumber());
+		result.setSelectedFileVersion(taskPacketDTO.getSelectedFileVersion());
+		result.setSelectedOrigSender(taskPacketDTO.getSelectedOrigSender());
+		result.setSelectedOrigSendDate(taskPacketDTO.getSelectedOrigSendDate());
+		result.setSelectedDataType(taskPacketDTO.getSelectedDataType());
+		result.setSelectedRecordType(taskPacketDTO.getSelectedRecordType());
+		result.setCompression (taskPacketDTO.getCompression());
+		result.setEncryption (taskPacketDTO.getEncryption());
+		result.setSerialNumber(taskPacketDTO.getSerialNumber());
+		result.setSendState(taskPacketDTO.getSendState());
+		result.setReceiveDate(taskPacketDTO.getReceiveDate());
+		result.setCreatedBy(taskPacketDTO.getCreatedBy());
  	  	return result;
 	 }
 	

@@ -13,6 +13,7 @@
 <link rel="stylesheet" href="${contextPath}/lib/validateForm/css/style.css"/>
 <link rel="stylesheet" href="${contextPath}/css/gqc.css"/>
 <link rel="stylesheet" type="text/css" href="${contextPath}/lib/uploadify.css">  
+<link href="${contextPath}/lib/bootstrap-wizard/prettify.css" rel="stylesheet" type="text/css" >
 
 <%-- js 默认就有 type="text/javascript" --%>
 <script  src="${contextPath}/lib/jquery-1.11.3.min.js"></script>
@@ -29,6 +30,8 @@
 <script  src="${contextPath}/lib/validateForm/validateForm.js"></script>
 <script  src="${contextPath}/lib/Koala_ToolTip.js"></script>
 <script  type="text/javascript" src="${contextPath}/lib/jquery.uploadify.min.js"></script>  
+<script src="${contextPath}/lib/bootstrap-wizard/jquery.bootstrap.wizard.js"></script>
+<script src="${contextPath}/lib/bootstrap-wizard/prettify.js"></script>
 
 <script>
 	$.ajaxSetup({cache:false});

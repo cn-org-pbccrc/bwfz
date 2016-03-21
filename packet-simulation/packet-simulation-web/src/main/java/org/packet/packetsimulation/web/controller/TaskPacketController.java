@@ -41,6 +41,7 @@ import org.packet.packetsimulation.facade.dto.*;
 import org.packet.packetsimulation.facade.TaskPacketFacade;
 //import org.pbccrc.ld.service.nature.customer.api.service.IBiBaseInfoService;
 import org.openkoala.koala.commons.InvokeResult;
+import org.openkoala.security.shiro.CurrentUser;
 
 
 @Controller
@@ -86,6 +87,14 @@ public class TaskPacketController {
 	}
 	
 	@ResponseBody
+	@RequestMapping("/pageJson")
+	public Page pageJson(TaskPacketDTO taskPacketDTO, @RequestParam int page, @RequestParam int pagesize) {
+		taskPacketDTO.setCreatedBy(CurrentUser.getUserAccount());
+		Page<TaskPacketDTO> all = taskPacketFacade.pageQueryTaskPacket(taskPacketDTO, page, pagesize, null);
+		return all;
+	}
+	
+	@ResponseBody
 	@RequestMapping("/delete")
 	public InvokeResult remove(@RequestParam String ids, HttpServletRequest request) {
 		String savePath = request.getSession().getServletContext().getRealPath("/")+File.separator+"uploadFiles"+File.separator;
@@ -93,8 +102,8 @@ public class TaskPacketController {
 		String[] value = ids.split(",");
         Long[] idArrs = new Long[value.length];
         for (int i = 0; i < value.length; i ++) {
-        	        					idArrs[i] = Long.parseLong(value[i]);
-						        }
+        	idArrs[i] = Long.parseLong(value[i]);
+		}
         return taskPacketFacade.removeTaskPackets(idArrs,savePath);
 	}
 	
@@ -137,9 +146,11 @@ public class TaskPacketController {
 	public int checkExisting(HttpServletRequest request, @RequestParam String taskId, @RequestParam String filename){
 		File file = new File(request.getSession().getServletContext().getRealPath("/") + File.separator + "uploadFiles" + File.separator + taskId + File.separator + "outsideFiles" + File.separator);
 		File[] fileList = file.listFiles();
-		for (int i = 0; i < fileList.length; i++) {
-			if(filename.equals(fileList[i].getName())){
-				return 1;
+		if (fileList!=null){
+			for (int i = 0; i < fileList.length; i++) {
+				if(filename.equals(fileList[i].getName())){
+					return 1;
+				}
 			}
 		}
 		return 0;

@@ -48,7 +48,7 @@ public class SecurityOrgAccessFacadeImpl implements SecurityOrgAccessFacade {
 
         return new Page<EmployeeUserDTO>(results.getStart(), results.getResultCount(), pageSize, transformToEmployeeUserDTO(results.getData()));
     }
-
+    
     private List<EmployeeUserDTO> transformToEmployeeUserDTO(List<EmployeeUser> employeeUsers) {
         List<EmployeeUserDTO> results = new ArrayList<EmployeeUserDTO>();
         for (EmployeeUser employeeUser : employeeUsers) {

@@ -10,9 +10,10 @@
 <%-- <link rel="stylesheet" type="text/css" href="${contextPath}/lib/uploadify.css"> --%>
 <script type="text/javascript">
 	 $(document).ready(function(){
+		 alert("<%=session.getId()%>")
 		//alert(taskId);
 		$("#uploadify").uploadify({
-			'uploader':'${pageContext.request.contextPath}/TaskPacket/uploadFile.koala?taskId='+taskId,
+			'uploader':'${pageContext.request.contextPath}/TaskPacket/uploadFile.koala?taskId='+taskId+"&&jsessionid=<%=session.getId()%>",
 			'swf':'${pageContext.request.contextPath}/lib/uploadify.swf',
 			'cancelImg':'${pageContext.request.contextPath}/lib/uploadify-cancel.png',
 			'folder':'uploads',
@@ -24,7 +25,7 @@
 			'simUploadLimit':1,
 			'buttonText':'选择文件',
 			'buttonCursor' : "hand",
-			'checkExisting' : '${pageContext.request.contextPath}/TaskPacket/checkExisting.koala?taskId='+taskId,
+			'checkExisting' : '${pageContext.request.contextPath}/TaskPacket/checkExisting.koala?taskId='+taskId+"&&jsessionid=<%=session.getId()%>",
 			'fileSizeLimit' : '500MB',
 // 	        'overrideEvents' : ['onSelectError' ],
 // 	        'onSelectError':function(file, errorCode, errorMsg){

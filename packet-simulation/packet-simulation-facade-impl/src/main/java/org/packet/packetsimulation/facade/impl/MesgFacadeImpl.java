@@ -1,16 +1,15 @@
 package org.packet.packetsimulation.facade.impl;
 
+import java.io.File;
+import java.io.FileWriter;
 import java.io.IOException;
-import java.math.BigInteger;
 import java.text.MessageFormat;
 import java.text.SimpleDateFormat;
 import java.util.ArrayList;
 import java.util.Date;
 import java.util.HashSet;
-import java.util.Iterator;
 import java.util.List;
 import java.util.Set;
-import java.util.concurrent.CopyOnWriteArrayList;
 import java.util.concurrent.ExecutionException;
 import java.util.concurrent.ForkJoinPool;
 import java.util.concurrent.Future;
@@ -23,27 +22,32 @@ import javax.xml.parsers.ParserConfigurationException;
 import org.dayatang.domain.InstanceFactory;
 import org.dayatang.querychannel.QueryChannelService;
 import org.dayatang.utils.Page;
-import org.dom4j.Document;
-import org.dom4j.DocumentException;
-import org.dom4j.DocumentHelper;
-import org.dom4j.Element;
 import org.openkoala.gqc.infra.util.XmlNode;
 import org.openkoala.gqc.infra.util.XmlUtil;
 import org.openkoala.koala.commons.InvokeResult;
+import org.openkoala.security.org.core.domain.EmployeeUser;
 import org.packet.packetsimulation.application.MesgApplication;
 import org.packet.packetsimulation.application.MesgTypeApplication;
 import org.packet.packetsimulation.application.PacketApplication;
+import org.packet.packetsimulation.application.TaskApplication;
+import org.packet.packetsimulation.application.TaskPacketApplication;
 import org.packet.packetsimulation.application.ThreeStandardApplication;
 import org.packet.packetsimulation.core.domain.Mesg;
 import org.packet.packetsimulation.core.domain.MesgType;
+import org.packet.packetsimulation.core.domain.PACKETCONSTANT;
 import org.packet.packetsimulation.core.domain.Packet;
+import org.packet.packetsimulation.core.domain.Task;
+import org.packet.packetsimulation.core.domain.TaskPacket;
 import org.packet.packetsimulation.core.domain.ThreeStandard;
 import org.packet.packetsimulation.facade.MesgFacade;
 import org.packet.packetsimulation.facade.dto.MesgDTO;
+import org.packet.packetsimulation.facade.dto.TaskDTO;
+import org.packet.packetsimulation.facade.dto.TaskPacketDTO;
 import org.packet.packetsimulation.facade.impl.assembler.MesgAssembler;
-import org.springframework.scheduling.concurrent.ThreadPoolTaskExecutor;
-import org.springframework.transaction.annotation.Transactional;
+import org.packet.packetsimulation.facade.impl.assembler.TaskAssembler;
+import org.packet.packetsimulation.facade.impl.assembler.TaskPacketAssembler;
 import org.springframework.dao.DataAccessException;
+import org.springframework.transaction.annotation.Transactional;
 import org.xml.sax.SAXException;
 
 @Named
@@ -51,6 +55,12 @@ public class MesgFacadeImpl implements MesgFacade {
 
 	@Inject
 	private MesgApplication  application;
+	
+	@Inject
+	private TaskApplication  taskApplication;
+	
+	@Inject
+	private TaskPacketApplication  taskPacketApplication;
 	
 	@Inject
 	private MesgTypeApplication  mesgTypeApplication;
@@ -94,8 +104,10 @@ public class MesgFacadeImpl implements MesgFacade {
 		Mesg mesg = MesgAssembler.toEntity(mesgDTO);
 		MesgType mesgType = mesgTypeApplication.getMesgType(mesgDTO.getMesgType());
 		mesg.setMesgType(mesgType);
+		if(mesgDTO.getPacketId()!=null){
 		Packet packet = packetApplication.getPacket(mesgDTO.getPacketId());
 		mesg.setPacket(packet);
+		}
 		application.creatMesg(mesg);
 		return InvokeResult.success();
 	}
@@ -581,8 +593,10 @@ public class MesgFacadeImpl implements MesgFacade {
 		Mesg mesg = MesgAssembler.toEntity(mesgDTO);		
 		MesgType mesgType = mesgTypeApplication.getMesgType(mesgDTO.getMesgType());
 		mesg.setMesgType(mesgType);
+		if(mesgDTO.getPacketId()!=null){
 		Packet packet = packetApplication.getPacket(mesgDTO.getPacketId());
 		mesg.setPacket(packet);
+		}
 		application.updateMesg(mesg);
 		return InvokeResult.success();
 	}
@@ -614,7 +628,15 @@ public class MesgFacadeImpl implements MesgFacade {
 	   		jpql.append(" and _mesg.packet.id = ? ");
 	   		conditionVals.add(packetId);
 	   	}
-	   	if (queryVo.getRemark() != null && !"".equals(queryVo.getRemark())) {
+	   	if (queryVo.getCreateBy() != null && !"".equals(queryVo.getCreateBy().trim()) ) {
+	   		jpql.append(" and _mesg.createBy = ? ");
+	   		conditionVals.add(queryVo.getCreateBy());
+	   	}
+	   	if (queryVo.getMesgType() != null ) {
+	   		jpql.append(" and _mesg.mesgType.id = ? ");
+	   		conditionVals.add(queryVo.getMesgType());
+	   	}
+	   	if (queryVo.getRemark() != null && !"".equals(queryVo.getRemark().trim())) {
 	   		jpql.append(" and _mesg.remark like ?");
 	   		conditionVals.add(MessageFormat.format("%{0}%", queryVo.getRemark()));
 	   	}	
@@ -730,5 +752,95 @@ public class MesgFacadeImpl implements MesgFacade {
 	   	}
 		List<ThreeStandard> result = getQueryChannelService().createJpqlQuery(jpql.toString()).setFirstResult(startOfThreeStandard-1).setPageSize(endOfThreeStandard-startOfThreeStandard+1).setParameters(conditionVals).list();
 		return result;
+	}
+
+	@Override
+	public String getMesgForSend(Long[] ids, String mesgType, String userAccount) {
+		EmployeeUser employeeUser = findEmployeeUserByCreatedBy(userAccount);
+		StringBuffer mesgBuffer = new StringBuffer("");
+		String currentOrgNO = employeeUser.getDepartment().getSn();
+		SimpleDateFormat dateFormat = new SimpleDateFormat("yyyyMMddhhmmss");
+		String currentDate = dateFormat.format(new Date());
+		Integer dateType = PACKETCONSTANT.TASKPACKET_DATATYPE_NORMAL;
+		String counter = String.format("%010d", ids.length);
+		mesgBuffer.append("A").append(PACKETCONSTANT.TASKPACKET_FILEVERSION).append(currentOrgNO).append(currentDate).append(mesgType).append(dateType).append(counter).append("\r\n");
+		for (Long id : ids) {
+			Mesg mesg=application.getMesg(id);
+			mesgBuffer.append(mesg.getContent()).append("\r\n");
+		}
+		return mesgBuffer.toString();
+	}
+	
+	@Transactional
+	@Override
+	public InvokeResult createTask(TaskDTO taskDTO, TaskPacketDTO taskPacketDTO, String mesgContent,String filePath) {
+		Task task=TaskAssembler.toEntity(taskDTO);
+		taskApplication.creatTask(task);
+		taskPacketDTO.setTaskId(task.getId());
+		EmployeeUser employeeUser = findEmployeeUserByCreatedBy(taskDTO.getTaskCreator());
+		SimpleDateFormat dateFormat=new SimpleDateFormat("yyyyMMdd");
+		String frontPosition = employeeUser.getDepartment().getSn()
+				+ dateFormat.format(new Date())
+				+ taskPacketDTO.getSelectedRecordType()
+				+ PACKETCONSTANT.TASKPACKET_DATATYPE_NORMAL
+				+ PACKETCONSTANT.TASKPACKET_TRANSPORTDIRECTION_REPORT;
+		Integer maxPacketNo=findMaxPacketNumberByFrontPosition(frontPosition);
+		if(maxPacketNo>9998){
+			return InvokeResult.failure("流水号最大值为9999!");
+		}
+	    String sn=String.format("%04d", maxPacketNo+1);
+	    
+	    createPacketFile(filePath, frontPosition+sn, mesgContent);
+		TaskPacket taskPacket=TaskPacketAssembler.toEntity(taskPacketDTO);
+		taskPacket.setTask(task);
+		taskPacket.setSelectedOrigSender(employeeUser.getDepartment().getSn());
+		taskPacket.setFrontPosition(frontPosition);
+		taskPacket.setPacketNumber(maxPacketNo+1);
+		taskPacket.setSelectedPacketName(frontPosition+sn);
+		taskPacket.setSelectedOrigSendDate(new Date());
+		taskPacket.setTaskPacketType(PACKETCONSTANT.TASKPACKET_TASKPACKETSTATE_EASYPACKET);
+		taskPacket.setPacketFrom(PACKETCONSTANT.TASKPACKET_PACKETFROM_EASYSEND);
+		taskPacketApplication.creatTaskPacket(taskPacket);
+		return InvokeResult.success();
+	}
+	
+	private void createPacketFile(String path, String fileName, String mesgContent) {
+		File f = new File(path+fileName+".csv");//新建一个文件对象
+        FileWriter fw;
+        try {
+        	fw=new FileWriter(f);	    
+        	fw.write(mesgContent);
+        	fw.close();
+        } catch (IOException e) {
+        	e.printStackTrace();
+        }
+	}
+	
+	private Integer findMaxPacketNumberByFrontPosition(String frontPosition){
+		List<Object> conditionVals = new ArrayList<Object>();
+	   	StringBuilder jpql = new StringBuilder("select max(_taskPacket.packetNumber) from TaskPacket _taskPacket  where 1=1 ");
+	   	
+	   	if (frontPosition != null ) {
+	   		jpql.append(" and _taskPacket.frontPosition = ? ");
+	   		conditionVals.add(frontPosition);
+	   	}
+	   	if((getQueryChannelService().createJpqlQuery(jpql.toString()).setParameters(conditionVals).singleResult()==null)){
+	   		return -1;
+	   	}
+	   	Integer max = (Integer) getQueryChannelService().createJpqlQuery(jpql.toString()).setParameters(conditionVals).singleResult();
+	   	return max;
+	}
+	
+	@SuppressWarnings("unchecked")
+	private EmployeeUser findEmployeeUserByCreatedBy(String createdBy){
+		List<Object> conditionVals = new ArrayList<Object>();
+	   	StringBuilder jpql = new StringBuilder("select _employeeUser from EmployeeUser _employeeUser  where 1=1 ");
+	   	
+	   	if (createdBy != null ) {
+	   		jpql.append(" and _employeeUser.userAccount = ? ");
+	   		conditionVals.add(createdBy);
+	   	}
+	   	EmployeeUser employeeUser = (EmployeeUser) getQueryChannelService().createJpqlQuery(jpql.toString()).setParameters(conditionVals).singleResult();
+	   	return employeeUser;
 	}
 }

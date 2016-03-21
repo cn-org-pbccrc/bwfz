@@ -33,6 +33,9 @@ public class EmployeeUserAssembler {
                 employeeUser.getUserAccount(), employeeUser.getCreateDate(), employeeUser.getDescription(),//
                 employeeUser.getCreateOwner(), employeeUser.getLastModifyTime(), employeeUser.isDisabled());
         employeeUserDTO.setOrganization(employeeUser.getOrganization());
+        if(employeeUser.getDepartment()!=null){
+        	employeeUserDTO.setSn(employeeUser.getDepartment().getSn());
+        }
         //System.out.println("hahahahahahahaha");
         //employeeUserDTO.setDepartmentName("haha");
         //System.out.println("getName:"+ employeeUser.getDepartment().getName());
