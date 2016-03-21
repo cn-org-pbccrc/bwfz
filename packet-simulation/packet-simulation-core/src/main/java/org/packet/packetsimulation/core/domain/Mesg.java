@@ -64,6 +64,14 @@ public class Mesg extends KoalaAbstractEntity{
 //		this.mesgId = mesgId;
 //	}
 
+	public String getCreateBy() {
+		return createBy;
+	}
+
+	public void setCreateBy(String createBy) {
+		this.createBy = createBy;
+	}
+
 	public Packet getPacket() {
 		return packet;
 	}

@@ -48,10 +48,9 @@ public class MesgController {
 	@ResponseBody
 	@RequestMapping("/add")
 	public InvokeResult add(MesgDTO mesgDTO,HttpServletRequest request) {
-		String realPath = request.getSession().getServletContext().getRealPath("/");
 		String createBy = CurrentUser.getUserAccount();
         mesgDTO.setCreateBy(createBy);
-		return mesgFacade.creatMesg(mesgDTO,realPath);
+		return mesgFacade.creatMesg(mesgDTO);
 	}
 	
 	@ResponseBody
