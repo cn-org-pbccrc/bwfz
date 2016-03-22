@@ -456,6 +456,88 @@ legend {
       	        });    	        
     	        });
    	    },
+    	    modify: function(id, grid){
+	        var self = this;
+	        var dialog = $('<div class="modal fade"><div class="modal-dialog" style="width:900px;"><div class="modal-content"><div class="modal-header"><button type="button" class="close" data-dismiss="modal" aria-hidden="true">&times;</button><h4 class="modal-title">修改</h4></div><div class="modal-body"><p>One fine body&hellip;</p></div><div class="modal-footer"><button type="button" class="btn btn-default" data-dismiss="modal">取消</button><button type="button" class="btn btn-success" id="save">保存</button></div></div></div></div>');	      
+	        $.get('<%=path%>/easyMesg-update.jsp').done(function(html){
+	               dialog.find('.modal-body').html(html);
+	               self.initPage(dialog.find('form'));
+	               $.get( '${pageContext.request.contextPath}/Mesg/initUpdate/' + id + '.koala').done(function(json){
+	                       json = json.data;
+	                        var elm;
+	                        for(var index in json){
+	                        	elm = dialog.find('#'+ index + 'ID');
+	                        	if(index=='content'){
+	                        		elm.append(json[index]);
+	                        	}else{
+		                            if(elm.hasClass('select')){
+		                                elm.setValue(json[index]);
+		                            }else{
+		                                elm.val(json[index]);
+		                            }
+	                        	}
+	                        }
+	                });
+	                dialog.modal({
+	                    keyboard:false
+	                }).on({
+	                    'hidden.bs.modal': function(){
+	                        $(this).remove();
+	                    }
+	                });
+	                dialog.find('#save').on('click',{grid: grid}, function(e){
+	                	var info = dialog.find($(".tab-content")).attr('id');
+						var xml = '<?xml version="1.0" encoding="UTF-8"?><Document><'+info+'>';
+						dialog.find($(".tab-pane")).each(function(){
+	    					
+	    					var id = $(this).attr('id');
+	    					xml += '<' + id + '>';
+	    					var flag = '';
+	    					$('#'+id).find($("[name]")).each(function(){
+								if($(this).parent().parent()[0].tagName != 'FIELDSET'){
+									var name = ($(this).attr('name'));
+		    						var value = ($(this).val());
+									xml += '<' + name + '>' + value + '</' + name + '>';
+								}
+								else{
+									var name = ($(this).attr('name')); 
+									xml += '<' + name + '>';
+									$(this).parent().parent().find($("[subName]")).each(function(){
+										var subName = ($(this).attr('subName'));
+										var value = ($(this).val());	
+										xml += '<' + subName + '>' + value + '</' + subName + '>'; 
+									});
+									xml += '</' + name + '>';
+								}
+	    					});
+	    					xml += '</' + id + '>';
+	  					});
+						xml += '</'+info+'></Document>';           
+	                if(!Validator.Validate(dialog.find('form')[0],3))return;
+	 				var data = [{ name: 'nodeValues', value: xml },
+	 				            { name: 'mesgType', value: dialog.find("#mesgTypeID").val()},
+	 				            { name: 'packetId', value: dialog.find("#packetIdID").val()},
+	 				            { name: 'mesgId', value: dialog.find("#mesgIdID").val()},
+	 				            { name: 'remark', value: dialog.find("#remarkID").val()},
+	 				            { name: 'version', value: dialog.find("#versionID").val()}
+	 				           ];
+	 			
+	    	        $.post('${pageContext.request.contextPath}/Mesg/update.koala?id='+id, data).done(function(result){
+	     	        	if(result.success ){
+	     	            	dialog.modal('hide');
+	     	                e.data.grid.data('koala.grid').refresh();
+	     	                e.data.grid.message({
+	     	                	type: 'success',
+	     	                	content: '保存成功'
+	                		});
+	     	            }else{
+							alert(result.errorMessage);
+	   	                    dialog.find('.modal-dialog').append('<div class="errMsg" style="float:left;position:absolute;max-width:500px;min-height:200px;bottom:20px;left:20px;background-color:#4cae4c;color:white;">'+result.errorMessage+ '</div>');
+	  				    }
+	      	        });
+	            });
+	        });
+	    },
     	    send: function(ids,grid){
     	        var self = this;
     	        var dialog = $('<div class="modal fade"><div class="modal-dialog">'
