@@ -628,7 +628,7 @@ legend {
 		$
 				.get(
 						contextPath
-								+ '/MesgType/findMesgTypesByCreateUser.koala?userName=root')
+								+ '/MesgType/findMesgTypes.koala')
 				.done(
 						function(data) {
 							$('#mesgTypeTree').loader('hide');

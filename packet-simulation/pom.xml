@@ -890,7 +890,7 @@
             <id>koala-releases</id>
             <url>http://nexus.openkoala.org/content/repositories/public-releases/</url>
             <releases>
-                <enabled>true</enabled>
+                <enabled>false</enabled>
             </releases>
             <snapshots>
                 <enabled>false</enabled>
@@ -903,14 +903,14 @@
                 <enabled>false</enabled>
             </releases>
             <snapshots>
-                <enabled>true</enabled>
+                <enabled>false</enabled>
             </snapshots>
         </repository>
                 <repository>
             <id>dayatang-releases</id>
             <url>http://nexus.dayatang.org:8083/content/repositories/releases</url>
             <releases>
-                <enabled>true</enabled>
+                <enabled>false</enabled>
             </releases>
             <snapshots>
                 <enabled>false</enabled>
@@ -923,7 +923,7 @@
                 <enabled>false</enabled>
             </releases>
             <snapshots>
-                <enabled>true</enabled>
+                <enabled>false</enabled>
             </snapshots>
         </repository>
     </repositories>
