@@ -25,9 +25,6 @@ public class MesgType extends KoalaAbstractEntity{
 	@Column(name = "MESG_TYPE") 
 	private String mesgType; 
 	
-	@Column(name = "FILEPATH") 
-	private String filePath; 
-	
 	@Column(name = "CODE",length=4)
 	private String code;
 	
@@ -42,6 +39,17 @@ public class MesgType extends KoalaAbstractEntity{
 	
 	@Column(name = "CREATED_BY") 
 	private String createdBy;
+	
+	@Column(name = "TRANSFORM") 
+	private String transform;
+
+	public String getTransform() {
+		return transform;
+	}
+
+	public void setTransform(String transform) {
+		this.transform = transform;
+	}
 
 	public String getXml() {
 		return xml;
@@ -73,14 +81,6 @@ public class MesgType extends KoalaAbstractEntity{
 
 	public void setSort(int sort) {
 		this.sort = sort;
-	}
-
-	public String getFilePath() {
-		return filePath;
-	}
-
-	public void setFilePath(String filePath) {
-		this.filePath = filePath;
 	}
 
 	public String getCode() {

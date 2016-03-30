@@ -28,6 +28,8 @@ public interface MesgTypeFacade {
 //	public InvokeResult getEditHtmlByMesgType(Long id,String realPath);
 	
 	public InvokeResult getEditHtmlByMesgType(Long id);
+	
+	public InvokeResult getEditHtmlOfChange(String code, String finanCode, String cstCode);
 
 	public List<MesgType> findMesgTypesByCreateUser(String userName);
 	

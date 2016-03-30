@@ -463,7 +463,7 @@ function initFun(){
 		     				{ name: 'compressions', value: isComs.join(',')},
 		     				{ name: 'encryptions', value: isEncs.join(',')},
 		     				{ name: 'taskId', value: taskId},
-		     				{ name: 'packetFrom', value: '内部报文'}
+		     				{ name: 'packetFrom', value: 0}
 		     			];
 		    	    	$.post('${pageContext.request.contextPath}/TaskPacket/add.koala', data).done(function(result){
 		 	        		if(result.success ){

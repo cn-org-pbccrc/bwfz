@@ -118,7 +118,7 @@ function initFun(){
 	                                 {
 	                                     var param = '"' + rowdata.id + '"';
 	                                     var packId = '"' + rowdata.packId + '"';
-	                                     var h = "<a href='javascript:openPacket(" + param + "," + packId + ")'>编辑报文</a> &nbsp;&nbsp;<a href='javascript:downloadCSV(" + param + ")'>导出csv文件</a> &nbsp;&nbsp;<a href='javascript:downloadENC(" + param + ")'>导出enc文件</a>&nbsp;&nbsp;<a href='javascript:openPacketView(" + param + ")'>显示报文</a>";
+	                                     var h = "<a href='javascript:openPacket(" + param + ")'>编辑报文</a> &nbsp;&nbsp;<a href='javascript:downloadCSV(" + param + ")'>导出csv文件</a> &nbsp;&nbsp;<a href='javascript:downloadENC(" + param + ")'>导出enc文件</a>&nbsp;&nbsp;<a href='javascript:openPacketView(" + param + ")'>显示报文</a>";
 	                                     return h;
 	                                 }
 	                             }
@@ -445,7 +445,7 @@ var openPacketView = function(id){
 }
 
 var mark;
-function openPacket(id,packId){
+function openPacket(id){
     var thiz 	= $(this);
     var  mark 	= thiz.attr('mark');
     mark = openTab("/pages/domain/Mesg-list.jsp", "增加报文明细 ",'OpenMesgList',id);

@@ -166,7 +166,7 @@ public class MesgController {
 	@ResponseBody
 	@RequestMapping("/send")
 	public InvokeResult send(TaskDTO taskDTO,TaskPacketDTO taskPacketDTO,String mesgContent,HttpServletRequest request) {
-		String ctxPath = request.getSession().getServletContext().getRealPath("/") + File.separator + "uploadFiles" + File.separator + "easySendFIles" + File.separator;
+		String ctxPath = request.getSession().getServletContext().getRealPath("/") + File.separator + "uploadFiles" + File.separator + "easySendFiles" + File.separator;
 		File file = new File(ctxPath);    	
 		if (!file.exists()) {    	
 			file.mkdirs();    	

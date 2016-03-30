@@ -72,7 +72,7 @@ public class AnalyzeFacadeImpl implements AnalyzeFacade {
 				String line = ReadAppointedLine.readAppointedLineNumber(new File(pathOfMesg),a+1,totalLines);
 				MessageHead messageHead = new MessageHead();
 	    		messageHead.setId(a);
-	    		messageHead.setXml(line.substring(0,line.length()));
+	    		//messageHead.setXml(line.substring(0,line.length()));
 	    		list.add(messageHead);
 			}else{
 				break;

@@ -16,11 +16,9 @@ public class MesgTypeDTO implements Serializable {
 
 	private Integer sort;
 
-	private String filePath;
-
 	private String mesgType;
 	
-	private String mesgTypeStr;
+	//private String mesgTypeStr;
 
 	private String code;
 	
@@ -29,6 +27,16 @@ public class MesgTypeDTO implements Serializable {
 	private String xml;
 	
 	private String createdBy;
+	
+	private String transform;
+
+	public String getTransform() {
+		return transform;
+	}
+
+	public void setTransform(String transform) {
+		this.transform = transform;
+	}
 
 	public String getXml() {
 		return xml;
@@ -46,13 +54,13 @@ public class MesgTypeDTO implements Serializable {
 		this.createdBy = createdBy;
 	}
 
-	public String getMesgTypeStr() {
-		return mesgTypeStr;
-	}
-
-	public void setMesgTypeStr(String mesgTypeStr) {
-		this.mesgTypeStr = mesgTypeStr;
-	}
+//	public String getMesgTypeStr() {
+//		return mesgTypeStr;
+//	}
+//
+//	public void setMesgTypeStr(String mesgTypeStr) {
+//		this.mesgTypeStr = mesgTypeStr;
+//	}
 
 	public String getCountTag() {
 		return countTag;
@@ -68,14 +76,6 @@ public class MesgTypeDTO implements Serializable {
 
 	public Integer getSort() {
 		return this.sort;
-	}
-
-	public void setFilePath(String filePath) {
-		this.filePath = filePath;
-	}
-
-	public String getFilePath() {
-		return this.filePath;
 	}
 
 	public String getCode() {

@@ -85,7 +85,7 @@ public class MesgFacadeImpl implements MesgFacade {
 		MesgType mesgType = mesgTypeApplication.getMesgType(dto.getMesgType());
 		try {
 			XmlNode xmlNode = XmlUtil.getXmlNodeByXmlContent(dto.getContent(),mesgType.getCountTag());
-			dto.setContent(xmlNode.toHtmlTabString(mesgType.getFilePath()));
+			dto.setContent(xmlNode.toHtmlTabString(mesgType.getMesgType()));
 			//System.out.println("巨头现身吧:"+xmlNode.toHtmlTabString(mesgType.getFilePath()));
 		} catch (SAXException e) {
 			// TODO Auto-generated catch block
@@ -114,7 +114,7 @@ public class MesgFacadeImpl implements MesgFacade {
 	
 	public InvokeResult verifyMesgType(Long id){
 		Mesg mesg = application.getMesg(id);
-		if(mesg.getMesgType().getFilePath().indexOf("正常报送记录")>0){
+		if(mesg.getMesgType().getMesgType().indexOf("正常报送记录")>0){
 			return InvokeResult.success();
 		}else{
 			return InvokeResult.failure("只有正常报送记录才能进行批量");
@@ -139,7 +139,7 @@ public class MesgFacadeImpl implements MesgFacade {
 		List<Mesg> mesgs= new ArrayList<Mesg>();
 		Mesg mesgById = application.getMesg(mesgDTO.getId());
 		String content = mesgById.getContent();
-		if(mesgById.getMesgType().getFilePath().equals("基本信息正常报送记录")){
+		if(mesgById.getMesgType().getMesgType().equals("基本信息正常报送记录")){
 			for(int i = 0; i < values.length; i++){
 				Mesg mesg = new Mesg();
 				String name = content.substring(content.indexOf("<Name>")+6,content.indexOf("</Name>"));
@@ -156,7 +156,7 @@ public class MesgFacadeImpl implements MesgFacade {
 				mesg.setContent(content);
 				mesgs.add(mesg);
 			}
-		}else if(mesgById.getMesgType().getFilePath().equals("账户信息正常报送记录")){
+		}else if(mesgById.getMesgType().getMesgType().equals("账户信息正常报送记录")){
 			for(int i = 0; i < values.length; i++){
 				Mesg mesg = new Mesg();
 				String name = content.substring(content.indexOf("<Name>")+6,content.indexOf("</Name>"));
@@ -177,7 +177,7 @@ public class MesgFacadeImpl implements MesgFacade {
 				mesg.setContent(content);
 				mesgs.add(mesg);
 			}
-		}else if(mesgById.getMesgType().getFilePath().equals("合同信息正常报送记录")){
+		}else if(mesgById.getMesgType().getMesgType().equals("合同信息正常报送记录")){
 			for(int i = 0; i < values.length; i++){
 				Mesg mesg = new Mesg();
 				String name = content.substring(content.indexOf("<Name>")+6,content.indexOf("</Name>"));
@@ -194,7 +194,7 @@ public class MesgFacadeImpl implements MesgFacade {
 				mesg.setContent(content);
 				mesgs.add(mesg);
 			}
-		}else if(mesgById.getMesgType().getFilePath().equals("抵质押合同信息正常报送记录")){
+		}else if(mesgById.getMesgType().getMesgType().equals("抵质押合同信息正常报送记录")){
 			for(int i = 0; i < values.length; i++){
 				Mesg mesg = new Mesg();
 				String name = content.substring(content.indexOf("<GuarName>")+10,content.indexOf("</GuarName>"));
@@ -495,7 +495,7 @@ public class MesgFacadeImpl implements MesgFacade {
 		List<ThreeStandard> list= queryThreeStandardByInput(startOfThreeStandard,endOfThreeStandard,currentUserId);		
 		List<Mesg> mesgs= new ArrayList<Mesg>();
 		Mesg mesg = application.getMesg(mesgDTO.getId());
-		if(mesg.getMesgType().getFilePath().equals("基本信息正常报送记录")){
+		if(mesg.getMesgType().getMesgType().equals("基本信息正常报送记录")){
 //			for(int i = 0; i < list.size(); i++){
 //				Mesg mesg = new Mesg();
 //				ThreeStandard threeStandard = threeStandardApplication.getThreeStandard(list.get(i).getId());
@@ -533,7 +533,7 @@ public class MesgFacadeImpl implements MesgFacade {
 	        } catch (ExecutionException e) {
 	            e.printStackTrace();
 	        }
-		}else if(mesg.getMesgType().getFilePath().equals("账户信息正常报送记录")){
+		}else if(mesg.getMesgType().getMesgType().equals("账户信息正常报送记录")){
 			ForkJoinPool pool = new ForkJoinPool(5);
 			AcctTask task = new AcctTask(list, mesg);
 	        Future<List> result =  pool.submit(task);
@@ -544,7 +544,7 @@ public class MesgFacadeImpl implements MesgFacade {
 	        } catch (ExecutionException e) {
 	            e.printStackTrace();
 	        }
-		}else if(mesg.getMesgType().getFilePath().equals("合同信息正常报送记录")){
+		}else if(mesg.getMesgType().getMesgType().equals("合同信息正常报送记录")){
 			ForkJoinPool pool = new ForkJoinPool(5);
 			ConTask task = new ConTask(list, mesg);
 	        Future<List> result =  pool.submit(task);
@@ -555,7 +555,7 @@ public class MesgFacadeImpl implements MesgFacade {
 	        } catch (ExecutionException e) {
 	            e.printStackTrace();
 	        }
-		}else if(mesg.getMesgType().getFilePath().equals("抵质押合同信息正常报送记录")){
+		}else if(mesg.getMesgType().getMesgType().equals("抵质押合同信息正常报送记录")){
 			ForkJoinPool pool = new ForkJoinPool(5);
 			CccTask task = new CccTask(list, mesg);
 	        Future<List> result =  pool.submit(task);
@@ -681,7 +681,7 @@ public class MesgFacadeImpl implements MesgFacade {
 		try {
 			XmlNode xmlNode = XmlUtil.getXmlNodeByXmlContent(mesgType.getXml(),mesgType.getCountTag());
 			XmlNode xmlNodeForUpdate = XmlUtil.getXmlNodeByXmlContent(mesg.getContent(),mesgType.getCountTag());
-			content = xmlNode.toEditHtmlTabStringForUpdate(mesgType.getFilePath(), xmlNodeForUpdate);
+			content = xmlNode.toEditHtmlTabStringForUpdate(mesgType.getMesgType(), xmlNodeForUpdate);
 		} catch (SAXException e) {
 			// TODO Auto-generated catch block
 			e.printStackTrace();
@@ -788,8 +788,7 @@ public class MesgFacadeImpl implements MesgFacade {
 		if(maxPacketNo>9998){
 			return InvokeResult.failure("流水号最大值为9999!");
 		}
-	    String sn=String.format("%04d", maxPacketNo+1);
-	    
+	    String sn=String.format("%04d", maxPacketNo+1);	    
 	    createPacketFile(filePath, frontPosition+sn, mesgContent);
 		TaskPacket taskPacket=TaskPacketAssembler.toEntity(taskPacketDTO);
 		taskPacket.setTask(task);
@@ -800,6 +799,11 @@ public class MesgFacadeImpl implements MesgFacade {
 		taskPacket.setSelectedOrigSendDate(new Date());
 		taskPacket.setTaskPacketType(PACKETCONSTANT.TASKPACKET_TASKPACKETSTATE_EASYPACKET);
 		taskPacket.setPacketFrom(PACKETCONSTANT.TASKPACKET_PACKETFROM_EASYSEND);
+		taskPacket.setSelectedDataType("0");
+		taskPacket.setSelectedFileVersion(PACKETCONSTANT.TASKPACKET_FILEVERSION);
+		Integer max = findMaxSerialNumber(taskPacketDTO.getTaskId());
+		Integer flag = max + 1;
+		taskPacket.setSerialNumber(flag);
 		taskPacketApplication.creatTaskPacket(taskPacket);
 		return InvokeResult.success();
 	}
@@ -842,5 +846,20 @@ public class MesgFacadeImpl implements MesgFacade {
 	   	}
 	   	EmployeeUser employeeUser = (EmployeeUser) getQueryChannelService().createJpqlQuery(jpql.toString()).setParameters(conditionVals).singleResult();
 	   	return employeeUser;
+	}
+	
+	private Integer findMaxSerialNumber(Long taskId){
+		List<Object> conditionVals = new ArrayList<Object>();
+	   	StringBuilder jpql = new StringBuilder("select max(_taskPacket.serialNumber) from TaskPacket _taskPacket  where 1=1 ");
+	   	
+	   	if (taskId != null ) {
+	   		jpql.append(" and _taskPacket.task.id = ? ");
+	   		conditionVals.add(taskId);
+	   	}
+	   	if((getQueryChannelService().createJpqlQuery(jpql.toString()).setParameters(conditionVals).singleResult()==null)){
+	   		return 0;
+	   	}
+	   	Integer max = (Integer) getQueryChannelService().createJpqlQuery(jpql.toString()).setParameters(conditionVals).singleResult();
+	   	return max;
 	}
 }

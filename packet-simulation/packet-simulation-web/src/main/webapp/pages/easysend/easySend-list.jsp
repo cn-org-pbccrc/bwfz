@@ -303,7 +303,7 @@ legend {
 							title : '操作',
 							render : function(rowdata, name, index) {
 								var param = '"' + rowdata.id + '"';
-								var h = "<a href='javascript:openDetailsPageOfMesg("+ param + ")'>查看文件</a>&nbsp&nbsp&nbsp&nbsp<a href='javascript:openDetailsPageOfMesg("
+								var h = "<a href='javascript:openSourceFile("+ param + ")'>查看文件</a>&nbsp&nbsp&nbsp&nbsp<a href='javascript:openFeedBackFile("
 										+ param + ")'>查看反馈</a>&nbsp&nbsp&nbsp&nbsp<a href='javascript:deleteTaskPacket("+param+")'>删除</a> ";
 								return h;
 							}
@@ -419,17 +419,21 @@ legend {
     					var flag = '';
     					$('#'+id).find($("[name]")).each(function(){
 							if($(this).parent().parent()[0].tagName != 'FIELDSET'){
-								var name = ($(this).attr('name'));
-	    						var value = ($(this).val());
-								xml += '<' + name + '>' + value + '</' + name + '>';
+								if($(this).attr('save')=='true'){
+									var name = ($(this).attr('name'));
+		    						var value = ($(this).val());
+									xml += '<' + name + '>' + value + '</' + name + '>';
+								}								
 							}
 							else{
 								var name = ($(this).attr('name')); 
 								xml += '<' + name + '>';
 								$(this).parent().parent().find($("[subName]")).each(function(){
-									var subName = ($(this).attr('subName'));
-									var value = ($(this).val());	
-									xml += '<' + subName + '>' + value + '</' + subName + '>'; 
+									if($(this).attr('save')=='true'){
+										var subName = ($(this).attr('subName'));
+										var value = ($(this).val());	
+										xml += '<' + subName + '>' + value + '</' + subName + '>';
+									}									
 								});
 								xml += '</' + name + '>';
 							}
@@ -438,7 +442,7 @@ legend {
   					});
 					xml += '</'+info+'></Document>';
  				if(!Validator.Validate(dialog.find('form')[0],3))return;
- 				var data = [{ name: 'nodeValues', value: xml },
+ 				var data = [{ name: 'content', value: xml },
  				            { name: 'mesgType', value: dialog.find("#mesgType").val()},
  				            { name: 'remark', value: dialog.find("#remarkID").val()}
  				           ];
@@ -488,24 +492,27 @@ legend {
 	                dialog.find('#save').on('click',{grid: grid}, function(e){
 	                	var info = dialog.find($(".tab-content")).attr('id');
 						var xml = '<?xml version="1.0" encoding="UTF-8"?><Document><'+info+'>';
-						dialog.find($(".tab-pane")).each(function(){
-	    					
+						dialog.find($(".tab-pane")).each(function(){	    					
 	    					var id = $(this).attr('id');
 	    					xml += '<' + id + '>';
 	    					var flag = '';
 	    					$('#'+id).find($("[name]")).each(function(){
 								if($(this).parent().parent()[0].tagName != 'FIELDSET'){
-									var name = ($(this).attr('name'));
-		    						var value = ($(this).val());
-									xml += '<' + name + '>' + value + '</' + name + '>';
+									if($(this).attr('save')=='true'){
+										var name = ($(this).attr('name'));
+			    						var value = ($(this).val());
+										xml += '<' + name + '>' + value + '</' + name + '>';
+									}									
 								}
 								else{
 									var name = ($(this).attr('name')); 
 									xml += '<' + name + '>';
 									$(this).parent().parent().find($("[subName]")).each(function(){
-										var subName = ($(this).attr('subName'));
-										var value = ($(this).val());	
-										xml += '<' + subName + '>' + value + '</' + subName + '>'; 
+										if($(this).attr('save')=='true'){
+											var subName = ($(this).attr('subName'));
+											var value = ($(this).val());	
+											xml += '<' + subName + '>' + value + '</' + subName + '>';
+										}										
 									});
 									xml += '</' + name + '>';
 								}
@@ -514,12 +521,11 @@ legend {
 	  					});
 						xml += '</'+info+'></Document>';           
 	                if(!Validator.Validate(dialog.find('form')[0],3))return;
-	 				var data = [{ name: 'nodeValues', value: xml },
+	 				var data = [{ name: 'content', value: xml },
 	 				            { name: 'mesgType', value: dialog.find("#mesgTypeID").val()},
-	 				            { name: 'packetId', value: dialog.find("#packetIdID").val()},
-	 				            { name: 'mesgId', value: dialog.find("#mesgIdID").val()},
 	 				            { name: 'remark', value: dialog.find("#remarkID").val()},
-	 				            { name: 'version', value: dialog.find("#versionID").val()}
+	 				            { name: 'version', value: dialog.find("#versionID").val()},
+	 				            { name: 'createBy', value: dialog.find("#createByID").val()}
 	 				           ];
 	 			
 	    	        $.post('${pageContext.request.contextPath}/Mesg/update.koala?id='+id, data).done(function(result){
@@ -562,9 +568,8 @@ legend {
     	            	var json=json.data;
     	            	dialog.find("#mesgContentID").val(json.mesgContent);
     	            	dialog.find("#selectedRecordTypeID").val(json.mesgType);
-	                       json = json.data;
-	                });
-    	            
+	                    json = json.data;
+	                });    	            
     	        });
     	        dialog.find('#send').on('click',{grid: grid}, function(e){
      		        if(!Validator.Validate(dialog.find('form')[0],3))return;
@@ -607,7 +612,6 @@ legend {
     	               });
     	    },
     	    remove: function(ids, grid){
-    	    	alert(ids)
     	    	var data = [{ name: 'ids', value: ids.join(',') }];
     	    	$.post('${pageContext.request.contextPath}/Mesg/delete.koala', data).done(function(result){
     	                        if(result.success){
@@ -649,7 +653,7 @@ legend {
     	                        }else{
     	                            grid.message({
     	                                type: 'error',
-    	                                content: result.result
+    	                                content: result.errorMessage
     	                            });
     	                        }
     	    	});
@@ -659,22 +663,13 @@ legend {
 				callBack : remove
 			});
 		}
-		 var openDetailsPageOfMesg = function(id){
+		 var openSourceFile = function(id){
             var dialog = $('<div class="modal fade"><div class="modal-dialog" style="width:900px;"><div class="modal-content"><div class="modal-header"><button type="button" class="close" data-dismiss="modal" aria-hidden="true">&times;</button><h4 class="modal-title">查看</h4></div><div class="modal-body"><p>One fine body&hellip;</p></div><div class="modal-footer"><button type="button" class="btn btn-info" data-dismiss="modal">返回</button></div></div></div></div>');
             $.get('<%=path%>/easyMesg-view.jsp').done(function(html){
                    dialog.find('.modal-body').html(html);
-                   $.get( '${pageContext.request.contextPath}/Mesg/get/' + id + '.koala').done(function(json){
+                   $.get( '${pageContext.request.contextPath}/TaskPacket/getTaskPacketView/' + id + '.koala').done(function(json){
                            json = json.data;
-                            var elm;
-                            for(var index in json){
-                            if(json[index]+"" == "false"){
-                            		dialog.find('#'+ index + 'ID').html("<span style='color:#d2322d' class='glyphicon glyphicon-remove'></span>");
-                            	}else if(json[index]+"" == "true"){
-                            		dialog.find('#'+ index + 'ID').html("<span style='color:#47a447' class='glyphicon glyphicon-ok'></span>");
-                            	}else{
-                              		 dialog.find('#'+ index + 'ID').html(json[index]+"");
-                            	}
-                            }
+                           dialog.find("#contentID").html("<div style='width:780px;overflow:auto;'><xmp>"+json+"</xmp></div>");
                    });
                     dialog.modal({
                         keyboard:false
@@ -685,6 +680,16 @@ legend {
                     });
             });
     }
+		 var mark;
+		 function openFeedBackFile(id){
+		     var thiz 	= $(this);
+		     var  mark 	= thiz.attr('mark');
+		     mark = openTab("/pages/domain/FeedBack-list.jsp", "查看反馈 ",'OpenFeedBackList',id);
+		     if(mark){
+		         thiz.attr("mark",mark);
+		     }
+		 }
+		 
 		  $(function(){
 		var form = $("#mesgSearchForm");
 		form.find('#mesgSearchBtn').on('click', function() {
@@ -793,10 +798,32 @@ legend {
 	    		alert("不能删除，资料记录必须大于一条！");
 	    	}
 	    }
-	    function removeTab(obj,tabId){
-	    	$(obj).parent().parent().remove();
-	    	var nextElement = $('#'+tabId).next();
-	    	$('#'+tabId).remove();
-	    	nextElement.attr("class","tab-pane fade active in");
-	    }
+// 	    function removeTab(obj,tabId){
+// 	    	$(obj).parent().parent().remove();
+// 	    	var nextElement = $('#'+tabId).next();
+// 	    	$('#'+tabId).remove();
+// 	    	nextElement.attr("class","tab-pane fade active in");
+// 	    }
+		function removeTab(obj,tabId){
+			if($(obj).children("span").attr("class")=="glyphicon glyphicon-remove"){
+				var len = $(obj).parent().attr("href").length;
+				var tab = $(obj).parent().attr("href").substring(1,len);
+				$("#"+tab).attr("class","tab-pane fade in active false");
+	    		$(obj).children("span").attr("class","glyphicon glyphicon-ok");
+			}else{
+				var len = $(obj).parent().attr("href").length;
+				var tab = $(obj).parent().attr("href").substring(1,len);
+				$("#"+tab).attr("class","tab-pane fade in active true");
+	    		$(obj).children("span").attr("class","glyphicon glyphicon-remove");
+			}
+		}
+		function removeField(obj){
+			if($(obj).children("span").attr("class")=="glyphicon glyphicon-remove"){
+				$(obj).prev().children("input").attr("save","false");
+	    		$(obj).children("span").attr("class","glyphicon glyphicon-ok");
+			}else{
+				$(obj).prev().children("input").attr("save","true");
+	    		$(obj).children("span").attr("class","glyphicon glyphicon-remove");
+			}
+		}
 </script>

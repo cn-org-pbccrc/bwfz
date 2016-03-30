@@ -176,10 +176,10 @@ function initFun(){
     		var self = this;
 			var dialog = $('<div class="modal fade"><div class="modal-dialog" style="width:1040px;">'
 				+'<div class="modal-content"><div class="modal-header"><button type="button" class="close" '
-     	        +'data-dismiss="modal" aria-hidden="true">&times;</button></div>'
-    	        +'<div class="modal-body">'
-    	        +'<p>One fine body&hellip;</p></div>'
-    	        +'</div></div></div>');
+			    +'data-dismiss="modal" aria-hidden="true">&times;</button>'
+			    +'<h4 class="modal-title">新增</h4></div><div class="modal-body">'
+			    +'<p>One fine body&hellip;</p></div></div>'
+			    +'</div></div>');
     	    $.get('<%=path%>/Mesg-add.jsp').done(function(html){
     	        dialog.modal({
     	            keyboard:false
@@ -189,11 +189,11 @@ function initFun(){
     	            },
     	            'shown.bs.modal': function(){
  	                	var columns = [
- 	                    	{ title:'报文类型', name:'mesgType' , width: 170},
- 	                    	{ title:'类型代码', name:'code', width: 140},
- 	                    	{ title:'模板名称', name:'filePath', width: 150},
- 	                    	{ title:'显示顺序', name:'sort', width: 120},
- 	                    	{ title:'创建人员', name:'createdBy', width: 120}	    	                    
+ 	                    	{ title:'报文类型', name:'mesgType' , width: 350},
+ 	                    	{ title:'类型代码', name:'code', width: 200},
+ 	                    	//{ title:'模板名称', name:'filePath', width: 150},
+ 	                    	//{ title:'显示顺序', name:'sort', width: 120},
+ 	                    	{ title:'创建人员', name:'createdBy',width: 120}	    	                    
  	                	];//<!-- definition columns end -->
  	                	//查询出当前表单所需要得数据。
  	                	dialog.find('.selectPacketGrid').grid({
@@ -253,8 +253,8 @@ function initFun(){
         	        $.post('${pageContext.request.contextPath}/Mesg/add.koala', data).done(function(result){
          	        	if(result.success ){
          	            	dialog.modal('hide');
-         	                e.data.grid.data('koala.grid').refresh();
-         	                e.data.grid.message({
+         	                grid.data('koala.grid').refresh();
+         	                grid.message({
          	                	type: 'success',
          	                	content: '保存成功'
                     		});

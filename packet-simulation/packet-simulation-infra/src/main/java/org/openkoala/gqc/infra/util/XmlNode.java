@@ -209,7 +209,7 @@ public class XmlNode implements Serializable, Cloneable{
 							value="";
 						}
 						//System.out.println("name2:"+PropertiesManager.getProperties(xmlNode.getTagName(),templateName)+";value2:"+value);
-						htmlStr = htmlStr + "<p><label class='rgt'>"+JSON.parseObject(PropertiesManager.getProperties(xmlNode.getTagName(),templateName)).getString("0")+" :</label><label class='lft'>" + value + "</label></p>";
+						htmlStr = htmlStr + "<p><label class='rgt'>"+JSON.parseObject(PropertiesManager.getProperties(xmlNode.getTagName(),templateName)).getString("0")+" :</label><label class='lft' value='" + value + "' name='" + xmlNode.getTagName() + "'>" + value + "</label></p>";
 					}
 				}else if(null!= childNode && childNode.size()>0){
 					htmlStr = htmlStr + "<fieldset><legend>"+JSON.parseObject(PropertiesManager.getProperties(xmlNode.getTagName(),templateName)).getString("0")+"</legend>";

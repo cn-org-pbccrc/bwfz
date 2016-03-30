@@ -655,8 +655,7 @@ var openXml = function(id){
 
 $('input[id=lefile]').change(function() {
 	   $('#fileID').val($(this).val());
-	});
-
+});
 </script>
 </head>
 <body>

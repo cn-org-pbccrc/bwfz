@@ -116,7 +116,7 @@ public class TaskPacketController {
 	@ResponseBody
 	@RequestMapping("/getTaskPacketView/{id}")
 	public InvokeResult getPacketView(@PathVariable Long id, HttpServletRequest request) throws Exception{		
-		String ctxPath=request.getSession().getServletContext().getRealPath("/") + File.separator + "uploadFiles" + File.separator;
+		String ctxPath = request.getSession().getServletContext().getRealPath("/") + File.separator + "uploadFiles" + File.separator;
 		String packetContent = taskPacketFacade.showPacketContent(id,ctxPath);
 		return InvokeResult.success(packetContent);	
 	}

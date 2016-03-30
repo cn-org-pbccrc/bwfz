@@ -10,8 +10,6 @@
 <%-- <link rel="stylesheet" type="text/css" href="${contextPath}/lib/uploadify.css"> --%>
 <script type="text/javascript">
 	 $(document).ready(function(){
-		 alert("<%=session.getId()%>")
-		//alert(taskId);
 		$("#uploadify").uploadify({
 			'uploader':'${pageContext.request.contextPath}/TaskPacket/uploadFile.koala?taskId='+taskId+"&&jsessionid=<%=session.getId()%>",
 			'swf':'${pageContext.request.contextPath}/lib/uploadify.swf',

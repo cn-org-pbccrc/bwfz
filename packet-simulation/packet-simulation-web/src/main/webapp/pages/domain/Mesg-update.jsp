@@ -32,10 +32,10 @@
 	<input type="hidden" id="packetIdID" name="packetId" />
 	<input type="hidden" id="mesgTypeID" name="mesgType" />
 	<div class="form-group">
-    	<label class="col-lg-3 control-label">备注:</label>
+    	<label class="col-lg-3 control-label">用例名称:</label>
 	    <div class="col-lg-9">
         	<input name="remark" style="display:inline; width:40%;" class="form-control"  type="text"  id="remarkID" />  
-        	<button type="button" class="btn btn-danger" id="delete" style="float:right;">删除字段</button>     	
+        	<button type="button" class="btn btn-danger" id="delete" style="float:right;">删除字段</button>
 		</div>
 	</div>
 	<div class="form-group">

@@ -14,6 +14,10 @@ import javax.xml.parsers.ParserConfigurationException;
 import org.dayatang.domain.InstanceFactory;
 import org.dayatang.querychannel.QueryChannelService;
 import org.dayatang.utils.Page;
+import org.dom4j.Document;
+import org.dom4j.DocumentException;
+import org.dom4j.DocumentHelper;
+import org.dom4j.Element;
 import org.openkoala.gqc.infra.util.XmlNode;
 import org.openkoala.gqc.infra.util.XmlUtil;
 import org.openkoala.koala.commons.InvokeResult;
@@ -21,10 +25,13 @@ import org.openkoala.security.core.domain.MenuResource;
 import org.openkoala.security.facade.dto.MenuResourceDTO;
 import org.openkoala.security.facade.impl.SecurityAccessFacadeImpl;
 import org.packet.packetsimulation.application.MesgTypeApplication;
+import org.packet.packetsimulation.core.domain.Mesg;
 import org.packet.packetsimulation.core.domain.MesgType;
 import org.packet.packetsimulation.core.domain.Packet;
 import org.packet.packetsimulation.facade.MesgTypeFacade;
+import org.packet.packetsimulation.facade.dto.MesgDTO;
 import org.packet.packetsimulation.facade.dto.MesgTypeDTO;
+import org.packet.packetsimulation.facade.impl.assembler.MesgAssembler;
 import org.packet.packetsimulation.facade.impl.assembler.MesgTypeAssembler;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -98,11 +105,7 @@ public class MesgTypeFacadeImpl implements MesgTypeFacade {
 	   	if (queryVo.getCode() != null && !"".equals(queryVo.getCode())) {
 	   		jpql.append(" and _mesgType.code like ?");
 	   		conditionVals.add(MessageFormat.format("%{0}%", queryVo.getCode()));
-	   	}
-	   	if (queryVo.getFilePath() != null && !"".equals(queryVo.getFilePath())) {
-	   		jpql.append(" and _mesgType.filePath like ?");
-	   		conditionVals.add(MessageFormat.format("%{0}%", queryVo.getFilePath()));
-	   	}		
+	   	}	
 	   	if (queryVo.getSort() != null && !"".equals(queryVo.getSort())) {
 	   		jpql.append(" and _mesgType.sort like ?");
 	   		conditionVals.add(MessageFormat.format("%{0}%",queryVo.getSort()));
@@ -145,7 +148,7 @@ public class MesgTypeFacadeImpl implements MesgTypeFacade {
 		MesgType mesgType = application.getMesgType(id);
 		try {
 			XmlNode xmlNode = XmlUtil.getXmlNodeByXmlContent(mesgType.getXml(),mesgType.getCountTag());
-			return InvokeResult.success(xmlNode.toEditHtmlTabString(mesgType.getFilePath()));
+			return InvokeResult.success(xmlNode.toEditHtmlTabString(mesgType.getMesgType()));
 		} catch (SAXException e) {
 			// TODO Auto-generated catch block
 			e.printStackTrace();
@@ -158,7 +161,54 @@ public class MesgTypeFacadeImpl implements MesgTypeFacade {
 		}
 		return null;
 	}
+	
+	public InvokeResult getEditHtmlByMesgType(MesgType mesgType) {
+		try {
+			XmlNode xmlNode = XmlUtil.getXmlNodeByXmlContent(mesgType.getXml(),mesgType.getCountTag());
+			return InvokeResult.success(xmlNode.toEditHtmlTabString(mesgType.getMesgType()));
+		} catch (SAXException e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+		} catch (IOException e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+		} catch (ParserConfigurationException e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+		}
+		return null;
+	}
+	public InvokeResult getEditHtmlOfChange(String code, String finanCode, String cstCode){
+		MesgType mesgType = findMesgTypeByCode(code);
+		Document document = null;
+		try {
+			document = DocumentHelper.parseText(mesgType.getXml());
+			Element root = document.getRootElement();
+			Element first = (Element) root.elements().get(0);
+			Element second = (Element) first.elements().get(0);
+			Element fin = second.element("Old_Finan_Code");
+			fin.setText(finanCode);
+			Element cst = second.element("Old_Cst_Code");
+			cst.setText(cstCode);
+		} catch (DocumentException e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+		}
+		mesgType.setXml(document.asXML().toString());
+		return getEditHtmlByMesgType(mesgType);
+	}
 
+	public MesgType findMesgTypeByCode(String code) {
+		List<Object> conditionVals = new ArrayList<Object>();
+	 	StringBuilder jpql = new StringBuilder("select _mesgType from MesgType _mesgType   where 1=1");
+	 	if (code != null ) {
+	   		jpql.append(" and _mesgType.code =? ");
+	   		conditionVals.add(code);
+	   	}
+	   	MesgType mesgType = (MesgType) getQueryChannelService().createJpqlQuery(jpql.toString()).setParameters(conditionVals).singleResult();
+	   	return mesgType;
+	}
+	
 	@Override
 	public List<MesgType> findMesgTypesByCreateUser(String userName) {
 	 	StringBuilder jpql = new StringBuilder("select _mesgType from MesgType _mesgType   where 1=1 and _mesgType.createdBy ='"+userName+"'");

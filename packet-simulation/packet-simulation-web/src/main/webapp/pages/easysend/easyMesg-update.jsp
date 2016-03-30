@@ -9,21 +9,21 @@
 	<input type="hidden" id="versionID" name="version" /> 
 	<input type="hidden" id="mesgTypeID" name="mesgType" />
 	<input type="hidden" id="createByID" name="createBy" />
-<!-- 	<input type="hidden" id="remarkID" name="remark" /> -->
-		<div class="form-group">
-                    <label class="col-lg-3 control-label">用例名称:</label>
-	                    <div class="col-lg-9">
-                           <input name="remark" style="display:inline; width:80%;" class="form-control"  type="text"  id="remarkID" />
-			    </div>
+	<div class="form-group">
+    	<label class="col-lg-3 control-label">用例名称:</label>
+	    <div class="col-lg-9">
+        	<input name="remark" style="display:inline; width:80%;" class="form-control"  type="text"  id="remarkID" />
+        	<button type="button" class="btn btn-danger" id="delete" style="float:right;">删除字段</button>
+		</div>
+	</div>			    
+	<div class="form-group">
+	    <div class="col-xs-10 g-mainc" style="width: 100%; margin: 0 auto;" id="contentID"></div>
 	</div>
-			    
-	           <div class="form-group">
-	                    <div class="col-xs-10 g-mainc" style="width: 100%; margin: 0 auto;" id="contentID">
-					</div>
-					</div>
-	</form>
+</form>
 <script type="text/javascript">
-    var selectItems = {};
-            </script>
+	$("#delete").click(function(){
+		$("button[class='btn btn-failure']").toggle();
+	});
+</script>
 </body>
 </html>

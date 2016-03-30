@@ -270,7 +270,7 @@ var mark;
 function openTaskPacket(id){
     var thiz 	= $(this);
     var  mark 	= thiz.attr('mark');
-    mark = openTab("/pages/domain/TaskPacket-list.jsp", "增加报文文件 ",'addPacket'+id,id);
+    mark = openTab("/pages/domain/TaskPacket-list.jsp", "增加报文文件 ",'addPacket',id);
     if(mark){
         thiz.attr("mark",mark);
     }

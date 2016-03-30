@@ -12,12 +12,6 @@
                            <input name="mesgType" style="display:inline; width:94%;" class="form-control"  type="text"  id="mesgTypeID" />
 			    </div>
 	</div>
-		           <div class="form-group">
-                    <label class="col-lg-3 control-label">模板名称:</label>
-	                    <div class="col-lg-9">
-                           <input name="filePath" style="display:inline; width:94%;" class="form-control"  type="text"  id="filePathID" />
-			    </div>
-	</div>
 					<div class="form-group">
                     <label class="col-lg-3 control-label">类型代码:</label>
 	                    <div class="col-lg-9">
@@ -28,6 +22,12 @@
                     <label class="col-lg-3 control-label">统计标签:</label>
 	                    <div class="col-lg-9">
                            <input name="countTag" style="display:inline; width:94%;" class="form-control"  type="text"  id="countTagID" />
+			    </div>
+	</div>
+	<div class="form-group">
+                    <label class="col-lg-3 control-label">转换模板:</label>
+	                    <div class="col-lg-9">
+                           <input name="transform" style="display:inline; width:94%;" class="form-control"  type="text"  id="transformID" />
 			    </div>
 	</div>
 		           <div class="form-group">

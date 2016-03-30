@@ -104,6 +104,12 @@ public class MesgTypeController {
     	return mesgTypeFacade.getEditHtmlByMesgType(id);
 	}
     
+    @ResponseBody
+ 	@RequestMapping("/getEditHtmlOfChange")
+ 	public InvokeResult getEditHtmlOfChange(@RequestParam String code, @RequestParam String finanCode, @RequestParam String cstCode) {
+     	return mesgTypeFacade.getEditHtmlOfChange(code, finanCode, cstCode);
+ 	}
+    
 	/**
 	 * 根据角色ID查询菜单权限资源树带有已经选中项。
 	 *

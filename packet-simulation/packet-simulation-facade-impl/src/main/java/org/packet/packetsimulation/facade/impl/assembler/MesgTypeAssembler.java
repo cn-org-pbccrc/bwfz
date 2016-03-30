@@ -15,11 +15,11 @@ public class MesgTypeAssembler {
     	MesgTypeDTO result  = new MesgTypeDTO();
 	    	result.setId (mesgType.getId());
      	    	result.setVersion (mesgType.getVersion());
-     	    	result.setFilePath(mesgType.getFilePath());
      	    	result.setMesgType(mesgType.getMesgType());
      	    	result.setSort(mesgType.getSort());
      	    	result.setCode(mesgType.getCode());
      	    	result.setCountTag(mesgType.getCountTag());
+     	    	result.setTransform(mesgType.getTransform());
      	    	result.setXml(mesgType.getXml());
      	    	result.setCreatedBy(mesgType.getCreatedBy());
      	    return result;
@@ -44,10 +44,10 @@ public class MesgTypeAssembler {
         result.setId (mesgTypeDTO.getId());
          result.setVersion (mesgTypeDTO.getVersion());
          result.setMesgType (mesgTypeDTO.getMesgType());
-         result.setFilePath(mesgTypeDTO.getFilePath());
 	     result.setSort(mesgTypeDTO.getSort());
 	     result.setCode(mesgTypeDTO.getCode());	     
 	     result.setCountTag(mesgTypeDTO.getCountTag());
+	     result.setTransform(mesgTypeDTO.getTransform());
 	     result.setXml(mesgTypeDTO.getXml());
 	     result.setCreatedBy(mesgTypeDTO.getCreatedBy());
  	  	return result;

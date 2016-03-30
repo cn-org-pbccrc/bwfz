@@ -41,7 +41,6 @@ function initFun(){
 	        	columns: [
 	            	{ title: '报文类型', name: 'mesgType', width: 240},
 	            	{ title: '类型代码', name: 'code', width: 140},
-	            	{ title: '模版名称', name: 'filePath', width: 200},
 	            	{ title: '显示顺序', name: 'sort', width: 140},
 	            	{ title: '创建人员', name: 'createdBy', width: 160},
 	            	{ title: '操作', width: 120, render: function (rowdata, name, index)
