@@ -44,25 +44,8 @@ public class Mesg extends KoalaAbstractEntity{
 	@Column(name = "CREATE_BY")
 	private String createBy;
 	
-//	@Column(name = "MESGID")
-//	private String mesgId;
-	
-//	@Column(name = "MESG_PRIORITY")
-//	private String mesgPriority;
-//	
-//	@Column(name = "MESG_DIRECTION")
-//	private String mesgDirection;
-//	
-//	@Column(name = "RESERVE")
-//	private String reserve;
-
-//	public String getMesgId() {
-//		return mesgId;
-//	}
-//
-//	public void setMesgId(String mesgId) {
-//		this.mesgId = mesgId;
-//	}
+	@Column(name = "MESG_FROM")
+	private Integer mesgFrom;
 
 	public String getCreateBy() {
 		return createBy;
@@ -104,6 +87,14 @@ public class Mesg extends KoalaAbstractEntity{
 		this.remark = remark;
 	}
 	
+	public Integer getMesgFrom() {
+		return mesgFrom;
+	}
+
+	public void setMesgFrom(Integer mesgFrom) {
+		this.mesgFrom = mesgFrom;
+	}
+
 	@Override
 	public String[] businessKeys() {
 		return null;

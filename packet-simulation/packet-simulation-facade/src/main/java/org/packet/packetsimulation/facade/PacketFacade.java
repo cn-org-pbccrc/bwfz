@@ -36,19 +36,6 @@ public interface PacketFacade {
 	
 	public Page<PacketDTO> pageQueryPacket(PacketDTO packet, int currentPage, int pageSize,String currentUserId);
 	
-	public String downloadCSV(Long id);
-	
-	public InvokeResult creatFileName(String frontPosition, String serialNumber);
-	
-	public InvokeResult updateFileName(Long id, String serialNumber);
-	
-	public boolean verifyPacketName(String fileName);
-	
-	public Packet findPacketByPacketNameAndCreatedBy(String packetName, String createdBy);
-	
-	public Packet getPacketById(long id);
-	
-	//public InvokeResult getPacketView(int id);
-	
+	public String downloadCSV(Long id);	
 }
 

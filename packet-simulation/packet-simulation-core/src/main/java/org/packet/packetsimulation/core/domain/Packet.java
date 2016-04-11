@@ -67,12 +67,6 @@ public class Packet extends KoalaAbstractEntity{
 	@Column(name = "RESERVE")
 	private String reserve;
 	
-	@Column(name = "FRONT_POSITION")
-	private String frontPosition;
-	
-	@Column(name = "SERIAL_NUMBER")
-	private Integer serialNumber;
-	
 	public Packet() {
 	}
 	  
@@ -80,22 +74,6 @@ public class Packet extends KoalaAbstractEntity{
         isExistPacketName(packetName);
         this.packetName = packetName;
     }
-
-	public String getFrontPosition() {
-		return frontPosition;
-	}
-
-	public void setFrontPosition(String frontPosition) {
-		this.frontPosition = frontPosition;
-	}
-
-	public Integer getSerialNumber() {
-		return serialNumber;
-	}
-
-	public void setSerialNumber(Integer serialNumber) {
-		this.serialNumber = serialNumber;
-	}
 
 	public String getPacketName() {
 		return packetName;
@@ -174,13 +152,6 @@ public class Packet extends KoalaAbstractEntity{
 		if (getByPacketName(packetName) != null) {
 			throw new PacketNameIsExistedException("packet packetName is existed.");
 	    }
-	}
-	
-	public boolean verify(String packetName) {
-		if (getByPacketName(packetName) != null) {
-			return true;
-	    }
-		return false;
 	}
 	
     public static Packet getByPacketName(String packetName) {

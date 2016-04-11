@@ -77,12 +77,12 @@ legend {
 	    	<div class="tab-pane" id="tab2">
 				<div class="form-group">
 					<p>
-						<label class="rgt">备注 :</label> 
+						<label class="rgt">用例名称 :</label> 
 						<label class="lft"> 
 							<input name="remark" class="form-control" type="text" id="remarkID" />
 						</label>
 					</p>
-					<button class="right btn btn-danger" id="delete">删除字段</button>
+					<input type="checkbox"  name="my-checkbox"  data-on-text="恢复" data-off-text="编辑" data-size="normal">				
 				</div>
 				<div class="form-group">
 					<div class="col-xs-10 g-mainc" style="width: 100%; margin: 0 auto;" id="content"></div>
@@ -98,6 +98,11 @@ legend {
 </div>
 <script type="text/javascript">
 	$(document).ready(function() {
+		$("[name='my-checkbox']").bootstrapSwitch({
+			onSwitchChange:function(event, state) {
+				$("button[class='btn btn-failure']").toggle();
+			}
+		});
 		$('#rootwizard').bootstrapWizard({
 			'tabClass' : 'nav nav-tabs', 
 			onTabShow : function(tab, navigation, index) {

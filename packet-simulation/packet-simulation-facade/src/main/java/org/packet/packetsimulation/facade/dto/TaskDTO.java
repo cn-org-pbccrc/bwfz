@@ -32,7 +32,7 @@ public class TaskDTO implements Serializable {
 				
 	private String taskName;
 		
-			
+	private Integer taskFrom;		
 	
 	public void setSetTime(String setTime) { 
 		this.setTime = setTime;
@@ -126,7 +126,15 @@ public class TaskDTO implements Serializable {
 		this.version = version;
 	}
 
-    @Override
+    public Integer getTaskFrom() {
+		return taskFrom;
+	}
+
+	public void setTaskFrom(Integer taskFrom) {
+		this.taskFrom = taskFrom;
+	}
+
+	@Override
 	public int hashCode() {
 		final int prime = 31;
 		int result = 1;

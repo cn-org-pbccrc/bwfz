@@ -8,7 +8,9 @@ import java.io.InputStreamReader;
 import java.io.Serializable;
 import java.io.StringReader;
 import java.io.StringWriter;
+import java.text.SimpleDateFormat;
 import java.util.ArrayList;
+import java.util.Date;
 import java.util.List;
 
 import javax.inject.Inject;
@@ -17,6 +19,8 @@ import javax.xml.parsers.DocumentBuilder;
 import javax.xml.parsers.DocumentBuilderFactory;
 import javax.xml.parsers.ParserConfigurationException;
 
+import org.dayatang.domain.InstanceFactory;
+import org.dayatang.querychannel.QueryChannelService;
 import org.dayatang.utils.Page;
 import org.dom4j.DocumentHelper;
 import org.dom4j.io.OutputFormat;
@@ -25,10 +29,12 @@ import org.openkoala.gqc.infra.util.ReadAppointedLine;
 import org.openkoala.gqc.infra.util.XmlNode;
 import org.openkoala.gqc.infra.util.XmlUtil;
 import org.openkoala.koala.commons.InvokeResult;
+import org.openkoala.security.org.core.domain.EmployeeUser;
 import org.packet.packetsimulation.application.TaskPacketApplication;
 import org.packet.packetsimulation.core.domain.Mesg;
 import org.packet.packetsimulation.core.domain.MesgType;
 import org.packet.packetsimulation.core.domain.MessageHead;
+import org.packet.packetsimulation.core.domain.PACKETCONSTANT;
 import org.packet.packetsimulation.core.domain.Packet;
 import org.packet.packetsimulation.core.domain.PacketsHead;
 import org.packet.packetsimulation.core.domain.TaskPacket;
@@ -47,6 +53,15 @@ import org.xml.sax.SAXException;
 public class FeedBackFacadeImpl implements FeedBackFacade {
 	@Inject
 	private TaskPacketApplication application;
+	
+	private QueryChannelService queryChannel;
+
+    private QueryChannelService getQueryChannelService(){
+        if(queryChannel==null){
+            queryChannel = InstanceFactory.getInstance(QueryChannelService.class,"queryChannel");
+        }
+        return queryChannel;
+    }
 	
 	public Page<MessageHead> showAnalyze(Long taskPacketId,int currentPage,int pageSize,String ctxPath) throws IOException{
 		TaskPacket taskPacket = application.getTaskPacket(taskPacketId);
@@ -155,19 +170,42 @@ public class FeedBackFacadeImpl implements FeedBackFacade {
 		return InvokeResult.success(xmlFormat);
 	}
 	
-	 public static String formatXml(String str) throws Exception {
-		  org.dom4j.Document document = null;
-		  document = DocumentHelper.parseText(str);
-		  // 格式化输出格式
-		  OutputFormat format = OutputFormat.createPrettyPrint();
-		  format.setEncoding("gb2312");
-		  StringWriter writer = new StringWriter();
-		  // 格式化输出流
-		  XMLWriter xmlWriter = new XMLWriter(writer, format);
-		  // 将document写入到输出流
-		  xmlWriter.write(document);
-		  xmlWriter.close();
-		  return writer.toString();
-		 }
-
+    public static String formatXml(String str) throws Exception {
+	    org.dom4j.Document document = null;
+		document = DocumentHelper.parseText(str);
+		// 格式化输出格式
+		OutputFormat format = OutputFormat.createPrettyPrint();
+		format.setEncoding("gb2312");
+		StringWriter writer = new StringWriter();
+		// 格式化输出流
+		XMLWriter xmlWriter = new XMLWriter(writer, format);
+		// 将document写入到输出流
+		xmlWriter.write(document);
+		xmlWriter.close();
+		return writer.toString();
+	}
+	public String getPacketHeadForSend(String code, String userAccount){
+		EmployeeUser employeeUser = findEmployeeUserByCreatedBy(userAccount);
+		StringBuffer packetHead = new StringBuffer("");
+		String currentOrgNO = employeeUser.getDepartment().getSn();
+		SimpleDateFormat dateFormat = new SimpleDateFormat("yyyyMMddhhmmss");
+		String currentDate = dateFormat.format(new Date());
+		Integer dataType = PACKETCONSTANT.TASKPACKET_DATATYPE_NORMAL;
+		String counter = String.format("%010d", 1);
+		packetHead.append("A").append(PACKETCONSTANT.TASKPACKET_FILEVERSION).append(currentOrgNO).append(currentDate).append(code).append(dataType).append(counter).append("                              ").append("\r\n");
+		return packetHead.toString();
+	}
+	
+	@SuppressWarnings("unchecked")
+	private EmployeeUser findEmployeeUserByCreatedBy(String createdBy){
+		List<Object> conditionVals = new ArrayList<Object>();
+	   	StringBuilder jpql = new StringBuilder("select _employeeUser from EmployeeUser _employeeUser  where 1=1 ");
+	   	
+	   	if (createdBy != null ) {
+	   		jpql.append(" and _employeeUser.userAccount = ? ");
+	   		conditionVals.add(createdBy);
+	   	}
+	   	EmployeeUser employeeUser = (EmployeeUser) getQueryChannelService().createJpqlQuery(jpql.toString()).setParameters(conditionVals).singleResult();
+	   	return employeeUser;
+	}
 }

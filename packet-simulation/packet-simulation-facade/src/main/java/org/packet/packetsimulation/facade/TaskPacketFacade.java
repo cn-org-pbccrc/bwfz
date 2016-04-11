@@ -14,8 +14,6 @@ public interface TaskPacketFacade {
 	
 	public InvokeResult creatTaskPacket(TaskPacketDTO taskPacket);
 	
-	public InvokeResult verifyTaskPacketName(String[] values, Long taskId);
-	
 	public InvokeResult creatOutSideTaskPacket(TaskPacketDTO taskPacket, String fileName) throws ParseException;
 	
 	public InvokeResult updateOutSideTaskPacket(String fileName) throws ParseException;
@@ -38,6 +36,6 @@ public interface TaskPacketFacade {
 	
 	public Page<TaskPacketDTO> pageQueryTaskPacket(TaskPacketDTO taskPacket, int currentPage, int pageSize,Long taskId);
 	
-
+	public Page<TaskPacketDTO> pageQueryTaskPacket(TaskPacketDTO queryVo, int currentPage, int pageSize);
 }
 

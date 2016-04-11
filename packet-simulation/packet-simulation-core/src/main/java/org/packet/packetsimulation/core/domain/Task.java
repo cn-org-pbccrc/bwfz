@@ -43,6 +43,9 @@ public class Task extends KoalaAbstractEntity{
 	
 	@Column(name = "PACKET_NUM")
 	private String packetNum;
+	
+	@Column(name = "TASK_FROM")
+	private Integer taskFrom;
 
 	public String getTaskName() {
 		return taskName;
@@ -98,6 +101,14 @@ public class Task extends KoalaAbstractEntity{
 
 	public void setPacketNum(String packetNum) {
 		this.packetNum = packetNum;
+	}
+
+	public Integer getTaskFrom() {
+		return taskFrom;
+	}
+
+	public void setTaskFrom(Integer taskFrom) {
+		this.taskFrom = taskFrom;
 	}
 
 	@Override

@@ -29,6 +29,8 @@ public interface MesgTypeFacade {
 	
 	public InvokeResult getEditHtmlByMesgType(Long id);
 	
+	public InvokeResult getEditHtmlByCode(String code);
+	
 	public InvokeResult getEditHtmlOfChange(String code, String finanCode, String cstCode);
 
 	public List<MesgType> findMesgTypesByCreateUser(String userName);

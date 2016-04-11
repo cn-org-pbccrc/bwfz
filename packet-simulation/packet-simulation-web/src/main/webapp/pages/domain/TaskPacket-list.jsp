@@ -121,13 +121,22 @@ function initFun(){
 	                    ],
 	                url:"${pageContext.request.contextPath}/TaskPacket/pageJson/" + taskId + ".koala",
 	                columns: [
-																				{ title: '内外部报文', name: 'packetFrom', width: width/2},
+																				{ title: '报文来源', name: 'packetFrom', width: width/2,
+																					render: function(item, name, index){
+                    	                         						                 if(item[name] == '0'){
+                    	                         						                     return '内部报文';
+                    	                         						                 }else if(item[name] == '1'){
+                    	                         						                     return '外部报文';
+                    	                         						                 }else if(item[name] == '2'){
+                    	                         						                	 return '快速报文';
+                    	                         						                 }
+                    	                         						             }
+																				},
 	                     	                         	                        { title: '报文名称', name: 'selectedPacketName', width: width/2},
 	                     	                         	                        { title: '版本号', name: 'selectedFileVersion', width: 5*width/12},
 	                     	                         	                        { title: '数据提供机构代码', name: 'selectedOrigSender', width: 3*width/4},
 	                     	                         	                        { title: '生成时间', name: 'selectedOrigSendDate', width: width/2,
 	                     	                         	                        	render: function(item, name, index){
-                      	                         						                //alert(item[name].getMonth());
                       	                         						                var d = new Date(item[name]);    //根据时间戳生成的时间对象
 																						var date = (d.getFullYear()) + "-" + 
 																								(d.getMonth() + 1) + "-" +
@@ -149,7 +158,7 @@ function initFun(){
                      	                         						                 }else{
                      	                         						                	 return '-';
                      	                         						                 }
-                     	                         						             }		
+                     	                         						             }
 	                     	                         	                        },
 	                     	                         	                        { title: '记录类型', name: 'selectedRecordType', width: width/2},
 	                         	                         	                         	                         { title: '加压', name: 'compression', width: width/3},
@@ -165,7 +174,6 @@ function initFun(){
 	                ]
 	         }).on({
 	                   'add': function(){
-	                	   //selectPackets();
 	                	   self.selectPackets($(this));
 	                   },
 	                   'modify': function(event, data){
@@ -423,64 +431,52 @@ function initFun(){
 	    	    	var data2 = [{ name: 'selectedPacketNames', value: selectedPacketNames.join(',')},
 	    	    		{ name: 'taskId', value: taskId}
 	    	    	];
-	    	    	$.post('${pageContext.request.contextPath}/TaskPacket/verify.koala', data2).done(function(result){
-	    	    		if(result.success){
-	    	        		creation(items);
-	    	        	}else{
-		                	dialog.find('.modal-content').message({
-		                		type: 'error',
-		                    	content: result.errorMessage
-		                	});
-		            	} 
-	    	    	});
-	    	    	function creation(items){
-	    	    		var isComs = new Array;
-		    	    	var isEncs = new Array;
-		    	    	var flagIds = new Array();
-		    	    	for(var i = 0; i < items.length; i++){
-		    	    		flagIds[i] = items[i].id;
-							isComs[i] = $("input[id='compressionId"+flagIds[i]+"']").is(':checked');
-							if(isComs[i] == true){
-								isComs[i] = '是';
-							}else if(isComs[i] == false){
-								isComs[i] = '否';
-							}
-							isEncs[i] = $("input[id='encryptionId"+flagIds[i]+"']").is(':checked');
-							if(isEncs[i] == true){
-								isEncs[i] = '是';
-							}else if(isEncs[i] == false){
-								isEncs[i] = '否';
-							}
+	    	    	var isComs = new Array;
+	    	    	var isEncs = new Array;
+	    	    	var flagIds = new Array();
+	    	    	for(var i = 0; i < items.length; i++){
+	    	    		flagIds[i] = items[i].id;
+						isComs[i] = $("input[id='compressionId"+flagIds[i]+"']").is(':checked');
+						if(isComs[i] == true){
+							isComs[i] = '是';
+						}else if(isComs[i] == false){
+							isComs[i] = '否';
 						}
-		    	    	if(items.length == 0){
-		    	    		dialog.find('.selectPacketGrid').message({
-		    	        		type: 'warning',
-		    	            	content: '请选择需要关联的报文！'
-		    	        	});
-		    	    	}                          
- 		    	    	var data = [
-							{ name: 'flagIds', value: flagIds.join(',')},
-		     				{ name: 'compressions', value: isComs.join(',')},
-		     				{ name: 'encryptions', value: isEncs.join(',')},
-		     				{ name: 'taskId', value: taskId},
-		     				{ name: 'packetFrom', value: 0}
-		     			];
-		    	    	$.post('${pageContext.request.contextPath}/TaskPacket/add.koala', data).done(function(result){
-		 	        		if(result.success ){
-		 	            		dialog.modal('hide');
-		 	                	e.data.grid.data('koala.grid').refresh();
-		 	                	e.data.grid.message({
-		 	                		type: 'success',
-		 	                    	content: '保存成功'
-		 	                	});
-		 	            	}else{
-		 	                	dialog.find('.modal-content').message({
-		 	                    	type: 'error',
-		 	                    	content: result.actionError
-		 	                	});
-		 	            	}
-		 	        	});
-	    	    	}
+						isEncs[i] = $("input[id='encryptionId"+flagIds[i]+"']").is(':checked');
+						if(isEncs[i] == true){
+							isEncs[i] = '是';
+						}else if(isEncs[i] == false){
+							isEncs[i] = '否';
+						}
+					}
+	    	    	if(items.length == 0){
+	    	    		dialog.find('.selectPacketGrid').message({
+	    	        		type: 'warning',
+	    	            	content: '请选择需要关联的报文！'
+	    	        	});
+	    	    	}                          
+		    	    var data = [
+						{ name: 'flagIds', value: flagIds.join(',')},
+	     				{ name: 'compressions', value: isComs.join(',')},
+	     				{ name: 'encryptions', value: isEncs.join(',')},
+	     				{ name: 'taskId', value: taskId},
+	     				{ name: 'packetFrom', value: 0}
+	     			];
+	    	    	$.post('${pageContext.request.contextPath}/TaskPacket/add.koala', data).done(function(result){
+	 	        		if(result.success ){
+	 	            		dialog.modal('hide');
+	 	                	e.data.grid.data('koala.grid').refresh();
+	 	                	e.data.grid.message({
+	 	                		type: 'success',
+	 	                    	content: '保存成功'
+	 	                	});
+	 	            	}else{
+	 	                	dialog.find('.modal-content').message({
+	 	                    	type: 'error',
+	 	                    	content: result.actionError
+	 	                	});
+	 	            	}
+	 	        	});
 		    	});       
 		    	//兼容IE8 IE9
 		    	if(window.ActiveXObject){
@@ -499,13 +495,7 @@ function initFun(){
 	               $.get( '${pageContext.request.contextPath}/TaskPacket/get/' + id + '.koala').done(function(json){
 	                       json = json.data;                     
 	                        var elm;
-	                        //selectedPacketName = json['selectedPacketName'];
 	                        packetFrom = json['packetFrom'];	                                                
-							//selectedFileVersion = json['selectedFileVersion'];
-	                		//selectedOrigSender = json['selectedOrigSender'];
-	                		//selectedOrigSendDate = json['selectedOrigSendDate'];
-	                		//selectedDataType = json['selectedDataType'];
-	                		//selectedRecordType = json['selectedRecordType'];
 	                        for(var index in json){
 	                            elm = dialog.find('#'+ index + 'ID');
 	                            if(elm.hasClass('select')){
@@ -514,10 +504,6 @@ function initFun(){
 	                                elm.val(json[index]);
 	                            }
 	                        }
-	                        //if(packetFrom == '外部报文'){
-	                        	//dialog.find('#compressionID_').val(json['compression']).attr('disabled', 'disabled');
-	                        	//dialog.find('#encryptionID_').val(json['encryption']).attr('disabled', 'disabled');
-	                        //}	
 	                        var d = new Date(json['selectedOrigSendDate']);    //根据时间戳生成的时间对象
 							var date = (d.getFullYear()) + "-" + 
 									(d.getMonth() + 1) + "-" +
@@ -536,14 +522,11 @@ function initFun(){
 	                });
 	                dialog.find('#save').on('click',{grid: grid}, function(e){
 	                	if(packetFrom == '外部报文'){
-	                		//alert("不能对外部报文进行修改！")
-	                		//dialog.modal('hide');
 	                		dialog.find('.modal-content').message({
 	                            type: 'error',
 	                            content: "不能对外部报文进行修改！"
 	                        });
 	                		return false;
-	                		//dialog.modal('hide');
 	                	}
 	                    if(!Validator.Validate(dialog.find('form')[0],3))return;
 	                    $.post('${pageContext.request.contextPath}/TaskPacket/update.koala?selectedOrigSendDate='+selectedOrigSendDate, dialog.find('form').serialize()).done(function(result){
@@ -573,77 +556,7 @@ function initFun(){
 	                   //minView: 2,
 	                   pickerPosition: 'bottom-left'
 	               }).datetimepicker('setDate', new Date());//加载日期选择器
-
-// 	               selectedPacketNameID = form.find("#selectedPacketNameID");
-// 	               form.find('[data-toggle="dropdown"]').on('click', function(){
-// 	            	   selectPackets();
-// 	               })
-// 	               var selectPackets = function() {	
-// 	                   $.get(contextPath + '/pages/auth/packet-select.jsp').done(function(data) {
-// 	                	   var dialog = $(data);
-// 	                       //显示对话框数据
-// 	                       dialog.modal({
-// 	                           keyboard: false,
-// 	                           backdrop: false // 指定当前页为静态页面，如果不写后台页面就是黑色。
-// 	                       }).on({
-// 	                           'hidden.bs.modal': function(){
-// 	                               $(this).remove();
-// 	                           },
-// 	                           'shown.bs.modal': function(){
-// 	                               var columns = [
-// 	                                   { title:'报文名称', name:'packetName' , width: 100},
-// 	                                   { title:'文件格式版本号', name:'fileVersion', width: 100},
-// 	                                   { title:'数据提供机构代码', name:'origSender', width: 100},
-// 	                                   { title:'文件生成时间', name:'origSendDate', width: 100},
-// 	                                   { title:'记录类型', name:'recordType', width: 100},
-// 	                                   { title:'数据类型', name:'dataType', width: 100},
-// 	                                   { title:'创建人员', name:'createdBy', width: 100},
-// 	                               ];//<!-- definition columns end -->
-
-// 	                               //查询出当前表单所需要得数据。
-// 	                               dialog.find('.selectPacketGrid').grid({
-// 	                                   identity: 'id',
-// 	                                   columns: columns,
-// 	                                   url: contextPath + '/Packet/pageJson/' + currentUserId + '.koala'
-// 	                                   //url: contextPath + '/Packet/pageJson.koala'
-// 	                               });
-
-// 	                           }
-// 	                       });//<!-- 显示对话框数据结束-->
-
-// 	                       dialog.find('#selectPacketGridSave').on('click',function(){                    	   
-// 	                           var items = dialog.find('.selectPacketGrid').data('koala.grid').selectedRows();
-// 	                           if(items.length == 0){
-// 	                               dialog.find('.selectPacketGrid').message({
-// 	                                   type: 'warning',
-// 	                                   content: '请选择需要关联的报文！'
-// 	                               });
-// 	                           }
-// 	                           if(items.length>1) {
-// 	                               dialog.find('.selectPacketGrid').message({
-// 	                                   type: 'warning',
-// 	                                   content: '只能选择一个需要关联的报文！'
-// 	                               });
-// 	                           }
-// 	                           var packetId2 =  items[0].id;
-// 	                           var packetName2 = items[0].packetName;	                          
-// 	                           dialog.modal('hide');
-// 	                           if(packetId2 != null){
-// 	                        	   selectedPacketNameID.find('[data-toggle="item"]').html(packetName2);
-// 	                           }
-// 	                           selectedPacketNameID.find('input').val(packetId2);
-// 	                           dialog.trigger('keydown');	                        
-// 	                       });
-
-// 	                       //兼容IE8 IE9
-// 	                       if(window.ActiveXObject){
-// 	                           if(parseInt(navigator.userAgent.toLowerCase().match(/msie ([\d.]+)/)[1]) < 10){
-// 	                               dialog.trigger('shown.bs.modal');
-// 	                           }
-// 	                       }
-
-// 	                   });   
-// 	               };
+	               
                    var selectItems = {};
                    var contents = [{title:'请选择', value: ''}];
                    selectItems['selectedPacketNameID'] = contents;
@@ -716,9 +629,6 @@ function initFun(){
 	            dialog.find('#cancelUpload').on('click',{grid: grid}, function(e){
 	            	$('#uploadify').uploadify('cancel');
 	            });
-	            //dialog.find('#back').on('click',{grid: grid}, function(e){
-	            	//openTaskPacket(taskId);	            	
-        		//});
 	        });
 	    },
 	    up: function(grid){
@@ -731,16 +641,13 @@ function initFun(){
 	    	}
 	    	var sourceIndex = grid.getGrid().selectedRowsNo();
 	    	var sourceId = grid.getGrid().getItemByIndex(sourceIndex).id;
-	    	//alert(sourceId)
 	    	grid.getGrid().up(grid.getGrid().selectedRowsNo());
 	    	var destId = grid.getGrid().getItemByIndex(sourceIndex).id;
-	    	//alert(destId)
 	    	var data = [{ name: 'sourceId', value: sourceId },
 	    	            { name: 'destId', value: destId }
 	    	            ];
 	    	$.post('${pageContext.request.contextPath}/TaskPacket/up.koala', data).done(function(result){
 	        	if(result.success){
-	            	//grid.data('koala.grid').refresh();
                     grid.message({
 	                	type: 'success',
 	                    content: '上移成功'
@@ -752,10 +659,6 @@ function initFun(){
 	                });
 	            }
 	    	});
-	    	//alert(grid.getGrid().selectedRowsNo())
-	    	//alert(grid.getGrid().getAllItems().length)
-	    	//alert(grid.getGrid().pageSize)
-
 	    },
 	    down: function(grid){
 	    	if(grid.getGrid().selectedRowsNo()==grid.getGrid().getAllItems().length-1){
@@ -767,11 +670,8 @@ function initFun(){
 	    	}
 	    	var sourceIndex = grid.getGrid().selectedRowsNo();
 	    	var sourceId = grid.getGrid().getItemByIndex(sourceIndex).id;
-	    	//alert(grid.getGrid().getAllItems().length)
 	    	grid.getGrid().down(grid.getGrid().selectedRowsNo());
-	    	//alert($("input[name='pagesize']").val())
 	    	var destId = grid.getGrid().getItemByIndex(sourceIndex).id;
-	    	//alert(destId)
 	    	var data = [{ name: 'sourceId', value: sourceId },
 	    	            { name: 'destId', value: destId }
 	    	            ];
@@ -904,7 +804,7 @@ var openDetailsPage = function(id){
 
 </head>
 <body>
-<div style="width:98%;margin-right:auto; margin-left:auto; padding-top: 15px;">
+<div>
 <!-- search form -->
 <form name=<%=formId%> id=<%=formId%> target="_self" class="form-horizontal">
 <input type="hidden" name="page" value="0">

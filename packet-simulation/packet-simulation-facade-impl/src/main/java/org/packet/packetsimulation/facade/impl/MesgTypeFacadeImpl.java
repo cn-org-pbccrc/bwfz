@@ -162,6 +162,25 @@ public class MesgTypeFacadeImpl implements MesgTypeFacade {
 		return null;
 	}
 	
+	@Override
+	public InvokeResult getEditHtmlByCode(String code) {
+		MesgType mesgType = findMesgTypeByCode(code);
+		try {
+			XmlNode xmlNode = XmlUtil.getXmlNodeByXmlContent(mesgType.getXml(),mesgType.getCountTag());
+			return InvokeResult.success(xmlNode.toEditHtmlTabString(mesgType.getMesgType()));
+		} catch (SAXException e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+		} catch (IOException e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+		} catch (ParserConfigurationException e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+		}
+		return null;
+	}
+	
 	public InvokeResult getEditHtmlByMesgType(MesgType mesgType) {
 		try {
 			XmlNode xmlNode = XmlUtil.getXmlNodeByXmlContent(mesgType.getXml(),mesgType.getCountTag());

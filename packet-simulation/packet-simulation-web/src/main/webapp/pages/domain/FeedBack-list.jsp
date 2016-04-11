@@ -518,33 +518,63 @@ function getPath(obj){
 }
 var openDetailsPage = function(id){
 	var dialog = $('<div class="modal fade"><div class="modal-dialog" style="width:900px;"><div class="modal-content"><div class="modal-header"><button type="button" class="close" data-dismiss="modal" aria-hidden="true">&times;</button><h4 class="modal-title">查看解析数据</h4></div><div class="modal-body"><p>One fine body&hellip;</p></div></div></div></div>');
-    $.get('<%=path%>/FeedBack-view.jsp').done(function(html){
-		dialog.find('.modal-body').html(html);
+	$.get('<%=path%>/FeedBack-view.jsp?id='+id).done(function(html){
+	    dialog.find('.modal-body').html(html);		
         $.get( '${pageContext.request.contextPath}/FeedBack/get/' + id + '.koala?taskPacketId='+taskPacketId).done(function(json){
         	json = json.data;
-        	var obj = eval("("+json['transform']+")");
             dialog.find("#content1").html(json['html']);
-            for (var key in obj){
-            	switch(key){
-            		case "change":
-            			dialog.find('#transform').append("&nbsp;&nbsp;&nbsp;<div class='radio'><span><input value="+obj[key]+" flag="+key+" type='radio'  name='transform' style='opacity: 0;'></span></div><span>标识变更</span>");
-            	  		break;
-            		case "deleteAll":
-            			dialog.find('#transform').append("&nbsp;&nbsp;&nbsp;<div class='radio'><span><input value="+obj[key]+" flag="+key+" type='radio'  name='transform' style='opacity: 0;'></span></div><span>整笔删除</span>");
-            	  		break;
-            		case "deleteBySeg":
-            			dialog.find('#transform').append("&nbsp;&nbsp;&nbsp;<div class='radio'><span><input value="+obj[key]+" flag="+key+" type='radio'  name='transform' style='opacity: 0;'></span></div><span>按段删除</span>");
-            			break;
-            		case "modify":
-            			dialog.find('#transform').append("&nbsp;&nbsp;&nbsp;<div class='radio'><span><input value="+obj[key]+" flag="+key+" type='radio'  name='transform' style='opacity: 0;'></span></div><span>修改</span>");
-            			break;
-            	}   
-			}
-            var transform = dialog.find('[name="transform"]').first();
-         	transform.parent().addClass("checked");
-         	transform.attr("checked","checked");	
-			dialog.find('#sub').click(function(){	        	      
-     	    	$.post('${pageContext.request.contextPath}/FeedBack/toDelete.koala').done(function(result){	     
+            if(json['transform']!=''){
+            	var obj = eval("("+json['transform']+")");
+                for (var key in obj){
+                	switch(key){
+                		case "change":
+                			var code = obj['change']['code'];
+    						var map = obj.change.map
+    						var flag = JSON.stringify(map);
+                			dialog.find('#transform').append("&nbsp;&nbsp;&nbsp;<div class='radio'><span><input value="+code+" flag="+flag+" catagory="+key+" type='radio'  name='transform' style='opacity: 0;'></span></div><span>标识变更</span>");
+                	  		break;
+                		case "deleteAll":
+                			var code = obj['deleteAll']['code'];
+    						var map = obj.deleteAll.map
+    						var flag = JSON.stringify(map);
+                			dialog.find('#transform').append("&nbsp;&nbsp;&nbsp;<div class='radio'><span><input value="+code+" flag="+flag+" catagory="+key+" type='radio'  name='transform' style='opacity: 0;'></span></div><span>整笔删除</span>");
+                	  		break;
+                		case "deleteBySeg":
+                			var code = obj['deleteBySeg']['code'];
+    						var map = obj.deleteBySeg.map
+    						var flag = JSON.stringify(map);
+                			dialog.find('#transform').append("&nbsp;&nbsp;&nbsp;<div class='radio'><span><input value="+code+" flag="+flag+" catagory="+key+" type='radio'  name='transform' style='opacity: 0;'></span></div><span>按段删除</span>");
+                			break;
+                		case "modify":
+                			var code = obj['modify']['code'];
+    						var map = obj.modify.map
+    						var flag = JSON.stringify(map);
+                			dialog.find('#transform').append("&nbsp;&nbsp;&nbsp;<div class='radio'><span><input value="+code+" flag="+flag+" catagory="+key+" type='radio'  name='transform' style='opacity: 0;'></span></div><span>修改</span>");
+                			break;
+                	}
+    			}
+                var transform = dialog.find('[name="transform"]').first();
+             	transform.parent().addClass("checked");
+             	transform.attr("checked","checked");
+            }else{
+            	dialog.find('#transform').append("<a>无</a>");
+            	dialog.find("#next").attr('class','disabled');
+            }         	
+			dialog.find('#sub').click(function(){
+				if (!Validation.notNull(dialog, dialog.find('#taskNameID'), dialog.find('#taskNameID').val(), '请输入任务名称')) {
+	    			return false;
+	    	  	}
+				if (!Validation.notNull(dialog, dialog.find('#sendChannelID'), dialog.find('#sendChannelID').val(), '请输入发送渠道')) {
+	    			return false;
+	    	  	}
+				var data = [{ name: 'taskName', value: dialog.find("#taskNameID").val()},
+				            { name: 'selectedRecordType', value: code},
+				            { name: 'sendChannel', value: dialog.find("#sendChannelID").val()},
+				            { name: 'encryption', value: dialog.find('[name="encryption"]').val()},
+				            { name: 'compression', value: dialog.find('[name="compression"]').val()},
+				            { name: 'mesgContent', value: dialog.find("#mesgContentID").val()}
+				            ];
+     	    	$.post('${pageContext.request.contextPath}/Mesg/send.koala', data).done(function(result){	     
      	        	if(result.success ){
      	            	dialog.modal('hide');
      	                grid.message({

@@ -22,6 +22,7 @@ import java.util.Date;
 import java.util.Map;
 
 import org.springframework.beans.propertyeditors.CustomDateEditor;
+import org.springframework.jdbc.core.JdbcTemplate;
 import org.springframework.stereotype.Controller;
 import org.springframework.web.bind.annotation.InitBinder;
 import org.springframework.web.bind.annotation.RequestMapping;
@@ -42,6 +43,9 @@ public class ThreeStandardController {
 		
 	@Inject
 	private ThreeStandardFacade threeStandardFacade;
+	
+	@Inject
+	private JdbcTemplate jdbcTemplate;
 	
 	@ResponseBody
 	@RequestMapping("/add")
@@ -77,6 +81,13 @@ public class ThreeStandardController {
         	        					idArrs[i] = Long.parseLong(value[i]);
 						        }
         return threeStandardFacade.removeThreeStandards(idArrs);
+	}
+	
+	@ResponseBody
+	@RequestMapping("/trash")
+	public InvokeResult trash() {
+		jdbcTemplate.execute("TRUNCATE `test`.`THREE_STANDARD`");
+		return InvokeResult.success();
 	}
 	
 	@ResponseBody

@@ -34,13 +34,13 @@ public class MesgType extends KoalaAbstractEntity{
 	@Column(name = "COUNT_TAG") 
 	private String countTag;
 	
-	@Column(name = "XML",length=20000) 
+	@Column(name = "XML",length=15000) 
 	private String xml;
 	
 	@Column(name = "CREATED_BY") 
 	private String createdBy;
 	
-	@Column(name = "TRANSFORM") 
+	@Column(name = "TRANSFORM",length=5000) 
 	private String transform;
 
 	public String getTransform() {

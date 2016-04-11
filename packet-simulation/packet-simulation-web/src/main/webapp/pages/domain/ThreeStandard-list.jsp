@@ -76,6 +76,7 @@ function initFun(){
 	                        {content: '<button class="btn btn-inverse" type="button"><span class="glyphicon glyphicon-import"><span>导入三标信息</button>', action: 'importFile'},
 	                        {content: '<button class="btn btn-inverse" type="button"><span class="glyphicon glyphicon-export"><span>导出三标信息</button>', action: 'exportFile'},
 	                        {content: '<button class="btn btn-info" type="button"><span class="glyphicon glyphicon-expand"><span>随机生成三标</button>', action: 'expand'},
+	                        {content: '<button class="btn btn-danger" type="button"><span class="glyphicon glyphicon-trash"><span>全部删除</button>', action: 'trash'},
 	                        {content: '<button class="btn btn-success" type="button"><span class="glyphicon glyphicon-search"><span>高级搜索<span class="caret"></span></button>', action: 'search'}
 	                    ],
 	                url:"${pageContext.request.contextPath}/ThreeStandard/pageJson/" + currentUserId + ".koala",
@@ -157,12 +158,22 @@ function initFun(){
 	                	   self.importFile($(this));
 	                   },
 	                   'exportFile':function(){
-	                	   var date = new Date();
+	                       var date = new Date();
 	                	   window.open('${pageContext.request.contextPath}/ThreeStandard/downloadCSV.koala?id='+date.getTime()+'.csv'+'&createdBy='+currentUserId);
 	                   },
+	                   'trash': function(){
+	                       var $this = $(this);
+	                       var trash = function(){
+	                           self.trash($this);
+	                       };
+	                       $this.confirm({
+	                           content: '确定要删除全部三标信息吗?',
+	                           callBack: trash
+	                       });
+	                   },
 	                   'search' : function() {						
-	       					$("#threeStandardQueryDiv").slideToggle("slow");						 
-	       				}
+	       			       $("#threeStandardQueryDiv").slideToggle("slow");						 
+	       			   }
 	         });
 	    },
 	    add: function(grid){
@@ -362,6 +373,22 @@ function initFun(){
 	                            });
 	                        }
 	    	});
+	    },
+	    trash: function(grid){
+	    	$.post('${pageContext.request.contextPath}/ThreeStandard/trash.koala').done(function(result){
+	        	if(result.success){
+	            	grid.data('koala.grid').refresh();
+	                grid.message({
+	                	type: 'success',
+	                    content: '清除成功'
+	                });
+	            }else{
+	                grid.message({
+	                	type: 'error',
+	                    content: result.errorMessage
+	                });
+	            }
+	    	});
 	    }
 	}
 	/*
@@ -418,7 +445,7 @@ var openDetailsPageOfThreeStandard = function(id){
 </script>
 </head>
 <body>
-<div style="width:98%;margin-right:auto; margin-left:auto; padding-top: 15px;">
+<div>
 <!-- search form -->
 <form name=<%=formId%> id=<%=formId%> target="_self" class="form-horizontal">
 <input type="hidden" name="page" value="0">

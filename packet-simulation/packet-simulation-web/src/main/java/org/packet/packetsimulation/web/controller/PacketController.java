@@ -43,6 +43,7 @@ import org.dom4j.io.OutputFormat;
 import org.dom4j.io.XMLWriter;
 import org.openkoala.gqc.infra.util.ReadAppointedLine;
 import org.openkoala.koala.commons.InvokeResult;
+import org.packet.packetsimulation.application.PacketApplication;
 import org.packet.packetsimulation.core.domain.Packet;
 import org.packet.packetsimulation.facade.PacketFacade;
 import org.packet.packetsimulation.facade.dto.PacketDTO;
@@ -61,8 +62,10 @@ import org.w3c.dom.Document;
 import org.w3c.dom.Element;
 import org.xml.sax.InputSource;
 import org.xml.sax.SAXException;
+
 import java.security.InvalidKeyException;
 import java.security.NoSuchAlgorithmException;
+
 import javax.crypto.BadPaddingException;
 import javax.crypto.IllegalBlockSizeException;
 import javax.crypto.KeyGenerator;
@@ -78,6 +81,9 @@ public class PacketController {
 	
 	@Inject
 	private PacketFacade packetFacade;
+	
+	@Inject
+	private PacketApplication  application;
 	
 	@ResponseBody
 	@RequestMapping("/add")
@@ -125,10 +131,9 @@ public class PacketController {
 	
 	@ResponseBody
 	@RequestMapping("/downloadCSV/{id}")
-	public void downloadCSV(@PathVariable Long id,HttpServletRequest request, HttpServletResponse response) {
-		
+	public void downloadCSV(@PathVariable Long id,HttpServletRequest request, HttpServletResponse response) {	
 		String downloadCSV = packetFacade.downloadCSV(id);
-		Packet packet = packetFacade.getPacketById(id);
+		Packet packet = application.getPacket(id);
 		response.setContentType("application/csv;charset=UTF-8");
 		response.setHeader("Content-Disposition", "attachment; filename=" + packet.getPacketName() + ".csv");
 		response.setCharacterEncoding("UTF-8");
@@ -235,7 +240,6 @@ public class PacketController {
 	@RequestMapping("/load")
 	public InvokeResult load(PacketDTO packetDTO, HttpServletRequest request, HttpServletResponse response) throws IOException, ParseException, ParserConfigurationException, SAXException {
 		request.setCharacterEncoding("utf-8"); 
-		//System.out.println("哈哈哈哈收到啦！！！！！！！！！");
 		MultipartHttpServletRequest multipartRequest = (MultipartHttpServletRequest) request;	
 		Map<String, MultipartFile> fileMap = multipartRequest.getFileMap();
 		String ctxPath=request.getSession().getServletContext().getRealPath("/")+File.separator+"loadFiles" + File.separator + packetDTO.getCreatedBy() + File.separator;	
@@ -249,15 +253,7 @@ public class PacketController {
 		for (Map.Entry<String, MultipartFile> entity : fileMap.entrySet()) {    	
 			MultipartFile mf = entity.getValue();  	
 			fileName = mf.getOriginalFilename();
-			System.out.println("filename="+fileName);
-			System.out.println(packetFacade.findPacketByPacketNameAndCreatedBy(fileName, packetDTO.getCreatedBy())!=null);
-			//if(packetFacade.verifyPacketName(fileName)){
-//			if(packetFacade.findPacketByPacketNameAndCreatedBy(fileName, packetDTO.getCreatedBy())!=null){
-//				System.out.println("臭米米");
-//				return InvokeResult.failure("报文名称已经存在");
-//			}
-			File uploadFile = new File(ctxPath + fileName);	
-//			try {				
+			File uploadFile = new File(ctxPath + fileName);				
 				FileCopyUtils.copy(mf.getBytes(), uploadFile);
 				BufferedReader br = new BufferedReader(new InputStreamReader(new FileInputStream(ctxPath + fileName)));  
 				String line = br.readLine();	

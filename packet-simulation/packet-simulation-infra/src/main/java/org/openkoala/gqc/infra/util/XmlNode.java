@@ -212,7 +212,7 @@ public class XmlNode implements Serializable, Cloneable{
 						htmlStr = htmlStr + "<p><label class='rgt'>"+JSON.parseObject(PropertiesManager.getProperties(xmlNode.getTagName(),templateName)).getString("0")+" :</label><label class='lft' value='" + value + "' name='" + xmlNode.getTagName() + "'>" + value + "</label></p>";
 					}
 				}else if(null!= childNode && childNode.size()>0){
-					htmlStr = htmlStr + "<fieldset><legend>"+JSON.parseObject(PropertiesManager.getProperties(xmlNode.getTagName(),templateName)).getString("0")+"</legend>";
+					htmlStr = htmlStr + "<fieldset><legend name='"+xmlNode.getTagName()+"'>"+JSON.parseObject(PropertiesManager.getProperties(xmlNode.getTagName(),templateName)).getString("0")+"</legend>";
 					for (XmlNode node:childNode) {
 						List<XmlNode> childNodes = node.getNodes();
 						if(null!= childNodes && childNodes.size()>0){
@@ -220,7 +220,7 @@ public class XmlNode implements Serializable, Cloneable{
 							htmlStr = htmlStr + getTabContents(childNodes,null,templateName);
 						}else{
 							//System.out.println("name4:"+PropertiesManager.getProperties(xmlNode.getTagName(),templateName)+";value4:"+xmlNode.getValue());
-							htmlStr = htmlStr + "<p><label class='rgt'>"+JSON.parseObject(PropertiesManager.getProperties(node.getTagName(),templateName)).getString("0")+" :</label><label class='lft'>" + node.getValue() + "</label></p>";
+							htmlStr = htmlStr + "<p><label class='rgt'>"+JSON.parseObject(PropertiesManager.getProperties(node.getTagName(),templateName)).getString("0")+" :</label><label class='lft' value='" + node.getValue() + "' subName='" + node.getTagName() + "'>" + node.getValue() + "</label></p>";
 						}
 					}
 					htmlStr = htmlStr +"</fieldset>";
@@ -683,7 +683,7 @@ public class XmlNode implements Serializable, Cloneable{
 			if(hasPeerNode){
 				htmlStr = htmlStr  
 					+ "<fieldset><legend>"+jsonObject1.getString("0")
-					+ "<button type='button' style='padding:2px 4px;' class='btn btn-failure' name='" + xmlNode.getTagName() +"' onclick='removeHtml(this,\"" + countTagId + "\");'><span class='glyphicon glyphicon-remove'></span></button>"
+					+ "<button type='button' style='padding:2px 4px;display:none' class='btn btn-failure' name='" + xmlNode.getTagName() +"' onclick='removeHtml(this,\"" + countTagId + "\");'><span class='glyphicon glyphicon-remove'></span></button>"
 					+ "</legend>";
 			}else{
 				htmlStr = htmlStr + "<fieldset><legend>"+jsonObject1.getString("0")+"</legend>";

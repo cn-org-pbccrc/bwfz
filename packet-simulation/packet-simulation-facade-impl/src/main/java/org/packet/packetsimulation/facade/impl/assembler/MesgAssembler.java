@@ -22,6 +22,7 @@ public class MesgAssembler {
      	    result.setMesgTypeStr(mesg.getMesgType().getMesgType());
      	    result.setRemark(mesg.getRemark());
      	    result.setCreateBy(mesg.getCreateBy());
+     	    result.setMesgFrom(mesg.getMesgFrom());
      	    return result;
 	 }
 	
@@ -46,6 +47,7 @@ public class MesgAssembler {
         result.setRemark(mesgDTO.getRemark());
         result.setCreateBy(mesgDTO.getCreateBy());
         result.setContent(mesgDTO.getContent());
+        result.setMesgFrom(mesgDTO.getMesgFrom());
  	  	return result;
 	 }
 	

@@ -311,7 +311,7 @@ var openDetailsPage = function(id){
 </script>
 </head>
 <body>
-<div style="width:98%;margin-right:auto; margin-left:auto; padding-top: 15px;">
+<div>
 <!-- search form -->
 <form name=<%=formId%> id=<%=formId%> target="_self" class="form-horizontal">
 <input type="hidden" name="page" value="0">

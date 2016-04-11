@@ -23,6 +23,8 @@ public class MesgDTO implements Serializable {
 	
 	private String remark;
 	
+	private Integer mesgFrom;
+	
 	public String getRemark() {
 		return remark;
 	}
@@ -93,6 +95,14 @@ public class MesgDTO implements Serializable {
 
 	public void setCreateBy(String createBy) {
 		this.createBy = createBy;
+	}
+
+	public Integer getMesgFrom() {
+		return mesgFrom;
+	}
+
+	public void setMesgFrom(Integer mesgFrom) {
+		this.mesgFrom = mesgFrom;
 	}
 
 	@Override

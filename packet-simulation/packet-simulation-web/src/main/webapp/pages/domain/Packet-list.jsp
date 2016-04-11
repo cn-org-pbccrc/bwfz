@@ -192,12 +192,7 @@ function initFun(){
 	            }).find('.modal-body').html(html);
 	            self.initPage(dialog.find('form'));
 	        });
-// 	        $.get('${pageContext.request.contextPath}/auth/currentUser/getUserDetail.koala').done(function(result) {
-// 	            var data = result.data;
-// 	      		currentUserId2 = data.userAccount; 		
-// 	        });
 	        dialog.find('#save').on('click',{grid: grid}, function(e){
-		        //alert(currentUserId);
  		        if(!Validator.Validate(dialog.find('form')[0],3))return;
 // 		        if (!Validation.notNull(dialog, dialog.find('#packetNameID'), dialog.find('#packetNameID').val(), '报文名称不能为空')) {
 //     			    return false;
@@ -213,14 +208,7 @@ function initFun(){
 // 			    }
 // 		        if (!Validation.notNull(dialog, dialog.find('#dataTypeID'), dialog.find('#dataTypeID').getValue(), '请选择数据类型')) {
 //     			    return false;
-//     		    }
-		        
-// 	              var origSenderID = dialog.find("#origSenderID").val();
-// 	              if('undefined'==origSenderID || null==origSenderID || origSenderID.length!=14){
-// 	            	  alert("报送机构编码为14位,请确认！");
-// 	            	  return;
-// 	              }	    
-					
+//     		    } 					
 	              $.post('${pageContext.request.contextPath}/Packet/add.koala?createdBy='+currentUserId, dialog.find('form').serialize()).done(function(result){
 	                   if(result.success ){
 	                        dialog.modal('hide');
@@ -452,34 +440,21 @@ function openPacket(id){
     if(mark){
         thiz.attr("mark",mark);
     }
-	
-// 	if(mark!=null){
-// 		$("#close"+mark).click();
-// 	}
-// 	openTabCust("/pages/domain/Mesg-list.jsp", "增加报文明细 ",packId,null,{packetId:id,packId:packId});
-// 	mark=packId;
 }
 
 function downloadCSV(id){
 	var date = new Date();
 	window.open('${pageContext.request.contextPath}/Packet/downloadCSV/' + id + '.koala?id='+date.getTime()+'.csv');
-	//window.open('${pageContext.request.contextPath}/Packet/downloadCSV/' + id + '.koala');
-// 	$.get( '${pageContext.request.contextPath}/Packet/downloadCSV/' + id + '.koala').done(function(data){
-//         json = data;
-//  	});
 }
 
 function downloadENC(id){
 	var date = new Date();
 	window.open('${pageContext.request.contextPath}/Packet/downloadENC/' + id + '.koala');
-// 	$.get( '${pageContext.request.contextPath}/Packet/downloadCSV/' + id + '.koala').done(function(data){
-//         json = data;
-//  	});
 }
 </script>
 </head>
 <body>
-<div style="width:98%;margin-right:auto; margin-left:auto; padding-top: 15px;">
+<div>
 <!-- search form -->
 <form name=<%=formId%> id=<%=formId%> target="_self" class="form-horizontal">
 <input type="hidden" name="page" value="0">

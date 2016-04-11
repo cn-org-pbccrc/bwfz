@@ -659,7 +659,7 @@ $('input[id=lefile]').change(function() {
 </script>
 </head>
 <body>
-<div style="width:98%;margin-right:auto; margin-left:auto; padding-top: 15px;">
+<div style="padding-top: 15px;">
 <!-- search form -->
 <form name=<%=formId%> id=<%=formId%> target="_self" class="form-horizontal">
 

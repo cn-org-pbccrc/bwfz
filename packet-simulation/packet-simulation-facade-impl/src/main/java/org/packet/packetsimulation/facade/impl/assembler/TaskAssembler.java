@@ -22,6 +22,7 @@ public class TaskAssembler {
      	    	result.setTaskCreatedTime (task.getTaskCreatedTime());
      	    	result.setTaskStatus (task.getTaskStatus());
      	    	result.setPacketNum (task.getPacketCountOfTask(task).toString());
+     	    	result.setTaskFrom(task.getTaskFrom());
      	    return result;
 	 }
 	
@@ -50,6 +51,7 @@ public class TaskAssembler {
          result.setTaskCreatedTime (taskDTO.getTaskCreatedTime());
          result.setTaskStatus (taskDTO.getTaskStatus());
          result.setPacketNum (taskDTO.getPacketNum());
+         result.setTaskFrom(taskDTO.getTaskFrom());
  	  	return result;
 	 }
 	

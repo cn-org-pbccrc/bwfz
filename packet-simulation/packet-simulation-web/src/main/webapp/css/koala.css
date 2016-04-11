@@ -43,6 +43,7 @@
 }
 .grid .pages .pagination {
 	margin: 0;
+	display:block;/*分页控件出现影响窗体大小*/
 }
 .grid  .search > div:first-child {
 	float: left;

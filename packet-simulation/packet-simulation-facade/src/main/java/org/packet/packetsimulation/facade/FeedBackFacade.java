@@ -17,4 +17,5 @@ public interface FeedBackFacade {
 	
 	public InvokeResult getOriginXml(int id, Long taskPacketId, String ctxPath) throws IOException, Exception;
 
+	public String getPacketHeadForSend(String code, String userAccount);
 }

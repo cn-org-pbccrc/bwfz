@@ -48,7 +48,7 @@ legend {
 %>
 </head>
 <body>
-<div style="width:98%;margin-right:auto; margin-left:auto; padding-top: 15px;">
+<div>
 <!-- search form -->
 <form name=<%=formId%> id=<%=formId%> target="_self" class="form-horizontal">
 <input type="hidden" name="page" value="0">
@@ -101,7 +101,7 @@ function initFun(){
     	        url:"${pageContext.request.contextPath}/Mesg/pageJson/" + packetId + ".koala",
     	        columns: [								 	
     	        	{ title: '报文类型', name: 'mesgTypeStr', width: 400},
-    	            { title: '备注', name: 'remark', width: 300},
+    	            { title: '用例名称', name: 'remark', width: 300},
     	            { title: '操作', width: 180, render: function (rowdata, name, index)
     	            	{
     	                	var param = '"' + rowdata.id + '"';
@@ -248,7 +248,8 @@ function initFun(){
      				var data = [{ name: 'content', value: xml },
       					{ name: 'mesgType', value: items[0].id},
      				    { name: 'packetId', value: packetId},
-      					{ name: 'remark', value: dialog.find("#remarkID").val()}
+      					{ name: 'remark', value: dialog.find("#remarkID").val()},
+      					{ name: 'mesgFrom', value: 0}
      				];		
         	        $.post('${pageContext.request.contextPath}/Mesg/add.koala', data).done(function(result){
          	        	if(result.success ){
@@ -329,7 +330,9 @@ function initFun(){
 	 				    { name: 'mesgType', value: dialog.find("#mesgTypeID").val()},
 	 	     			{ name: 'packetId', value: dialog.find("#packetIdID").val()},
 	 	     			{ name: 'version', value: dialog.find("#versionID").val()},
- 	 					{ name: 'remark', value: dialog.find("#remarkID").val()}
+ 	 					{ name: 'remark', value: dialog.find("#remarkID").val()},
+ 	 					{ name: 'createBy', value: dialog.find("#createByID").val()},
+ 	 					{ name: 'mesgFrom', value: dialog.find("#mesgFromID").val()}
 	 				];
 	    	        $.post('${pageContext.request.contextPath}/Mesg/update.koala?id='+id, data).done(function(result){
 	     	        	if(result.success ){

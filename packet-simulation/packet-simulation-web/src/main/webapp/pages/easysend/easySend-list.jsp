@@ -233,7 +233,7 @@ legend {
 			initTaskPacketGridPanel : function() {
 				var self = this;
 				var columns = [
-				            { title: '报文名称', name: 'task', width: 150,
+				            { title: '任务名称', name: 'task', width: 150,
 				            	render:function(item, name, index){
 				            		return item[name].taskName
 				            	}	
@@ -257,7 +257,6 @@ legend {
 		            		},
                          	{ title: '发送时间', name: 'selectedOrigSendDate', width: 100,
 	                        	render: function(item, name, index){
-					                //alert(item[name].getMonth());
 					                if(item[name]){
 					                var d = new Date(item[name]);    //根据时间戳生成的时间对象
 								var date = (d.getFullYear()) + "-" + 
@@ -444,7 +443,8 @@ legend {
  				if(!Validator.Validate(dialog.find('form')[0],3))return;
  				var data = [{ name: 'content', value: xml },
  				            { name: 'mesgType', value: dialog.find("#mesgType").val()},
- 				            { name: 'remark', value: dialog.find("#remarkID").val()}
+ 				            { name: 'remark', value: dialog.find("#remarkID").val()},
+ 				            { name: 'mesgFrom', value: 1}
  				           ];
     	        $.post('${pageContext.request.contextPath}/Mesg/add.koala', data).done(function(result){
      	        	if(result.success ){
@@ -458,7 +458,7 @@ legend {
    	                    dialog.find('.modal-dialog').append('<div class="errMsg" style="float:left;position:absolute;max-width:500px;min-height:200px;bottom:20px;left:20px;background-color:#4cae4c;color:white;">'+result.errorMessage+ '</div>');
   				    }
       	        });    	        
-    	        });
+    	    });
    	    },
     	    modify: function(id, grid){
 	        var self = this;
@@ -525,7 +525,8 @@ legend {
 	 				            { name: 'mesgType', value: dialog.find("#mesgTypeID").val()},
 	 				            { name: 'remark', value: dialog.find("#remarkID").val()},
 	 				            { name: 'version', value: dialog.find("#versionID").val()},
-	 				            { name: 'createBy', value: dialog.find("#createByID").val()}
+	 				            { name: 'createBy', value: dialog.find("#createByID").val()},
+	 				            { name: 'mesgFrom', value: dialog.find("#mesgFromID").val()}
 	 				           ];
 	 			
 	    	        $.post('${pageContext.request.contextPath}/Mesg/update.koala?id='+id, data).done(function(result){
@@ -629,6 +630,32 @@ legend {
     	    	});
     	    }
 		}
+	 var openDetailsPageOfMesg = function(id){
+        var dialog = $('<div class="modal fade"><div class="modal-dialog" style="width:900px;"><div class="modal-content"><div class="modal-header"><button type="button" class="close" data-dismiss="modal" aria-hidden="true">&times;</button><h4 class="modal-title">查看</h4></div><div class="modal-body"><p>One fine body&hellip;</p></div><div class="modal-footer"><button type="button" class="btn btn-info" data-dismiss="modal">返回</button></div></div></div></div>');
+        $.get('<%=path%>/easyMesg-view.jsp').done(function(html){
+               dialog.find('.modal-body').html(html);
+               $.get( '${pageContext.request.contextPath}/Mesg/get/' + id + '.koala').done(function(json){
+                       json = json.data;
+                        var elm;
+                        for(var index in json){
+                        if(json[index]+"" == "false"){
+                        		dialog.find('#'+ index + 'ID').html("<span style='color:#d2322d' class='glyphicon glyphicon-remove'></span>");
+                        	}else if(json[index]+"" == "true"){
+                        		dialog.find('#'+ index + 'ID').html("<span style='color:#47a447' class='glyphicon glyphicon-ok'></span>");
+                        	}else{
+                          		 dialog.find('#'+ index + 'ID').html(json[index]+"");
+                        	}
+                        }
+               });
+                dialog.modal({
+                    keyboard:false
+                }).on({
+                    'hidden.bs.modal': function(){
+                        $(this).remove();
+                    }
+                });
+        });
+}
 		PageLoader.initGridPanel();
 		PageLoader.initTaskPacketGridPanel();
 		$(".easySendPannel .u-tree").css("height",$("#mesgGrid").height());

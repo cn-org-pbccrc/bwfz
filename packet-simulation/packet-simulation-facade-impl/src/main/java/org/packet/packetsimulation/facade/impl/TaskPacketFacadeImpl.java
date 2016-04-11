@@ -38,6 +38,9 @@ public class TaskPacketFacadeImpl implements TaskPacketFacade {
 	
 	@Inject
 	private TaskApplication  taskApplication;
+	
+	@Inject
+	private PacketApplication  packetApplication;
 
 	private QueryChannelService queryChannel;
 
@@ -57,6 +60,63 @@ public class TaskPacketFacadeImpl implements TaskPacketFacade {
 		Task task = taskApplication.getTask(taskPacketDTO.getTaskId());
 		taskPacket.setTask(task);
 		application.creatTaskPacket(taskPacket);
+		return InvokeResult.success();
+	}
+	
+	public InvokeResult creatTaskPackets(TaskPacketDTO taskPacketDTO, String ctxPath, String[] flags, String[] coms, String[] encs) throws ParseException {
+		Set<TaskPacket> taskPackets= new HashSet<TaskPacket>();
+		Integer maxSerialNumber = findMaxSerialNumber(taskPacketDTO.getTaskId());				
+		for (int i = 0; i < flags.length; i++) {
+			DateFormat dateFormat1 = new SimpleDateFormat("yyyyMMdd");			
+			TaskPacket taskPacket = TaskPacketAssembler.toEntity(taskPacketDTO);
+			Task task = taskApplication.getTask(taskPacketDTO.getTaskId());			
+			taskPacket.setTask(task);
+			Packet packet = packetApplication.getPacket(Long.parseLong(flags[i]));
+			String frontPosition = packet.getOrigSender() + dateFormat1.format(packet.getOrigSendDate()) + packet.getRecordType() + "0";
+			Integer maxPacketNumber = findMaxPacketNumberByFrontPositionAndCreatedBy(frontPosition, packet.getCreatedBy());
+			if(maxPacketNumber > 9998){
+				return InvokeResult.failure("流水号最大值为9999!");
+			}
+			String sn = String.format("%04d", maxPacketNumber + 1);
+			taskPacket.setSelectedPacketName(frontPosition+"0"+sn);
+			taskPacket.setSelectedFileVersion(packet.getFileVersion());
+			taskPacket.setSelectedOrigSender(packet.getOrigSender());
+			taskPacket.setSelectedOrigSendDate(packet.getOrigSendDate());
+			taskPacket.setSelectedDataType(packet.getDataType());
+			taskPacket.setSelectedRecordType(packet.getRecordType());
+			taskPacket.setCompression(coms[i]);
+			taskPacket.setEncryption(encs[i]);
+			taskPacket.setFrontPosition(frontPosition);
+			taskPacket.setPacketNumber(maxPacketNumber + 1);
+			taskPacket.setSerialNumber(maxSerialNumber + 1);
+			taskPacket.setCreatedBy(packet.getCreatedBy());
+			maxSerialNumber++;
+			taskPackets.add(taskPacket);			
+			DateFormat dateFormat2 = new SimpleDateFormat("yyyyMMddHHmmss");  
+	   		String counter;
+	   		String result;
+		   	List<Mesg> mesgList = findMesgsByPacketId(Long.parseLong(flags[i]));
+		   	if(null!=mesgList && mesgList.size()>0){
+		   		counter = fillStringToHead(10,""+mesgList.size(),"0");
+		   		result = "A" + packet.getFileVersion() + packet.getOrigSender() + dateFormat2.format(packet.getOrigSendDate()) + packet.getRecordType() + packet.getDataType() + counter + "                              " + "\r\n";
+		   		for(Mesg mesg : mesgList){  			
+					result = result + mesg.getContent() + "\r\n";
+		   		}
+		   	}else{
+		   		counter = fillStringToHead(10,"0","0");
+		   		result = "A" + packet.getFileVersion() + packet.getOrigSender() + dateFormat2.format(packet.getOrigSendDate()) + packet.getRecordType() + packet.getDataType() + counter + "                              " + "\r\n";
+		   	}
+		    File f = new File(ctxPath+packet.getPacketName()+".csv");//新建一个文件对象
+	        FileWriter fw;
+	        try {
+	        	fw=new FileWriter(f);//新建一个FileWriter	    
+	        	fw.write(result);//将字符串写入到指定的路径下的文件中
+	        	fw.close();
+	        } catch (IOException e) {
+	        	e.printStackTrace();
+	        }
+		}
+		application.creatTaskPackets(taskPackets);
 		return InvokeResult.success();
 	}
 	
@@ -91,9 +151,8 @@ public class TaskPacketFacadeImpl implements TaskPacketFacade {
 		   	conditionVals.add(fileName);
 		}
 		jpql.append(" and _taskPacket.packetFrom = ? ");
-		conditionVals.add("外部报文");
+		conditionVals.add(PACKETCONSTANT.TASKPACKET_PACKETFROM_OUTSIDE);
 		TaskPacket taskPacket = (TaskPacket) getQueryChannelService().createJpqlQuery(jpql.toString()).setParameters(conditionVals).singleResult();
-		//taskPacketDTO.setId(taskPacket.getId());
 		SimpleDateFormat sdf = new SimpleDateFormat("yyyy-MM-dd HH:mm:ss");
 		String dateString = sdf.format(new Date());
 		Date date=sdf.parse(dateString);
@@ -102,58 +161,7 @@ public class TaskPacketFacadeImpl implements TaskPacketFacade {
 		return InvokeResult.success();
 	}
 	
-	public InvokeResult creatTaskPackets(TaskPacketDTO taskPacketDTO, String ctxPath, String[] flags, String[] coms, String[] encs) throws ParseException {
-		Set<TaskPacket> taskPackets= new HashSet<TaskPacket>();
-		//SimpleDateFormat sdf = new SimpleDateFormat("yyyy-MM-dd HH:mm:ss");
-		Integer max = findMaxSerialNumber(taskPacketDTO.getTaskId());
-		Integer flag = max + 1;
-		for (int i =0; i < flags.length; i++) {
-			TaskPacket taskPacket = TaskPacketAssembler.toEntity(taskPacketDTO);
-			Task task = taskApplication.getTask(taskPacketDTO.getTaskId());			
-			taskPacket.setTask(task);
-			Packet packet = findPacketById(Long.parseLong(flags[i]));
-			taskPacket.setSelectedPacketName(packet.getPacketName());
-			taskPacket.setSelectedFileVersion(packet.getFileVersion());
-			taskPacket.setSelectedOrigSender(packet.getOrigSender());
-			//Date date=sdf.parse(dates[i]);
-			taskPacket.setSelectedOrigSendDate(packet.getOrigSendDate());
-			taskPacket.setSelectedDataType(packet.getDataType());
-			taskPacket.setSelectedRecordType(packet.getRecordType());
-			taskPacket.setCompression(coms[i]);
-			taskPacket.setEncryption(encs[i]);
-			taskPacket.setSerialNumber(flag);
-			flag++;
-			taskPackets.add(taskPacket);			
-			DateFormat dateFormat = new SimpleDateFormat("yyyyMMddHHmmss");  
-	   		String counter;
-	   		String result;
-		   	List<Mesg> mesgList = findMesgsByPacketId(Long.parseLong(flags[i]));
-		   	if(null!=mesgList && mesgList.size()>0){
-		   		counter = fillStringToHead(10,""+mesgList.size(),"0");
-		   		result = "A" + packet.getFileVersion() + packet.getOrigSender() + dateFormat.format(packet.getOrigSendDate()) + packet.getRecordType() + packet.getDataType() + counter + "                              " + "\r\n";
-		   		for(Mesg mesg : mesgList){  			
-					result = result + mesg.getContent() + "\r\n";
-		   		}
-		   	}else{
-		   		counter = fillStringToHead(10,"0","0");
-		   		result = "A" + packet.getFileVersion() + packet.getOrigSender() + dateFormat.format(packet.getOrigSendDate()) + packet.getRecordType() + packet.getDataType() + counter + "                              " + "\r\n";
-		   	}
-		    File f = new File(ctxPath+packet.getPacketName()+".csv");//新建一个文件对象
-	        FileWriter fw;
-	        try {
-	        	fw=new FileWriter(f);//新建一个FileWriter	    
-	        	fw.write(result);//将字符串写入到指定的路径下的文件中
-	        	fw.close();
-	        } catch (IOException e) {
-	        	e.printStackTrace();
-	        }
-		}
-		application.creatTaskPackets(taskPackets);
-		return InvokeResult.success();
-	}
-	
 	public String showPacketContent(Long id, String ctxPath){
-		//TaskPacket taskPacket = findTaskPacketById(id);
 		TaskPacket taskPacket = application.getTaskPacket(id);
 		String path;
 		String str = null;
@@ -203,58 +211,6 @@ public class TaskPacketFacadeImpl implements TaskPacketFacade {
 	   	return mesgList;
 	}
 	
-	@SuppressWarnings("unchecked")
-	private Packet findPacketById(Long id){
-		List<Object> conditionVals = new ArrayList<Object>();
-	   	StringBuilder jpql = new StringBuilder("select _packet from Packet _packet  where 1=1 ");
-	   	
-	   	if (id != null ) {
-	   		jpql.append(" and _packet.id = ? ");
-	   		conditionVals.add(id);
-	   	}
-	   	Packet packet = (Packet) getQueryChannelService().createJpqlQuery(jpql.toString()).setParameters(conditionVals).singleResult();
-	   	return packet;
-	}
-	
-//	@SuppressWarnings("unchecked")
-//	private TaskPacket findTaskPacketById(Long id){
-//		List<Object> conditionVals = new ArrayList<Object>();
-//	   	StringBuilder jpql = new StringBuilder("select _taskPacket from TaskPacket _taskPacket  where 1=1 ");
-//	   	
-//	   	if (id != null ) {
-//	   		jpql.append(" and _taskPacket.id = ? ");
-//	   		conditionVals.add(id);
-//	   	}
-//	   	TaskPacket taskPacket = (TaskPacket) getQueryChannelService().createJpqlQuery(jpql.toString()).setParameters(conditionVals).singleResult();
-//	   	return taskPacket;
-//	}
-	
-	public InvokeResult verifyTaskPacketName(String[] values, Long taskId){
-		for (int i =0; i < values.length; i++){
-			if(findTaskPacketByPacketName(values[i], taskId) != null){
-				return InvokeResult.failure("报文名称"+values[i]+"已存在");
-			}
-		}
-		return InvokeResult.success();
-	}
-	
-	private TaskPacket findTaskPacketByPacketName(String selectedPacketName, Long taskId){
-		List<Object> conditionVals = new ArrayList<Object>();
-	   	StringBuilder jpql = new StringBuilder("select _taskPacket from TaskPacket _taskPacket  where 1=1 ");
-	   	
-	   	if (selectedPacketName != null ) {
-	   		jpql.append(" and _taskPacket.selectedPacketName = ? ");
-	   		conditionVals.add(selectedPacketName);
-	   	}
-	   	if (taskId != null ) {
-	   		jpql.append(" and _taskPacket.task.id = ? ");
-	   		conditionVals.add(taskId);
-	   	}
-	   
-	   	TaskPacket taskPacket = (TaskPacket) getQueryChannelService().createJpqlQuery(jpql.toString()).setParameters(conditionVals).singleResult();
-	   	return taskPacket;
-	}
-	
 	private Integer findMaxSerialNumber(Long taskId){
 		List<Object> conditionVals = new ArrayList<Object>();
 	   	StringBuilder jpql = new StringBuilder("select max(_taskPacket.serialNumber) from TaskPacket _taskPacket  where 1=1 ");
@@ -284,11 +240,9 @@ public class TaskPacketFacadeImpl implements TaskPacketFacade {
 	}
 	
 	public InvokeResult removeTaskPackets(Long[] ids, String savePath) {
-		Set<TaskPacket> taskPackets= new HashSet<TaskPacket>();
-		Task task = application.getTaskPacket(ids[0]).getTask();
 		for (Long id : ids) {
 			TaskPacket taskPacket = application.getTaskPacket(id);
-			taskPackets.add(taskPacket);
+			application.removeTaskPacket(taskPacket);
 			int packetFrom = (int) taskPacket.getPacketFrom();
 			if(packetFrom==PACKETCONSTANT.TASKPACKET_PACKETFROM_INSIDE){
 				new File(savePath+application.getTaskPacket(id).getTask().getId()+File.separator+"insideFiles"+File.separator+taskPacket.getSelectedPacketName()+".csv").delete();
@@ -296,13 +250,9 @@ public class TaskPacketFacadeImpl implements TaskPacketFacade {
 				new File(savePath+application.getTaskPacket(id).getTask().getId()+File.separator+"outsideFiles"+File.separator+taskPacket.getSelectedPacketName()).delete();
 			}else{
 				new File(savePath+"easySendFiles"+File.separator+taskPacket.getSelectedPacketName()+".csv").delete();
+				taskApplication.removeTask(taskPacket.getTask());
 			}						
 		}
-		application.removeTaskPackets(taskPackets);
-		if(findTaskPacketsByTaskId(task.getId()).size() > 0){
-			return InvokeResult.success();
-		}
-		taskApplication.removeTask(task);
 		return InvokeResult.success();
 	}
 	
@@ -350,7 +300,6 @@ public class TaskPacketFacadeImpl implements TaskPacketFacade {
 	public Page<TaskPacketDTO> pageQueryTaskPacket(TaskPacketDTO queryVo, int currentPage, int pageSize, Long taskId) {
 		List<Object> conditionVals = new ArrayList<Object>();
 	   	StringBuilder jpql = new StringBuilder("select _taskPacket from TaskPacket _taskPacket   where 1=1");
-	   	//StringBuilder jpql = new StringBuilder("select _taskPacket from TaskPacket _taskPacket   where 1=1");
 	   	if (taskId != null ) {
 	   		jpql.append(" and _taskPacket.task.id = ? ");
 	   		conditionVals.add(taskId);
@@ -371,10 +320,6 @@ public class TaskPacketFacadeImpl implements TaskPacketFacade {
 	   		jpql.append(" and _taskPacket.selectedOrigSender like ?");
 	   		conditionVals.add(MessageFormat.format("%{0}%", queryVo.getSelectedOrigSender()));
 	   	}
-//	   	if (queryVo.getSelectedOrigSendDate() != null && !"".equals(queryVo.getSelectedOrigSendDate())) {
-//	   		jpql.append(" and _taskPacket.selectedOrigSendDate like ?");
-//	   		conditionVals.add(MessageFormat.format("%{0}%", queryVo.getSelectedOrigSendDate()));
-//	   	}
 	   	if (queryVo.getSelectedOrigSendDate() != null ) {
 	   		jpql.append(" and _taskPacket.selectedOrigSendDate between ? and ? ");
 	   		conditionVals.add(queryVo.getSelectedOrigSendDate());
@@ -402,19 +347,93 @@ public class TaskPacketFacadeImpl implements TaskPacketFacade {
 	   	}	
 		if(queryVo.getCreatedBy()!=null&&!"".equals(queryVo.getCreatedBy())){
 			jpql.append(" and _taskPacket.createdBy = ?");
-			conditionVals.add(queryVo.getCreatedBy());
-			
+			conditionVals.add(queryVo.getCreatedBy());			
 		}
-		jpql.append("order by  _taskPacket.serialNumber asc");
-		
+		jpql.append("order by  _taskPacket.serialNumber asc");		
         Page<TaskPacket> pages = getQueryChannelService()
 		   .createJpqlQuery(jpql.toString())
 		   .setParameters(conditionVals)
 		   .setPage(currentPage, pageSize)
-		   .pagedList();
-		   
+		   .pagedList();		   
         return new Page<TaskPacketDTO>(pages.getStart(), pages.getResultCount(),pageSize, TaskPacketAssembler.toDTOs(pages.getData()));
 	}
 	
+	@SuppressWarnings("unchecked")
+	public Page<TaskPacketDTO> pageQueryTaskPacket(TaskPacketDTO queryVo, int currentPage, int pageSize) {
+		List<Object> conditionVals = new ArrayList<Object>();
+		StringBuilder jpql = new StringBuilder("select _taskPacket from TaskPacket _taskPacket   where 1=1");
+		if (queryVo.getPacketFrom() != null && !"".equals(queryVo.getPacketFrom())) {
+			jpql.append(" and _taskPacket.packetFrom like ?");
+			conditionVals.add(MessageFormat.format("%{0}%", queryVo.getPacketFrom()));
+		}	
+		if (queryVo.getSelectedPacketName() != null && !"".equals(queryVo.getSelectedPacketName())) {
+			jpql.append(" and _taskPacket.selectedPacketName like ?");
+			conditionVals.add(MessageFormat.format("%{0}%", queryVo.getSelectedPacketName()));
+		}
+		if (queryVo.getSelectedFileVersion() != null && !"".equals(queryVo.getSelectedFileVersion())) {
+			jpql.append(" and _taskPacket.selectedFileVersion like ?");
+			conditionVals.add(MessageFormat.format("%{0}%", queryVo.getSelectedFileVersion()));
+		}
+		if (queryVo.getSelectedOrigSender() != null && !"".equals(queryVo.getSelectedOrigSender())) {
+			jpql.append(" and _taskPacket.selectedOrigSender like ?");
+			conditionVals.add(MessageFormat.format("%{0}%", queryVo.getSelectedOrigSender()));
+		}
+		if (queryVo.getSelectedOrigSendDate() != null ) {
+			jpql.append(" and _taskPacket.selectedOrigSendDate between ? and ? ");
+			conditionVals.add(queryVo.getSelectedOrigSendDate());
+			conditionVals.add(queryVo.getSelectedOrigSendDateEnd());
+		}
+		if (queryVo.getSelectedDataType() != null && !"".equals(queryVo.getSelectedDataType())) {
+			jpql.append(" and _taskPacket.selectedDataType like ?");
+			conditionVals.add(MessageFormat.format("%{0}%", queryVo.getSelectedDataType()));
+		}
+		if (queryVo.getSelectedRecordType() != null && !"".equals(queryVo.getSelectedRecordType())) {
+			jpql.append(" and _taskPacket.selectedRecordType like ?");
+			conditionVals.add(MessageFormat.format("%{0}%", queryVo.getSelectedRecordType()));
+		}	
+		if (queryVo.getCompression() != null && !"".equals(queryVo.getCompression())) {
+			jpql.append(" and _taskPacket.compression like ?");
+			conditionVals.add(MessageFormat.format("%{0}%", queryVo.getCompression()));
+		}		
+		if (queryVo.getEncryption() != null && !"".equals(queryVo.getEncryption())) {
+			jpql.append(" and _taskPacket.encryption like ?");
+			conditionVals.add(MessageFormat.format("%{0}%", queryVo.getEncryption()));
+		}
+		if (queryVo.getSerialNumber() != null && !"".equals(queryVo.getSerialNumber())) {
+			jpql.append(" and _taskPacket.serialNumber like ?");
+			conditionVals.add(queryVo.getSerialNumber());
+		}	
+		if(queryVo.getCreatedBy()!=null&&!"".equals(queryVo.getCreatedBy())){
+			jpql.append(" and _taskPacket.createdBy = ?");
+			conditionVals.add(queryVo.getCreatedBy());
+			
+		}
+		jpql.append("order by _taskPacket.selectedOrigSendDate desc");
+		Page<TaskPacket> pages = getQueryChannelService()
+				.createJpqlQuery(jpql.toString())
+				.setParameters(conditionVals)
+				.setPage(currentPage, pageSize)
+				.pagedList();
+		
+		return new Page<TaskPacketDTO>(pages.getStart(), pages.getResultCount(),pageSize, TaskPacketAssembler.toDTOs(pages.getData()));
+	}
 	
+	private Integer findMaxPacketNumberByFrontPositionAndCreatedBy(String frontPosition, String createdBy){
+		List<Object> conditionVals = new ArrayList<Object>();
+	   	StringBuilder jpql = new StringBuilder("select max(_taskPacket.packetNumber) from TaskPacket _taskPacket  where 1=1 ");
+	   	
+	   	if (frontPosition != null ) {
+	   		jpql.append(" and _taskPacket.frontPosition = ? ");
+	   		conditionVals.add(frontPosition);
+	   	}
+	   	if (createdBy != null ) {
+	   		jpql.append(" and _taskPacket.createdBy = ? ");
+	   		conditionVals.add(createdBy);
+	   	}
+	   	if((getQueryChannelService().createJpqlQuery(jpql.toString()).setParameters(conditionVals).singleResult()==null)){
+	   		return 0;
+	   	}
+	   	Integer max = (Integer) getQueryChannelService().createJpqlQuery(jpql.toString()).setParameters(conditionVals).singleResult();
+	   	return max;
+	}
 }

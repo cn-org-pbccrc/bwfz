@@ -45,7 +45,6 @@ public class PacketAssembler {
 			return null;
 		}
 	 	Packet result  = new Packet();
-	 	//Packet result = new Packet(packetDTO.getPacketName());
         result.setId (packetDTO.getId());
         result.setVersion (packetDTO.getVersion());
         result.setPacketName(packetDTO.getPacketName());

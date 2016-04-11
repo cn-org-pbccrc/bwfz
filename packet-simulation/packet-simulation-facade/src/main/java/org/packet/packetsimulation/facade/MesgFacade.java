@@ -31,7 +31,7 @@ public interface MesgFacade {
 	
 	public List<MesgDTO> findAllMesg();
 	
-	public Page<MesgDTO> pageQueryMesg(MesgDTO mesg, int currentPage, int pageSize,Long packetId);
+	public Page<MesgDTO> pageQueryMesg(MesgDTO mesg, int currentPage, int pageSize, Long packetId, Integer mesgFrom);
 	
 	public InvokeResult getMesgForUpdate(Long id);
 	

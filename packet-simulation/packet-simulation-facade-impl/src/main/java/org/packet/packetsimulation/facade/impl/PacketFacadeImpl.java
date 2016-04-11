@@ -94,9 +94,6 @@ public class PacketFacadeImpl implements PacketFacade {
 	
 	@Inject
 	private MesgApplication  mesgApplication;
-	
-	@Inject
-	private MesgTypeApplication  mesgTypeApplication;
 
 	private QueryChannelService queryChannel;
 
@@ -112,109 +109,18 @@ public class PacketFacadeImpl implements PacketFacade {
 	}
 	
 	public InvokeResult creatPacket(PacketDTO packetDTO) {
-		Packet packet = PacketAssembler.toEntity(packetDTO);
-		DateFormat dateFormat = new SimpleDateFormat("yyyyMMdd");
-		Integer serialNumber = 1;
-		String sn;
-		String frontPosition = packet.getOrigSender() + dateFormat.format(packet.getOrigSendDate()) + packet.getRecordType() + packet.getDataType();
-		packet.setFrontPosition(frontPosition);
-		if(findPacketsByFrontPositionAndCreatedBy(frontPosition,packetDTO.getCreatedBy())==null){			
-			packet.setSerialNumber(serialNumber);
-		}else{
-			Integer max = findMaxSerialNumberByFrontPosition(frontPosition, packetDTO.getCreatedBy());
-			serialNumber = max + 1;
-			packet.setSerialNumber(serialNumber);
-		}
-		sn = ""+serialNumber; 
-		if(sn.length()>4){
-			return InvokeResult.failure("流水号最大值为9999!");
-		}
-		int size = 4-sn.length(); 
-		for(int j=0; j<size; j++){ 
-			sn="0"+sn; 
-		}
-		packet.setPacketName(frontPosition+"0"+sn);
-		application.creatPacket(packet);
+		packetDTO.setDataType("0");
+		application.creatPacket(PacketAssembler.toEntity(packetDTO));
 		return InvokeResult.success();
 	}
 	
-	private Integer findMaxSerialNumberByFrontPosition(String frontPosition, String createdBy){
-		List<Object> conditionVals = new ArrayList<Object>();
-	   	StringBuilder jpql = new StringBuilder("select max(_packet.serialNumber) from Packet _packet  where 1=1 ");
-	   	
-	   	if (frontPosition != null ) {
-	   		jpql.append(" and _packet.frontPosition = ? ");
-	   		conditionVals.add(frontPosition);
-	   	}
-	 	if (createdBy != null ) {
-	   		jpql.append(" and _packet.createdBy = ? ");
-	   		conditionVals.add(createdBy);
-	   	}
-	   	if((getQueryChannelService().createJpqlQuery(jpql.toString()).setParameters(conditionVals).singleResult()==null)){
-	   		return 0;
-	   	}
-	   	Integer max = (Integer) getQueryChannelService().createJpqlQuery(jpql.toString()).setParameters(conditionVals).singleResult();
-	   	return max;
-	}
-	
-	public boolean verifyPacketName(String fileName){
-		Packet packet = new Packet();
-		if(packet.verify(fileName)){
-			return true;
-		}
-		return false;
-	}
-	
 	public InvokeResult updatePacket(PacketDTO packetDTO) {
-		Packet packet = PacketAssembler.toEntity(packetDTO);
-		DateFormat dateFormat = new SimpleDateFormat("yyyyMMdd");
-		Integer serialNumber = 1;
-		String sn;
-		String frontPosition = packet.getOrigSender() + dateFormat.format(packet.getOrigSendDate()) + packet.getRecordType() + packet.getDataType();
-		packet.setFrontPosition(frontPosition);
-		if(findPacketsByFrontPositionAndCreatedBy(frontPosition,packetDTO.getCreatedBy())==null){			
-			packet.setSerialNumber(serialNumber);
-		}else{
-			Integer max = findMaxSerialNumberByFrontPosition(frontPosition, packetDTO.getCreatedBy());
-			serialNumber = max + 1;
-			packet.setSerialNumber(serialNumber);
-		}
-		sn = ""+serialNumber; 
-		if(sn.length()>4){
-			return InvokeResult.failure("流水号最大值为9999!");
-		}
-		int size = 4-sn.length(); 
-		for(int j=0; j<size; j++){ 
-			sn="0"+sn; 
-		}
-		packet.setPacketName(frontPosition+"0"+sn);
-		application.updatePacket(packet);
+		application.updatePacket(PacketAssembler.toEntity(packetDTO));
 		return InvokeResult.success();
 	}
 	
 	public InvokeResult saveAsPacket(PacketDTO packetDTO, String idOfPacket){
 		Packet packet = PacketAssembler.toEntity(packetDTO);
-		DateFormat dateFormat = new SimpleDateFormat("yyyyMMdd");
-		Integer serialNumber = 1;
-		String sn;
-		String frontPosition = packet.getOrigSender() + dateFormat.format(packet.getOrigSendDate()) + packet.getRecordType() + packet.getDataType();
-		packet.setFrontPosition(frontPosition);
-		if(findPacketsByFrontPositionAndCreatedBy(frontPosition,packetDTO.getCreatedBy())==null){			
-			packet.setSerialNumber(serialNumber);
-		}else{
-			Integer max = findMaxSerialNumberByFrontPosition(frontPosition, packetDTO.getCreatedBy());
-			serialNumber = max + 1;
-			packet.setSerialNumber(serialNumber);
-		}
-		sn = ""+serialNumber; 
-		if(sn.length()>4){
-			return InvokeResult.failure("流水号最大值为9999!");
-		}
-		int size = 4-sn.length(); 
-		for(int j=0; j<size; j++){ 
-			sn="0"+sn; 
-		}
-		packet.setPacketName(frontPosition+"0"+sn);
 		application.updatePacket(packet);
 		List<Mesg> mesgsOfSourcePacket = findMesgsByIdOfPacket(Long.valueOf(idOfPacket));
 		List<Mesg> mesgs= new ArrayList<Mesg>();
@@ -246,13 +152,9 @@ public class PacketFacadeImpl implements PacketFacade {
 	}
 	
 	public InvokeResult removePackets(Long[] ids, String savePath) {
-		
 		Set<Packet> packets= new HashSet<Packet>();
 		for (Long id : ids) {
 			packets.add(application.getPacket(id));
-			//System.out.println("要删除的文件名称:"+savePath+application.getPacket(id).getCreatedBy()+File.separator+application.getPacket(id).getPacketName());
-			//new File(savePath+application.getPacket(id).getCreatedBy()+File.separator+application.getPacket(id).getPacketName()).delete();
-			//System.out.println("哈哈哈删除啦米米");
 			List<Mesg> mesgList = findMesgsByPacketId(id);
 			Set<Mesg> mesgs= new HashSet<Mesg>();
 			mesgs.addAll(mesgList);
@@ -305,11 +207,6 @@ public class PacketFacadeImpl implements PacketFacade {
 	   		jpql.append(" and _packet.reserve like ?");
 	   		conditionVals.add(MessageFormat.format("%{0}%", queryVo.getReserve()));	   			 
 	   	}
-//	   	if (queryVo.getCreatedAt() != null) {
-//	   		jpql.append(" and _packet.createdAt between ? and ? ");
-//	   		conditionVals.add(queryVo.getCreatedAt());
-//	   		conditionVals.add(queryVo.getCreatedAtEnd());
-//	   	}	
 	   	if (currentUserId != null) {
 	   		jpql.append(" and _packet.createdBy = ?");
 	   		conditionVals.add(currentUserId);
@@ -357,50 +254,6 @@ public class PacketFacadeImpl implements PacketFacade {
 	   	return mesgList;
 	}
 	
-	@SuppressWarnings("unchecked")
-	public List<Packet> findPacketsByFrontPositionAndCreatedBy(String frontPosition, String createdBy){
-		List<Object> conditionVals = new ArrayList<Object>();
-	   	StringBuilder jpql = new StringBuilder("select _packet from Packet _packet  where 1=1 ");
-	   	if (frontPosition != null ) {
-	   		jpql.append(" and _packet.frontPosition = ? ");
-	   		conditionVals.add(frontPosition);
-	   	}
-	   	if (createdBy != null ) {
-	   		jpql.append(" and _packet.createdBy = ? ");
-	   		conditionVals.add(createdBy);
-	   	}
-	   	List<Packet> packets = (List<Packet>) getQueryChannelService().createJpqlQuery(jpql.toString()).setParameters(conditionVals).list();
-	   	return packets;
-	}
-	
-	@SuppressWarnings("unchecked")
-	public Packet findPacketByPacketNameAndCreatedBy(String packetName, String createdBy){
-		List<Object> conditionVals = new ArrayList<Object>();
-	   	StringBuilder jpql = new StringBuilder("select _packet from Packet _packet  where 1=1 ");
-	   	if (packetName != null ) {
-	   		jpql.append(" and _packet.packetName = ? ");
-	   		conditionVals.add(packetName);
-	   	}
-	   	if (createdBy != null ) {
-	   		jpql.append(" and _packet.createdBy = ? ");
-	   		conditionVals.add(createdBy);
-	   	}
-	   	Packet packet = (Packet) getQueryChannelService().createJpqlQuery(jpql.toString()).setParameters(conditionVals).singleResult();
-	   	return packet;
-	}
-	
-//	public Packet findPacketByFrontPosition(String frontPosition){
-//		List<Object> conditionVals = new ArrayList<Object>();
-//	   	StringBuilder jpql = new StringBuilder("select _packet from Packet _packet  where 1=1 ");
-//	   	
-//	   	if (frontPosition != null ) {
-//	   		jpql.append(" and _packet.frontPosition = ? ");
-//	   		conditionVals.add(frontPosition);
-//	   	}
-//	   	Packet packet = (Packet)getQueryChannelService().createJpqlQuery(jpql.toString()).setParameters(conditionVals).singleResult();
-//	   	return packet;
-//	}
-	
 	private String fillStringToHead(int length,String target,String filler){
 		if(null!=target && target.length()<length && null!=filler && !"".equals(filler)){
 			String result = "";
@@ -413,18 +266,13 @@ public class PacketFacadeImpl implements PacketFacade {
 		return target;
 	}
 	
-	@SuppressWarnings("resource")
 	@Transactional
 	@Override
 	public InvokeResult uploadPacket(PacketDTO packetDTO, String path, String ctxPath) throws IOException, ParseException, ParserConfigurationException, SAXException {
 		BufferedReader br = new BufferedReader(new InputStreamReader(new FileInputStream(ctxPath+path)));  
-		String line = br.readLine();
-		//packetDTO.setPacketName(path);	
+		String line = br.readLine();	
 		Packet packet=PacketAssembler.toEntity(packetDTO);
-		//System.out.println("第一名:"+line.substring(0,1));
-		//System.out.println("第二名:"+line.substring(1,4));
 		packet.setFileVersion(line.substring(1,4));
-		//System.out.println("``````````````"+line.substring(1,4));
 		packet.setOrigSender(line.substring(4,18));
 		String date = line.substring(18,32);
 		String dateFormat = date.substring(0,4)+"-"+date.substring(4,6)+"-"+date.substring(6,8)+" "+date.substring(8,10)+":"+date.substring(10,12)+":"+date.substring(12,14);
@@ -435,40 +283,10 @@ public class PacketFacadeImpl implements PacketFacade {
 		packet.setRecordType(recordType);
 		packet.setDataType(line.substring(36,37));
 		packet.setMesgNum(String.valueOf(Integer.parseInt(line.substring(37,47))));
-		DateFormat df = new SimpleDateFormat("yyyyMMdd");
-		Integer serialNumber = 1;
-		String sn;
-		String frontPosition = packet.getOrigSender() + df.format(packet.getOrigSendDate()) + packet.getRecordType() + packet.getDataType();
-		packet.setFrontPosition(frontPosition);
-		if(findPacketsByFrontPositionAndCreatedBy(frontPosition,packetDTO.getCreatedBy())==null){			
-			packet.setSerialNumber(serialNumber);
-		}else{
-			Integer max = findMaxSerialNumberByFrontPosition(frontPosition, packetDTO.getCreatedBy());
-			serialNumber = max + 1;
-			packet.setSerialNumber(serialNumber);
-		}
-		sn = ""+serialNumber; 
-		if(sn.length()>4){
-			return InvokeResult.failure("流水号最大值为9999!");
-		}
-		int size = 4-sn.length(); 
-		for(int j=0; j<size; j++){ 
-			sn="0"+sn; 
-		}
-		packet.setPacketName(frontPosition+"0"+sn);
 		br.close();
 		int totalLines = ReadAppointedLine.getTotalLines(new File(ctxPath+path));
 		application.creatPacket(packet);
-		//System.out.println("最重要的来啦啊哈哈哈哈"+packet.getId());
 		List<Mesg> mesgs= new ArrayList<Mesg>();
-//		List<Object> conditionVals = new ArrayList<Object>();
-//		StringBuilder jpql = new StringBuilder("select _mesgType from MesgType _mesgType  where 1=1 ");
-//		if (recordType != null && !"".equals(recordType)) {
-//			jpql.append(" and _mesgType.code = ? ");
-//			conditionVals.add(recordType);
-//		}
-//		MesgType mesgType = (MesgType) getQueryChannelService().createJpqlQuery(jpql.toString()).setParameters(conditionVals).singleResult();
-//		System.out.println("次重要的来啦啊哈哈哈哈"+mesgType.getId());
 		for(int i = 1; i < totalLines; i++){
 			String appointedLine = ReadAppointedLine.readAppointedLineNumber(new File(ctxPath+path),i+1,totalLines);			
 			System.out.println("第"+(i+1)+"行:"+appointedLine);
@@ -549,15 +367,11 @@ public class PacketFacadeImpl implements PacketFacade {
 		   	conditionVals.add(fileName);
 		}
 		Packet packet = (Packet) getQueryChannelService().createJpqlQuery(jpql.toString()).setParameters(conditionVals).singleResult();
-		System.out.println("222啊哈哈哈哈"+packet.getId());
 		BufferedReader br = new BufferedReader(new InputStreamReader(new FileInputStream(ctxPath+fileName)));  
 		String line = br.readLine();
-		System.out.println("第一名:"+line.substring(0,1));
-		System.out.println("第二名:"+line.substring(1,4));
 		String recordType = null;
 		if(line.substring(0,1).equals("A")){
 			packet.setFileVersion(line.substring(1,4));
-			System.out.println("``````````````"+line.substring(1,4));
 			packet.setOrigSender(line.substring(4,18));
 			String date = line.substring(18,26);
 			String dateFormat = date.substring(0,4)+"-"+date.substring(4,6)+"-"+date.substring(6,8);
@@ -569,7 +383,6 @@ public class PacketFacadeImpl implements PacketFacade {
 			packet.setDataType(line.substring(36,37));
 		}
 		application.updatePacket(packet);
-		System.out.println("最重要的来啦啊哈哈哈哈"+packet.getId()+"嘻嘻:"+packet.getFileVersion());
 		br.close();
 		int totalLines = ReadAppointedLine.getTotalLines(new File(ctxPath+fileName));
 		Set<Mesg> mesgs= new HashSet<Mesg>();
@@ -580,7 +393,6 @@ public class PacketFacadeImpl implements PacketFacade {
 		   	conditionVals2.add(recordType);
 		}
 		MesgType mesgType = (MesgType) getQueryChannelService().createJpqlQuery(jpql2.toString()).setParameters(conditionVals2).singleResult();
-		System.out.println("次重要的来啦啊哈哈哈哈"+mesgType.getId());
 		List<Object> conditionVals3 = new ArrayList<Object>();
 	   	StringBuilder jpql3 = new StringBuilder("select _mesg from Mesg _mesg   where 1=1 ");
 	   	if (packet.getId() != null && !"".equals(packet.getId())) {
@@ -602,24 +414,6 @@ public class PacketFacadeImpl implements PacketFacade {
 		}
 		mesgApplication.updateMesgs(mesgs);
 		return InvokeResult.success();
-	}
-	
-	public InvokeResult creatFileName(String frontPosition, String serialNumber){
-		FileName fileName = new FileName(frontPosition, serialNumber);
-		application.creatFileName(fileName);
-		return InvokeResult.success();
-	}
-	
-	public InvokeResult updateFileName(Long id, String serialNumber){
-		FileName fileName = application.getFileName(id);
-		fileName.setSerialNumber(serialNumber);
-		application.updateFileName(fileName);
-		return InvokeResult.success();
-	}
-	
-	public Packet getPacketById(long id){
-		Packet packet = application.getPacket(id);
-		return packet;
 	}
 }
 

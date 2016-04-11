@@ -105,8 +105,8 @@ public class MesgFacadeImpl implements MesgFacade {
 		MesgType mesgType = mesgTypeApplication.getMesgType(mesgDTO.getMesgType());
 		mesg.setMesgType(mesgType);
 		if(mesgDTO.getPacketId()!=null){
-		Packet packet = packetApplication.getPacket(mesgDTO.getPacketId());
-		mesg.setPacket(packet);
+			Packet packet = packetApplication.getPacket(mesgDTO.getPacketId());
+			mesg.setPacket(packet);
 		}
 		application.creatMesg(mesg);
 		return InvokeResult.success();
@@ -594,8 +594,8 @@ public class MesgFacadeImpl implements MesgFacade {
 		MesgType mesgType = mesgTypeApplication.getMesgType(mesgDTO.getMesgType());
 		mesg.setMesgType(mesgType);
 		if(mesgDTO.getPacketId()!=null){
-		Packet packet = packetApplication.getPacket(mesgDTO.getPacketId());
-		mesg.setPacket(packet);
+			Packet packet = packetApplication.getPacket(mesgDTO.getPacketId());
+			mesg.setPacket(packet);
 		}
 		application.updateMesg(mesg);
 		return InvokeResult.success();
@@ -620,10 +620,13 @@ public class MesgFacadeImpl implements MesgFacade {
 	}
 	
 	@SuppressWarnings("unchecked")
-	public Page<MesgDTO> pageQueryMesg(MesgDTO queryVo, int currentPage, int pageSize,Long packetId) {
+	public Page<MesgDTO> pageQueryMesg(MesgDTO queryVo, int currentPage, int pageSize, Long packetId, Integer mesgFrom) {
 		List<Object> conditionVals = new ArrayList<Object>();
 	   	StringBuilder jpql = new StringBuilder("select _mesg from Mesg _mesg   where 1=1 ");
-	   	
+	   	if(!"".equals(queryVo.getMesgFrom())){
+	   		jpql.append(" and _mesg.mesgFrom = ? ");
+	   		conditionVals.add(mesgFrom);
+	   	}	   	
 	   	if (packetId != null ) {
 	   		jpql.append(" and _mesg.packet.id = ? ");
 	   		conditionVals.add(packetId);
@@ -652,26 +655,6 @@ public class MesgFacadeImpl implements MesgFacade {
 		   
         return new Page<MesgDTO>(pages.getStart(), pages.getResultCount(),pageSize, MesgAssembler.toDTOs(pages.getData()));
 	}
-
-//	@Override
-//	public InvokeResult getMesgForUpdate(Long id) {
-//		MesgDTO dto = MesgAssembler.toDTO(application.getMesg(id));
-//		MesgType mesgType = mesgTypeApplication.getMesgType(dto.getMesgType());
-//		try {
-//			XmlNode xmlNode = XmlUtil.getXmlNodeByXmlContent(dto.getContent(),mesgType.getCountTag());
-//			dto.setContent(xmlNode.toEditHtmlTabString(mesgType.getFilePath()));
-//		} catch (SAXException e) {
-//			// TODO Auto-generated catch block
-//			e.printStackTrace();
-//		} catch (IOException e) {
-//			// TODO Auto-generated catch block
-//			e.printStackTrace();
-//		} catch (ParserConfigurationException e) {
-//			// TODO Auto-generated catch block
-//			e.printStackTrace();
-//		}
-//		return InvokeResult.success(dto);
-//	}
 	
 	@Override
 	public InvokeResult getMesgForUpdate(Long id) {
@@ -695,22 +678,6 @@ public class MesgFacadeImpl implements MesgFacade {
 		MesgDTO dto = MesgAssembler.toDTO(mesg);
 		dto.setContent(content);
 		return InvokeResult.success(dto);
-//		MesgDTO dto = MesgAssembler.toDTO(application.getMesg(id));
-//		MesgType mesgType = mesgTypeApplication.getMesgType(dto.getMesgType());
-//		try {
-//			XmlNode xmlNode = XmlUtil.getXmlNodeByXmlContent(dto.getContent(),mesgType.getCountTag());
-//			dto.setContent(xmlNode.toEditHtmlTabString(mesgType.getFilePath()));
-//		} catch (SAXException e) {
-//			// TODO Auto-generated catch block
-//			e.printStackTrace();
-//		} catch (IOException e) {
-//			// TODO Auto-generated catch block
-//			e.printStackTrace();
-//		} catch (ParserConfigurationException e) {
-//			// TODO Auto-generated catch block
-//			e.printStackTrace();
-//		}
-//		return InvokeResult.success(dto);
 	}
 
 	@Override
@@ -775,6 +742,7 @@ public class MesgFacadeImpl implements MesgFacade {
 	@Override
 	public InvokeResult createTask(TaskDTO taskDTO, TaskPacketDTO taskPacketDTO, String mesgContent,String filePath) {
 		Task task=TaskAssembler.toEntity(taskDTO);
+		task.setTaskFrom(1);
 		taskApplication.creatTask(task);
 		taskPacketDTO.setTaskId(task.getId());
 		EmployeeUser employeeUser = findEmployeeUserByCreatedBy(taskDTO.getTaskCreator());
@@ -784,7 +752,7 @@ public class MesgFacadeImpl implements MesgFacade {
 				+ taskPacketDTO.getSelectedRecordType()
 				+ PACKETCONSTANT.TASKPACKET_DATATYPE_NORMAL
 				+ PACKETCONSTANT.TASKPACKET_TRANSPORTDIRECTION_REPORT;
-		Integer maxPacketNo=findMaxPacketNumberByFrontPosition(frontPosition);
+		Integer maxPacketNo=findMaxPacketNumberByFrontPositionAndCreatedBy(frontPosition, taskPacketDTO.getCreatedBy());
 		if(maxPacketNo>9998){
 			return InvokeResult.failure("流水号最大值为9999!");
 		}
@@ -820,7 +788,7 @@ public class MesgFacadeImpl implements MesgFacade {
         }
 	}
 	
-	private Integer findMaxPacketNumberByFrontPosition(String frontPosition){
+	private Integer findMaxPacketNumberByFrontPositionAndCreatedBy(String frontPosition, String createdBy){
 		List<Object> conditionVals = new ArrayList<Object>();
 	   	StringBuilder jpql = new StringBuilder("select max(_taskPacket.packetNumber) from TaskPacket _taskPacket  where 1=1 ");
 	   	
@@ -828,8 +796,12 @@ public class MesgFacadeImpl implements MesgFacade {
 	   		jpql.append(" and _taskPacket.frontPosition = ? ");
 	   		conditionVals.add(frontPosition);
 	   	}
+	   	if (createdBy != null ) {
+	   		jpql.append(" and _taskPacket.createdBy = ? ");
+	   		conditionVals.add(createdBy);
+	   	}
 	   	if((getQueryChannelService().createJpqlQuery(jpql.toString()).setParameters(conditionVals).singleResult()==null)){
-	   		return -1;
+	   		return 0;
 	   	}
 	   	Integer max = (Integer) getQueryChannelService().createJpqlQuery(jpql.toString()).setParameters(conditionVals).singleResult();
 	   	return max;

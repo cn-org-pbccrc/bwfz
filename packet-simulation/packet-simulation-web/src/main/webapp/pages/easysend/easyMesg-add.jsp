@@ -48,26 +48,30 @@ legend {
 			<div class="col-lg-9">
 				<input name="remark" style="display: inline; width: 40%;" class="form-control" type="text" id="remarkID" />
 				<input name="mesgType"  class="form-control" type="hidden" id="mesgType" />
-				<button type="button" class="btn btn-danger" id="delete" style="float:right;">删除字段</button>
+				&nbsp;&nbsp;&nbsp;&nbsp;<input type="checkbox"  name="my-checkbox"  data-on-text="恢复" data-off-text="编辑" data-size="normal">
 			</div>
 		</div>
 		<div class="form-group">
 			<div class="col-xs-10 g-mainc" style="width: 100%; margin: 0 auto;" id="content"></div>
 		</div>
 	</form>
-	<script type="text/javascript">
-		function addContent(id) {
-			$("#content").empty();
-			$.get(
-					'${pageContext.request.contextPath}/MesgType/getEditHtmlByMesgType/'
-							+ id + '.koala').done(function(data) {
-				//alert(data.data)
-				$("#content").append(data.data);
-			});
-		}
-		$("#delete").click(function(){
-			$("button[class='btn btn-failure']").toggle();
+<script type="text/javascript">
+	$(document).ready(function() {
+		$("[name='my-checkbox']").bootstrapSwitch({
+			onSwitchChange:function(event, state) {
+				$("button[class='btn btn-failure']").toggle();
+			}
 		});
-	</script>
+	});
+	function addContent(id) {
+		$("#content").empty();
+		$.get('${pageContext.request.contextPath}/MesgType/getEditHtmlByMesgType/'+ id + '.koala').done(function(data) {
+			$("#content").append(data.data);
+		});
+	}
+	$("#delete").click(function(){
+		$("button[class='btn btn-failure']").toggle();
+	});
+</script>
 </body>
 </html>

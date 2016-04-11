@@ -44,7 +44,9 @@ public class TaskFacadeImpl implements TaskFacade {
 	}
 	
 	public InvokeResult creatTask(TaskDTO taskDTO) {
-		application.creatTask(TaskAssembler.toEntity(taskDTO));
+		Task task = TaskAssembler.toEntity(taskDTO);
+		task.setTaskFrom(0);
+		application.creatTask(task);
 		return InvokeResult.success();
 	}
 	
@@ -65,7 +67,6 @@ public class TaskFacadeImpl implements TaskFacade {
 			List<TaskPacket> taskPacketList = findTaskPacketsByTaskId(id);
 			Set<TaskPacket> taskPackets= new HashSet<TaskPacket>();
 			taskPackets.addAll(taskPacketList);
-			//new File(savePath+id).delete();
 			deleteFile(new File(savePath+id));
 			taskPacketApplication.removeTaskPackets(taskPackets);
 		}
@@ -109,6 +110,8 @@ public class TaskFacadeImpl implements TaskFacade {
 	public Page<TaskDTO> pageQueryTask(TaskDTO queryVo, int currentPage, int pageSize, String currentUserId) {
 		List<Object> conditionVals = new ArrayList<Object>();
 	   	StringBuilder jpql = new StringBuilder("select _task from Task _task   where 1=1 ");
+	   	jpql.append(" and _task.taskFrom = ?");
+	   	conditionVals.add(0);
 	   	if (queryVo.getTaskName() != null && !"".equals(queryVo.getTaskName())) {
 	   		jpql.append(" and _task.taskName like ?");
 	   		conditionVals.add(MessageFormat.format("%{0}%", queryVo.getTaskName()));

@@ -102,6 +102,7 @@ public class ThreeStandardFacadeImpl implements ThreeStandardFacade {
 		}
 		int a = threeStandardNumber / 10000;
 		int b = threeStandardNumber % 10000;
+		int max = findMaxCustomerCode(createdBy);
 		Long start = System.currentTimeMillis();
 		if (a != 0){
 			for(int i = 0; i < a; i++){
@@ -109,6 +110,7 @@ public class ThreeStandardFacadeImpl implements ThreeStandardFacade {
 				myThread.setNumber(10000);
 				myThread.setCreatedBy(createdBy);
 				myThread.setOrganizationCode(organizationCode);
+				myThread.setMax(max + i * 10000);
 				Future<String> future = service.submit(myThread);
 	        	resultList.add(future);
 			}
@@ -117,6 +119,7 @@ public class ThreeStandardFacadeImpl implements ThreeStandardFacade {
 			myThread.setNumber(threeStandardNumber);
 			myThread.setCreatedBy(createdBy);
 			myThread.setOrganizationCode(organizationCode);
+			myThread.setMax(max);
 			Future<String> future = service.submit(myThread);
         	resultList.add(future);
 		}
@@ -125,6 +128,7 @@ public class ThreeStandardFacadeImpl implements ThreeStandardFacade {
 			myThread.setNumber(threeStandardNumber - a * 10000);
 			myThread.setCreatedBy(createdBy);
 			myThread.setOrganizationCode(organizationCode);
+			myThread.setMax(max + a * 10000);
 			Future<String> future = service.submit(myThread);
         	resultList.add(future);
 		}
@@ -155,6 +159,13 @@ public class ThreeStandardFacadeImpl implements ThreeStandardFacade {
 		private int number;
 		private String createdBy;
 		private String organizationCode;
+		private int max;
+		public int getMax() {
+			return max;
+		}
+		public void setMax(int max) {
+			this.max = max;
+		}
 		public int getNumber() {
 			return number;
 		}
@@ -177,8 +188,7 @@ public class ThreeStandardFacadeImpl implements ThreeStandardFacade {
 		public String call() throws Exception{
 			// TODO Auto-generated method stub		
     		SimpleDateFormat sdf=new SimpleDateFormat("yyyy-MM-dd");       		
-    		Integer max = findMaxCustomerCode(createdBy);
-    		Integer a = max + 1;
+    		int a = max + 1;
     		List<ThreeStandard> threeStandards = new ArrayList<ThreeStandard>();
     		for(int i = 0; i < number; i++){       			
     			ThreeStandard threeStandard = new ThreeStandard();
@@ -209,7 +219,7 @@ public class ThreeStandardFacadeImpl implements ThreeStandardFacade {
     				application.creatThreeStandards(threeStandards);
     				threeStandards.clear();
     				System.gc();
-    			}
+    			}       			
     		}
 	        return null;			
 		}	
@@ -440,6 +450,7 @@ public class ThreeStandardFacadeImpl implements ThreeStandardFacade {
 	   		jpql.append(" and _threeStandard.createdBy = ?");
 	   		conditionVals.add(currentUserId);
 	   	}
+	  	jpql.append("order by _threeStandard.customerCode asc");
         Page<ThreeStandard> pages = getQueryChannelService()
 		   .createJpqlQuery(jpql.toString())
 		   .setParameters(conditionVals)

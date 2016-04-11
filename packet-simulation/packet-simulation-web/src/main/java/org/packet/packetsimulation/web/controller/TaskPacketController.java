@@ -63,14 +63,6 @@ public class TaskPacketController {
 			file.mkdirs();    	
 		}	
 		return taskPacketFacade.creatTaskPackets(taskPacketDTO,ctxPath,flags,coms,encs);
-		//return taskPacketFacade.creatTaskPacket(taskPacketDTO);
-	}
-	
-	@ResponseBody
-	@RequestMapping("/verify")
-	public InvokeResult verify(@RequestParam String selectedPacketNames, @RequestParam Long taskId){
-		String[] values = selectedPacketNames.split(",");
-		return taskPacketFacade.verifyTaskPacketName(values,taskId);
 	}
 	
 	@ResponseBody
@@ -90,7 +82,7 @@ public class TaskPacketController {
 	@RequestMapping("/pageJson")
 	public Page pageJson(TaskPacketDTO taskPacketDTO, @RequestParam int page, @RequestParam int pagesize) {
 		taskPacketDTO.setCreatedBy(CurrentUser.getUserAccount());
-		Page<TaskPacketDTO> all = taskPacketFacade.pageQueryTaskPacket(taskPacketDTO, page, pagesize, null);
+		Page<TaskPacketDTO> all = taskPacketFacade.pageQueryTaskPacket(taskPacketDTO, page, pagesize);
 		return all;
 	}
 	
@@ -98,7 +90,6 @@ public class TaskPacketController {
 	@RequestMapping("/delete")
 	public InvokeResult remove(@RequestParam String ids, HttpServletRequest request) {
 		String savePath = request.getSession().getServletContext().getRealPath("/")+File.separator+"uploadFiles"+File.separator;
-		//System.out.println(savePath);
 		String[] value = ids.split(",");
         Long[] idArrs = new Long[value.length];
         for (int i = 0; i < value.length; i ++) {

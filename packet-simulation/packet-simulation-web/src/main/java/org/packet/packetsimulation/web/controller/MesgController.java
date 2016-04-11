@@ -97,7 +97,7 @@ public class MesgController {
 	@ResponseBody
 	@RequestMapping("/pageJson/{packetId}")
 	public Page pageJson(MesgDTO mesgDTO, @RequestParam int page, @RequestParam int pagesize,@PathVariable Long packetId) {
-		Page<MesgDTO> all = mesgFacade.pageQueryMesg(mesgDTO, page, pagesize,packetId);
+		Page<MesgDTO> all = mesgFacade.pageQueryMesg(mesgDTO, page, pagesize, packetId, 0);
 		return all;
 	}
 	
@@ -105,7 +105,7 @@ public class MesgController {
 	@ResponseBody
 	@RequestMapping("/pageJson")
 	public Page pageJson(MesgDTO mesgDTO, @RequestParam int page, @RequestParam int pagesize) {
-		Page<MesgDTO> all = mesgFacade.pageQueryMesg(mesgDTO, page, pagesize,null);
+		Page<MesgDTO> all = mesgFacade.pageQueryMesg(mesgDTO, page, pagesize,null, 1);
 		return all;
 	}
 	
@@ -165,7 +165,7 @@ public class MesgController {
 	 */
 	@ResponseBody
 	@RequestMapping("/send")
-	public InvokeResult send(TaskDTO taskDTO,TaskPacketDTO taskPacketDTO,String mesgContent,HttpServletRequest request) {
+	public InvokeResult send(TaskDTO taskDTO, TaskPacketDTO taskPacketDTO, @RequestParam String mesgContent, HttpServletRequest request) {
 		String ctxPath = request.getSession().getServletContext().getRealPath("/") + File.separator + "uploadFiles" + File.separator + "easySendFiles" + File.separator;
 		File file = new File(ctxPath);    	
 		if (!file.exists()) {    	

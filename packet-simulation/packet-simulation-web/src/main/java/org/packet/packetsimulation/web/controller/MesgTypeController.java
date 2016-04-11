@@ -105,6 +105,12 @@ public class MesgTypeController {
 	}
     
     @ResponseBody
+  	@RequestMapping("/getEditHtmlByCode")
+  	public InvokeResult getEditHtmlByCode(@RequestParam String code) {
+      	return mesgTypeFacade.getEditHtmlByCode(code);
+  	}
+    
+    @ResponseBody
  	@RequestMapping("/getEditHtmlOfChange")
  	public InvokeResult getEditHtmlOfChange(@RequestParam String code, @RequestParam String finanCode, @RequestParam String cstCode) {
      	return mesgTypeFacade.getEditHtmlOfChange(code, finanCode, cstCode);
