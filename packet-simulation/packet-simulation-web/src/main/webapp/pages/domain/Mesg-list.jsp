@@ -325,7 +325,7 @@ function initFun(){
 	    				});
 	    				xml += '</' + id + '>';
 	  				});
-					xml += '</'+info+'></Document>';           
+					xml += '</'+info+'></Document>';
 	 				var data = [{ name: 'content', value: xml },
 	 				    { name: 'mesgType', value: dialog.find("#mesgTypeID").val()},
 	 	     			{ name: 'packetId', value: dialog.find("#packetIdID").val()},
@@ -564,25 +564,25 @@ function removeHtml(obj,countTagId){
 //     nextElement.attr("class","tab-pane fade active in");
 // }
 function removeTab(obj,tabId){
-	if($(obj).children("span").attr("class")=="glyphicon glyphicon-remove"){
+	if($(obj).children("span").attr("class")=="glyphicon glyphicon-check"){
 		var len = $(obj).parent().attr("href").length;
 		var tab = $(obj).parent().attr("href").substring(1,len);
 		$("#"+tab).attr("class","tab-pane fade in active false");
-	    $(obj).children("span").attr("class","glyphicon glyphicon-ok");
+	    $(obj).children("span").attr("class","glyphicon glyphicon-unchecked");
 	}else{
 		var len = $(obj).parent().attr("href").length;
 		var tab = $(obj).parent().attr("href").substring(1,len);
 		$("#"+tab).attr("class","tab-pane fade in active true");
-	    $(obj).children("span").attr("class","glyphicon glyphicon-remove");
+	    $(obj).children("span").attr("class","glyphicon glyphicon-check");
 	}
 }
 function removeField(obj){
-	if($(obj).children("span").attr("class")=="glyphicon glyphicon-remove"){
+	if($(obj).children("span").attr("class")=="glyphicon glyphicon-check"){
 		$(obj).prev().children("input").attr("save","false");
-	    $(obj).children("span").attr("class","glyphicon glyphicon-ok");
+	    $(obj).children("span").attr("class","glyphicon glyphicon-unchecked");
 	}else{
 		$(obj).prev().children("input").attr("save","true");
-	    $(obj).children("span").attr("class","glyphicon glyphicon-remove");
+	    $(obj).children("span").attr("class","glyphicon glyphicon-check");
 	}
 }
 </script>

@@ -404,23 +404,21 @@ legend {
     				$.get(
     						'${pageContext.request.contextPath}/MesgType/getEditHtmlByMesgType/'
     								+ mesgType+ '.koala').done(function(data) {
-    					//alert(data.data)
     					dialog.find("#content").append(data.data);
     				});
     	            dialog.find("#mesgType").val(mesgType);
     	        });
     	        dialog.find('#save').on('click',{grid: grid}, function(e){
-					var info = dialog.find($(".tab-content")).attr('id');
+    	        	var info = dialog.find($(".tab-content")).attr('id');
 					var xml = '<?xml version="1.0" encoding="UTF-8"?><Document><'+info+'>';
-					dialog.find($(".tab-pane")).each(function(){   					
-    					var id = $(this).attr('id');
-    					xml += '<' + id + '>';
-    					var flag = '';
-    					$('#'+id).find($("[name]")).each(function(){
+					dialog.find($(".true")).each(function(){	    					
+	    				var id = $(this).attr('id');
+	    				xml += '<' + id + '>';
+	    				$('#'+id).find($("[name]")).each(function(){
 							if($(this).parent().parent()[0].tagName != 'FIELDSET'){
 								if($(this).attr('save')=='true'){
 									var name = ($(this).attr('name'));
-		    						var value = ($(this).val());
+			    					var value = ($(this).val());
 									xml += '<' + name + '>' + value + '</' + name + '>';
 								}								
 							}
@@ -436,10 +434,10 @@ legend {
 								});
 								xml += '</' + name + '>';
 							}
-    					});
-    					xml += '</' + id + '>';
-  					});
-					xml += '</'+info+'></Document>';
+	    				});
+	    				xml += '</' + id + '>';
+	  				});
+					xml += '</'+info+'></Document>';    
  				if(!Validator.Validate(dialog.find('form')[0],3))return;
  				var data = [{ name: 'content', value: xml },
  				            { name: 'mesgType', value: dialog.find("#mesgType").val()},
@@ -492,17 +490,16 @@ legend {
 	                dialog.find('#save').on('click',{grid: grid}, function(e){
 	                	var info = dialog.find($(".tab-content")).attr('id');
 						var xml = '<?xml version="1.0" encoding="UTF-8"?><Document><'+info+'>';
-						dialog.find($(".tab-pane")).each(function(){	    					
-	    					var id = $(this).attr('id');
-	    					xml += '<' + id + '>';
-	    					var flag = '';
-	    					$('#'+id).find($("[name]")).each(function(){
+						dialog.find($(".true")).each(function(){	    					
+		    				var id = $(this).attr('id');
+		    				xml += '<' + id + '>';
+		    				$('#'+id).find($("[name]")).each(function(){
 								if($(this).parent().parent()[0].tagName != 'FIELDSET'){
 									if($(this).attr('save')=='true'){
 										var name = ($(this).attr('name'));
-			    						var value = ($(this).val());
+				    					var value = ($(this).val());
 										xml += '<' + name + '>' + value + '</' + name + '>';
-									}									
+									}								
 								}
 								else{
 									var name = ($(this).attr('name')); 
@@ -512,14 +509,14 @@ legend {
 											var subName = ($(this).attr('subName'));
 											var value = ($(this).val());	
 											xml += '<' + subName + '>' + value + '</' + subName + '>';
-										}										
+										}									
 									});
 									xml += '</' + name + '>';
 								}
-	    					});
-	    					xml += '</' + id + '>';
-	  					});
-						xml += '</'+info+'></Document>';           
+		    				});
+		    				xml += '</' + id + '>';
+		  				});
+						xml += '</'+info+'></Document>';
 	                if(!Validator.Validate(dialog.find('form')[0],3))return;
 	 				var data = [{ name: 'content', value: xml },
 	 				            { name: 'mesgType', value: dialog.find("#mesgTypeID").val()},
@@ -831,26 +828,26 @@ legend {
 // 	    	$('#'+tabId).remove();
 // 	    	nextElement.attr("class","tab-pane fade active in");
 // 	    }
-		function removeTab(obj,tabId){
-			if($(obj).children("span").attr("class")=="glyphicon glyphicon-remove"){
-				var len = $(obj).parent().attr("href").length;
-				var tab = $(obj).parent().attr("href").substring(1,len);
-				$("#"+tab).attr("class","tab-pane fade in active false");
-	    		$(obj).children("span").attr("class","glyphicon glyphicon-ok");
-			}else{
-				var len = $(obj).parent().attr("href").length;
-				var tab = $(obj).parent().attr("href").substring(1,len);
-				$("#"+tab).attr("class","tab-pane fade in active true");
-	    		$(obj).children("span").attr("class","glyphicon glyphicon-remove");
-			}
-		}
-		function removeField(obj){
-			if($(obj).children("span").attr("class")=="glyphicon glyphicon-remove"){
-				$(obj).prev().children("input").attr("save","false");
-	    		$(obj).children("span").attr("class","glyphicon glyphicon-ok");
-			}else{
-				$(obj).prev().children("input").attr("save","true");
-	    		$(obj).children("span").attr("class","glyphicon glyphicon-remove");
-			}
-		}
+function removeTab(obj,tabId){
+	if($(obj).children("span").attr("class")=="glyphicon glyphicon-check"){
+		var len = $(obj).parent().attr("href").length;
+		var tab = $(obj).parent().attr("href").substring(1,len);
+		$("#"+tab).attr("class","tab-pane fade in active false");
+	    $(obj).children("span").attr("class","glyphicon glyphicon-unchecked");
+	}else{
+		var len = $(obj).parent().attr("href").length;
+		var tab = $(obj).parent().attr("href").substring(1,len);
+		$("#"+tab).attr("class","tab-pane fade in active true");
+	    $(obj).children("span").attr("class","glyphicon glyphicon-check");
+	}
+}
+function removeField(obj){
+	if($(obj).children("span").attr("class")=="glyphicon glyphicon-check"){
+		$(obj).prev().children("input").attr("save","false");
+	    $(obj).children("span").attr("class","glyphicon glyphicon-unchecked");
+	}else{
+		$(obj).prev().children("input").attr("save","true");
+	    $(obj).children("span").attr("class","glyphicon glyphicon-check");
+	}
+}
 </script>

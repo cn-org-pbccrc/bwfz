@@ -52,12 +52,24 @@
 	$(document).ready(function() {
 		$("[name='my-checkbox']").bootstrapSwitch({
 			onSwitchChange:function(event, state) {
-				$("button[class='btn btn-failure']").toggle();
+				$("button[class='btn btn-link']").toggle();
+				$("li:has(span[class='glyphicon glyphicon-unchecked'])").toggle();
+				$("p:has(span[class='glyphicon glyphicon-unchecked'])").toggle();
+				if(state==false){
+					var activeHref = $("#contentID").find($("li[class='active']")).children().attr('href')
+					var activeClass = $("#contentID").find($("li[class='active']")).children().children().children().attr('class')
+					if(activeClass=='glyphicon glyphicon-unchecked'){
+						var firstCheckedHref = $("li:has(span[class='glyphicon glyphicon-check']):first").children().attr('href');
+						var firstCheckedId = firstCheckedHref.substring(1,firstCheckedHref.length);
+						var activeId = activeHref.substring(1,activeHref.length);
+						$("#contentID").find($("li[class='active']")).removeClass('active');
+						$('#' + activeId).removeClass('active in');
+						$("li:has(span[class='glyphicon glyphicon-check']):first").addClass('active');
+						$('#' + firstCheckedId).addClass('active in');
+					}
+				}		
 			}
 		});
-	});
-	$("#delete").click(function(){
-		$("button[class='btn btn-failure']").toggle();
 	});
 </script>
 </body>

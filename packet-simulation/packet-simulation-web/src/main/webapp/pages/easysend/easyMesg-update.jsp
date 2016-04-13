@@ -25,12 +25,9 @@
 	$(document).ready(function() {
 		$("[name='my-checkbox']").bootstrapSwitch({
 			onSwitchChange:function(event, state) {
-				$("button[class='btn btn-failure']").toggle();
+				$("button[class='btn btn-link']").toggle();
 			}
 		});
-	});
-	$("#delete").click(function(){
-		$("button[class='btn btn-failure']").toggle();
 	});
 </script>
 </body>

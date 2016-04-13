@@ -665,6 +665,7 @@ public class MesgFacadeImpl implements MesgFacade {
 			XmlNode xmlNode = XmlUtil.getXmlNodeByXmlContent(mesgType.getXml(),mesgType.getCountTag());
 			XmlNode xmlNodeForUpdate = XmlUtil.getXmlNodeByXmlContent(mesg.getContent(),mesgType.getCountTag());
 			content = xmlNode.toEditHtmlTabStringForUpdate(mesgType.getMesgType(), xmlNodeForUpdate);
+			System.out.println("1111111111111:"+content);
 		} catch (SAXException e) {
 			// TODO Auto-generated catch block
 			e.printStackTrace();
