@@ -739,6 +739,19 @@ public class MesgFacadeImpl implements MesgFacade {
 		return mesgBuffer.toString();
 	}
 	
+	@Override
+	public String getFileHeaderForSend(String mesgType, String userAccount) {
+		EmployeeUser employeeUser = findEmployeeUserByCreatedBy(userAccount);
+		StringBuffer mesgBuffer = new StringBuffer("");
+		String currentOrgNO = employeeUser.getDepartment().getSn();
+		SimpleDateFormat dateFormat = new SimpleDateFormat("yyyyMMddhhmmss");
+		String currentDate = dateFormat.format(new Date());
+		Integer dateType = PACKETCONSTANT.TASKPACKET_DATATYPE_NORMAL;
+		String counter = String.format("%010d", 1);
+		mesgBuffer.append("A").append(PACKETCONSTANT.TASKPACKET_FILEVERSION).append(currentOrgNO).append(currentDate).append(mesgType).append(dateType).append(counter).append("\r\n");
+		return mesgBuffer.toString();
+	}
+	
 	@Transactional
 	@Override
 	public InvokeResult createTask(TaskDTO taskDTO, TaskPacketDTO taskPacketDTO, String mesgContent,String filePath) {
@@ -748,7 +761,8 @@ public class MesgFacadeImpl implements MesgFacade {
 		taskPacketDTO.setTaskId(task.getId());
 		EmployeeUser employeeUser = findEmployeeUserByCreatedBy(taskDTO.getTaskCreator());
 		SimpleDateFormat dateFormat=new SimpleDateFormat("yyyyMMdd");
-		String frontPosition = employeeUser.getDepartment().getSn()
+		String orgCode= employeeUser.getDepartment()!=null?employeeUser.getDepartment().getSn():employeeUser.getCompany().getSn();
+		String frontPosition =orgCode
 				+ dateFormat.format(new Date())
 				+ taskPacketDTO.getSelectedRecordType()
 				+ PACKETCONSTANT.TASKPACKET_DATATYPE_NORMAL

@@ -156,6 +156,24 @@ public class MesgController {
 	}
 	
 	/**
+	 * 初始化发送配置界面
+	 * @param ids 记录id
+	 * @param mesgType 记录类型id
+	 * @return
+	 */
+	@SuppressWarnings({ "unchecked", "rawtypes" })
+	@ResponseBody
+	@RequestMapping("/initUpdateSend")
+	public InvokeResult initUpdateSend(@RequestParam Long mesgType) {
+		Map map=new HashMap();
+		MesgTypeDTO mesgTypeCode=(MesgTypeDTO) mesgTypeFacade.getMesgType(mesgType).getData();
+		String fileHeader=mesgFacade.getFileHeaderForSend(mesgTypeCode.getCode(),CurrentUser.getUserAccount());
+		map.put("fileHeader", fileHeader);
+		map.put("mesgType", mesgTypeCode.getCode());
+		return InvokeResult.success(map);
+	}
+	
+	/**
 	 * 快速发送
 	 * @param taskDTO
 	 * @param taskPacketDTO
