@@ -40,7 +40,7 @@
 						$("li:has(span[class='glyphicon glyphicon-check']):first").addClass('active');
 						$('#' + firstCheckedId).addClass('active in');
 					}
-				}		
+				}
 			}
 		});
 	});

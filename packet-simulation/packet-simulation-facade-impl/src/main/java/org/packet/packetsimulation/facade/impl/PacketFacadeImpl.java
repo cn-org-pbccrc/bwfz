@@ -109,7 +109,7 @@ public class PacketFacadeImpl implements PacketFacade {
 	}
 	
 	public InvokeResult creatPacket(PacketDTO packetDTO) {
-		packetDTO.setDataType("0");
+		packetDTO.setDataType(0);
 		application.creatPacket(PacketAssembler.toEntity(packetDTO));
 		return InvokeResult.success();
 	}
@@ -281,7 +281,7 @@ public class PacketFacadeImpl implements PacketFacade {
 		packet.setOrigSendDate(origSendDate);
 		String recordType = line.substring(32,36);
 		packet.setRecordType(recordType);
-		packet.setDataType(line.substring(36,37));
+		packet.setDataType(Integer.valueOf(line.substring(36,37)));
 		packet.setMesgNum(String.valueOf(Integer.parseInt(line.substring(37,47))));
 		br.close();
 		int totalLines = ReadAppointedLine.getTotalLines(new File(ctxPath+path));
@@ -380,7 +380,7 @@ public class PacketFacadeImpl implements PacketFacade {
 			packet.setOrigSendDate(origSendDate);
 			recordType = line.substring(32,36);
 			packet.setRecordType(recordType);
-			packet.setDataType(line.substring(36,37));
+			packet.setDataType(Integer.valueOf(line.substring(36,37)));
 		}
 		application.updatePacket(packet);
 		br.close();

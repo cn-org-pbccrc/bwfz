@@ -96,7 +96,7 @@ $(function (){
 	                         	                         	                     { title: '操作', width: 120, render: function (rowdata, name, index)
 	                                 {
 	                                     var param = '"' + rowdata.id + '"';
-	                                     var h = "<a href='javascript:openDetailsPage(" + param + ")'>查看解析数据</a> &nbsp&nbsp  <a href='javascript:openXml(" + param + ")'>查看源数据</a>";
+	                                     var h = "<a href='javascript:openDetailsPage(" + param + ")'><span class='glyphicon glyphicon glyphicon-transfer'></span>&nbsp记录转换</a> &nbsp&nbsp  <a href='javascript:openXml(" + param + ")'><span class='glyphicon glyphicon glyphicon-eye-open'></span>&nbsp查看源数据</a>";
 	                                     return h;
 	                                 }
 	                             }
@@ -517,7 +517,7 @@ function getPath(obj){
     grid.getGrid().search(params);
 }
 var openDetailsPage = function(id){
-	var dialog = $('<div class="modal fade"><div class="modal-dialog" style="width:900px;"><div class="modal-content"><div class="modal-header"><button type="button" class="close" data-dismiss="modal" aria-hidden="true">&times;</button><h4 class="modal-title">查看解析数据</h4></div><div class="modal-body"><p>One fine body&hellip;</p></div></div></div></div>');
+	var dialog = $('<div class="modal fade"><div class="modal-dialog" style="width:900px;"><div class="modal-content"><div class="modal-header"><button type="button" class="close" data-dismiss="modal" aria-hidden="true">&times;</button><h4 class="modal-title">记录类型转换</h4></div><div class="modal-body"><p>One fine body&hellip;</p></div></div></div></div>');
 	$.get('<%=path%>/FeedBack-view.jsp?id='+id).done(function(html){
 	    dialog.find('.modal-body').html(html);		
         $.get( '${pageContext.request.contextPath}/FeedBack/get/' + id + '.koala?taskPacketId='+taskPacketId).done(function(json){

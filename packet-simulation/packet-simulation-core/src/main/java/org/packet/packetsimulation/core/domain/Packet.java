@@ -56,7 +56,7 @@ public class Packet extends KoalaAbstractEntity{
 	private String createdBy;
 	
 	@Column(name = "DATATYPE")
-	private String dataType;
+	private Integer dataType;
 
 	@Column(name = "RECORDTYPE")
 	private String recordType;
@@ -124,11 +124,11 @@ public class Packet extends KoalaAbstractEntity{
 		this.fileVersion = fileVersion;
 	}
 
-	public String getDataType() {
+	public Integer getDataType() {
 		return dataType;
 	}
 
-	public void setDataType(String dataType) {
+	public void setDataType(Integer dataType) {
 		this.dataType = dataType;
 	}
 

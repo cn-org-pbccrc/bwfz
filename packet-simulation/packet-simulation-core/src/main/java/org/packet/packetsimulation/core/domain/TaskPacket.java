@@ -76,7 +76,7 @@ public class TaskPacket extends KoalaAbstractEntity{
 	 * 数据类型
 	 */
 	@Column(name = "SELECTED_DATATYPE")
-	private String selectedDataType;
+	private Integer selectedDataType;
 
 	/**
 	 * 记录类型
@@ -88,13 +88,13 @@ public class TaskPacket extends KoalaAbstractEntity{
 	 * 加压
 	 */
 	@Column(name = "COMPRESSION")
-	private String compression;
+	private Integer compression;
 	
 	/**
 	 * 加密
 	 */
 	@Column(name = "ENCRYPTION")
-	private String encryption;
+	private Integer encryption;
 	
 	/**
 	 * 排序字段
@@ -119,12 +119,6 @@ public class TaskPacket extends KoalaAbstractEntity{
 	@DateTimeFormat(pattern="yyyy-MM-dd HH:mm:ss")
 	@Column(name = "RECEIVE_DATE")
 	private Date receiveDate;
-	
-	/**
-	 * 文件类型 0-正常文件 1-快速发送文件
-	 */
-	@Column(name = "TASKPACKET_TYPE")
-	private Integer taskPacketType;
 	
 	/**
      * 创建时间
@@ -199,11 +193,11 @@ public class TaskPacket extends KoalaAbstractEntity{
 		this.selectedOrigSendDate = selectedOrigSendDate;
 	}
 
-	public String getSelectedDataType() {
+	public Integer getSelectedDataType() {
 		return selectedDataType;
 	}
 
-	public void setSelectedDataType(String selectedDataType) {
+	public void setSelectedDataType(Integer selectedDataType) {
 		this.selectedDataType = selectedDataType;
 	}
 
@@ -231,19 +225,19 @@ public class TaskPacket extends KoalaAbstractEntity{
 		this.selectedPacketName = selectedPacketName;
 	}
 
-	public String getCompression() {
+	public Integer getCompression() {
 		return compression;
 	}
 
-	public void setCompression(String compression) {
+	public void setCompression(Integer compression) {
 		this.compression = compression;
 	}
 
-	public String getEncryption() {
+	public Integer getEncryption() {
 		return encryption;
 	}
 
-	public void setEncryption(String encryption) {
+	public void setEncryption(Integer encryption) {
 		this.encryption = encryption;
 	}
 
@@ -269,14 +263,6 @@ public class TaskPacket extends KoalaAbstractEntity{
 
 	public void setCreatedBy(String createdBy) {
 		this.createdBy = createdBy;
-	}
-
-	public Integer getTaskPacketType() {
-		return taskPacketType;
-	}
-
-	public void setTaskPacketType(Integer taskPacketType) {
-		this.taskPacketType = taskPacketType;
 	}
 
 	@Override

@@ -84,8 +84,8 @@ public class TaskPacketFacadeImpl implements TaskPacketFacade {
 			taskPacket.setSelectedOrigSendDate(packet.getOrigSendDate());
 			taskPacket.setSelectedDataType(packet.getDataType());
 			taskPacket.setSelectedRecordType(packet.getRecordType());
-			taskPacket.setCompression(coms[i]);
-			taskPacket.setEncryption(encs[i]);
+			taskPacket.setCompression(Integer.valueOf(coms[i]));
+			taskPacket.setEncryption(Integer.valueOf(encs[i]));
 			taskPacket.setFrontPosition(frontPosition);
 			taskPacket.setPacketNumber(maxPacketNumber + 1);
 			taskPacket.setSerialNumber(maxSerialNumber + 1);
@@ -106,7 +106,7 @@ public class TaskPacketFacadeImpl implements TaskPacketFacade {
 		   		counter = fillStringToHead(10,"0","0");
 		   		result = "A" + packet.getFileVersion() + packet.getOrigSender() + dateFormat2.format(packet.getOrigSendDate()) + packet.getRecordType() + packet.getDataType() + counter + "                              " + "\r\n";
 		   	}
-		    File f = new File(ctxPath+packet.getPacketName()+".csv");//新建一个文件对象
+		    File f = new File(ctxPath+frontPosition+"0"+sn+".csv");//新建一个文件对象
 	        FileWriter fw;
 	        try {
 	        	fw=new FileWriter(f);//新建一个FileWriter	    
@@ -134,10 +134,10 @@ public class TaskPacketFacadeImpl implements TaskPacketFacade {
 		String dateString = sdf.format(new Date());
 		Date date=sdf.parse(dateString);
 		taskPacket.setSelectedOrigSendDate(date);
-		taskPacket.setSelectedDataType("-");
+		taskPacket.setSelectedDataType(0);
 		taskPacket.setSelectedRecordType("-");
-		taskPacket.setCompression("-");
-		taskPacket.setEncryption("-");
+		taskPacket.setCompression(1);
+		taskPacket.setEncryption(1);
 		taskPacket.setSerialNumber(flag);
 		application.creatTaskPacket(taskPacket);
 		return InvokeResult.success();
@@ -155,7 +155,7 @@ public class TaskPacketFacadeImpl implements TaskPacketFacade {
 		TaskPacket taskPacket = (TaskPacket) getQueryChannelService().createJpqlQuery(jpql.toString()).setParameters(conditionVals).singleResult();
 		SimpleDateFormat sdf = new SimpleDateFormat("yyyy-MM-dd HH:mm:ss");
 		String dateString = sdf.format(new Date());
-		Date date=sdf.parse(dateString);
+		Date date = sdf.parse(dateString);
 		taskPacket.setSelectedOrigSendDate(date);
 		application.updateTaskPacket(taskPacket);
 		return InvokeResult.success();
@@ -165,21 +165,21 @@ public class TaskPacketFacadeImpl implements TaskPacketFacade {
 		TaskPacket taskPacket = application.getTaskPacket(id);
 		String path;
 		String str = null;
-		if(taskPacket.getPacketFrom().equals("0")){
+		if(taskPacket.getPacketFrom()==0){
 			path = ctxPath + taskPacket.getTask().getId() + File.separator + "insideFiles" + File.separator + taskPacket.getSelectedPacketName() + ".csv";
-		}else if(taskPacket.getPacketFrom().equals("1")){
+		}else if(taskPacket.getPacketFrom()==1){
 			path = ctxPath + taskPacket.getTask().getId() + File.separator + "outsideFiles" + File.separator + taskPacket.getSelectedPacketName();
 		}else{
 			path = ctxPath + "easySendFiles" + File.separator + taskPacket.getSelectedPacketName() + ".csv";
 		}
-	    File file=new File(path);
+	    File file = new File(path);
 	    try {
-	        FileInputStream in=new FileInputStream(file);
-	        int size=in.available();
-	        byte[] buffer=new byte[size];
+	        FileInputStream in = new FileInputStream(file);
+	        int size = in.available();
+	        byte[] buffer = new byte[size];
 	        in.read(buffer);
 	        in.close();
-	        str=new String(buffer,"UTF-8");
+	        str = new String(buffer,"UTF-8");
 	    } catch (IOException e) {
 	    	e.printStackTrace();
 	    }
@@ -242,30 +242,20 @@ public class TaskPacketFacadeImpl implements TaskPacketFacade {
 	public InvokeResult removeTaskPackets(Long[] ids, String savePath) {
 		for (Long id : ids) {
 			TaskPacket taskPacket = application.getTaskPacket(id);
-			application.removeTaskPacket(taskPacket);
 			int packetFrom = (int) taskPacket.getPacketFrom();
 			if(packetFrom==PACKETCONSTANT.TASKPACKET_PACKETFROM_INSIDE){
-				new File(savePath+application.getTaskPacket(id).getTask().getId()+File.separator+"insideFiles"+File.separator+taskPacket.getSelectedPacketName()+".csv").delete();
+				new File(savePath+taskPacket.getTask().getId()+File.separator+"insideFiles"+File.separator+taskPacket.getSelectedPacketName()+".csv").delete();
+				application.removeTaskPacket(taskPacket);
 			}else if(packetFrom==PACKETCONSTANT.TASKPACKET_PACKETFROM_OUTSIDE){
-				new File(savePath+application.getTaskPacket(id).getTask().getId()+File.separator+"outsideFiles"+File.separator+taskPacket.getSelectedPacketName()).delete();
+				new File(savePath+taskPacket.getTask().getId()+File.separator+"outsideFiles"+File.separator+taskPacket.getSelectedPacketName()).delete();
+				application.removeTaskPacket(taskPacket);
 			}else{
 				new File(savePath+"easySendFiles"+File.separator+taskPacket.getSelectedPacketName()+".csv").delete();
+				application.removeTaskPacket(taskPacket);
 				taskApplication.removeTask(taskPacket.getTask());
 			}						
 		}
 		return InvokeResult.success();
-	}
-	
-	@SuppressWarnings("unchecked")
-	private List<TaskPacket> findTaskPacketsByTaskId(Long taskId){
-		List<Object> conditionVals = new ArrayList<Object>();
-	   	StringBuilder jpql = new StringBuilder("select _taskPacket from TaskPacket _taskPacket  where 1=1 ");	   	
-	   	if (taskId != null ) {
-	   		jpql.append(" and _taskPacket.task.id = ? ");
-	   		conditionVals.add(taskId);
-	   	}
-	   	List<TaskPacket> taskPacketList = getQueryChannelService().createJpqlQuery(jpql.toString()).setParameters(conditionVals).list();
-	   	return taskPacketList;
 	}
 	
 	public List<TaskPacketDTO> findAllTaskPacket() {
@@ -335,11 +325,11 @@ public class TaskPacketFacadeImpl implements TaskPacketFacade {
 	   	}	
 	   	if (queryVo.getCompression() != null && !"".equals(queryVo.getCompression())) {
 	   		jpql.append(" and _taskPacket.compression like ?");
-	   		conditionVals.add(MessageFormat.format("%{0}%", queryVo.getCompression()));
+	   		conditionVals.add(queryVo.getCompression());
 	   	}		
 	   	if (queryVo.getEncryption() != null && !"".equals(queryVo.getEncryption())) {
 	   		jpql.append(" and _taskPacket.encryption like ?");
-	   		conditionVals.add(MessageFormat.format("%{0}%", queryVo.getEncryption()));
+	   		conditionVals.add(queryVo.getEncryption());
 	   	}
 		if (queryVo.getSerialNumber() != null && !"".equals(queryVo.getSerialNumber())) {
 	   		jpql.append(" and _taskPacket.serialNumber like ?");
@@ -359,12 +349,12 @@ public class TaskPacketFacadeImpl implements TaskPacketFacade {
 	}
 	
 	@SuppressWarnings("unchecked")
-	public Page<TaskPacketDTO> pageQueryTaskPacket(TaskPacketDTO queryVo, int currentPage, int pageSize) {
+	public Page<TaskPacketDTO> pageQueryTaskPacket(TaskPacketDTO queryVo, int currentPage, int pageSize, int taskPacketFrom) {
 		List<Object> conditionVals = new ArrayList<Object>();
 		StringBuilder jpql = new StringBuilder("select _taskPacket from TaskPacket _taskPacket   where 1=1");
-		if (queryVo.getPacketFrom() != null && !"".equals(queryVo.getPacketFrom())) {
-			jpql.append(" and _taskPacket.packetFrom like ?");
-			conditionVals.add(MessageFormat.format("%{0}%", queryVo.getPacketFrom()));
+		if (!"".equals(queryVo.getPacketFrom())) {
+			jpql.append(" and _taskPacket.packetFrom = ?");
+			conditionVals.add(taskPacketFrom);
 		}	
 		if (queryVo.getSelectedPacketName() != null && !"".equals(queryVo.getSelectedPacketName())) {
 			jpql.append(" and _taskPacket.selectedPacketName like ?");

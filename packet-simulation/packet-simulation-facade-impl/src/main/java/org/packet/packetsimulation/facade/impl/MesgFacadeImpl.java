@@ -780,9 +780,8 @@ public class MesgFacadeImpl implements MesgFacade {
 		taskPacket.setPacketNumber(maxPacketNo+1);
 		taskPacket.setSelectedPacketName(frontPosition+sn);
 		taskPacket.setSelectedOrigSendDate(new Date());
-		taskPacket.setTaskPacketType(PACKETCONSTANT.TASKPACKET_TASKPACKETSTATE_EASYPACKET);
 		taskPacket.setPacketFrom(PACKETCONSTANT.TASKPACKET_PACKETFROM_EASYSEND);
-		taskPacket.setSelectedDataType("0");
+		taskPacket.setSelectedDataType(0);
 		taskPacket.setSelectedFileVersion(PACKETCONSTANT.TASKPACKET_FILEVERSION);
 		Integer max = findMaxSerialNumber(taskPacketDTO.getTaskId());
 		Integer flag = max + 1;

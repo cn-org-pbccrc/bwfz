@@ -21,7 +21,7 @@ public class PacketDTO implements Serializable {
 	
 	private String fileVersion;
 	
-	private String dataType;
+	private Integer dataType;
 	
 	private String recordType;
 
@@ -37,11 +37,11 @@ public class PacketDTO implements Serializable {
 		this.fileVersion = fileVersion;
 	}
 
-	public String getDataType() {
+	public Integer getDataType() {
 		return dataType;
 	}
 
-	public void setDataType(String dataType) {
+	public void setDataType(Integer dataType) {
 		this.dataType = dataType;
 	}
 
