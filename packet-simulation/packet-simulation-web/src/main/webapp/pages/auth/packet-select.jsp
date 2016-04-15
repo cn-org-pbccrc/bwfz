@@ -3,7 +3,7 @@
 <html lang="en-ZH">
 <style>
 	.select-role .modal-body {
-		height: 460px;
+		height: 520px;
 	}
 	
 	.select-role .grid-table-body {

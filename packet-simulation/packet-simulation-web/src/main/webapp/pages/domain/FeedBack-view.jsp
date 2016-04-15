@@ -50,7 +50,7 @@ legend {
 		<div class="navbar">
 	  		<div class="navbar-inner">
 				<ul>
-	  				<li><a href="#tab1" data-toggle="tab">查看数据</a></li>
+	  				<li><a href="#tab1" data-toggle="tab">原始记录</a></li>
 					<li><a href="#tab2" data-toggle="tab">模板转换</a></li>
 					<li><a href="#tab3" data-toggle="tab">发送配置</a></li>
 				</ul>
@@ -64,7 +64,7 @@ legend {
 					</div>
 				</div>
 				<div id="transform">
-					<label style="color:#778899;font: "Microsoft Yahei", "宋体", verdana;>选择转换报文:</label>
+					<label style="color:#778899;font: "Microsoft Yahei", "宋体", verdana;>选择转换类型:</label>
 				</div>
 	    	</div>
 	    	<div class="tab-pane" id="tab2">

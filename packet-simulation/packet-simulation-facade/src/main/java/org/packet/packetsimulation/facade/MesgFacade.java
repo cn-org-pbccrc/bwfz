@@ -3,6 +3,7 @@ package org.packet.packetsimulation.facade;
 import java.util.List;
 
 
+
 import org.dayatang.utils.Page;
 import org.openkoala.koala.commons.InvokeResult;
 import org.packet.packetsimulation.facade.dto.*;
@@ -57,6 +58,14 @@ public interface MesgFacade {
 	 * @return
 	 */
 	public InvokeResult createTask(TaskDTO taskDTO, TaskPacketDTO taskPacketDTO, String mesgContent,String filePath);
+	
+	/**
+	 * 获取发送前文件头内容
+	 * @param mesgType
+	 * @param userAccount
+	 * @return
+	 */
+	public String getFileHeaderForSend(String mesgType, String userAccount);
 	
 }
 

@@ -138,7 +138,7 @@ function initFun(){
 							render : function(rowdata, name, index) {
 								var param = '"' + rowdata.id + '"';
 								var h = "<a href='javascript:openDetailsPageOfMesg("
-										+ param + ")'>查看</a> ";
+										+ param + ")'><span class='glyphicon glyphicon glyphicon-eye-open'></span>&nbsp查看</a> ";
 								return h;
 							}
 						} ];
@@ -245,7 +245,7 @@ function initFun(){
 			initTaskPacketGridPanel : function() {
 				var self = this;
 				var columns = [
-				            { title: '任务名称', name: 'task', width: 150,
+				            { title: '任务名称', name: 'task', width: 100,
 				            	render:function(item, name, index){
 				            		return item[name].taskName
 				            	}	
@@ -314,8 +314,8 @@ function initFun(){
 							title : '操作',
 							render : function(rowdata, name, index) {
 								var param = '"' + rowdata.id + '"';
-								var h = "<a href='javascript:openSourceFile("+ param + ")'>查看文件</a>&nbsp&nbsp&nbsp&nbsp<a href='javascript:openFeedBackFile("
-										+ param + ")'>查看反馈</a>&nbsp&nbsp&nbsp&nbsp<a href='javascript:deleteTaskPacket("+param+")'>删除</a> ";
+								var h = "<a href='javascript:openSourceFile("+ param + ")'><span class='glyphicon glyphicon glyphicon-book'></span>&nbsp查看文件</a>&nbsp&nbsp&nbsp&nbsp<a href='javascript:openFeedBackFile("
+										+ param + ")'><span class='glyphicon glyphicon glyphicon-eye-open'></span>&nbsp查看反馈</a>&nbsp&nbsp&nbsp&nbsp<a href='javascript:deleteTaskPacket("+param+")'><span class='glyphicon glyphicon glyphicon-remove'></span>&nbsp删除</a> ";
 								return h;
 							}
 						} ];
@@ -476,8 +476,12 @@ function initFun(){
    	    },
     	    modify: function(id, grid){
 	        var self = this;
+	        var dialog = $('<div class="modal fade"><div class="modal-dialog" style="width:900px;"><div class="modal-content"><div class="modal-header"><button type="button" class="close" data-dismiss="modal" aria-hidden="true">&times;</button><h4 class="modal-title">修改</h4></div><div class="modal-body"><p>One fine body&hellip;</p></div><div class="modal-footer">'
+	        +'<button type="button" class="btn btn-default" data-dismiss="modal">取消</button>'
+	        +'<button type="button" class="btn btn-default" id="saveas">另存</button>'
+        	+'<button type="button" class="btn btn-default" id="send">不保存发送</button>'
+        	+'</div></div></div></div>');	      
 	        var items = grid.data('koala.grid').selectedRows();
-	        var dialog = $('<div class="modal fade"><div class="modal-dialog" style="width:900px;"><div class="modal-content"><div class="modal-header"><button type="button" class="close" data-dismiss="modal" aria-hidden="true">&times;</button><h4 class="modal-title">修改</h4></div><div class="modal-body"><p>One fine body&hellip;</p></div><div class="modal-footer"><button type="button" class="btn btn-default" data-dismiss="modal">取消</button></div></div></div></div>');	      
 	        if(items[0].createBy==currentUserId){
 	        	dialog.find('.modal-footer').append("<button type='button' class='btn btn-success' id='save'>保存</button>");
 	        }	        
@@ -563,6 +567,134 @@ function initFun(){
 	  				    }
 	      	        });
 	            });
+	                dialog.find('#saveas').on('click',{grid: grid}, function(e){
+	    	        	var info = dialog.find($(".tab-content")).attr('id');
+						var xml = '<?xml version="1.0" encoding="UTF-8"?><Document><'+info+'>';
+						dialog.find($(".true")).each(function(){	    					
+		    				var id = $(this).attr('id');
+		    				xml += '<' + id + '>';
+		    				$('#'+id).find($("[name]")).each(function(){
+								if($(this).parent().parent()[0].tagName != 'FIELDSET'){
+									if($(this).attr('save')=='true'){
+										var name = ($(this).attr('name'));
+				    					var value = ($(this).val());
+										xml += '<' + name + '>' + value + '</' + name + '>';
+									}								
+								}
+								else{
+									var name = ($(this).attr('name')); 
+									xml += '<' + name + '>';
+									$(this).parent().parent().find($("[subName]")).each(function(){
+										if($(this).attr('save')=='true'){
+											var subName = ($(this).attr('subName'));
+											var value = ($(this).val());	
+											xml += '<' + subName + '>' + value + '</' + subName + '>';
+										}									
+									});
+									xml += '</' + name + '>';
+								}
+		    				});
+		    				xml += '</' + id + '>';
+		  				});
+						xml += '</'+info+'></Document>';    
+	 				if(!Validator.Validate(dialog.find('form')[0],3))return;
+	 				var data = [{ name: 'content', value: xml },
+	 				            { name: 'mesgType', value: dialog.find("#mesgTypeID").val()},
+	 				            { name: 'remark', value: dialog.find("#remarkID").val()},
+	 				            { name: 'mesgFrom', value: 1}
+	 				           ];
+	                	alert(1)
+	    	        $.post('${pageContext.request.contextPath}/Mesg/add.koala', data).done(function(result){
+	     	        	if(result.success ){
+	     	            	dialog.modal('hide');
+	     	                e.data.grid.data('koala.grid').refresh();
+	     	                e.data.grid.message({
+	     	                	type: 'success',
+	     	                	content: '保存成功'
+	                		});
+	     	            }else{
+	   	                    dialog.find('.modal-dialog').append('<div class="errMsg" style="float:left;position:absolute;max-width:500px;min-height:200px;bottom:20px;left:20px;background-color:#4cae4c;color:white;">'+result.errorMessage+ '</div>');
+	  				    }
+	      	        });    	        
+	    	    });
+	                dialog.find('#send').on('click',{grid: grid}, function(e){
+	                	dialog.modal('hide');
+	    	        	var info = dialog.find($(".tab-content")).attr('id');
+						var xml = '<?xml version="1.0" encoding="UTF-8"?><Document><'+info+'>';
+						dialog.find($(".true")).each(function(){	    					
+		    				var id = $(this).attr('id');
+		    				xml += '<' + id + '>';
+		    				$('#'+id).find($("[name]")).each(function(){
+								if($(this).parent().parent()[0].tagName != 'FIELDSET'){
+									if($(this).attr('save')=='true'){
+										var name = ($(this).attr('name'));
+				    					var value = ($(this).val());
+										xml += '<' + name + '>' + value + '</' + name + '>';
+									}								
+								}
+								else{
+									var name = ($(this).attr('name')); 
+									xml += '<' + name + '>';
+									$(this).parent().parent().find($("[subName]")).each(function(){
+										if($(this).attr('save')=='true'){
+											var subName = ($(this).attr('subName'));
+											var value = ($(this).val());	
+											xml += '<' + subName + '>' + value + '</' + subName + '>';
+										}									
+									});
+									xml += '</' + name + '>';
+								}
+		    				});
+		    				xml += '</' + id + '>';
+		  				});
+						xml += '</'+info+'></Document>';   
+						var self = this;
+		    	        var cfgDialog = $('<div class="modal fade"><div class="modal-dialog">'
+		    	        	+'<div class="modal-content"><div class="modal-header"><button type="button" class="close" '
+		    	        	+'data-dismiss="modal" aria-hidden="true">&times;</button>'
+		    	        	+'<h4 class="modal-title">发送配置</h4></div><div class="modal-body">'
+		    	        	+'<p>One fine body&hellip;</p></div><div class="modal-footer">'
+		    	        	+'<button type="button" class="btn btn-default" data-dismiss="modal">取消</button>'
+		    	        	+'<button type="button" class="btn btn-success" id="send">发送</button></div></div>' 
+		    	        	+'</div></div>');
+		    	        $.get('<%=path%>/easySend-config.jsp').done(function(html){
+		    	        	cfgDialog.modal({
+		    	                keyboard:false
+		    	            }).on({
+		    	                'hidden.bs.modal': function(){
+		    	                    $(this).remove();
+		    	                }
+		    	            }).find('.modal-body').html(html);
+		    	            var data = [{ name: 'mesgType', value: $("#mesgType").val() }];
+		    	            $.get( '${pageContext.request.contextPath}/Mesg/initUpdateSend.koala',data).done(function(json){
+		    	            	var json=json.data;
+		    	            	cfgDialog.find("#mesgContentID").val(json.fileHeader+xml);
+		    	            	cfgDialog.find("#selectedRecordTypeID").val(json.mesgType);
+			                });    	            
+		    	        });
+		    	        cfgDialog.find('#send').on('click',{grid: grid}, function(e){
+		     		        if(!Validator.Validate(dialog.find('form')[0],3))return;
+		    	              $.post('${pageContext.request.contextPath}/Mesg/send.koala', cfgDialog.find('form').serialize()).done(function(result){
+		    	                   if(result.success ){
+		    	                	   cfgDialog.modal('hide');
+		    	                        e.data.grid.data('koala.grid').refresh();
+		    	                        $("#taskPacketGrid").getGrid().refresh()
+		    	                        e.data.grid.message({
+		    	                            type: 'success',
+		    	                            content: '发送成功'
+		    	                         });
+		    	                    }else{
+		    	                    	cfgDialog.find('.modal-content').message({
+		    	                            type: 'error',
+		    	                            content: result.errorMessage
+		    	                        });
+		    	                     }
+		    	              });
+		    	        });
+		    	        
+		    	        
+		    	        
+	    	    });
 	        });
 	    },
     	    send: function(ids,grid){
@@ -589,7 +721,6 @@ function initFun(){
     	            	var json=json.data;
     	            	dialog.find("#mesgContentID").val(json.mesgContent);
     	            	dialog.find("#selectedRecordTypeID").val(json.mesgType);
-	                    json = json.data;
 	                });    	            
     	        });
     	        dialog.find('#send').on('click',{grid: grid}, function(e){
@@ -662,7 +793,7 @@ function initFun(){
 			$(".easySendPannel .u-tree").css("height",$("#mesgGrid").height());
 		}
 		
-		 
+		
 		 
 		  $(function(){
 		var form = $("#mesgSearchForm");
