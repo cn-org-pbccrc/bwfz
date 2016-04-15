@@ -245,13 +245,15 @@ public class TaskPacketFacadeImpl implements TaskPacketFacade {
 			int packetFrom = (int) taskPacket.getPacketFrom();
 			if(packetFrom==PACKETCONSTANT.TASKPACKET_PACKETFROM_INSIDE){
 				new File(savePath+taskPacket.getTask().getId()+File.separator+"insideFiles"+File.separator+taskPacket.getSelectedPacketName()+".csv").delete();
+				application.removeTaskPacket(taskPacket);
 			}else if(packetFrom==PACKETCONSTANT.TASKPACKET_PACKETFROM_OUTSIDE){
 				new File(savePath+taskPacket.getTask().getId()+File.separator+"outsideFiles"+File.separator+taskPacket.getSelectedPacketName()).delete();
+				application.removeTaskPacket(taskPacket);
 			}else{
 				new File(savePath+"easySendFiles"+File.separator+taskPacket.getSelectedPacketName()+".csv").delete();
+				application.removeTaskPacket(taskPacket);
 				taskApplication.removeTask(taskPacket.getTask());
 			}						
-			application.removeTaskPacket(taskPacket);
 		}
 		return InvokeResult.success();
 	}
