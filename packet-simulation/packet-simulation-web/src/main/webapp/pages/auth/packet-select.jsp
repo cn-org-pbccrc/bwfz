@@ -27,7 +27,7 @@
 						<table border="0" cellspacing="0" cellpadding="0">
   							<tr>
     							<td>
-          							<div class="form-group">          
+          							<div class="form-group">
            								<label class="control-label" style="width:130px;float:left;">报文名称:</label>
             							<div style="margin-left:5px;margin-right: 25px;float:left;">
             								<input name="packetName" class="form-control" type="text" style="width:160px;" id="packetNameID"  />
@@ -45,35 +45,26 @@
   							</tr>
   							<tr>
   								<td>
-                 					<label class="control-label" style="width:130px;float:left;">记录类型:</label>
-            						<div style="margin-left:5px;margin-right: 25px;float:left;">
-            							<input name="recordType" class="form-control" type="text" style="width:160px;" id="recordID"  />
-        							</div>
-									<label class="control-label" style="width:130px;float:left;">数据类型:</label>
-    	  							<div style="margin-left:5px;margin-right: 25px;float:left;">
-	      								<div class="btn-group select" id="dataType_SELECT"></div>
-	        							<input type="hidden" id="dataTypeID_" name="dataType" />
-	      							</div>
-  								</td>
-  							</tr>
-  							<tr>
-  								<td>      
-                        			<div class="form-group">
-          								<label class="control-label" style="width:130px;float:left;">文件生成时间:</label>
+  									<div class="form-group">
+                 						<label class="control-label" style="width:130px;float:left;">记录类型:</label>
+            							<div style="margin-left:5px;margin-right: 25px;float:left;">
+            								<input name="recordType" class="form-control" type="text" style="width:160px;" id="recordID"  />
+        								</div>
+										<label class="control-label" style="width:130px;float:left;">文件生成时间:</label>
            								<div style="margin-left:5px;margin-right: 25px;float:left;">
             								<div class="input-group date form_datetime" style="width:160px;float:left;" >
                 								<input type="text" class="form-control" style="width:160px;" name="origSendDate" id="origSendDateID_start" >
                 								<span class="input-group-addon"><span class="glyphicon glyphicon-th"></span></span>
             								</div>
-            							<div style="float:left; width:10px; margin-left:auto; margin-right:auto;">&nbsp;-&nbsp;</div>
+            								<div style="float:left; width:10px; margin-left:auto; margin-right:auto;">&nbsp;-&nbsp;</div>
             								<div class="input-group date form_datetime" style="width:160px;float:left;" >
                 								<input type="text" class="form-control" style="width:160px;" name="origSendDateEnd" id="origSendDateID_end" >
                 								<span class="input-group-addon"><span class="glyphicon glyphicon-th"></span></span>
             								</div>
-       									</div>
-            						</div>
-            					</td>
-       							<td style="vertical-align: bottom;"><button id="search2" type="button" style="position:relative; margin-left:15px; top: -15px" class="btn btn-primary"><span class="glyphicon glyphicon-search"></span>&nbsp;查询</button></td>
+       									</div>       									
+									</div>
+  								</td>
+  								<td style="vertical-align: bottom;"><button id="search2" type="button" style="position:relative; margin-left:15px; top: -15px" class="btn btn-primary"><span class="glyphicon glyphicon-search"></span>&nbsp;查询</button></td>
   							</tr>
 						</table>
 					</div>	   

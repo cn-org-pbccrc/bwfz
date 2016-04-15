@@ -16,7 +16,7 @@ public class TaskPacketDTO implements Serializable {
 	
 	private Long taskId;
 
-	private String encryption;
+	private Integer encryption;
 		
 	private String selectedPacketName;
 	
@@ -30,11 +30,11 @@ public class TaskPacketDTO implements Serializable {
 	
 	private Date selectedOrigSendDateEnd;
 	
-	private String selectedDataType;
+	private Integer selectedDataType;
 
 	private String selectedRecordType;
 			
-	private String compression;
+	private Integer compression;
 	
 	private Integer serialNumber;
 	
@@ -58,12 +58,6 @@ public class TaskPacketDTO implements Serializable {
 	 */
 	private Date receiveDate;
 	
-	/**
-	 * 文件类型 0-正常文件 1-快速发送文件
-	 */
-	private Integer taskPacketType;
-	
-	
     /**
 	 * 创建者
 	 */
@@ -73,20 +67,12 @@ public class TaskPacketDTO implements Serializable {
 		return sendState;
 	}
 
-	public Integer getTaskPacketType() {
-		return taskPacketType;
-	}
-
 	public String getCreatedBy() {
 		return createdBy;
 	}
 
 	public void setSendState(Integer sendState) {
 		this.sendState = sendState;
-	}
-
-	public void setTaskPacketType(Integer taskPacketType) {
-		this.taskPacketType = taskPacketType;
 	}
 
 	public void setCreatedBy(String createdBy) {
@@ -141,11 +127,11 @@ public class TaskPacketDTO implements Serializable {
 			this.selectedOrigSendDate = selectedOrigSendDate;
 		}
 
-		public String getSelectedDataType() {
+		public Integer getSelectedDataType() {
 			return selectedDataType;
 		}
 
-		public void setSelectedDataType(String selectedDataType) {
+		public void setSelectedDataType(Integer selectedDataType) {
 			this.selectedDataType = selectedDataType;
 		}
 
@@ -157,12 +143,12 @@ public class TaskPacketDTO implements Serializable {
 			this.selectedRecordType = selectedRecordType;
 		}
 
-	public void setEncryption(String encryption) { 
+	public void setEncryption(Integer encryption) { 
 		this.encryption = encryption;
 	}
 
-	public String getEncryption() {
-		return this.encryption;
+	public Integer getEncryption() {
+		return encryption;
 	}
 		
 			
@@ -177,12 +163,12 @@ public class TaskPacketDTO implements Serializable {
 		
 			
 	
-	public void setCompression(String compression) { 
+	public void setCompression(Integer compression) { 
 		this.compression = compression;
 	}
 
-	public String getCompression() {
-		return this.compression;
+	public Integer getCompression() {
+		return compression;
 	}
 		
 		

@@ -84,9 +84,8 @@ function initFun(){
           form.find('#selectedDataTypeID_').val($(this).getValue());
       });
              var contentsOfCompression = [{title:'请选择', value: ''}];
-             contentsOfCompression.push({title:'是' , value:'是'});
-             contentsOfCompression.push({title:'否' , value:'否'});
-             contentsOfCompression.push({title:'-' , value:'-'});
+             contentsOfCompression.push({title:'是' , value:1});
+             contentsOfCompression.push({title:'否' , value:0});
              form.find('#compression_SELECT').select({
            title: '请选择',
            contents: contentsOfCompression
@@ -94,9 +93,8 @@ function initFun(){
           form.find('#compressionID_').val($(this).getValue());
       });
              var contentsOfEncryption = [{title:'请选择', value: ''}];
-             contentsOfEncryption.push({title:'是' , value:'是'});
-             contentsOfEncryption.push({title:'否' , value:'否'});             
-             contentsOfEncryption.push({title:'-' , value:'-'});
+             contentsOfEncryption.push({title:'是' , value:1});
+             contentsOfEncryption.push({title:'否' , value:0});             
              form.find('#encryption_SELECT').select({
            title: '请选择',
            contents: contentsOfEncryption
@@ -151,18 +149,20 @@ function initFun(){
 	                     	                         	                        	render: function(item, name, index){
                      	                         						                 if(item[name] == '0'){
                      	                         						                     return '正常';
-                     	                         						                 }else if(item[name] == '1'){
-                     	                         						                     return '删除且不需重报';
-                     	                         						                 }else if(item[name] == '2'){
-                     	                         						                	 return '删除且需重报';
-                     	                         						                 }else{
-                     	                         						                	 return '-';
                      	                         						                 }
                      	                         						             }
 	                     	                         	                        },
 	                     	                         	                        { title: '记录类型', name: 'selectedRecordType', width: width/2},
-	                         	                         	                         	                         { title: '加压', name: 'compression', width: width/3},
-	                         	                         	                         	                         { title: '加密', name: 'encryption', width: width/3},
+	                         	                         	                    { title: '加压', name: 'compression', width: width/3,
+	                     	                         	                        	render:function(item, name, index){
+	                     	                       				            			return item[name]==1?"是":"否";
+	                     	                       				            		}
+	                     	                         	                        },
+	                         	                         	                    { title: '加密', name: 'encryption', width: width/3,
+	                     	                         	                        	render:function(item, name, index){
+	                     	                       				            			return item[name]==1?"是":"否";
+	                     	                       				            		}
+	                         	                         	                    },
 	                         	                         	                         	                         { title: '顺序号', name: 'serialNumber', width: 5*width/12},
 	                         	                         	                             { title: '操作', width: 100, render: function (rowdata, name, index)
 	                                 {
@@ -193,7 +193,7 @@ function initFun(){
 	                            })
 	                            return;
 	                        }
-	                       self.modify(indexs[0], $this);
+	                        self.modify(indexs[0], $this);
 	                    },
 	                   'delete': function(event, data){
 	                        var indexs = data.data;
@@ -398,16 +398,16 @@ function initFun(){
 	                    startTime.datetimepicker('setEndDate', endTimeVal.val());
 	                }).datetimepicker('setDate', new Date()).trigger('changeDate');//加载日期选择器
 	                startTime.datetimepicker('setDate', yesterday).trigger('changeDate');
-	                var contents = [{title:'请选择', value: ''}];
- 	                contents.push({title:'正常' , value:'0'});
- 	                contents.push({title:'删除且不需重报' , value:'1'});
- 	                contents.push({title:'删除且需重报' , value:'2'});
- 	                dialog.find('#dataType_SELECT').select({
-                    	title: '请选择',
-                        contents: contents
-                    }).on('change',function(){
-                        dialog.find('#dataTypeID_').val($(this).getValue());
-                    });
+// 	                var contents = [{title:'请选择', value: ''}];
+//  	                contents.push({title:'正常' , value:'0'});
+//  	                contents.push({title:'删除且不需重报' , value:'1'});
+//  	                contents.push({title:'删除且需重报' , value:'2'});
+//  	                dialog.find('#dataType_SELECT').select({
+//                     	title: '请选择',
+//                         contents: contents
+//                     }).on('change',function(){
+//                         dialog.find('#dataTypeID_').val($(this).getValue());
+//                     });
 	            }
 	    	    initSearch(); 
 	    	    dialog.find('#search2').on('click', function(){
@@ -438,15 +438,15 @@ function initFun(){
 	    	    		flagIds[i] = items[i].id;
 						isComs[i] = $("input[id='compressionId"+flagIds[i]+"']").is(':checked');
 						if(isComs[i] == true){
-							isComs[i] = '是';
+							isComs[i] = 1;
 						}else if(isComs[i] == false){
-							isComs[i] = '否';
+							isComs[i] = 0;
 						}
 						isEncs[i] = $("input[id='encryptionId"+flagIds[i]+"']").is(':checked');
 						if(isEncs[i] == true){
-							isEncs[i] = '是';
+							isEncs[i] = 1;
 						}else if(isEncs[i] == false){
-							isEncs[i] = '否';
+							isEncs[i] = 0;
 						}
 					}
 	    	    	if(items.length == 0){
@@ -473,7 +473,7 @@ function initFun(){
 	 	            	}else{
 	 	                	dialog.find('.modal-content').message({
 	 	                    	type: 'error',
-	 	                    	content: result.actionError
+	 	                    	content: result.errorMessage
 	 	                	});
 	 	            	}
 	 	        	});
@@ -492,11 +492,11 @@ function initFun(){
 	        $.get('<%=path%>/TaskPacket-update.jsp').done(function(html){
 	               dialog.find('.modal-body').html(html);
 	               self.initPage(dialog.find('form'));
-	               $.get( '${pageContext.request.contextPath}/TaskPacket/get/' + id + '.koala').done(function(json){
+	               $.get('${pageContext.request.contextPath}/TaskPacket/get/' + id + '.koala').done(function(json){
 	                       json = json.data;                     
 	                        var elm;
-	                        packetFrom = json['packetFrom'];	                                                
-	                        for(var index in json){
+	                        //packetFrom = json['packetFrom'];	                                                
+	                        for(var index in json){	                            	
 	                            elm = dialog.find('#'+ index + 'ID');
 	                            if(elm.hasClass('select')){
 	                                elm.setValue(json[index]);
@@ -521,13 +521,6 @@ function initFun(){
 	                    }
 	                });
 	                dialog.find('#save').on('click',{grid: grid}, function(e){
-	                	if(packetFrom == '外部报文'){
-	                		dialog.find('.modal-content').message({
-	                            type: 'error',
-	                            content: "不能对外部报文进行修改！"
-	                        });
-	                		return false;
-	                	}
 	                    if(!Validator.Validate(dialog.find('form')[0],3))return;
 	                    $.post('${pageContext.request.contextPath}/TaskPacket/update.koala?selectedOrigSendDate='+selectedOrigSendDate, dialog.find('form').serialize()).done(function(result){
 	                        if(result.success){
@@ -540,7 +533,7 @@ function initFun(){
 	                        }else{
 	                            dialog.find('.modal-content').message({
 	                            type: 'error',
-	                            content: result.actionError
+	                            content: result.errorMessage
 	                            });
 	                        }
 	                    });
@@ -561,13 +554,13 @@ function initFun(){
                    var contents = [{title:'请选择', value: ''}];
                    selectItems['selectedPacketNameID'] = contents;
                    var contents = [{title:'请选择', value: ''}];
-                   contents.push({title:'是' , value:'是'});
-                   contents.push({title:'否' , value:'否'});
+                   contents.push({title:'是' , value:1});
+                   contents.push({title:'否' , value:0});
                    
                    selectItems['compressionID'] = contents;
                    var contents = [{title:'请选择', value: ''}];
-                   contents.push({title:'是' , value:'是'});
-        		   contents.push({title:'否' , value:'否'});
+                   contents.push({title:'是' , value:1});
+        		   contents.push({title:'否' , value:0});
         		   
 
         		   selectItems['encryptionID'] = contents;
@@ -595,7 +588,7 @@ function initFun(){
 	                        }else{
 	                            grid.message({
 	                                type: 'error',
-	                                content: result.result
+	                                content: result.errorMessage
 	                            });
 	                        }
 	    	});
@@ -738,7 +731,6 @@ function initFun(){
             });
             grid.getGrid().search(params);
         });
-//});
 }
 
 var openTaskPacketView = function(id){
@@ -827,7 +819,10 @@ var openDetailsPage = function(id){
             <input name="selectedFileVersion" class="form-control" type="text" style="width:160px;" id="selectedFileVersionID"  />
         </div>
         </div>
-
+    </td>
+  </tr>
+  <tr>
+    <td>
         <div class="form-group">
                       <label class="control-label" style="width:160px;float:left;">数据提供机构代码:&nbsp;</label>
             <div style="margin-left:15px;float:left;">
@@ -846,17 +841,20 @@ var openDetailsPage = function(id){
             </div>
        </div>
        </div>
-
+     </td>
+   </tr>
+   <tr>
+   <td>
        <div class="form-group">
        <label class="control-label" style="width:160px;float:left;">记录类型:&nbsp;</label>
             <div style="margin-left:15px;float:left;">
             <input name="selectedRecordType" class="form-control" type="text" style="width:160px;" id="selectedRecordID"  />
         </div>
-                <label class="control-label" style="width:160px;float:left;">数据类型:&nbsp;</label>
-    	  <div style="margin-left:15px;float:left;">
-	      <div class="btn-group select" id="selectedDataType_SELECT"></div>
-	        <input type="hidden" id="selectedDataTypeID_" name="selectedDataType" />
-	      </div>
+<!--                 <label class="control-label" style="width:160px;float:left;">数据类型:&nbsp;</label> -->
+<!--     	  <div style="margin-left:15px;float:left;"> -->
+<!-- 	      <div class="btn-group select" id="selectedDataType_SELECT"></div> -->
+<!-- 	        <input type="hidden" id="selectedDataTypeID_" name="selectedDataType" /> -->
+<!-- 	      </div> -->
 
 	      		<label class="control-label" style="width:100px;float:left;">加压:&nbsp;</label>
     	  <div style="margin-left:15px;float:left;">
@@ -871,6 +869,8 @@ var openDetailsPage = function(id){
 	      </div>
 </div>
 </td>
+       <td style="vertical-align: bottom;"><button id="search" type="button" style="position:relative; margin-left:35px; top: -15px" class="btn btn-primary"><span class="glyphicon glyphicon-search"></span>&nbsp;查询</button></td>
+</tr>
 <!--        <div class="form-group"> -->
 <!--                       <label class="control-label" style="width:160px;float:left;">加压:&nbsp;</label> -->
 <!--             <div style="margin-left:15px;float:left;"> -->
@@ -882,8 +882,6 @@ var openDetailsPage = function(id){
 <!--             <input name="encryption" class="form-control" type="text" style="width:160px;" id="encryptionID"  /> -->
 <!--         </div> -->
 <!--         </div> -->
-       <td style="vertical-align: bottom;"><button id="search" type="button" style="position:relative; margin-left:35px; top: -15px" class="btn btn-primary"><span class="glyphicon glyphicon-search"></span>&nbsp;查询</button></td>
-  </tr>
 </table>
 </div>	
 </form>

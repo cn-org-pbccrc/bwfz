@@ -114,7 +114,9 @@ legend {
 <script type="text/javascript" src="<c:url value='/js/organisation/select-employee.js' />"></script>
 
 <script>
-  
+var currentUserId = '<ks:user property="userAccount" />';
+initFun();
+function initFun(){
 	PageLoader = {
 			//初始化记录模板列表
 			initGridPanel : function() {
@@ -191,7 +193,7 @@ legend {
 								content : '只能选择一条记录进行修改'
 							})
 							return;
-						}
+						}						
 						self.modify(indexs[0], $this);
 					},
 					'delete' : function(event, data) {
@@ -204,6 +206,16 @@ legend {
 							});
 							return;
 						}
+						var items = $this.data('koala.grid').selectedRows();
+		    	    	for(var i = 0; i < items.length; i++){
+		    	    		if(items[i].createBy!=currentUserId){
+		    	    			$this.message({
+		                    		type: 'error',
+		                        	content: "不能删除非当前用户所创建的记录"
+		                    	});
+		        	        	return;
+		    	    		}
+		    	    	}
 						var remove = function() {
 							self.remove(indexs, $this);
 						};
@@ -453,14 +465,22 @@ legend {
      	                	content: '保存成功'
                 		});
      	            }else{
-   	                    dialog.find('.modal-dialog').append('<div class="errMsg" style="float:left;position:absolute;max-width:500px;min-height:200px;bottom:20px;left:20px;background-color:#4cae4c;color:white;">'+result.errorMessage+ '</div>');
+     	            	dialog.modal('hide');
+     	            	e.data.grid.message({
+                        	type: 'error',
+                        	content: result.errorMessage
+                        });
   				    }
       	        });    	        
     	    });
    	    },
     	    modify: function(id, grid){
 	        var self = this;
-	        var dialog = $('<div class="modal fade"><div class="modal-dialog" style="width:900px;"><div class="modal-content"><div class="modal-header"><button type="button" class="close" data-dismiss="modal" aria-hidden="true">&times;</button><h4 class="modal-title">修改</h4></div><div class="modal-body"><p>One fine body&hellip;</p></div><div class="modal-footer"><button type="button" class="btn btn-default" data-dismiss="modal">取消</button><button type="button" class="btn btn-success" id="save">保存</button></div></div></div></div>');	      
+	        var items = grid.data('koala.grid').selectedRows();
+	        var dialog = $('<div class="modal fade"><div class="modal-dialog" style="width:900px;"><div class="modal-content"><div class="modal-header"><button type="button" class="close" data-dismiss="modal" aria-hidden="true">&times;</button><h4 class="modal-title">修改</h4></div><div class="modal-body"><p>One fine body&hellip;</p></div><div class="modal-footer"><button type="button" class="btn btn-default" data-dismiss="modal">取消</button></div></div></div></div>');	      
+	        if(items[0].createBy==currentUserId){
+	        	dialog.find('.modal-footer').append("<button type='button' class='btn btn-success' id='save'>保存</button>");
+	        }	        
 	        $.get('<%=path%>/easyMesg-update.jsp').done(function(html){
 	               dialog.find('.modal-body').html(html);
 	               self.initPage(dialog.find('form'));
@@ -535,8 +555,11 @@ legend {
 	     	                	content: '保存成功'
 	                		});
 	     	            }else{
-							alert(result.errorMessage);
-	   	                    dialog.find('.modal-dialog').append('<div class="errMsg" style="float:left;position:absolute;max-width:500px;min-height:200px;bottom:20px;left:20px;background-color:#4cae4c;color:white;">'+result.errorMessage+ '</div>');
+	     	            	dialog.modal('hide');
+	     	            	e.data.grid.message({
+	                        	type: 'error',
+	                        	content: result.errorMessage
+	                        });
 	  				    }
 	      	        });
 	            });
@@ -627,32 +650,8 @@ legend {
     	    	});
     	    }
 		}
-	 var openDetailsPageOfMesg = function(id){
-        var dialog = $('<div class="modal fade"><div class="modal-dialog" style="width:900px;"><div class="modal-content"><div class="modal-header"><button type="button" class="close" data-dismiss="modal" aria-hidden="true">&times;</button><h4 class="modal-title">查看</h4></div><div class="modal-body"><p>One fine body&hellip;</p></div><div class="modal-footer"><button type="button" class="btn btn-info" data-dismiss="modal">返回</button></div></div></div></div>');
-        $.get('<%=path%>/easyMesg-view.jsp').done(function(html){
-               dialog.find('.modal-body').html(html);
-               $.get( '${pageContext.request.contextPath}/Mesg/get/' + id + '.koala').done(function(json){
-                       json = json.data;
-                        var elm;
-                        for(var index in json){
-                        if(json[index]+"" == "false"){
-                        		dialog.find('#'+ index + 'ID').html("<span style='color:#d2322d' class='glyphicon glyphicon-remove'></span>");
-                        	}else if(json[index]+"" == "true"){
-                        		dialog.find('#'+ index + 'ID').html("<span style='color:#47a447' class='glyphicon glyphicon-ok'></span>");
-                        	}else{
-                          		 dialog.find('#'+ index + 'ID').html(json[index]+"");
-                        	}
-                        }
-               });
-                dialog.modal({
-                    keyboard:false
-                }).on({
-                    'hidden.bs.modal': function(){
-                        $(this).remove();
-                    }
-                });
-        });
-}
+
+
 		PageLoader.initGridPanel();
 		PageLoader.initTaskPacketGridPanel();
 		$(".easySendPannel .u-tree").css("height",$("#mesgGrid").height());
@@ -662,57 +661,8 @@ legend {
 			$("#taskPacketGrid").getGrid()._reSize();
 			$(".easySendPannel .u-tree").css("height",$("#mesgGrid").height());
 		}
-		//删除文件
-		var deleteTaskPacket= function(id){
-			var remove = function() {
-				var data = [{ name: 'ids', value: id }];
-				var grid=$('#taskPacketGrid');
-    	    	$.post('${pageContext.request.contextPath}/TaskPacket/delete.koala', data).done(function(result){
-    	                        if(result.success){
-    	                            grid.getGrid().refresh();
-    	                            grid.message({
-    	                                type: 'success',
-    	                                content: '删除成功'
-    	                            });
-    	                        }else{
-    	                            grid.message({
-    	                                type: 'error',
-    	                                content: result.errorMessage
-    	                            });
-    	                        }
-    	    	});
-			};
-			$('#taskPacketGrid').confirm({
-				content : '确定要删除所选记录吗?',
-				callBack : remove
-			});
-		}
-		 var openSourceFile = function(id){
-            var dialog = $('<div class="modal fade"><div class="modal-dialog" style="width:900px;"><div class="modal-content"><div class="modal-header"><button type="button" class="close" data-dismiss="modal" aria-hidden="true">&times;</button><h4 class="modal-title">查看</h4></div><div class="modal-body"><p>One fine body&hellip;</p></div><div class="modal-footer"><button type="button" class="btn btn-info" data-dismiss="modal">返回</button></div></div></div></div>');
-            $.get('<%=path%>/easyMesg-view.jsp').done(function(html){
-                   dialog.find('.modal-body').html(html);
-                   $.get( '${pageContext.request.contextPath}/TaskPacket/getTaskPacketView/' + id + '.koala').done(function(json){
-                           json = json.data;
-                           dialog.find("#contentID").html("<div style='width:780px;overflow:auto;'><xmp>"+json+"</xmp></div>");
-                   });
-                    dialog.modal({
-                        keyboard:false
-                    }).on({
-                        'hidden.bs.modal': function(){
-                            $(this).remove();
-                        }
-                    });
-            });
-    }
-		 var mark;
-		 function openFeedBackFile(id){
-		     var thiz 	= $(this);
-		     var  mark 	= thiz.attr('mark');
-		     mark = openTab("/pages/domain/FeedBack-list.jsp", "查看反馈 ",'OpenFeedBackList',id);
-		     if(mark){
-		         thiz.attr("mark",mark);
-		     }
-		 }
+		
+		 
 		 
 		  $(function(){
 		var form = $("#mesgSearchForm");
@@ -786,7 +736,86 @@ legend {
 		
 	})
 
-	var showMesgTempletes = function(id) {
+	
+}
+var openDetailsPageOfMesg = function(id){
+    var dialog = $('<div class="modal fade"><div class="modal-dialog" style="width:900px;"><div class="modal-content"><div class="modal-header"><button type="button" class="close" data-dismiss="modal" aria-hidden="true">&times;</button><h4 class="modal-title">查看</h4></div><div class="modal-body"><p>One fine body&hellip;</p></div><div class="modal-footer"><button type="button" class="btn btn-info" data-dismiss="modal">返回</button></div></div></div></div>');
+    $.get('<%=path%>/easyMesg-view.jsp').done(function(html){
+           dialog.find('.modal-body').html(html);
+           $.get( '${pageContext.request.contextPath}/Mesg/get/' + id + '.koala').done(function(json){
+                   json = json.data;
+                    var elm;
+                    for(var index in json){
+                    if(json[index]+"" == "false"){
+                    		dialog.find('#'+ index + 'ID').html("<span style='color:#d2322d' class='glyphicon glyphicon-remove'></span>");
+                    	}else if(json[index]+"" == "true"){
+                    		dialog.find('#'+ index + 'ID').html("<span style='color:#47a447' class='glyphicon glyphicon-ok'></span>");
+                    	}else{
+                      		 dialog.find('#'+ index + 'ID').html(json[index]+"");
+                    	}
+                    }
+           });
+            dialog.modal({
+                keyboard:false
+            }).on({
+                'hidden.bs.modal': function(){
+                    $(this).remove();
+                }
+            });
+    });
+}
+var openSourceFile = function(id){
+    var dialog = $('<div class="modal fade"><div class="modal-dialog" style="width:900px;"><div class="modal-content"><div class="modal-header"><button type="button" class="close" data-dismiss="modal" aria-hidden="true">&times;</button><h4 class="modal-title">查看</h4></div><div class="modal-body"><p>One fine body&hellip;</p></div><div class="modal-footer"><button type="button" class="btn btn-info" data-dismiss="modal">返回</button></div></div></div></div>');
+    $.get('<%=path%>/easyMesg-view.jsp').done(function(html){
+           dialog.find('.modal-body').html(html);
+           $.get( '${pageContext.request.contextPath}/TaskPacket/getTaskPacketView/' + id + '.koala').done(function(json){
+                   json = json.data;
+                   dialog.find("#contentID").html("<div style='width:780px;overflow:auto;'><xmp>"+json+"</xmp></div>");
+           });
+            dialog.modal({
+                keyboard:false
+            }).on({
+                'hidden.bs.modal': function(){
+                    $(this).remove();
+                }
+            });
+    });
+}
+ var mark;
+ function openFeedBackFile(id){
+     var thiz 	= $(this);
+     var  mark 	= thiz.attr('mark');
+     mark = openTab("/pages/domain/FeedBack-list.jsp", "查看反馈 ",'OpenFeedBackList',id);
+     if(mark){
+         thiz.attr("mark",mark);
+     }
+ }
+//删除文件
+	var deleteTaskPacket= function(id){
+		var remove = function() {
+			var data = [{ name: 'ids', value: id }];
+			var grid=$('#taskPacketGrid');
+	    	$.post('${pageContext.request.contextPath}/TaskPacket/delete.koala', data).done(function(result){
+	                        if(result.success){
+	                            grid.getGrid().refresh();
+	                            grid.message({
+	                                type: 'success',
+	                                content: '删除成功'
+	                            });
+	                        }else{
+	                            grid.message({
+	                                type: 'error',
+	                                content: result.errorMessage
+	                            });
+	                        }
+	    	});
+		};
+		$('#taskPacketGrid').confirm({
+			content : '确定要删除所选记录吗?',
+			callBack : remove
+		});
+	}
+ var showMesgTempletes = function(id) {
 		var form = $("#mesgSearchForm");
 		$("#mesgType").val(id);
 		var params = {};
@@ -822,12 +851,6 @@ legend {
 	    		alert("不能删除，资料记录必须大于一条！");
 	    	}
 	    }
-// 	    function removeTab(obj,tabId){
-// 	    	$(obj).parent().parent().remove();
-// 	    	var nextElement = $('#'+tabId).next();
-// 	    	$('#'+tabId).remove();
-// 	    	nextElement.attr("class","tab-pane fade active in");
-// 	    }
 function removeTab(obj,tabId){
 	if($(obj).children("span").attr("class")=="glyphicon glyphicon-check"){
 		var len = $(obj).parent().attr("href").length;

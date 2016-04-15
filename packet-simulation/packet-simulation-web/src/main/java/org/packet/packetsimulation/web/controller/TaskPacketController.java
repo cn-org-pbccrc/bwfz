@@ -82,7 +82,7 @@ public class TaskPacketController {
 	@RequestMapping("/pageJson")
 	public Page pageJson(TaskPacketDTO taskPacketDTO, @RequestParam int page, @RequestParam int pagesize) {
 		taskPacketDTO.setCreatedBy(CurrentUser.getUserAccount());
-		Page<TaskPacketDTO> all = taskPacketFacade.pageQueryTaskPacket(taskPacketDTO, page, pagesize);
+		Page<TaskPacketDTO> all = taskPacketFacade.pageQueryTaskPacket(taskPacketDTO, page, pagesize, 2);
 		return all;
 	}
 	
