@@ -84,10 +84,10 @@ function initFun(){
 	                url:"${pageContext.request.contextPath}/Packet/pageJson/" + currentUserId + ".koala",
 	                columns: [
 	                     	                         	                         //{ title: '流水号', name: 'packId', width: width},
-	                     	                         	                         								 { title: '报文名称', name: 'packetName', width: 2*width/3},
-	                     	                         	                         								 { title: '版本号', name: 'fileVersion', width: 11*width/24},
-	                         	                         	                         	                         { title: '数据提供机构代码', name: 'origSender', width: 3*width/4},	                     	                
-	                         	                         	                         	                         { title: '文件生成时间', name: 'origSendDate', width: 2*width/3,
+	                     	                         	                         								 { title: '文件名称', name: 'packetName', width: 100},
+	                     	                         	                         								 { title: '版本号', name: 'fileVersion', width: 50},
+	                         	                         	                         	                         { title: '数据提供机构代码', name: 'origSender', width: 100},	                     	                
+	                         	                         	                         	                         { title: '文件生成时间', name: 'origSendDate', width: 100,
 	                         	                         	                         	                        	 render: function(item, name, index){
 	                     	                         	                         						                //alert(item[name].getMonth());
 	                     	                         	                         						                var d = new Date(item[name]);    //根据时间戳生成的时间对象
@@ -100,8 +100,8 @@ function initFun(){
 	                     	                         	                         						                return date;
 	                     	                         	                         						             }	
 	                         	                         	                         	                         },
-	                         	                         	                         	                         { title: '记录类型', name: 'recordType', width: 11*width/24},
-	                         	                         	                         	                         { title: '数据类型', name: 'dataType', width: 2*width/3,
+	                         	                         	                         	                         { title: '记录类型', name: 'recordType', width: 100},
+	                         	                         	                         	                         { title: '数据类型', name: 'dataType', width: 60,
 	                         	                         	                         	                 		 render: function(item, name, index){
                      	                         	                         						                 if(item[name] == '0'){
                      	                         	                         						                     return '正常';
@@ -113,12 +113,14 @@ function initFun(){
                      	                         	                         						             }	
 	                         	                         	                         	                         },
 	                         	                         	                         	                      	 { title: '信息记录数', name: 'mesgNum', width: width/2},
-	                         	                         	                         	                         { title: '创建人员', name: 'createdBy', width: 11*width/24},
-	                         	                         	                             { title: '操作', width: 170, render: function (rowdata, name, index)
+	                         	                         	                             { title: '操作', width: 200, render: function (rowdata, name, index)
 	                                 {
 	                                     var param = '"' + rowdata.id + '"';
 	                                     var packId = '"' + rowdata.packId + '"';
-	                                     var h = "<a href='javascript:openPacket(" + param + ")'>编辑报文</a> &nbsp;&nbsp;<a href='javascript:downloadCSV(" + param + ")'>导出csv文件</a> &nbsp;&nbsp;<a href='javascript:downloadENC(" + param + ")'>导出enc文件</a>&nbsp;&nbsp;<a href='javascript:openPacketView(" + param + ")'>显示报文</a>";
+	                                     var h = "<a href='javascript:openPacket(" + param + ")'><span class='glyphicon glyphicon glyphicon-edit'></span>&nbsp记录管理</a> "
+	                                     +"&nbsp;&nbsp;<a href='javascript:downloadCSV(" + param + ")'><span class='glyphicon glyphicon glyphicon-export'></span>&nbsp导出csv文件</a> "
+	                                     +"&nbsp;&nbsp;<a href='javascript:downloadENC(" + param + ")'><span class='glyphicon glyphicon glyphicon-export'></span>&nbsp导出enc文件</a>"
+	                                     +"&nbsp;&nbsp;<a href='javascript:openPacketView(" + param + ")'><span class='glyphicon glyphicon glyphicon-eye-open'></span>&nbsp显示报文</a>";
 	                                     return h;
 	                                 }
 	                             }
