@@ -5,7 +5,7 @@
     <div class="modal fade select-role">
          <style> 
             .select-role .modal-body {
-                height: 420px;
+                height: 520px;
             }
             .select-role .grid-table-body {
                 height: 250px;
