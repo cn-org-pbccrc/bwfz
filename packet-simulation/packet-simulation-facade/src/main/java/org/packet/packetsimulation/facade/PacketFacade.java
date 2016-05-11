@@ -12,6 +12,7 @@ import org.openkoala.koala.commons.InvokeResult;
 import org.packet.packetsimulation.core.domain.FileName;
 import org.packet.packetsimulation.core.domain.Packet;
 import org.packet.packetsimulation.facade.dto.*;
+import org.springframework.web.servlet.ModelAndView;
 import org.xml.sax.SAXException;
 
 public interface PacketFacade {
@@ -20,9 +21,7 @@ public interface PacketFacade {
 	
 	public InvokeResult creatPacket(PacketDTO packet);
 	
-	public InvokeResult uploadPacket(PacketDTO packetDTO, String path, String ctxPath) throws FileNotFoundException, IOException, ParseException, ParserConfigurationException, SAXException;
-	
-	public InvokeResult updateUploadPacket(String fileName, String ctxPath) throws IOException, ParseException;
+	public ModelAndView uploadPacket(PacketDTO packetDTO, String ctxPath, String xsdPath) throws FileNotFoundException, IOException, ParseException, ParserConfigurationException, SAXException;
 	
 	public InvokeResult updatePacket(PacketDTO packet);
 	

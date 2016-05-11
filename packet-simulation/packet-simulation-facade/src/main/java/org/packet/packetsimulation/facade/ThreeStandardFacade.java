@@ -8,6 +8,7 @@ import java.util.List;
 import org.dayatang.utils.Page;
 import org.openkoala.koala.commons.InvokeResult;
 import org.packet.packetsimulation.facade.dto.*;
+import org.springframework.web.servlet.ModelAndView;
 
 public interface ThreeStandardFacade {
 
@@ -17,7 +18,7 @@ public interface ThreeStandardFacade {
 	
 	public InvokeResult generateThreeStandard(String createdBy, int threeStandardNumber, int threadNumber);
 	
-	public InvokeResult importThreeStandard(ThreeStandardDTO threeStandardDTO, String path, String ctxPath) throws FileNotFoundException, IOException, ParseException;
+	public ModelAndView importThreeStandard(ThreeStandardDTO threeStandardDTO, String fileName, String ctxPath) throws FileNotFoundException, IOException, ParseException;
 	
 	public InvokeResult updateThreeStandard(ThreeStandardDTO threeStandard);
 	

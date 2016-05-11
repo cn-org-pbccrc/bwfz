@@ -244,9 +244,9 @@ function initFun(){
     	            dialog.find('.selectPacketGrid').getGrid().search(params);
     	        });
     	        dialog.find('#sub').on('click',{grid: grid}, function(e){
-    				var info = dialog.find($(".tab-content")).attr('id');
+    				var info = dialog.find($(".info")).attr('id');
     				var xml = '<?xml version="1.0" encoding="UTF-8"?><Document><'+info+'>';
-    				dialog.find($(".true")).each(function(){   					
+    				dialog.find($(".true")).each(function(){
         				var id = $(this).attr('id');
         				xml += '<' + id + '>';
         				$('#'+id).find($("[name]")).each(function(){
@@ -294,7 +294,7 @@ function initFun(){
       				    }
           	        });    	        
         	    });
-    	    });    	        
+    	    });
  	    },
     	modify: function(id, grid){
 	        var self = this;

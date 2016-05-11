@@ -44,8 +44,8 @@ public class MesgTypeAssembler {
         result.setId (mesgTypeDTO.getId());
          result.setVersion (mesgTypeDTO.getVersion());
          result.setMesgType (mesgTypeDTO.getMesgType());
-	     result.setSort(mesgTypeDTO.getSort());
-	     result.setCode(mesgTypeDTO.getCode());	     
+         result.setSort(mesgTypeDTO.getSort());       
+	     result.setCode(mesgTypeDTO.getCode());
 	     result.setCountTag(mesgTypeDTO.getCountTag());
 	     result.setTransform(mesgTypeDTO.getTransform());
 	     result.setXml(mesgTypeDTO.getXml());

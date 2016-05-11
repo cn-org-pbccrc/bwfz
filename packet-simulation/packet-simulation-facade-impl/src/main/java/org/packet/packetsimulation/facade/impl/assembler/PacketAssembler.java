@@ -24,7 +24,9 @@ public class PacketAssembler {
      	    result.setMesgNum(packet.getMesgCountOfPacket(packet).toString());
      	    result.setReserve(packet.getReserve());
      	    result.setCreatedBy(packet.getCreatedBy());
-     	   	result.setOrigSendDate(new Date(packet.getOrigSendDate().getTime()));
+     	    if(packet.getOrigSendDate() != null){
+     	    	result.setOrigSendDate(new Date(packet.getOrigSendDate().getTime()));
+     	    }     	   	
      	    result.setOrigSender(packet.getOrigSender());
      	return result;
 	 }

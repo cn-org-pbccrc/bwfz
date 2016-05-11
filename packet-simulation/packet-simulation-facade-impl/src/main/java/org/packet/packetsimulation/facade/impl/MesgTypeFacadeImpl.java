@@ -28,6 +28,7 @@ import org.packet.packetsimulation.application.MesgTypeApplication;
 import org.packet.packetsimulation.core.domain.Mesg;
 import org.packet.packetsimulation.core.domain.MesgType;
 import org.packet.packetsimulation.core.domain.Packet;
+import org.packet.packetsimulation.core.domain.TaskPacket;
 import org.packet.packetsimulation.facade.MesgTypeFacade;
 import org.packet.packetsimulation.facade.dto.MesgDTO;
 import org.packet.packetsimulation.facade.dto.MesgTypeDTO;
@@ -48,18 +49,18 @@ public class MesgTypeFacadeImpl implements MesgTypeFacade {
 	private static final Logger LOGGER = LoggerFactory.getLogger(MesgTypeFacadeImpl.class);
 
     private QueryChannelService getQueryChannelService(){
-       if(queryChannel==null){
-          queryChannel = InstanceFactory.getInstance(QueryChannelService.class,"queryChannel");
-       }
-     return queryChannel;
+        if(queryChannel==null){
+        	queryChannel = InstanceFactory.getInstance(QueryChannelService.class,"queryChannel");
+        }
+        return queryChannel;
     }
 	
-	public InvokeResult getMesgType(Long id) {
-		return InvokeResult.success(MesgTypeAssembler.toDTO(application.getMesgType(id)));
-	}
-	
-	public InvokeResult creatMesgType(MesgTypeDTO mesgTypeDTO) {
-		application.creatMesgType(MesgTypeAssembler.toEntity(mesgTypeDTO));
+	public InvokeResult creatMesgType(MesgTypeDTO mesgTypeDTO) {		
+		MesgType mesgType = MesgTypeAssembler.toEntity(mesgTypeDTO);
+		Integer maxSort = findMaxSort();
+		mesgType.setSort(maxSort + 1);
+		maxSort++;
+		application.creatMesgType(mesgType);
 		return InvokeResult.success();
 	}
 	
@@ -80,6 +81,10 @@ public class MesgTypeFacadeImpl implements MesgTypeFacade {
 		}
 		application.removeMesgTypes(mesgTypes);
 		return InvokeResult.success();
+	}
+	
+	public InvokeResult getMesgType(Long id) {
+		return InvokeResult.success(MesgTypeAssembler.toDTO(application.getMesgType(id)));
 	}
 	
 	public List<MesgTypeDTO> findAllMesgType() {
@@ -105,10 +110,10 @@ public class MesgTypeFacadeImpl implements MesgTypeFacade {
 	   	if (queryVo.getCode() != null && !"".equals(queryVo.getCode())) {
 	   		jpql.append(" and _mesgType.code like ?");
 	   		conditionVals.add(MessageFormat.format("%{0}%", queryVo.getCode()));
-	   	}	
-	   	if (queryVo.getSort() != null && !"".equals(queryVo.getSort())) {
+	   	}
+	   	if (queryVo.getSort() != null &&!"".equals(queryVo.getSort())) {
 	   		jpql.append(" and _mesgType.sort like ?");
-	   		conditionVals.add(MessageFormat.format("%{0}%",queryVo.getSort()));
+	   		conditionVals.add(queryVo.getSort());
 	   	}
 	   	if (queryVo.getCreatedBy() != null && !"".equals(queryVo.getCreatedBy())) {
 	   		jpql.append(" and _mesgType.createdBy like ?");
@@ -120,8 +125,31 @@ public class MesgTypeFacadeImpl implements MesgTypeFacade {
 		   .setParameters(conditionVals)
 		   .setPage(currentPage, pageSize)
 		   .pagedList();
-		   
-        return new Page<MesgTypeDTO>(pages.getStart(), pages.getResultCount(),pageSize, MesgTypeAssembler.toDTOs(pages.getData()));
+        return new Page<MesgTypeDTO>(pages.getStart(), pages.getResultCount(), pageSize, MesgTypeAssembler.toDTOs(pages.getData()));
+	}
+	
+	public InvokeResult upMesgType(String sourceId, String destId){
+		MesgType sourceMesgType = application.getMesgType(Long.parseLong(sourceId));
+		MesgType destMesgType = application.getMesgType(Long.parseLong(destId));
+		Integer sourceSort = sourceMesgType.getSort();
+		Integer destSort = destMesgType.getSort();
+		sourceMesgType.setSort(destSort);
+		destMesgType.setSort(sourceSort);
+		application.updateMesgType(sourceMesgType);
+		application.updateMesgType(destMesgType);
+		return InvokeResult.success();
+	}
+	
+	public InvokeResult downMesgType(String sourceId, String destId){
+		MesgType sourceMesgType = application.getMesgType(Long.parseLong(sourceId));
+		MesgType destMesgType = application.getMesgType(Long.parseLong(destId));
+		Integer sourceSort = sourceMesgType.getSort();
+		Integer destSort = destMesgType.getSort();
+		sourceMesgType.setSort(destSort);
+		destMesgType.setSort(sourceSort);
+		application.updateMesgType(sourceMesgType);
+		application.updateMesgType(destMesgType);
+		return InvokeResult.success();
 	}
 	
 //	@Override
@@ -236,4 +264,13 @@ public class MesgTypeFacadeImpl implements MesgTypeFacade {
 	   	return mesgTypes;
 	}
 	
+	private Integer findMaxSort(){
+		List<Object> conditionVals = new ArrayList<Object>();
+	   	StringBuilder jpql = new StringBuilder("select max(_mesgType.sort) from MesgType _mesgType  where 1=1 ");
+	   	if((getQueryChannelService().createJpqlQuery(jpql.toString()).setParameters(conditionVals).singleResult()==null)){
+	   		return 0;
+	   	}
+	   	Integer max = (Integer) getQueryChannelService().createJpqlQuery(jpql.toString()).setParameters(conditionVals).singleResult();
+	   	return max;
+	}
 }

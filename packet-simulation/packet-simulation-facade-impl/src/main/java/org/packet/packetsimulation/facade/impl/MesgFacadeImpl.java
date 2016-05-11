@@ -277,9 +277,11 @@ public class MesgFacadeImpl implements MesgFacade {
         private List<ThreeStandard> data;
         private Mesg tmpMesg;
         private String content;
-        public BaseTask(List<ThreeStandard> data, Mesg tmpMesg){
+        private String currentUserId;
+        public BaseTask(List<ThreeStandard> data, Mesg tmpMesg, String currentUserId){
             this.data = data;
             this.tmpMesg = tmpMesg;
+            this.currentUserId = currentUserId;
             this.content = tmpMesg.getContent();
         }
         @Override
@@ -300,6 +302,8 @@ public class MesgFacadeImpl implements MesgFacade {
     				mesg.setMesgType(tmpMesg.getMesgType());
     				mesg.setPacket(tmpMesg.getPacket());
     				mesg.setContent(content);
+    				mesg.setMesgFrom(0);
+    				mesg.setCreateBy(currentUserId);
     				mesgs.add(mesg);
     			}
             }else{
@@ -308,9 +312,9 @@ public class MesgFacadeImpl implements MesgFacade {
                 for (int index = 0; index * size < data.size(); index++) {
                 	BaseTask task;
                     if((index + 1) * size > data.size()){
-                        task = new BaseTask(data.subList(index * size, data.size()), tmpMesg);
+                        task = new BaseTask(data.subList(index * size, data.size()), tmpMesg, currentUserId);
                     }else{
-                        task = new BaseTask(data.subList(index * size, (index + 1) * size), tmpMesg);
+                        task = new BaseTask(data.subList(index * size, (index + 1) * size), tmpMesg, currentUserId);
                     }
                     task.fork();
                     tasks.add(task);
@@ -534,8 +538,8 @@ public class MesgFacadeImpl implements MesgFacade {
 		SimpleDateFormat sdf = new SimpleDateFormat("yyyy-MM-dd hh:mm:ss"); 
 		String s = sdf.format(start);		
 		List<ThreeStandard> list= queryThreeStandardByInput(startOfThreeStandard,endOfThreeStandard,currentUserId);		
-		List<Mesg> mesgs= new ArrayList<Mesg>();
-		Mesg mesg = application.getMesg(mesgDTO.getId());
+		List<Mesg> mesgs= new ArrayList<Mesg>();		
+		Mesg mesg = application.getMesg(mesgDTO.getId());		
 		if(mesg.getMesgType().getMesgType().equals("基本信息正常报送记录")){
 //			for(int i = 0; i < list.size(); i++){
 //				Mesg mesg = new Mesg();
@@ -565,7 +569,7 @@ public class MesgFacadeImpl implements MesgFacade {
 //				}			
 //			}
 			ForkJoinPool pool = new ForkJoinPool(5);
-			BaseTask task = new BaseTask(list, mesg);
+			BaseTask task = new BaseTask(list, mesg, currentUserId);
 	        Future<List> result =  pool.submit(task);
 	        try {
 	            mesgs = result.get();
@@ -706,7 +710,6 @@ public class MesgFacadeImpl implements MesgFacade {
 			XmlNode xmlNode = XmlUtil.getXmlNodeByXmlContent(mesgType.getXml(),mesgType.getCountTag());
 			XmlNode xmlNodeForUpdate = XmlUtil.getXmlNodeByXmlContent(mesg.getContent(),mesgType.getCountTag());
 			content = xmlNode.toEditHtmlTabStringForUpdate(mesgType.getMesgType(), xmlNodeForUpdate);
-			System.out.println("1111111111111:"+content);
 		} catch (SAXException e) {
 			// TODO Auto-generated catch block
 			e.printStackTrace();

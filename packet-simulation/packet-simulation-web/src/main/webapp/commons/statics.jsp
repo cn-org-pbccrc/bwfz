@@ -16,6 +16,7 @@
 <link rel="stylesheet" type="text/css" href="${contextPath}/lib/uploadify.css">  
 <link href="${contextPath}/lib/bootstrap-wizard/prettify.css" rel="stylesheet" type="text/css" >
 <link href="${contextPath}/lib/bootstrap-switch/css/bootstrap3/bootstrap-switch.css" rel="stylesheet" type="text/css" >
+<link href="${contextPath}/lib/bootstrap-upload/css/fileinput.min.css" media="all" rel="stylesheet" type="text/css" />
 
 <%-- js 默认就有 type="text/javascript" --%>
 <script  src="${contextPath}/lib/jquery-1.11.3.min.js"></script>
@@ -35,6 +36,8 @@
 <script src="${contextPath}/lib/bootstrap-wizard/jquery.bootstrap.wizard.js"></script>
 <script src="${contextPath}/lib/bootstrap-wizard/prettify.js"></script>
 <script src="${contextPath}/lib/bootstrap-switch/js/bootstrap-switch.js"></script>
+<script src="${contextPath}/lib/bootstrap-upload/js/fileinput.min.js"></script>
+<script src="${contextPath}/lib/bootstrap-upload/js/fileinput_locale_zh.js"></script>  
 
 <script>
 	$.ajaxSetup({cache:false});

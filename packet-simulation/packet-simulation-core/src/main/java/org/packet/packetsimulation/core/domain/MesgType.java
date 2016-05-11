@@ -29,7 +29,7 @@ public class MesgType extends KoalaAbstractEntity{
 	private String code;
 	
 	@Column(name = "SORT") 
-	private int sort;
+	private Integer sort;
 	
 	@Column(name = "COUNT_TAG") 
 	private String countTag;
@@ -75,11 +75,11 @@ public class MesgType extends KoalaAbstractEntity{
 		this.mesgType = mesgType;
 	}
 
-	public int getSort() {
+	public Integer getSort() {
 		return sort;
 	}
 
-	public void setSort(int sort) {
+	public void setSort(Integer sort) {
 		this.sort = sort;
 	}
 

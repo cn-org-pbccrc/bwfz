@@ -6,6 +6,7 @@ import java.util.List;
 import org.dayatang.utils.Page;
 import org.openkoala.koala.commons.InvokeResult;
 import org.packet.packetsimulation.facade.dto.*;
+import org.springframework.web.servlet.ModelAndView;
 //import org.springframework.web.bind.annotation.RequestParam;
 
 public interface TaskPacketFacade {
@@ -14,13 +15,11 @@ public interface TaskPacketFacade {
 	
 	public InvokeResult creatTaskPacket(TaskPacketDTO taskPacket);
 	
-	public InvokeResult creatOutSideTaskPacket(TaskPacketDTO taskPacket, String fileName) throws ParseException;
-	
-	public InvokeResult updateOutSideTaskPacket(String fileName) throws ParseException;
-	
 	public InvokeResult creatTaskPackets(TaskPacketDTO taskPacket, String ctxPath, String[] flags, String[] coms, String[] encs) throws ParseException;
 	
 	public InvokeResult updateTaskPacket(TaskPacketDTO taskPacket);
+	
+	public ModelAndView uploadTaskPacket(TaskPacketDTO taskPacketDTO, String ctxPath);
 	
 	public InvokeResult removeTaskPacket(Long id);
 	

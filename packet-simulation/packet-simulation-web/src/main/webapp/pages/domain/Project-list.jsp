@@ -179,7 +179,6 @@ $(function (){
 	            //alert(a);	            
 	        });
 	        dialog.find('#save').on('click',{grid: grid}, function(e){	        	  
-	              //alert(userId.val());
 	              if (!Validation.notNull(dialog, dialog.find('#projectNameID'), dialog.find('#projectNameID').val(), '请输入项目名称')) {
 		    			return false;
 		    	  }

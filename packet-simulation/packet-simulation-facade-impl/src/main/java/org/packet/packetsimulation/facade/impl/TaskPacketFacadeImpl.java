@@ -1,9 +1,11 @@
 package org.packet.packetsimulation.facade.impl;
 
 import java.util.Date;
+import java.util.HashMap;
 import java.util.HashSet;
 import java.util.List;
 import java.util.ArrayList;
+import java.util.Map;
 import java.util.Set;
 import java.io.File;
 import java.io.FileInputStream;
@@ -29,6 +31,8 @@ import org.packet.packetsimulation.application.PacketApplication;
 import org.packet.packetsimulation.application.TaskApplication;
 import org.packet.packetsimulation.application.TaskPacketApplication;
 import org.packet.packetsimulation.core.domain.*;
+import org.springframework.web.servlet.ModelAndView;
+import org.springframework.web.servlet.view.json.MappingJacksonJsonView;
 
 @Named
 public class TaskPacketFacadeImpl implements TaskPacketFacade {
@@ -78,7 +82,7 @@ public class TaskPacketFacadeImpl implements TaskPacketFacade {
 				return InvokeResult.failure("流水号最大值为9999!");
 			}
 			String sn = String.format("%04d", maxPacketNumber + 1);
-			taskPacket.setSelectedPacketName(frontPosition+"0"+sn);
+			taskPacket.setSelectedPacketName(frontPosition + "0" + sn);
 			taskPacket.setSelectedFileVersion(packet.getFileVersion());
 			taskPacket.setSelectedOrigSender(packet.getOrigSender());
 			taskPacket.setSelectedOrigSendDate(packet.getOrigSendDate());
@@ -120,45 +124,46 @@ public class TaskPacketFacadeImpl implements TaskPacketFacade {
 		return InvokeResult.success();
 	}
 	
-	public InvokeResult creatOutSideTaskPacket(TaskPacketDTO taskPacketDTO, String fileName) throws ParseException {
-		TaskPacket taskPacket = TaskPacketAssembler.toEntity(taskPacketDTO);
-		Integer max = findMaxSerialNumber(taskPacketDTO.getTaskId());
-		Integer flag = max + 1;
-		Task task = taskApplication.getTask(taskPacketDTO.getTaskId());			
-		taskPacket.setTask(task);
-		SimpleDateFormat sdf = new SimpleDateFormat("yyyy-MM-dd HH:mm:ss");
-		taskPacket.setPacketFrom(PACKETCONSTANT.TASKPACKET_PACKETFROM_OUTSIDE);
-		taskPacket.setSelectedPacketName(fileName);
-		taskPacket.setSelectedFileVersion("-");
-		taskPacket.setSelectedOrigSender("-");
-		String dateString = sdf.format(new Date());
-		Date date=sdf.parse(dateString);
-		taskPacket.setSelectedOrigSendDate(date);
-		taskPacket.setSelectedDataType(0);
-		taskPacket.setSelectedRecordType("-");
-		taskPacket.setCompression(1);
-		taskPacket.setEncryption(1);
-		taskPacket.setSerialNumber(flag);
-		application.creatTaskPacket(taskPacket);
-		return InvokeResult.success();
-	}
-	
-	public InvokeResult updateOutSideTaskPacket(String fileName) throws ParseException{
-		List<Object> conditionVals = new ArrayList<Object>();
-		StringBuilder jpql = new StringBuilder("select _taskPacket from TaskPacket _taskPacket  where 1=1 ");
-		if (fileName != null && !"".equals(fileName)) {
-			jpql.append(" and _taskPacket.selectedPacketName = ? ");
-		   	conditionVals.add(fileName);
+	public ModelAndView uploadTaskPacket(TaskPacketDTO taskPacketDTO, String ctxPath){
+		ModelAndView modelAndView = new ModelAndView("index");
+		MappingJacksonJsonView view = new MappingJacksonJsonView();
+		Map<String,String> attributes = new HashMap();
+		File uploadFile = new File(ctxPath + taskPacketDTO.getSelectedPacketName());
+		TaskPacket taskPacket = findTaskPacketBySelectedPacketNameAndPacketFrom(taskPacketDTO.getSelectedPacketName());
+		if(taskPacket == null){
+			taskPacket = TaskPacketAssembler.toEntity(taskPacketDTO);
+			Integer max = findMaxSerialNumber(taskPacketDTO.getTaskId());
+			Task task = taskApplication.getTask(taskPacketDTO.getTaskId());			
+			taskPacket.setTask(task);
+			taskPacket.setCreatedBy(task.getTaskCreator());			
+			taskPacket.setPacketFrom(PACKETCONSTANT.TASKPACKET_PACKETFROM_OUTSIDE);
+			taskPacket.setSelectedFileVersion("-");
+			taskPacket.setSelectedOrigSender("-");			
+			taskPacket.setSelectedDataType(0);
+			taskPacket.setSelectedRecordType("-");
+			taskPacket.setCompression(1);
+			taskPacket.setEncryption(1);
+			taskPacket.setSerialNumber(max + 1);			
 		}
-		jpql.append(" and _taskPacket.packetFrom = ? ");
-		conditionVals.add(PACKETCONSTANT.TASKPACKET_PACKETFROM_OUTSIDE);
-		TaskPacket taskPacket = (TaskPacket) getQueryChannelService().createJpqlQuery(jpql.toString()).setParameters(conditionVals).singleResult();
 		SimpleDateFormat sdf = new SimpleDateFormat("yyyy-MM-dd HH:mm:ss");
 		String dateString = sdf.format(new Date());
-		Date date = sdf.parse(dateString);
+		Date date = null;
+		try {
+			date = sdf.parse(dateString);
+		} catch (ParseException e) {
+			e.printStackTrace();
+			uploadFile.delete();
+			attributes.put("error","日期转换错误!");
+			view.setAttributesMap(attributes);
+			modelAndView.setView(view);
+			return modelAndView;
+		}
 		taskPacket.setSelectedOrigSendDate(date);
-		application.updateTaskPacket(taskPacket);
-		return InvokeResult.success();
+		application.creatTaskPacket(taskPacket);
+		attributes.put("data","上传成功!");
+		view.setAttributesMap(attributes);
+		modelAndView.setView(view);
+		return modelAndView;
 	}
 	
 	public String showPacketContent(Long id, String ctxPath){
@@ -224,6 +229,20 @@ public class TaskPacketFacadeImpl implements TaskPacketFacade {
 	   	}
 	   	Integer max = (Integer) getQueryChannelService().createJpqlQuery(jpql.toString()).setParameters(conditionVals).singleResult();
 	   	return max;
+	}
+	
+	@SuppressWarnings("unchecked")
+	private TaskPacket findTaskPacketBySelectedPacketNameAndPacketFrom(String selectedPacketName){
+		List<Object> conditionVals = new ArrayList<Object>();
+		StringBuilder jpql = new StringBuilder("select _taskPacket from TaskPacket _taskPacket  where 1=1 ");
+		if (selectedPacketName != null && !"".equals(selectedPacketName)) {
+			jpql.append(" and _taskPacket.selectedPacketName = ? ");
+		   	conditionVals.add(selectedPacketName);
+		}
+		jpql.append(" and _taskPacket.packetFrom = ? ");
+		conditionVals.add(PACKETCONSTANT.TASKPACKET_PACKETFROM_OUTSIDE);
+		TaskPacket taskPacket = (TaskPacket) getQueryChannelService().createJpqlQuery(jpql.toString()).setParameters(conditionVals).singleResult();
+		return taskPacket;
 	}
 	
 	public InvokeResult updateTaskPacket(TaskPacketDTO taskPacketDTO) {

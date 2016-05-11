@@ -40,14 +40,14 @@
         <xs:sequence>
             <xs:element name="IDNm"></xs:element><!-- 标识个数 -->
             <xs:element name="IDRec" type="IDRecTp" maxOccurs="unbounded"></xs:element><!-- 其他证件信息 --><!-- 出现次数怎么定 -->
+            <xs:element name="InfoUpDate"></xs:element><!-- 信息更新日期 -->
         </xs:sequence>
     </xs:complexType>
     <xs:complexType name="IDRecTp">
         <xs:sequence>
             <xs:element name="Alias"></xs:element><!-- 其他姓名 -->
             <xs:element name="OthIdType"></xs:element><!-- 其他证件类型 -->
-            <xs:element name="OthIdNum"></xs:element><!-- 其他证件号码 -->
-            <xs:element name="InfoUpDate"></xs:element><!-- 信息更新日期 -->
+            <xs:element name="OthIdNum"></xs:element><!-- 其他证件号码 -->            
         </xs:sequence>
     </xs:complexType>
     <xs:complexType name="AcctIDInfSgmtTp">
