@@ -1,6 +1,5 @@
 package org.openkoala.gqc.infra.util;
 
-import java.io.ByteArrayOutputStream;
 import java.io.File;
 import java.io.IOException;
 import java.io.StringReader;
@@ -10,21 +9,12 @@ import java.util.List;
 import javax.xml.parsers.DocumentBuilder;
 import javax.xml.parsers.DocumentBuilderFactory;
 import javax.xml.parsers.ParserConfigurationException;
-import javax.xml.parsers.SAXParser;
-import javax.xml.parsers.SAXParserFactory;
 import javax.xml.transform.Source;
 import javax.xml.transform.stream.StreamSource;
 import javax.xml.validation.Schema;
 import javax.xml.validation.SchemaFactory;
 import javax.xml.validation.Validator;
 
-import org.dom4j.DocumentException;
-import org.dom4j.DocumentHelper;
-import org.dom4j.io.OutputFormat;
-import org.dom4j.io.SAXReader;
-import org.dom4j.io.SAXValidator;
-import org.dom4j.io.XMLWriter;
-import org.dom4j.util.XMLErrorHandler;
 import org.w3c.dom.Attr;
 import org.w3c.dom.Document;
 import org.w3c.dom.Element;
@@ -34,8 +24,11 @@ import org.w3c.dom.NodeList;
 import org.xml.sax.InputSource;
 import org.xml.sax.SAXException;
 
+import com.alibaba.fastjson.JSON;
+import com.alibaba.fastjson.JSONObject;
+
 /**
- * xsd验证xml格式工具
+ * xml操作工具
  * 
  * @author hbikai
  *
@@ -51,7 +44,17 @@ public class XmlUtil {
 	private XmlUtil() {
 
 	}
-
+	
+	/**
+	 * 根据路径将xml转为xmlNode
+	 * @param filePath
+	 * @param realPath
+	 * @param countTags
+	 * @return
+	 * @throws SAXException
+	 * @throws IOException
+	 * @throws ParserConfigurationException
+	 */
 	public static XmlNode getXmlNodeByXml(String filePath, String realPath, String countTags)
 			throws SAXException, IOException, ParserConfigurationException {
 		String[] countTag = null;
@@ -68,7 +71,16 @@ public class XmlUtil {
 		xmlNode = parseElement(root, xmlNode,countTag);
 		return xmlNode;
 	}
-
+	
+	/**
+	 * 将xml字符串转为xmlNode
+	 * @param xmlContent
+	 * @param countTags
+	 * @return
+	 * @throws SAXException
+	 * @throws IOException
+	 * @throws ParserConfigurationException
+	 */
 	public static XmlNode getXmlNodeByXmlContent(String xmlContent,String countTags)
 			throws SAXException, IOException, ParserConfigurationException {
 		String[] countTag = null;
@@ -84,10 +96,146 @@ public class XmlUtil {
 		xmlNode = parseElement(root, xmlNode,countTag);
 		return xmlNode;
 	}
-
+	
+	/**
+	 * 将xml字符串转为xmlNode
+	 * @param xmlContent
+	 * @param countTags
+	 * @return
+	 * @throws SAXException
+	 * @throws IOException
+	 * @throws ParserConfigurationException
+	 */
+	public static XmlNode getXmlNodeByXmlContent1(String xmlContent, String countTags, String templateName)
+			throws SAXException, IOException, ParserConfigurationException {
+		String[] countTag = null;
+		if(null!=countTags && !"".equals(countTags)){
+			countTag = countTags.split(",");
+		}
+		DocumentBuilderFactory factory = DocumentBuilderFactory.newInstance();
+		DocumentBuilder builder = factory.newDocumentBuilder();
+		Document doc = builder.parse(new InputSource(new StringReader(xmlContent)));
+		// 获得根元素结点
+		Element root = ((org.w3c.dom.Document) doc).getDocumentElement();
+		XmlNode xmlNode = new XmlNode();
+		xmlNode = parseElement1(root, xmlNode, countTag, templateName);
+		return xmlNode;
+	}
+	
+	/**
+	 * 递归将element的子孙节点转为xmlNode
+	 * @param element 根节点元素
+	 * @param xmlNode xmlNode对象
+	 * @param countTag 重复域统计字段
+	 * @return
+	 */
+	public static XmlNode parseElement1(Element element, XmlNode xmlNode,String[] countTag,String templateName) {
+		String tagName = element.getNodeName();
+		NodeList children = element.getChildNodes();
+		xmlNode.setTagName(tagName);
+		xmlNode.setNodeType(element.getNodeType());
+		JSONObject object = JSON.parseObject(PropertiesManager.getProperties(tagName, templateName));
+		xmlNode.setCnName(object.getString("0"));
+		xmlNode.setHint(object.getString("1"));
+		if(object.getString("2")!=null && !"".equals(object.getString("2"))){
+			xmlNode.setNull(false);
+		}else {
+			xmlNode.setNull(true);
+		}
+		
+		if ("Document".equals(tagName)) {
+			// element元素的所有属性所构成的NamedNodeMap对象，需要对其进行判断
+			String prototype = "";
+			NamedNodeMap map = element.getAttributes();
+			// 如果该元素存在属性
+			if (null != map) {
+				for (int i = 0; i < map.getLength(); i++) {
+					// 获得该元素的每一个属性
+					Attr attr = (Attr) map.item(i);
+					String attrName = attr.getName();
+					String attrValue = attr.getValue();
+					//System.out.println("attrName:"+attrName+";attrValue:"+attrValue);
+					prototype = prototype + " " + attrName + "=\"" + attrValue
+							+ "\"";
+				}
+			}
+			xmlNode.setPrototype(prototype);
+		} else {
+			if (xmlNode.getPath() == null) {
+				xmlNode.setPath(tagName);
+			} else {
+				xmlNode.setPath(xmlNode.getPath() + "." + tagName);
+			}
+		}
+		xmlNode.setRowspan(0);
+		
+		List<XmlNode> xmlNodes = new ArrayList<XmlNode>();
+		if (children.getLength() == 1) {
+			xmlNode.setRowspan(1);
+		}
+		List<XmlNode> peerNodes = new ArrayList<XmlNode>();
+		int countIndex = 0;
+		for (int i = 0; i < children.getLength(); i++) {
+			
+			Node node = children.item(i);
+			//System.out.println("取所有结点值看一看:"+node.getNodeName()+";它的类型:"+node.getNodeType());
+			// 获得结点的类型
+			short nodeType = node.getNodeType();
+			
+			if (nodeType == Node.ELEMENT_NODE) {
+				// 是元素，继续递归
+				XmlNode childNode = new XmlNode();
+				childNode.setPath(xmlNode.getPath());
+				childNode = parseElement1((Element) node, childNode, countTag, templateName);
+				
+				if (children.getLength() != 1) {
+					xmlNode.setRowspan(xmlNode.getRowspan() + childNode.getRowspan());
+				}
+				
+				if(xmlNode.isCountTag() && countIndex<=(xmlNode.getPeerNodeSize())){
+					peerNodes.add(childNode);
+					//System.out.println("peerNode:"+childNode.getTagName());
+					if((countIndex+1)==xmlNode.getPeerNodeSize()){
+						xmlNode.setCountTag(false);
+					}
+					XmlNode countNode = xmlNodes.get(xmlNodes.size()-1);
+					countNode.setPeerNodes(peerNodes);
+					xmlNode.setNodes(xmlNodes);
+					countIndex=countIndex+1;
+				}else{
+					xmlNodes.add(childNode);
+				}
+				
+				if(null!=countTag){
+					for(String countTagName : countTag){
+						if(childNode.getTagName().equals(countTagName)){
+							xmlNode.setCountTag(true);
+							xmlNode.setPeerNodeSize(Integer.valueOf(childNode.getValue()));
+						}
+					}
+				}
+			} else if (nodeType == Node.TEXT_NODE) {
+				// 递归出口
+				xmlNode.setValue(node.getNodeValue());
+				//System.out.println("所有标签:"+node.getTextContent());
+				//System.out.println("递归出口:"+node.getNodeValue());
+			}
+			// else if(nodeType == Node.COMMENT_NODE) {
+			// Comment comment = (Comment)node; //注释内容
+			// String data = comment.getData();
+		}
+		xmlNode.setNodes(xmlNodes);
+		return xmlNode;
+	}
+	/**
+	 * 递归将element的子孙节点转为xmlNode
+	 * @param element 根节点元素
+	 * @param xmlNode xmlNode对象
+	 * @param countTag 重复域统计字段
+	 * @return
+	 */
 	public static XmlNode parseElement(Element element, XmlNode xmlNode,String[] countTag) {
 		String tagName = element.getNodeName();
-		//System.out.println("这这这tagName是:"+tagName);
 		NodeList children = element.getChildNodes();
 		xmlNode.setTagName(tagName);
 
@@ -99,7 +247,6 @@ public class XmlUtil {
 			if (null != map) {
 				for (int i = 0; i < map.getLength(); i++) {
 					// 获得该元素的每一个属性
-					//System.out.println("看看进没进去");
 					Attr attr = (Attr) map.item(i);
 					String attrName = attr.getName();
 					String attrValue = attr.getValue();
@@ -153,7 +300,6 @@ public class XmlUtil {
 					countIndex=countIndex+1;
 				}else{
 					xmlNodes.add(childNode);
-					//System.out.println("米米去日本啦!!:"+childNode.getTagName());
 				}
 				
 				if(null!=countTag){
@@ -175,14 +321,15 @@ public class XmlUtil {
 			// String data = comment.getData();
 		}
 		xmlNode.setNodes(xmlNodes);
-		for(int i = 0;i<xmlNodes.size();i++){
-			//System.out.println("本泽马哈哈:"+xmlNodes.get(i).getTagName()+";贝尔哈哈:"+xmlNodes.get(i).getValue());
-		}
 		return xmlNode;
 	}
 
 	/**
 	 * 通过XSD（XML Schema）校验XML
+	 * @param fileName
+	 * @param realPath
+	 * @param xmlContent
+	 * @return
 	 */
 	public static String validateXMLByXSD(String fileName,String realPath,String xmlContent) {
 		
@@ -240,7 +387,15 @@ public class XmlUtil {
 //			return ex.toString();
 //		}
 	}
-
+	
+	/**
+	 * 校验xml
+	 * @param xsdpath
+	 * @param xmlpath
+	 * @return
+	 * @throws SAXException
+	 * @throws IOException
+	 */
 	public static boolean Validatexml(String xsdpath, String xmlpath)
 			throws SAXException, IOException {
 		// 建立schema工厂

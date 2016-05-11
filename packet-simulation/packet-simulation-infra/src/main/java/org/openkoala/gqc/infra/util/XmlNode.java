@@ -57,6 +57,21 @@ public class XmlNode implements Serializable, Cloneable{
 	
 	private String cnName;
 	
+	/**
+	 * 备注信息
+	 */
+	private String hint;
+	
+	/**
+	 * 是否必填
+	 */
+	private boolean isNull;
+	
+	/**
+	 * 节点类型
+	 */
+	private short nodeType;
+	
 	private String value;
 	
 	private List<XmlNode> nodes;
@@ -93,6 +108,30 @@ public class XmlNode implements Serializable, Cloneable{
 
 	public void setCnName(String cnName) {
 		this.cnName = cnName;
+	}
+
+	public String getHint() {
+		return hint;
+	}
+
+	public boolean isNull() {
+		return isNull;
+	}
+
+	public short getNodeType() {
+		return nodeType;
+	}
+
+	public void setHint(String hint) {
+		this.hint = hint;
+	}
+
+	public void setNull(boolean isNull) {
+		this.isNull = isNull;
+	}
+
+	public void setNodeType(short nodeType) {
+		this.nodeType = nodeType;
 	}
 
 	public int getRowspan() {

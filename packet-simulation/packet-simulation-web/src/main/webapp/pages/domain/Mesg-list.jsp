@@ -1,4 +1,6 @@
 <%@ page language="java" contentType="text/html; charset=UTF-8" pageEncoding="UTF-8"%>
+<%@ taglib uri="http://java.sun.com/jsp/jstl/core" prefix="c" %>
+<script type="text/javascript" src="/js/batchConfig/batchConfig.js"></script>
 <div class="mesgDetail" id="mesgDetail">
 <html lang="zh-CN">
 <head>
@@ -96,6 +98,7 @@ function initFun(){
     	        	{content: '<button class="btn btn-primary" type="button"><span class="glyphicon glyphicon-plus"><span>添加</button>', action: 'add'},
     	            {content: '<button class="btn btn-success" type="button"><span class="glyphicon glyphicon-edit"><span>修改</button>', action: 'modify'},
     	            {content: '<button class="btn btn-danger" type="button"><span class="glyphicon glyphicon-remove"><span>删除</button>', action: 'delete'},
+    	            {content: '<button class="btn btn-info" type="button"><span class="glyphicon glyphicon-repeat"><span>批量规则</button>', action: 'ruleConfig'},
     	            {content: '<button class="btn btn-info" type="button"><span class="glyphicon glyphicon-repeat"><span>批量添加</button>', action: 'batch'}
     	        ],
     	        url:"${pageContext.request.contextPath}/Mesg/pageJson/" + packetId + ".koala",
@@ -169,6 +172,32 @@ function initFun(){
   	                    return;
   	                }
   	                self.batch(indexs[0], $this);
+  	            },
+    	        'ruleConfig': function(event, data){
+  	            	var indexs = data.data;
+  	                var $this = $(this);
+  	                	if(indexs.length == 0){
+  	                    	$this.message({
+  	                        	type: 'warning',
+  	                            content: '请选择一条记录进行批量配置'
+  	                    })
+  	                    return;
+  	                }
+  	                if(indexs.length > 1){
+  	                	$this.message({
+  	                    	type: 'warning',
+  	                        content: '只能选择一条记录进行批量配置'
+  	                    })
+  	                    return;
+  	                }  
+  	                $.get( '${pageContext.request.contextPath}/BatchConfig/isExist/' + indexs[0] + '.koala').done(function(data){
+    	            	  var ruleConfigId = data.data;
+    	            	  if(ruleConfigId){
+    	            		  batchConfig().modify(ruleConfigId.id,grid);
+    	            	  }else{
+    	            		  batchConfig().add(grid);
+    	            	  }
+      	              });
   	            }
     	    });
     	},
@@ -493,7 +522,10 @@ function initFun(){
 	                });
 	            }
     	    });
-    	},
+    	},	
+    	batchConfig: function(id, grid){
+    		batchConfig().add($(this));
+    	}
     }
     PageLoader.initGridPanel();
 }

@@ -12,6 +12,7 @@
 <link rel="stylesheet" href="${contextPath}/css/organisation.css"/>
 <link rel="stylesheet" href="${contextPath}/lib/validateForm/css/style.css"/>
 <link rel="stylesheet" href="${contextPath}/css/gqc.css"/>
+<link rel="stylesheet" href="${contextPath}/css/batchConfig.css"/>
 <link rel="stylesheet" type="text/css" href="${contextPath}/lib/uploadify.css">  
 <link href="${contextPath}/lib/bootstrap-wizard/prettify.css" rel="stylesheet" type="text/css" >
 <link href="${contextPath}/lib/bootstrap-switch/css/bootstrap3/bootstrap-switch.css" rel="stylesheet" type="text/css" >

@@ -65,7 +65,7 @@
             </activation>
             <properties>
                 <hibernate.hbm2ddl.auto>update</hibernate.hbm2ddl.auto>
-                <hibernate.show_sql>false</hibernate.show_sql>
+                <hibernate.show_sql>true</hibernate.show_sql>
                 <hibernate.dialect>org.hibernate.dialect.MySQL5Dialect</hibernate.dialect>
                 <db.jdbcDriver>com.mysql.jdbc.Driver</db.jdbcDriver>
                 <db.connectionURL>jdbc:mysql://localhost:3306/test?useUnicode=true&amp;characterEncoding=UTF-8

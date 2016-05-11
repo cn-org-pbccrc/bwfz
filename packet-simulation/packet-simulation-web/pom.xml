@@ -141,6 +141,7 @@
                 <groupId>org.mortbay.jetty</groupId>  
                 <artifactId>jetty-maven-plugin</artifactId>  
                 <configuration>
+                <webDefaultXml>src/main/resources/webdefault.xml</webDefaultXml>
 					<connectors>
 						<connector implementation="org.eclipse.jetty.server.nio.SelectChannelConnector">
 							<port>8080</port>
@@ -151,6 +152,7 @@
                     <!--<scanIntervalSeconds>10</scanIntervalSeconds>-->  
                     <webApp> 
                         <contextPath>/</contextPath> 
+                        <defaultsDescriptor>src/main/resources/webdefault.xml</defaultsDescriptor>
                     </webApp> 
                 </configuration> 
             </plugin> 

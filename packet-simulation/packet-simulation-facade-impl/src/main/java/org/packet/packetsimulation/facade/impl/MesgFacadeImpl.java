@@ -3,6 +3,7 @@ package org.packet.packetsimulation.facade.impl;
 import java.io.File;
 import java.io.FileWriter;
 import java.io.IOException;
+import java.math.BigInteger;
 import java.text.MessageFormat;
 import java.text.SimpleDateFormat;
 import java.util.ArrayList;
@@ -22,16 +23,22 @@ import javax.xml.parsers.ParserConfigurationException;
 import org.dayatang.domain.InstanceFactory;
 import org.dayatang.querychannel.QueryChannelService;
 import org.dayatang.utils.Page;
+import org.dom4j.Document;
+import org.dom4j.DocumentException;
+import org.dom4j.DocumentHelper;
+import org.dom4j.Element;
 import org.openkoala.gqc.infra.util.XmlNode;
 import org.openkoala.gqc.infra.util.XmlUtil;
 import org.openkoala.koala.commons.InvokeResult;
 import org.openkoala.security.org.core.domain.EmployeeUser;
+import org.packet.packetsimulation.application.BatchConfigApplication;
 import org.packet.packetsimulation.application.MesgApplication;
 import org.packet.packetsimulation.application.MesgTypeApplication;
 import org.packet.packetsimulation.application.PacketApplication;
 import org.packet.packetsimulation.application.TaskApplication;
 import org.packet.packetsimulation.application.TaskPacketApplication;
 import org.packet.packetsimulation.application.ThreeStandardApplication;
+import org.packet.packetsimulation.core.domain.BatchRule;
 import org.packet.packetsimulation.core.domain.Mesg;
 import org.packet.packetsimulation.core.domain.MesgType;
 import org.packet.packetsimulation.core.domain.PACKETCONSTANT;
@@ -50,6 +57,9 @@ import org.springframework.dao.DataAccessException;
 import org.springframework.transaction.annotation.Transactional;
 import org.xml.sax.SAXException;
 
+import com.alibaba.fastjson.JSON;
+import com.alibaba.fastjson.JSONObject;
+
 @Named
 public class MesgFacadeImpl implements MesgFacade {
 
@@ -64,6 +74,9 @@ public class MesgFacadeImpl implements MesgFacade {
 	
 	@Inject
 	private MesgTypeApplication  mesgTypeApplication;
+	
+	@Inject
+	private BatchConfigApplication  batchConfigApplication;
 	
 	@Inject
 	private PacketApplication  packetApplication;
@@ -229,6 +242,34 @@ public class MesgFacadeImpl implements MesgFacade {
 		}
 		application.creatMesgs(mesgs);
 		return InvokeResult.success();
+	}
+	
+	private String fillBatchRule(String content, List<BatchRule> rules, int rowNum) throws DocumentException{
+		Document document = DocumentHelper.parseText(content);  
+		for (BatchRule rule : rules) {
+			int ruleType = rule.getRuleType();
+			String prop = rule.getRuleProperties();
+			JSONObject obj = JSON.parseObject(prop);
+			Element element = (Element) document.selectNodes(rule.getXpath()).get(0);
+			switch (ruleType) {
+			case 0://自增
+				Long start = obj.getLong("start");//起始
+				int size = obj.getIntValue("stepSize");//步长
+				Long total = start + size*rowNum;
+				element.setText(total.toString());
+				break;
+			case 1://数据集
+				obj.getString("dickName");
+				break;
+			case 2://自定义
+				obj.getString("userDefine");
+				break;
+			default:
+				break;
+			}
+		}
+        System.out.println(document.asXML());
+		return document.asXML();
 	}
 	
 	class BaseTask extends RecursiveTask<List>{
