@@ -30,6 +30,7 @@ import org.springframework.web.multipart.MultipartFile;
 import org.springframework.web.multipart.MultipartHttpServletRequest;
 import org.springframework.web.multipart.MultipartResolver;
 import org.springframework.web.multipart.commons.CommonsMultipartResolver;
+import org.springframework.web.servlet.ModelAndView;
 //import org.apache.commons.fileupload.FileItem;
 //import org.apache.commons.fileupload.FileItemFactory;
 //import org.apache.commons.fileupload.disk.DiskFileItemFactory;
@@ -134,12 +135,12 @@ public class TaskPacketController {
 	
 	@ResponseBody
 	@RequestMapping("/checkExisting")
-	public int checkExisting(HttpServletRequest request, @RequestParam String taskId, @RequestParam String filename){
+	public int checkExisting(HttpServletRequest request, @RequestParam String taskId, @RequestParam String fileName){
 		File file = new File(request.getSession().getServletContext().getRealPath("/") + File.separator + "uploadFiles" + File.separator + taskId + File.separator + "outsideFiles" + File.separator);
 		File[] fileList = file.listFiles();
 		if (fileList!=null){
 			for (int i = 0; i < fileList.length; i++) {
-				if(filename.equals(fileList[i].getName())){
+				if(fileName.equals(fileList[i].getName())){
 					return 1;
 				}
 			}
@@ -149,49 +150,26 @@ public class TaskPacketController {
 	
 	@ResponseBody
 	@RequestMapping("/uploadFile")  	
-	public InvokeResult upload(TaskPacketDTO taskPacketDTO, HttpServletResponse response, HttpServletRequest request) throws IOException, ParseException{
-		request.setCharacterEncoding("utf-8"); 
-		MultipartHttpServletRequest multipartRequest = (MultipartHttpServletRequest) request;	
-//		MultipartResolver resolver = new CommonsMultipartResolver(request.getSession().getServletContext());
-//		MultipartHttpServletRequest multipartRequest = resolver.resolveMultipart(request);
+	public ModelAndView upload(TaskPacketDTO taskPacketDTO, HttpServletResponse response, HttpServletRequest request) throws IOException, ParseException{			
+		ModelAndView modelAndView = new ModelAndView("index");
+		MultipartHttpServletRequest multipartRequest = (MultipartHttpServletRequest) request;
 		Map<String, MultipartFile> fileMap = multipartRequest.getFileMap();
-		String ctxPath=request.getSession().getServletContext().getRealPath("/") + File.separator + "uploadFiles" + File.separator + taskPacketDTO.getTaskId() + File.separator + "outsideFiles" + File.separator;
-		System.out.println("ctxpath="+ctxPath);	
-		File file = new File(ctxPath);    	
-		if (!file.exists()) {    	
-			file.mkdirs();    	
-		}	
-		File[] fileList = file.listFiles();
-		boolean flag = false;
+		String ctxPath = request.getSession().getServletContext().getRealPath("/") + File.separator + "uploadFiles" + File.separator + taskPacketDTO.getTaskId() + File.separator + "outsideFiles" + File.separator;
+		File file = new File(ctxPath);
+		if (!file.exists()) {
+			file.mkdirs();
+		}
 		String fileName = null;    	
-		for (Map.Entry<String, MultipartFile> entity : fileMap.entrySet()) {    	
+		for (Map.Entry<String, MultipartFile> entity : fileMap.entrySet()) {
 			MultipartFile mf = entity.getValue();  	
 			fileName = mf.getOriginalFilename();
-			System.out.println("filename="+fileName);	
-			File uploadFile = new File(ctxPath + fileName);	
-			try {
-				FileCopyUtils.copy(mf.getBytes(), uploadFile);
-				for (int i = 0; i < fileList.length; i++) {
-					if(fileName.equals(fileList[i].getName())){
-						flag = true;
-						break;
-					}
-				}
-				if(flag){
-					taskPacketFacade.updateOutSideTaskPacket(fileName);
-				}else{
-					taskPacketFacade.creatOutSideTaskPacket(taskPacketDTO,fileName);
-				}				  	   
-			} catch (IOException e) {  	   		       
-				e.printStackTrace();  	       
-			}	
-		}   	
-		response.setHeader("Content-type", "text/html;charset=UTF-8");
-        response.setCharacterEncoding("UTF-8");
-		response.getWriter().write("上传成功!");
-		return null;    
-	}    	
-	
+			File uploadFile = new File(ctxPath + fileName);
+			FileCopyUtils.copy(mf.getBytes(), uploadFile);
+			taskPacketDTO.setSelectedPacketName(fileName);
+			return taskPacketFacade.uploadTaskPacket(taskPacketDTO, ctxPath);
+		}
+		return modelAndView;  
+	}
 	
     @InitBinder    
     public void initBinder(WebDataBinder binder) {  

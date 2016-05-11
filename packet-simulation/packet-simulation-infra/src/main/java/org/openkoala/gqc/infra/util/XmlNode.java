@@ -164,7 +164,7 @@ public class XmlNode implements Serializable, Cloneable{
 	public String toHtmlTabString(String templateName){
 		
 		String result = UL_TAG;
-		String contentStr="<div class='tab-content' id='myTabContent'>";
+		String contentStr="<div class='tab-content info' id='myTabContent'>";
 		String tabClass="active";
 		String contentClass="tab-pane fade active in";
 		List<XmlNode> tabNodes=nodes.get(0).getNodes();
@@ -451,7 +451,7 @@ public class XmlNode implements Serializable, Cloneable{
 		//System.out.println("看看到底nodes是多少个:"+nodes.size());
 		//System.out.println("看看到底nodes(0)是啥:"+nodes.get(0).getTagName());
 		List<XmlNode> tabNodes=nodes.get(0).getNodes();
-		String contentStr="<div class='tab-content' id='"+nodes.get(0).getTagName()+"'>";
+		String contentStr="<div class='tab-content info' id='"+nodes.get(0).getTagName()+"'>";
 		if(null!=tabNodes && tabNodes.size()>0){
 			for(XmlNode xmlNode : tabNodes){
 				JSONObject jsonObject = JSON.parseObject(PropertiesManager.getProperties(xmlNode.getTagName(),templateName));
@@ -541,7 +541,7 @@ public class XmlNode implements Serializable, Cloneable{
 		//System.out.println("看看到底nodes是多少个:"+nodes.size());
 		//System.out.println("看看到底nodes(0)是啥:"+nodes.get(0).getTagName());
 		List<XmlNode> tabNodes=nodes.get(0).getNodes();
-		String contentStr="<div class='tab-content' id='"+nodes.get(0).getTagName()+"'>";
+		String contentStr="<div class='tab-content info' id='"+nodes.get(0).getTagName()+"'>";
 		int j = 0;
 		if(null!=tabNodes && tabNodes.size()>0){
 //			if(tabs.contains(tabNodes.get(0).getTagName())){

@@ -27,6 +27,10 @@ public interface MesgTypeFacade {
 	
 //	public InvokeResult getEditHtmlByMesgType(Long id,String realPath);
 	
+	public InvokeResult upMesgType(String sourceId, String destId);
+	
+	public InvokeResult downMesgType(String sourceId, String destId);
+	
 	public InvokeResult getEditHtmlByMesgType(Long id);
 	
 	public InvokeResult getEditHtmlByCode(String code);

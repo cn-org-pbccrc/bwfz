@@ -19,6 +19,7 @@ import java.io.OutputStream;
 import java.text.ParseException;
 import java.text.SimpleDateFormat;
 import java.util.Date;
+import java.util.HashMap;
 import java.util.Map;
 
 import org.springframework.beans.propertyeditors.CustomDateEditor;
@@ -31,6 +32,8 @@ import org.springframework.web.bind.annotation.ResponseBody;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.multipart.MultipartFile;
 import org.springframework.web.multipart.MultipartHttpServletRequest;
+import org.springframework.web.servlet.ModelAndView;
+import org.springframework.web.servlet.view.json.MappingJacksonJsonView;
 import org.xml.sax.SAXException;
 import org.dayatang.utils.Page;
 import org.packet.packetsimulation.facade.dto.*;
@@ -85,8 +88,8 @@ public class ThreeStandardController {
 	
 	@ResponseBody
 	@RequestMapping("/trash")
-	public InvokeResult trash() {
-		jdbcTemplate.execute("TRUNCATE `test`.`THREE_STANDARD`");
+	public InvokeResult trash(@RequestParam String createdBy) {
+		jdbcTemplate.execute("delete from THREE_STANDARD where CREATED_BY ='" + createdBy + "'");
 		return InvokeResult.success();
 	}
 	
@@ -98,68 +101,33 @@ public class ThreeStandardController {
 	
 	@ResponseBody
 	@RequestMapping("/importFile")
-	public InvokeResult load(ThreeStandardDTO threeStandardDTO, HttpServletRequest request, HttpServletResponse response) throws IOException, ParseException, ParserConfigurationException, SAXException {
-		request.setCharacterEncoding("utf-8"); 
-		MultipartHttpServletRequest multipartRequest = (MultipartHttpServletRequest) request;	
+	public ModelAndView load(ThreeStandardDTO threeStandardDTO, HttpServletRequest request, HttpServletResponse response) throws IOException, ParseException, ParserConfigurationException, SAXException {
+		ModelAndView modelAndView=new ModelAndView("index");
+		MultipartHttpServletRequest multipartRequest = (MultipartHttpServletRequest) request;
 		Map<String, MultipartFile> fileMap = multipartRequest.getFileMap();
-		String ctxPath=request.getSession().getServletContext().getRealPath("/") + File.separator + "importFiles" + File.separator + threeStandardDTO.getCreatedBy() + File.separator;			
-		File file = new File(ctxPath);    	
-		if (!file.exists()) {    	
-			file.mkdirs();    	
-		}	
+		String ctxPath = request.getSession().getServletContext().getRealPath("/") + File.separator + "importFiles" + File.separator + threeStandardDTO.getCreatedBy() + File.separator;
+		File file = new File(ctxPath);
+		if (!file.exists()) {
+			file.mkdirs();
+		}
 		String fileName = null;
-		for (Map.Entry<String, MultipartFile> entity : fileMap.entrySet()) {    	
-			MultipartFile mf = entity.getValue();  	
-			fileName = mf.getOriginalFilename();	
-			File uploadFile = new File(ctxPath + fileName);	
-			try {
-				FileCopyUtils.copy(mf.getBytes(), uploadFile);
-				BufferedReader br = new BufferedReader(new InputStreamReader(new FileInputStream(ctxPath + fileName)));  
-				String line = br.readLine();				
-				String[] threeStandards = line.split(",");
-				if(threeStandards.length!=3||!threeStandards[0].equals("\"姓名\"")||!threeStandards[1].equals("\"证件类型\"")||!threeStandards[2].equals("\"证件号码\"")){
-					//System.out.println(threeStandards[0]+":"+threeStandards[1]+":"+threeStandards[0]+"?"+threeStandards.length);
-					br.close();
-					uploadFile.delete();
-					response.setHeader("Content-type", "text/html;charset=UTF-8");
-				    response.setCharacterEncoding("UTF-8");
-					response.getWriter().write("文件第1行应为''姓名','证件类型','证件号码''");
-					return null;
-				}
-				String temp = "";
-				int lineNumber = 2;
-				while((temp=br.readLine())!=null){
-					if(temp.split(",").length!=3){
-						br.close();
-						uploadFile.delete();
-						response.setHeader("Content-type", "text/html;charset=UTF-8");
-					    response.setCharacterEncoding("UTF-8");
-						response.getWriter().write("文件第"+lineNumber+"行不符合格式规范");						
-						return null;
-					}
-					lineNumber++;
-				}
-				br.close();
-				threeStandardFacade.importThreeStandard(threeStandardDTO, fileName, ctxPath);				  	   
-			} catch (IOException e) {  	   	 	       
-				e.printStackTrace();  	       
-			}	
-		}   	
-		response.setHeader("Content-type", "text/html;charset=UTF-8");
-        response.setCharacterEncoding("UTF-8");
-		response.getWriter().write("上传成功!");
-		return null;    
+		for (Map.Entry<String, MultipartFile> entity : fileMap.entrySet()) {
+			MultipartFile mf = entity.getValue();
+			fileName = mf.getOriginalFilename();
+			File uploadFile = new File(ctxPath + fileName);
+			FileCopyUtils.copy(mf.getBytes(), uploadFile);
+			return threeStandardFacade.importThreeStandard(threeStandardDTO, fileName, ctxPath);
+		}
+		return modelAndView;
 	}
 		
 	@ResponseBody
 	@RequestMapping("/downloadCSV")
 	public void downloadCSV(HttpServletRequest request, HttpServletResponse response, @RequestParam String createdBy) {
-		
 		String downloadCSV = threeStandardFacade.downloadCSV(createdBy);
 		response.setContentType("application/csv;charset=UTF-8");
 		response.setHeader("Content-Disposition", "attachment; filename=" + new Date().getTime() + ".csv");
 		response.setCharacterEncoding("UTF-8");
-		
 		InputStream in = null;;
 		OutputStream out;
 		try {

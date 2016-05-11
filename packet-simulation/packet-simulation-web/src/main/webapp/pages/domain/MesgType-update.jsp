@@ -8,6 +8,7 @@
 	<input type="hidden" id="idID" name="id" /> 
 	<input type="hidden" id="versionID" name="version" />
 	<input type="hidden" id="createdByID" name="createdBy" />
+	<input type="hidden" id="sortID" name="sort" />
 	
 	           <div class="form-group">
                     <label class="col-lg-3 control-label">报文类型:</label>
@@ -31,12 +32,6 @@
                     <label class="col-lg-3 control-label">转换模板:</label>
 	                    <div class="col-lg-9">
                            <input name="transform" style="display:inline; width:94%;" class="form-control"  type="text"  id="transformID" />
-			    </div>
-	</div>
-		           <div class="form-group">
-                    <label class="col-lg-3 control-label">显示顺序:</label>
-	                    <div class="col-lg-9">
-                           <input name="sort" style="display:inline; width:94%;" class="form-control"  type="text"  id="sortID" />
 			    </div>
 	</div>
 				           <div class="form-group">

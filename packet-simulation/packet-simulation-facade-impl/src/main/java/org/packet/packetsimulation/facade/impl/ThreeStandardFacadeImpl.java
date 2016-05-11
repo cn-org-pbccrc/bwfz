@@ -1,9 +1,11 @@
 package org.packet.packetsimulation.facade.impl;
 
 import java.util.Date;
+import java.util.HashMap;
 import java.util.HashSet;
 import java.util.List;
 import java.util.ArrayList;
+import java.util.Map;
 import java.util.Set;
 import java.util.UUID;
 import java.util.concurrent.Callable;
@@ -42,6 +44,8 @@ import org.packet.packetsimulation.facade.ThreeStandardFacade;
 import org.packet.packetsimulation.application.ThreeStandardApplication;
 import org.packet.packetsimulation.core.domain.*;
 import org.springframework.transaction.annotation.Transactional;
+import org.springframework.web.servlet.ModelAndView;
+import org.springframework.web.servlet.view.json.MappingJacksonJsonView;
 
 @Named
 public class ThreeStandardFacadeImpl implements ThreeStandardFacade {
@@ -460,59 +464,73 @@ public class ThreeStandardFacadeImpl implements ThreeStandardFacade {
         return new Page<ThreeStandardDTO>(pages.getStart(), pages.getResultCount(),pageSize, ThreeStandardAssembler.toDTOs(pages.getData()));
 	}
 	
-	//@Transactional
+	@Transactional
 	@Override
-	public InvokeResult importThreeStandard(ThreeStandardDTO threeStandardDTO, String path, String ctxPath) throws IOException, ParseException {	
-		String[] temp = new String[3];
-		List<ThreeStandard> threeStandards= new ArrayList<ThreeStandard>();
-		int totalLines = ReadAppointedLine.getTotalLines(new File(ctxPath+path));
-		String flag = null;
+	public ModelAndView importThreeStandard(ThreeStandardDTO threeStandardDTO, String fileName, String ctxPath) throws IOException, ParseException {
+		ModelAndView modelAndView = new ModelAndView("index");
+		MappingJacksonJsonView view = new MappingJacksonJsonView();
+		Map<String,String> attributes = new HashMap();
+		File uploadFile = new File(ctxPath + fileName);
+		BufferedReader br = new BufferedReader(new InputStreamReader(new FileInputStream(ctxPath + fileName)));  
+		String line = br.readLine();				
+		String[] temp = line.split(",");
+		if(temp.length!=3||!temp[0].equals("\"姓名\"")||!temp[1].equals("\"证件类型\"")||!temp[2].equals("\"证件号码\"")){
+			br.close();
+			uploadFile.delete();
+			attributes.put("error","文件第1行应为''姓名','证件类型','证件号码''");
+			view.setAttributesMap(attributes);
+			modelAndView.setView(view);
+			return modelAndView;
+		}
+		int lineNumber = 2;
+		List<ThreeStandard> threeStandards = new ArrayList<ThreeStandard>();
 		EmployeeUser employeeUser = findEmployeeUserByCreatedBy(threeStandardDTO.getCreatedBy());
-		System.out.println("xxxxx"+employeeUser);
 		if(employeeUser.getOrganization().equals("1")){
 			threeStandardDTO.setOrganizationCode(employeeUser.getCompany().getSn());
 		}else{
 			threeStandardDTO.setOrganizationCode(employeeUser.getDepartment().getSn());
 		}
 		Integer max = findMaxCustomerCode(threeStandardDTO.getCreatedBy());
-		Integer a = max + 1;
-		for(int i = 1; i < totalLines; i++){
-			ThreeStandard threeStandard = ThreeStandardAssembler.toEntity(threeStandardDTO);
-			String appointedLine = ReadAppointedLine.readAppointedLineNumber(new File(ctxPath+path),i+1,totalLines);			
-			System.out.println("第"+(i+1)+"行:"+appointedLine);
-			temp = appointedLine.split(",");
-			threeStandard.setName(temp[0].substring(1,temp[0].length()-1));
-			if(temp[1].substring(1,temp[1].length()-1).equals("身份证")){
-				flag = "0";
-			}else if(temp[1].substring(1,temp[1].length()-1).equals("军官证")){
-				flag = "1";
-			}else if((temp[1].substring(1,temp[1].length()-1).equals("护照"))){
-				flag = "2";
+		while((line=br.readLine())!=null){
+			temp = line.split(",");
+			if(temp.length!=3){
+				br.close();
+				uploadFile.delete();
+				attributes.put("error","文件第"+lineNumber+"行不符合格式规范");
+				view.setAttributesMap(attributes);
+				modelAndView.setView(view);
+				return modelAndView;
 			}
-			threeStandard.setCredentialType(flag);
+			ThreeStandard threeStandard = ThreeStandardAssembler.toEntity(threeStandardDTO);
+			threeStandard.setName(temp[0].substring(1,temp[0].length()-1));
+			String credentialType = temp[1].substring(1,temp[1].length()-1);
+			if(credentialType.equals("身份证")){
+				credentialType = "0";
+			}else if(credentialType.equals("军官证")){
+				credentialType = "1";
+			}else if(credentialType.equals("护照")){
+				credentialType = "2";
+			}
+			threeStandard.setCredentialType(credentialType);
 			threeStandard.setCredentialNumber(temp[2].substring(1,temp[2].length()-1));
-			//String uuid = UUID.randomUUID().toString().substring(0,8);
-			
-			threeStandard.setCustomerCode(a);
-			a++;
+			threeStandard.setCustomerCode(max+1);			
 			threeStandard.setAcctCode("AcCode"+getShortUuid());
 			threeStandard.setConCode("Cc"+getShortUuid());
 			threeStandard.setCcc("Ccc"+getShortUuid());
-			//Date date = new Date(); 
-			SimpleDateFormat sdf=new SimpleDateFormat("yyyy-MM-dd");
-			//String dateFormat = sdf.format(date);  
-			java.util.Date time=null;
-			try {
-				time= sdf.parse(sdf.format(new Date()));
-			} catch (ParseException e) {
-				e.printStackTrace();
-			}
+			SimpleDateFormat sdf = new SimpleDateFormat("yyyy-MM-dd");
+			Date time = sdf.parse(sdf.format(new Date()));
 			threeStandard.setCreatedDate(time);
-			threeStandards.add(threeStandard);			
+			threeStandards.add(threeStandard);
+			max++;
+			lineNumber++;
 		}
-		new File(ctxPath+path).delete();
+		br.close();
+		uploadFile.delete();
 		application.creatThreeStandards(threeStandards);
-		return InvokeResult.success();
+		attributes.put("data","上传并解析成功!");
+		view.setAttributesMap(attributes);
+		modelAndView.setView(view);
+		return modelAndView;
 	}
 
 	@SuppressWarnings("unchecked")

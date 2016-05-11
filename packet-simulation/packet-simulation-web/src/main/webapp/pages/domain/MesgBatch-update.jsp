@@ -6,7 +6,7 @@
 <body>
 <form class="form-horizontal">
 	<input type="hidden" id="idID" name="id" /> 
-	<input type="hidden" id="versionID" name="version" /> 
+	<input type="hidden" id="versionID" name="version" />
 	
 	           <div class="form-group">
                     <label class="col-lg-3 control-label">版本号:</label>

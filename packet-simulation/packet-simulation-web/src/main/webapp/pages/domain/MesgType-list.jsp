@@ -35,6 +35,9 @@ function initFun(){
 	            	{content: '<button class="btn btn-primary" type="button"><span class="glyphicon glyphicon-plus"><span>添加</button>', action: 'add'},
 	            	{content: '<button class="btn btn-success" type="button"><span class="glyphicon glyphicon-edit"><span>修改</button>', action: 'modify'},
 	            	{content: '<button class="btn btn-danger" type="button"><span class="glyphicon glyphicon-remove"><span>删除</button>', action: 'delete'},
+                    {content: '<button class="btn btn-info" type="button"><span class="glyphicon glyphicon-arrow-up"><span>上移</button>', action: 'up'},
+                    {content: '<button class="btn btn-info" type="button"><span class="glyphicon glyphicon-arrow-down"><span>下移</button>', action: 'down'},
+                    {content: '<button class="btn btn-warning" type="button"><span class="glyphicon glyphicon-refresh"><span>刷新</button>', action: 'fresh'},
 	            	{content: '<button class="btn btn-success" type="button"><span class="glyphicon glyphicon-search"><span>高级搜索<span class="caret"></span></button>', action: 'search'}
 	        	],
 	        	url:"${pageContext.request.contextPath}/MesgType/pageJson.koala",
@@ -92,6 +95,47 @@ function initFun(){
 	                	callBack: remove
 	            	});
 	        	},
+	        	'up':function(event, data){
+                    var indexs = data.data;
+                    var $this = $(this);
+                    if(indexs.length == 0){
+                        $this.message({
+                            type: 'warning',
+                            content: '请选择一条记录进行上移'
+                        })
+                        return;
+                    }
+                    if(indexs.length > 1){
+                        $this.message({
+                            type: 'warning',
+                            content: '只能选择一条记录进行上移'
+                        })
+                        return;
+                    }
+                   self.up($this);
+                },
+               'down':function(event, data){
+                    var indexs = data.data;
+                    var $this = $(this);
+                    if(indexs.length == 0){
+                        $this.message({
+                            type: 'warning',
+                            content: '请选择一条记录进行下移'
+                        })
+                        return;
+                    }
+                    if(indexs.length > 1){
+                        $this.message({
+                            type: 'warning',
+                            content: '只能选择一条记录进行下移'
+                        })
+                        return;
+                    }
+                   self.down($this);
+                },
+                'fresh' : function() {
+                	grid.data('koala.grid').refresh();
+                },
 	        	'search' : function() {						
 	            	$("#mesgTypeQueryDiv").slideToggle("slow");						 
 	       		}
@@ -118,13 +162,19 @@ function initFun(){
             	self.initPage(dialog.find('form'));
         	});
         	dialog.find('#save').on('click',{grid: grid}, function(e){
-            	if(!Validator.Validate(dialog.find('form')[0],3))return;	              
+            	if(!Validator.Validate(dialog.find('form')[0],3))return;
+            	if (!Validation.notNull(dialog, dialog.find('#mesgTypeID'), dialog.find('#mesgTypeID').val(), '请输入报文类型')) {
+	    			return false;
+	    	    }
             	if (!Validation.checkByRegExp(dialog, dialog.find('#codeID'), '^[0-9]{4}$', dialog.find('#codeID').val(), '类型代码应为4位数字')) {
  			    	return false;
  				}
-            	if (!Validation.notNull(dialog, dialog.find('#sortID'), dialog.find('#sortID').val(), '显示顺序不能为空')) {
-     		    	return false;
-     			}
+            	if (!Validation.notNull(dialog, dialog.find('#transformID'), dialog.find('#transformID').val(), '请输入转换模板')) {
+	    			return false;
+	    	    }
+            	if (!Validation.notNull(dialog, dialog.find('#xmlID'), dialog.find('#xmlID').val(), '请输入基础模板')) {
+	    			return false;
+	    	    }
             	$.post('${pageContext.request.contextPath}/MesgType/add.koala?createdBy='+currentUserId, dialog.find('form').serialize()).done(function(result){
             		if(result.success ){
                 		dialog.modal('hide');
@@ -136,7 +186,7 @@ function initFun(){
                 	}else{
                     	dialog.find('.modal-content').message({
                         	type: 'error',
-                        	content: result.actionError
+                        	content: result.errorMessage
                     	});
                 	}
             	});
@@ -169,12 +219,18 @@ function initFun(){
             	});
             	dialog.find('#save').on('click',{grid: grid}, function(e){
                 	if(!Validator.Validate(dialog.find('form')[0],3))return;	                    
-  	            	if (!Validation.checkByRegExp(dialog, dialog.find('#codeID'), '^[0-9]{4}$', dialog.find('#codeID').val(), '类型代码应为4位数字')) {
- 			        	return false;
- 			    	}
-                	if (!Validation.notNull(dialog, dialog.find('#sortID'), dialog.find('#sortID').val(), '显示顺序不能为空')) {
-     		        	return false;
-     		    	}
+                	if (!Validation.notNull(dialog, dialog.find('#mesgTypeID'), dialog.find('#mesgTypeID').val(), '请输入报文类型')) {
+    	    			return false;
+    	    	    }
+                	if (!Validation.checkByRegExp(dialog, dialog.find('#codeID'), '^[0-9]{4}$', dialog.find('#codeID').val(), '类型代码应为4位数字')) {
+     			    	return false;
+     				}
+                	if (!Validation.notNull(dialog, dialog.find('#transformID'), dialog.find('#transformID').val(), '请输入转换模板')) {
+    	    			return false;
+    	    	    }
+                	if (!Validation.notNull(dialog, dialog.find('#xmlID'), dialog.find('#xmlID').val(), '请输入基础模板')) {
+    	    			return false;
+    	    	    }
                 	$.post('${pageContext.request.contextPath}/MesgType/update.koala?id='+id, dialog.find('form').serialize()).done(function(result){
                     	if(result.success){
                         	dialog.modal('hide');
@@ -186,7 +242,7 @@ function initFun(){
                     	}else{
                         	dialog.find('.modal-content').message({
                             	type: 'error',
-                            	content: result.actionError
+                            	content: result.errorMessage
                         	});
                     	}
                 	});
@@ -229,7 +285,65 @@ function initFun(){
                 	});
             	}
     		});
-    	}
+    	},
+    	up: function(grid){
+	    	if(grid.getGrid().selectedRowsNo()==0){
+	    		grid.message({
+                     type: 'error',
+                     content: "不能继续上移"
+                 });
+	    		return;
+	    	}
+	    	var sourceIndex = grid.getGrid().selectedRowsNo();
+	    	var sourceId = grid.getGrid().getItemByIndex(sourceIndex).id;
+	    	grid.getGrid().up(grid.getGrid().selectedRowsNo());
+	    	var destId = grid.getGrid().getItemByIndex(sourceIndex).id;
+	    	var data = [{ name: 'sourceId', value: sourceId },
+	    	            { name: 'destId', value: destId }
+	    	            ];
+	    	$.post('${pageContext.request.contextPath}/MesgType/up.koala', data).done(function(result){
+	        	if(result.success){
+                    grid.message({
+	                	type: 'success',
+	                    content: '上移成功'
+	                });
+	            }else{
+	                grid.message({
+	                    type: 'error',
+	                    content: result.errorMessage
+	                });
+	            }
+	    	});
+	    },
+	    down: function(grid){
+	    	if(grid.getGrid().selectedRowsNo()==grid.getGrid().getAllItems().length-1){
+	    		grid.message({
+                    type: 'error',
+                    content: "不能继续下移"
+                });
+	    		return;
+	    	}
+	    	var sourceIndex = grid.getGrid().selectedRowsNo();
+	    	var sourceId = grid.getGrid().getItemByIndex(sourceIndex).id;
+	    	grid.getGrid().down(grid.getGrid().selectedRowsNo());
+	    	var destId = grid.getGrid().getItemByIndex(sourceIndex).id;
+	    	var data = [{ name: 'sourceId', value: sourceId },
+	    	            { name: 'destId', value: destId }
+	    	            ];
+	    	$.post('${pageContext.request.contextPath}/MesgType/down.koala', data).done(function(result){
+	        	if(result.success){
+                    grid.message({
+	                	type: 'success',
+	                    content: '下移成功'
+	                });
+	            }else{
+	                grid.message({
+	                    type: 'error',
+	                    content: result.errorMessage
+	                });
+	            }
+	    	});
+	    }
 	}
 	PageLoader.initSearchPanel();
 	PageLoader.initGridPanel();

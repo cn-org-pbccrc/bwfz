@@ -221,36 +221,29 @@ function initFun(){
     			+'<div class="modal-content"><div class="modal-header"><button type="button" class="close" '
     			+'data-dismiss="modal" aria-hidden="true">&times;</button>'
     			+'<h4 class="modal-title">导入三标信息</h4></div><div class="modal-body">'
-    			+'<p>One fine body&hellip;</p></div><div class="modal-footer">'	        	
-    			+'<button type="button" class="btn btn-default" id="back" data-dismiss="modal">返回</button>'
-    			+'<button type="button" class="btn btn-success" id="upload">上传</button>'
-    			+'<button type="button" class="btn btn-warning" id="cancelUpload">取消上传</button></div></div>'
-    			+'</div></div>');
+    			+'<p>One fine body&hellip;</p></div></div>');
     		$.get('<%=path%>/ThreeStandard-importFile.jsp').done({ 
-        		'createdBy' :  currentUserId, 'grid' : grid
+        		'createdBy' :  currentUserId
     			},function(html){
         			dialog.modal({
            			keyboard:false
         		}).on({
             		'hidden.bs.modal': function(){
-                	$(this).remove();
+                		$(this).remove();
             		}
         		}).find('.modal-body').html(html);
         		self.initPage(dialog.find('form'));
-        		dialog.find('#upload').on('click',{grid: grid}, function(e){
-        			$('#uploadify').uploadify('upload');
+        		dialog.find("#input-id").on("fileuploaded", function(event, data, previewId, index) {
+        			dialog.modal('hide');
+                    grid.data('koala.grid').refresh();
+                    grid.message({
+                        type: 'success',
+                        content: '保存成功'
+                     });
         		});
-        		dialog.find('#cancelUpload').on('click',{grid: grid}, function(e){
-        			$('#uploadify').uploadify('cancel');
+        		dialog.find("#input-id").on('fileuploaderror', function(event, data, msg) {
+                    //alert(111);
         		});
-//         		dialog.find('#back').on('click',{grid: grid}, function(e){
-//         			var $menuLi =  $('.g-sidec').find('li[data-mark="menuMark192"]');
-//                     if($menuLi.length){
-//                         $menuLi.click();
-//                     }else{
-//                         clearMenuEffect();
-//                     }
-//         		});
     		});
 	    },
 	    modify: function(id, grid){
@@ -375,7 +368,8 @@ function initFun(){
 	    	});
 	    },
 	    trash: function(grid){
-	    	$.post('${pageContext.request.contextPath}/ThreeStandard/trash.koala').done(function(result){
+	    	var data = [{ name: 'createdBy', value: currentUserId}];
+	    	$.post('${pageContext.request.contextPath}/ThreeStandard/trash.koala', data).done(function(result){
 	        	if(result.success){
 	            	grid.data('koala.grid').refresh();
 	                grid.message({
@@ -452,52 +446,44 @@ var openDetailsPageOfThreeStandard = function(id){
 <input type="hidden" name="pagesize" value="10">
 <div id="threeStandardQueryDiv" hidden="true">
 <table border="0" cellspacing="0" cellpadding="0">
-  <tr>
-    <td>
-          <div class="form-group">
-          <label class="control-label" style="width:120px;float:left;">姓名:&nbsp;</label>
-            <div style="margin-left:15px;float:left;">
-            <input name="name" class="form-control" type="text" style="width:180px;" id="nameID"  />
-        </div>
-        <label class="control-label" style="width:120px;float:left;">证件类型:&nbsp;</label>
-    	  <div style="margin-left:15px;float:left;">
-	      <div class="btn-group select" id="credentialType_SELECT"></div>
-	        <input type="hidden" id="credentialTypeID_" name="credentialType" />
-	      </div>
-	  </div>
-	  <div class="form-group">
-                      <label class="control-label" style="width:120px;float:left;">证件号:&nbsp;</label>
-            <div style="margin-left:15px;float:left;">
-            <input name="credentialNumber" class="form-control" type="text" style="width:180px;" id="credentialNumberID"  />
-        </div>
-
-                  
-          <label class="control-label" style="width:120px;float:left;">创建日期:&nbsp;</label>
-           <div style="margin-left:15px;float:left;">
-            <div class="input-group date form_datetime" style="width:140px;float:left;" >
-                <input type="text" class="form-control" style="width:140px;" name="createdDate" id="createdDateID_start" >
-                <span class="input-group-addon"><span class="glyphicon glyphicon-th"></span></span>
-            </div>
-            <div style="float:left; width:10px; margin-left:auto; margin-right:auto;">&nbsp;-&nbsp;</div>
-            <div class="input-group date form_datetime" style="width:140px;float:left;" >
-                <input type="text" class="form-control" style="width:140px;" name="createdDateEnd" id="createdDateID_end" >
-                <span class="input-group-addon"><span class="glyphicon glyphicon-th"></span></span>
-            </div>
-       </div> 
-       </div>                  
-                  <div class="form-group">
-<!--           <label class="control-label" style="width:120px;float:left;">客户资料标识号:&nbsp;</label> -->
-<!--             <div style="margin-left:15px;float:left;"> -->
-<!--             <input name="customerCode" class="form-control" type="text" style="width:180px;" id="customerCodeID"  /> -->
-<!--         </div> -->
-                      <label class="control-label" style="width:120px;float:left;">机构代码:&nbsp;</label>
-            <div style="margin-left:15px;float:left;">
-            <input name="organizationCode" class="form-control" type="text" style="width:180px;" id="organizationCodeID"  />
-        </div>
-            </div>
-            </td>
-       <td style="vertical-align: bottom;"><button id="search" type="button" style="position:relative; margin-left:35px; top: -15px" class="btn btn-primary"><span class="glyphicon glyphicon-search"></span>&nbsp;查询</button></td>
-  </tr>
+    <tr>
+        <td>
+            <div class="form-group">
+            	<label class="control-label" style="width:120px;float:left;">姓名:&nbsp;</label>
+            	<div style="margin-left:15px;float:left;">
+                	<input name="name" class="form-control" type="text" style="width:180px;" id="nameID"  />
+        		</div>
+        		<label class="control-label" style="width:120px;float:left;">证件类型:&nbsp;</label>
+    	  		<div style="margin-left:15px;float:left;">
+	      		<div class="btn-group select" id="credentialType_SELECT"></div>
+	        		<input type="hidden" id="credentialTypeID_" name="credentialType" />
+	      		</div>
+	      		<label class="control-label" style="width:120px;float:left;">证件号:&nbsp;</label>
+            	<div style="margin-left:15px;float:left;">
+            		<input name="credentialNumber" class="form-control" type="text" style="width:180px;" id="credentialNumberID"  />
+        		</div>
+	  		</div>
+	  		<div class="form-group">                           
+          		<label class="control-label" style="width:120px;float:left;">创建日期:&nbsp;</label>
+           		<div style="margin-left:15px;float:left;">
+            		<div class="input-group date form_datetime" style="width:140px;float:left;" >
+                		<input type="text" class="form-control" style="width:140px;" name="createdDate" id="createdDateID_start" >
+                		<span class="input-group-addon"><span class="glyphicon glyphicon-th"></span></span>
+            		</div>
+            		<div style="float:left; width:10px; margin-left:auto; margin-right:auto;">&nbsp;-&nbsp;</div>
+            		<div class="input-group date form_datetime" style="width:140px;float:left;" >
+                		<input type="text" class="form-control" style="width:140px;" name="createdDateEnd" id="createdDateID_end" >
+                		<span class="input-group-addon"><span class="glyphicon glyphicon-th"></span></span>
+            		</div>
+       			</div>
+       			<label class="control-label" style="width:120px;float:left;">机构代码:&nbsp;</label>
+            	<div style="margin-left:15px;float:left;">
+            		<input name="organizationCode" class="form-control" type="text" style="width:180px;" id="organizationCodeID"  />
+        		</div>
+       		</div>
+        </td>
+        <td style="vertical-align: bottom;"><button id="search" type="button" style="position:relative; margin-left:35px; top: -15px" class="btn btn-primary"><span class="glyphicon glyphicon-search"></span>&nbsp;查询</button></td>
+    </tr>
 </table>
 </div>	
 </form>

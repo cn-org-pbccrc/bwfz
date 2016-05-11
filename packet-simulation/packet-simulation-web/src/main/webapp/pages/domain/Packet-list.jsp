@@ -22,6 +22,12 @@ $.get('${pageContext.request.contextPath}/auth/currentUser/getUserDetail.koala')
 var grid;
 var form;
 var _dialog;
+var selectMesg;
+var mesgTree;
+var mesgInput;
+var mesgId;
+var mesgName;
+var mesgCode;
 
 function initFun(){
 	grid = $("#<%=gridId%>");
@@ -83,13 +89,11 @@ function initFun(){
 	                    ],
 	                url:"${pageContext.request.contextPath}/Packet/pageJson/" + currentUserId + ".koala",
 	                columns: [
-	                     	                         	                         //{ title: '流水号', name: 'packId', width: width},
 	                     	                         	                         								 { title: '报文名称', name: 'packetName', width: 2*width/3},
 	                     	                         	                         								 { title: '版本号', name: 'fileVersion', width: 11*width/24},
 	                         	                         	                         	                         { title: '数据提供机构代码', name: 'origSender', width: 3*width/4},	                     	                
 	                         	                         	                         	                         { title: '文件生成时间', name: 'origSendDate', width: 2*width/3,
 	                         	                         	                         	                        	 render: function(item, name, index){
-	                     	                         	                         						                //alert(item[name].getMonth());
 	                     	                         	                         						                var d = new Date(item[name]);    //根据时间戳生成的时间对象
 																														var date = (d.getFullYear()) + "-" + 
            																													(d.getMonth() + 1) + "-" +
@@ -151,8 +155,8 @@ function initFun(){
 	                        var $this = $(this);
 	                        if(indexs.length == 0){
 	                            $this.message({
-	                                   type: 'warning',
-	                                   content: '请选择要删除的记录'
+	                            	type: 'warning',
+	                                content: '请选择要删除的记录'
 	                            });
 	                            return;
 	                        }
@@ -191,6 +195,11 @@ function initFun(){
 	                }
 	            }).find('.modal-body').html(html);
 	            self.initPage(dialog.find('form'));
+	            selectMesg = dialog.find('#select-mesg');
+	            mesgInput = selectMesg.find('input');
+				selectMesg.find('[data-toggle="dropdown"]').on('click', function(){
+					selectMesgTypes();
+				});
 	        });
 	        dialog.find('#save').on('click',{grid: grid}, function(e){
  		        if(!Validator.Validate(dialog.find('form')[0],3))return;
@@ -208,61 +217,54 @@ function initFun(){
 // 			    }
 // 		        if (!Validation.notNull(dialog, dialog.find('#dataTypeID'), dialog.find('#dataTypeID').getValue(), '请选择数据类型')) {
 //     			    return false;
-//     		    } 					
-	              $.post('${pageContext.request.contextPath}/Packet/add.koala?createdBy='+currentUserId, dialog.find('form').serialize()).done(function(result){
-	                   if(result.success ){
-	                        dialog.modal('hide');
-	                        e.data.grid.data('koala.grid').refresh();
-	                        e.data.grid.message({
-	                            type: 'success',
-	                            content: '保存成功'
-	                         });
-	                    }else{
-	                        dialog.find('.modal-content').message({
-	                            type: 'error',
-	                            content: result.errorMessage
-	                        });
-	                     }
-	              });
+//     		    }
+				if(!CheckDateTime(dialog.find('#origSendDateID').val())){
+					showErrorMessage(dialog, dialog.find('#origSendDateID'), '日期格式不正确');
+					return false;
+				}
+	            $.post('${pageContext.request.contextPath}/Packet/add.koala?createdBy='+currentUserId, dialog.find('form').serialize()).done(function(result){
+	            	if(result.success ){
+	                	dialog.modal('hide');
+	                    e.data.grid.data('koala.grid').refresh();
+	                    e.data.grid.message({
+	                    	type: 'success',
+	                        content: '保存成功'
+	                    });
+	                }else{
+	                    dialog.find('.modal-content').message({
+	                        type: 'error',
+	                        content: result.errorMessage
+	                    });
+	                }
+	            });
 	        });
 	    },
-	    
 	    load: function(grid){
 			var self = this;
     		var dialog = $('<div class="modal fade"><div class="modal-dialog">'
     			+'<div class="modal-content"><div class="modal-header"><button type="button" class="close" '
     			+'data-dismiss="modal" aria-hidden="true">&times;</button>'
     			+'<h4 class="modal-title">上传外部文件</h4></div><div class="modal-body">'
-    			+'<p>One fine body&hellip;</p></div><div class="modal-footer">'	        	
-    			+'<button type="button" class="btn btn-default" id="back" data-dismiss="modal">返回</button>'
-    			+'<button type="button" class="btn btn-success" id="upload">上传</button>'
-    			+'<button type="button" class="btn btn-warning" id="cancelUpload">取消上传</button></div></div>'
-    			+'</div></div>');
+    			+'<p>One fine body&hellip;</p></div></div>');
     		$.get('<%=path%>/Packet-load.jsp').done({ 
-        		'createdBy' :  currentUserId, 'grid' : grid
+        		'createdBy' :  currentUserId
     			},function(html){
         			dialog.modal({
            			keyboard:false
         		}).on({
             		'hidden.bs.modal': function(){
-                	$(this).remove();
+                		$(this).remove();
             		}
-        		}).find('.modal-body').html(html);
+        		}).find('.modal-body').html(html);        		
         		self.initPage(dialog.find('form'));
-        		dialog.find('#upload').on('click',{grid: grid}, function(e){
-        			$('#uploadify').uploadify('upload');
+        		dialog.find("#input-id").on("fileuploaded", function(event, data, previewId, index) {
+        			dialog.modal('hide');
+                    grid.data('koala.grid').refresh();
+                    grid.message({
+                        type: 'success',
+                        content: '保存成功'
+                     });
         		});
-        		dialog.find('#cancelUpload').on('click',{grid: grid}, function(e){
-        			$('#uploadify').uploadify('cancel');
-        		});
-//         		dialog.find('#back').on('click',{grid: grid}, function(e){
-//         			var $menuLi =  $('.g-sidec').find('li[data-mark="menuMark188"]');
-//                     if($menuLi.length){
-//                         $menuLi.click();
-//                     }else{
-//                         clearMenuEffect();
-//                     }
-//         		});
     		});
 	    },
 	    modify: function(id, grid){
@@ -314,7 +316,11 @@ function initFun(){
 // 	    			    }
 // 	    		        if (!Validation.notNull(dialog, dialog.find('#dataTypeID'), dialog.find('#dataTypeID').getValue(), '请选择数据类型')) {
 // 	        			    return false;
-// 	        		    }	         
+// 	        		    }
+	                    if(!CheckDateTime(dialog.find('#origSendDateID').val())){
+	    					showErrorMessage(dialog, dialog.find('#origSendDateID'), '日期类型不正确');
+	    					return false;
+	    				}
 	                    $.post('${pageContext.request.contextPath}/Packet/update.koala?id='+id+'&createdBy='+currentUserId, dialog.find('form').serialize()).done(function(result){
 	                        if(result.success){
 	                            dialog.modal('hide');
@@ -363,7 +369,7 @@ function initFun(){
 	                   //minView: 2,
 	                   pickerPosition: 'bottom-left'
 	               }).datetimepicker('setDate', new Date());//加载日期选择器
-	               var selectItems = {};
+	               /* var selectItems = {};
 	               var contents = [{title:'请选择', value: ''}];
 	               contents.push({title:'正常' , value:'0'});
 	               contents.push({title:'删除且不需重报' , value:'1'});
@@ -378,7 +384,7 @@ function initFun(){
 	                    }).on('change', function(){
 	                        form.find('#'+ idAttr + '_').val($(this).getValue());
 	                    });
-	               });
+	               }); */
 	    },
 	    remove: function(ids, grid){
 	    	var data = [{ name: 'ids', value: ids.join(',') }];
@@ -413,6 +419,21 @@ function initFun(){
             grid.getGrid().search(params);
         });
 }
+
+function CheckDateTime(str){
+	var reg = /^(\d+)-(\d{1,2})-(\d{1,2}) (\d{1,2}):(\d{1,2}):(\d{1,2})$/;
+	var r = str.match(reg);
+	if(r == null) return false;  
+	r[2] = r[2] - 1;  
+	var d = new Date(r[1], r[2], r[3], r[4], r[5], r[6]);  
+	if (d.getFullYear() != r[1]) return false;  
+	if (d.getMonth() != r[2]) return false;  
+	if (d.getDate() != r[3]) return false;  
+	if (d.getHours() != r[4]) return false;  
+	if (d.getMinutes() != r[5]) return false;  
+	if (d.getSeconds() != r[6]) return false;  
+	return true;  
+}  
 
 var openPacketView = function(id){
 	var dialog = $('<div class="modal fade"><div class="modal-dialog" style="width:900px;"><div class="modal-content"><div class="modal-header"><button type="button" class="close" data-dismiss="modal" aria-hidden="true">&times;</button><h4 class="modal-title">查看源数据</h4></div><div class="modal-body"><p>One fine body&hellip;</p></div><div class="modal-footer"><button type="button" class="btn btn-info" data-dismiss="modal">返回</button></div></div></div></div>');
@@ -451,6 +472,73 @@ function downloadENC(id){
 	var date = new Date();
 	window.open('${pageContext.request.contextPath}/Packet/downloadENC/' + id + '.koala');
 }
+
+var selectMesgTypes = function(){
+	$.get( contextPath + '/pages/organisation/select-mesg-template.jsp').done(function(data){
+		var mesgTreeDialog = $(data);
+		mesgTreeDialog.find('.modal-body').css({height:'325px'});
+		mesgTree = mesgTreeDialog.find('.tree');
+        loadMesgTree();
+		mesgTreeDialog.find('#confirm').on('click',function(){
+			mesgInput.val(mesgCode);
+			selectMesg.find('[data-toggle="item"]').text(mesgName);
+			mesgTreeDialog.modal('hide');
+			selectMesg.trigger('keydown');
+		}).end().modal({
+			backdrop: false,
+			keyboard: false
+		}).on({
+			'hidden.bs.modal': function(){
+				$(this).remove();
+			}
+		});
+	});
+};
+
+var loadMesgTree = function(){
+	mesgTree.parent().loader({
+		opacity: 0
+	});
+    $.get(contextPath  + '/MesgType/findMesgTypes.koala').done(function(data){
+        mesgTree.parent().loader('hide');
+        var zNodes = new Array();
+		var cNodes = new Array();
+		if (!data) {
+			return;
+		}
+		$.each(data, function() {
+			var cNode = {};
+			this.title = this.mesgType;
+			cNode.menu = this;
+			cNodes.push(cNode);
+		});
+		var zNode = {};
+		var menu = {};
+		zNode.type = 'parent';
+		menu.title = '个人';
+		menu.open = true;
+		zNode.children = cNodes;
+		zNode.menu = menu;
+		zNodes.push(zNode);
+		var dataSourceTree = {
+			data : zNodes,
+			delay : 400
+		};
+        mesgTree.tree({
+            dataSource: dataSourceTree,
+            loadingHTML: '<div class="static-loader">Loading...</div>',
+            multiSelect: false,
+            useChkBox : false,
+            cacheItems: true
+        }).on({
+            'selectChildren': function(event, data){
+                mesgId = data.id;
+                mesgName = data.mesgType;
+                mesgCode = data.code;
+            }
+        });
+    });
+};
 </script>
 </head>
 <body>
@@ -469,10 +557,10 @@ function downloadENC(id){
             		<input name="packetName" class="form-control" type="text" style="width:160px;" id="packetNameID"  />
         		</div>
           
-            	<label class="control-label" style="width:160px;float:left;">文件格式版本号:&nbsp;</label>
-            	<div style="margin-left:15px;float:left;">
-            		<input name="fileVersion" class="form-control" type="text" style="width:160px;" id="fileVersionID"  />
-        		</div>
+<!--             	<label class="control-label" style="width:160px;float:left;">文件格式版本号:&nbsp;</label> -->
+<!--             	<div style="margin-left:15px;float:left;"> -->
+<!--             		<input name="fileVersion" class="form-control" type="text" style="width:160px;" id="fileVersionID"  /> -->
+<!--         		</div> -->
                       
             	<label class="control-label" style="width:160px;float:left;">数据提供机构代码:&nbsp;</label>
             	<div style="margin-left:15px;float:left;">
@@ -492,21 +580,25 @@ function downloadENC(id){
                 		<input type="text" class="form-control" style="width:160px;" name="origSendDateEnd" id="origSendDateID_end" >
                 		<span class="input-group-addon"><span class="glyphicon glyphicon-th"></span></span>
             		</div>
-       			</div>       
-       		</div>
-       		
-            <div class="form-group">
-            	<label class="control-label" style="width:160px;float:left;">记录类型:&nbsp;</label>
+       			</div>
+       			<label class="control-label" style="width:160px;float:left;">记录类型:&nbsp;</label>
             	<div style="margin-left:15px;float:left;">
             		<input name="recordType" class="form-control" type="text" style="width:160px;" id="recordID"  />
         		</div>
+       		</div>
+       		
+<!--             <div class="form-group"> -->
+<!--             	<label class="control-label" style="width:160px;float:left;">记录类型:&nbsp;</label> -->
+<!--             	<div style="margin-left:15px;float:left;"> -->
+<!--             		<input name="recordType" class="form-control" type="text" style="width:160px;" id="recordID"  /> -->
+<!--         		</div> -->
 
-                <label class="control-label" style="width:160px;float:left;">数据类型:&nbsp;</label>
-    	  		<div style="margin-left:15px;float:left;">
-	      		<div class="btn-group select" id="dataType_SELECT"></div>
-	        		<input type="hidden" id="dataTypeID_" name="dataType" />
-	      		</div>
-	  		</div>
+<!--                 <label class="control-label" style="width:160px;float:left;">数据类型:&nbsp;</label> -->
+<!--     	  		<div style="margin-left:15px;float:left;"> -->
+<!-- 	      		<div class="btn-group select" id="dataType_SELECT"></div> -->
+<!-- 	        		<input type="hidden" id="dataTypeID_" name="dataType" /> -->
+<!-- 	      		</div> -->
+<!-- 	  		</div> -->
         </td>
         <td style="vertical-align: bottom;"><button id="search" type="button" style="position:relative; margin-left:35px; top: -15px" class="btn btn-primary"><span class="glyphicon glyphicon-search"></span>&nbsp;查询</button></td>
 	</tr>

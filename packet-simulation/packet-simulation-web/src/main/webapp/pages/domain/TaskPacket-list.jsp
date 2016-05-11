@@ -599,14 +599,9 @@ function initFun(){
 	        	+'<div class="modal-content"><div class="modal-header"><button type="button" class="close" '
 	        	+'data-dismiss="modal" aria-hidden="true">&times;</button>'
 	        	+'<h4 class="modal-title">上传外部文件</h4></div><div class="modal-body">'
-	        	+'<p>One fine body&hellip;</p></div><div class="modal-footer">'	        	
-	        	+'<button type="button" class="btn btn-default" id="back" data-dismiss="modal">返回</button>'
-	        	+'<button type="button" class="btn btn-success" id="upload">上传</button>'
-	        	+'<button type="button" class="btn btn-warning" id="cancelUpload">取消上传</button></div></div>'
-	        	+'</div></div>');
-	        
+	        	+'<p>One fine body&hellip;</p></div></div>');	        
 	        $.get('<%=path%>/TaskPacket-upload.jsp').done({ 
-                'taskId' :  taskId, 'grid' : grid
+                'taskId' :  taskId
             },function(html){
 	            dialog.modal({
 	                keyboard:false
@@ -616,19 +611,33 @@ function initFun(){
 	                }
 	            }).find('.modal-body').html(html);
 	            self.initPage(dialog.find('form'));
-	            dialog.find('#upload').on('click',{grid: grid}, function(e){
-	            	$('#uploadify').uploadify('upload');
-		        });
-	            dialog.find('#cancelUpload').on('click',{grid: grid}, function(e){
-	            	$('#uploadify').uploadify('cancel');
+	            dialog.find("#input-id").on('fileselect', function(event, numFiles, label) {
+	            	var fileName = dialog.find(".file-caption-name").attr('title');
+	            	var data = [{ name: 'taskId', value: taskId },
+	    	    	            { name: 'fileName', value: fileName }
+	    	    	]; 
+	            	$.post('${pageContext.request.contextPath}/TaskPacket/checkExisting.koala', data).done(function(result){
+	            		if(result==1){
+	            			dialog.find(".file-error-message").attr('style','display:block');
+		                	dialog.find(".file-error-message").append('<ul><li>已上传同名的文件，请确认是否继续上传覆盖原文件</li></ul>');
+	            		}	            		
+	            	});	                
 	            });
+	            dialog.find("#input-id").on("fileuploaded", function(event, data, previewId, index) {
+        			dialog.modal('hide');
+                    grid.data('koala.grid').refresh();
+                    grid.message({
+                        type: 'success',
+                        content: '保存成功'
+                     });
+        		});
 	        });
 	    },
 	    up: function(grid){
 	    	if(grid.getGrid().selectedRowsNo()==0){
 	    		grid.message({
                      type: 'error',
-                     content: "不能再往上移啦"
+                     content: "不能继续上移"
                  });
 	    		return;
 	    	}
@@ -648,7 +657,7 @@ function initFun(){
 	            }else{
 	                grid.message({
 	                    type: 'error',
-	                    content: result.result
+	                    content: result.errorMessage
 	                });
 	            }
 	    	});
@@ -657,7 +666,7 @@ function initFun(){
 	    	if(grid.getGrid().selectedRowsNo()==grid.getGrid().getAllItems().length-1){
 	    		grid.message({
                     type: 'error',
-                    content: "不能再往下移啦"
+                    content: "不能继续下移"
                 });
 	    		return;
 	    	}
@@ -678,7 +687,7 @@ function initFun(){
 	            }else{
 	                grid.message({
 	                    type: 'error',
-	                    content: result.result
+	                    content: result.errorMessage
 	                });
 	            }
 	    	});

@@ -8,6 +8,7 @@
 <!-- 	<input type="hidden" id="idID" name="id" /> -->
 	<input type="hidden" id="versionID" name="version" />
 	<input type="hidden" id="dataTypeID" name="dataType" />
+	<input type="hidden" id="recordTypeID" name="recordType" />
 	 				<div class="form-group">
                     <label class="col-lg-3 control-label">报文名称:</label>
 	                    <div class="col-lg-9">
@@ -35,12 +36,12 @@
                      </div>
                      </div>
                      </div>
-	         <div class="form-group">
-                    <label class="col-lg-3 control-label">记录类型:</label>
-	                    <div class="col-lg-9">
-                           <input name="recordType" style="display:inline; width:94%;" class="form-control"  type="text"  id="recordTypeID" />
-			    </div>
-	</div>
+<!-- 	         <div class="form-group"> -->
+<!--                     <label class="col-lg-3 control-label">记录类型:</label> -->
+<!-- 	                    <div class="col-lg-9"> -->
+<!--                            <input name="recordType" style="display:inline; width:94%;" class="form-control"  type="text"  id="recordTypeID" /> -->
+<!-- 			    </div> -->
+<!-- 	</div> -->
 	</form>
 <script type="text/javascript">
 </script>
