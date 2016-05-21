@@ -86,13 +86,13 @@
 .batchRuleSelected table td {
     padding: 2px!important;
 }
-.query-condition  .column-name {
+.mesg-coloum  .column-name {
     width: 40%;
 }
-.query-condition  .paragraph-name {
+.mesg-coloum  .paragraph-name {
     width: 30%;
 }
-.query-condition  .operation {
+.mesg-coloum  .operation {
     width: 30%;
     padding-left: 12px;
     text-align: left !important;
@@ -169,7 +169,7 @@
     padding: 0 10px !important;
     width: 20%;
 }
-.previewQuery .query-condition {
+.previewQuery .mesg-coloum {
     padding: 0 10px !important;
     width: 20%;
 }

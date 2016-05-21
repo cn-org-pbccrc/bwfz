@@ -38,13 +38,8 @@ public class MesgController {
 	private MesgFacade mesgFacade;
 	
 	@Inject
-	private SecurityOrgAccessFacade securityOrgAccessFacade;
-	
-	@Inject
 	private MesgTypeFacade mesgTypeFacade;
 	
-	@Inject
-	private TaskFacade taskFacade;
 	@ResponseBody
 	@RequestMapping("/add")
 	public InvokeResult add(MesgDTO mesgDTO,HttpServletRequest request) {
@@ -59,24 +54,35 @@ public class MesgController {
 		return mesgFacade.verifyMesgType(Long.parseLong(id));
 	}
 	
+	/**
+	 * 记录批量
+	 * @param mesgDTO
+	 * @param request
+	 * @param ids
+	 * @param start
+	 * @param end
+	 * @return
+	 */
 	@ResponseBody
 	@RequestMapping("/batch")
-	public InvokeResult batch(MesgDTO mesgDTO,HttpServletRequest request,@RequestParam String ids,@RequestParam String start,@RequestParam String end,@RequestParam String currentUserId) {
-		String realPath = request.getSession().getServletContext().getRealPath("/");
-		Long count = mesgFacade.queryCountOfThreeStandard(currentUserId);
-		int countOfThreeStandard = Integer.parseInt(String.valueOf(count));
+	public InvokeResult batch(MesgDTO mesgDTO, HttpServletRequest request, @RequestParam String ids, @RequestParam Integer start, @RequestParam Integer end) {
+		String userAccount = CurrentUser.getUserAccount();
+		Long countOfThreeStandard = mesgFacade.queryCountOfThreeStandard(userAccount);
 		if(start != null && !"".equals(start) && end != null && !"".equals(end)){
-			int startOfThreeStandard = Integer.parseInt(start);
-			int endOfThreeStandard = Integer.parseInt(end);
-			if(startOfThreeStandard>=1&&startOfThreeStandard<=endOfThreeStandard&&endOfThreeStandard<=countOfThreeStandard){
-				return mesgFacade.creatMesgsByInput(mesgDTO,startOfThreeStandard,endOfThreeStandard,currentUserId);
-			}
-			else if(startOfThreeStandard<1 || startOfThreeStandard>endOfThreeStandard || endOfThreeStandard>countOfThreeStandard){
+			int startOfThreeStandard = Integer.valueOf(start);
+			int endOfThreeStandard = Integer.valueOf(end);
+			if (startOfThreeStandard >= 1
+					&& startOfThreeStandard <= endOfThreeStandard
+					&& endOfThreeStandard <= countOfThreeStandard) {
+				return mesgFacade.batchMesg(mesgDTO, startOfThreeStandard, endOfThreeStandard, userAccount);
+			} else if (startOfThreeStandard < 1
+					|| startOfThreeStandard > endOfThreeStandard
+					|| endOfThreeStandard > countOfThreeStandard) {
 				return InvokeResult.failure("起始值不能小于1,结束值不能大于三标总个数,且起始值不能大于结束值");
 			}
 		}else if((start == null || "".equals(start)) && (end == null || "".equals(end))){
 			String[] values = ids.split(",");
-			return mesgFacade.creatMesgs(mesgDTO,realPath,values);
+			return mesgFacade.batchMesg(mesgDTO, values, userAccount);
 		}else if((start == null || "".equals(start)) && (end != null || !"".equals(end))){			
 			return InvokeResult.failure("不能起始为空,结束不为空");
 		}else if((start != null || !"".equals(start)) && (end == null || "".equals(end))){

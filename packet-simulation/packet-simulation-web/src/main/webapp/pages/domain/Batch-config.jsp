@@ -25,7 +25,7 @@
                                 <td>
                                     <div class="panel panel-default table-responsive">
                                         <div class="panel-heading">可选列</div>
-                                        <table class="table table-responsive table-bordered grid query-condition">
+                                        <table class="table table-responsive table-bordered grid mesg-coloum">
                                             <tr>
                                                 <td>
                                                     <div class="grid-body">
@@ -37,7 +37,7 @@
 															</table>
 														</div>
                                                         <div class="grid-table-body" style="overflow-x:hidden">
-                                                            <table class="table table-bordered table-hover table-striped" id="staticQueryLeftTable">
+                                                            <table class="table table-bordered table-hover table-striped" id="configLeftTable">
 
                                                             </table>
                                                         </div>
@@ -67,7 +67,7 @@
                                                             </table>
                                                         </div>
                                                         <div class="grid-table-body" style="overflow-x:hidden">
-                                                            <table class="table table-bordered table-hover table-striped staticQueryRightTable" id="staticQueryRightTable">
+                                                            <table class="table table-bordered table-hover table-striped configRightTable" id="configRightTable">
 
                                                             </table>
                                                         </div>
@@ -84,7 +84,7 @@
             </div>
             <div class="modal-footer">
                 <button type="button" class="btn btn-default" data-dismiss="modal">取消</button>
-                <button type="button" class="btn btn-success" id="generalQuerySave">保存</button>
+                <button type="button" class="btn btn-success" id="batchConfigSave">保存</button>
             </div>
         </div>
     </div>

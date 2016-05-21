@@ -3,7 +3,6 @@ package org.packet.packetsimulation.facade.impl;
 import java.io.File;
 import java.io.FileWriter;
 import java.io.IOException;
-import java.math.BigInteger;
 import java.text.MessageFormat;
 import java.text.SimpleDateFormat;
 import java.util.ArrayList;
@@ -31,13 +30,13 @@ import org.openkoala.gqc.infra.util.XmlNode;
 import org.openkoala.gqc.infra.util.XmlUtil;
 import org.openkoala.koala.commons.InvokeResult;
 import org.openkoala.security.org.core.domain.EmployeeUser;
-import org.packet.packetsimulation.application.BatchConfigApplication;
 import org.packet.packetsimulation.application.MesgApplication;
 import org.packet.packetsimulation.application.MesgTypeApplication;
 import org.packet.packetsimulation.application.PacketApplication;
 import org.packet.packetsimulation.application.TaskApplication;
 import org.packet.packetsimulation.application.TaskPacketApplication;
 import org.packet.packetsimulation.application.ThreeStandardApplication;
+import org.packet.packetsimulation.core.domain.BatchConfig;
 import org.packet.packetsimulation.core.domain.BatchRule;
 import org.packet.packetsimulation.core.domain.Mesg;
 import org.packet.packetsimulation.core.domain.MesgType;
@@ -58,6 +57,7 @@ import org.springframework.transaction.annotation.Transactional;
 import org.xml.sax.SAXException;
 
 import com.alibaba.fastjson.JSON;
+import com.alibaba.fastjson.JSONArray;
 import com.alibaba.fastjson.JSONObject;
 
 @Named
@@ -74,9 +74,6 @@ public class MesgFacadeImpl implements MesgFacade {
 	
 	@Inject
 	private MesgTypeApplication  mesgTypeApplication;
-	
-	@Inject
-	private BatchConfigApplication  batchConfigApplication;
 	
 	@Inject
 	private PacketApplication  packetApplication;
@@ -101,13 +98,10 @@ public class MesgFacadeImpl implements MesgFacade {
 			dto.setContent(xmlNode.toHtmlTabString(mesgType.getMesgType()));
 			//System.out.println("巨头现身吧:"+xmlNode.toHtmlTabString(mesgType.getFilePath()));
 		} catch (SAXException e) {
-			// TODO Auto-generated catch block
 			e.printStackTrace();
 		} catch (IOException e) {
-			// TODO Auto-generated catch block
 			e.printStackTrace();
 		} catch (ParserConfigurationException e) {
-			// TODO Auto-generated catch block
 			e.printStackTrace();
 		}
 		return InvokeResult.success(dto);
@@ -148,10 +142,12 @@ public class MesgFacadeImpl implements MesgFacade {
 		return InvokeResult.success();
 	}
 	
-	public InvokeResult creatMesgs(MesgDTO mesgDTO,String realPath,String[] values) {		
+	public InvokeResult batchMesg(MesgDTO mesgDTO, String[] values,  String userAccount) {		
 		List<Mesg> mesgs= new ArrayList<Mesg>();
 		Mesg mesgById = application.getMesg(mesgDTO.getId());
 		String content = mesgById.getContent();
+		BatchConfig bc = getBatchConfig(mesgById.getMesgType().getId(), mesgById.getCreateBy());
+		List<BatchRule> rules = bc.getBatchRules();
 		if(mesgById.getMesgType().getMesgType().equals("基本信息正常报送记录")){
 			for(int i = 0; i < values.length; i++){
 				Mesg mesg = new Mesg();
@@ -164,9 +160,17 @@ public class MesgFacadeImpl implements MesgFacade {
 				content = content.replace("<IDType>"+credentialType+"</IDType>","<IDType>"+threeStandard.getCredentialType()+"</IDType>");
 				content = content.replace("<IDNum>"+credentialNumber+"</IDNum>","<IDNum>"+threeStandard.getCredentialNumber()+"</IDNum>");
 				content = content.replace("<CstCode>"+customerCode+"</CstCode>","<CstCode>"+threeStandard.getCustomerCode()+"</CstCode>");
+				try {
+					content = fillBatchRule(content, rules, i);
+				} catch (DocumentException e) {
+					e.printStackTrace();
+					throw new RuntimeException("xml格式转换失败！", e);
+				}
 				mesg.setMesgType(mesgById.getMesgType());
 				mesg.setPacket(mesgById.getPacket());
 				mesg.setContent(content);
+				mesg.setCreateBy(userAccount);
+				mesg.setMesgFrom(0);
 				mesgs.add(mesg);
 			}
 		}else if(mesgById.getMesgType().getMesgType().equals("账户信息正常报送记录")){
@@ -244,16 +248,120 @@ public class MesgFacadeImpl implements MesgFacade {
 		return InvokeResult.success();
 	}
 	
+	public InvokeResult batchMesg(MesgDTO mesgDTO, int startOfThreeStandard, int endOfThreeStandard, String userAccount){
+		Long start = new Date().getTime();
+		SimpleDateFormat sdf = new SimpleDateFormat("yyyy-MM-dd hh:mm:ss"); 
+		String s = sdf.format(start);		
+		List<ThreeStandard> list= queryThreeStandardByInput(startOfThreeStandard, endOfThreeStandard, userAccount);		
+		List<Mesg> mesgs= new ArrayList<Mesg>();		
+		Mesg mesg = application.getMesg(mesgDTO.getId());		
+		if(mesg.getMesgType().getMesgType().equals("基本信息正常报送记录")){
+//			for(int i = 0; i < list.size(); i++){
+//				Mesg mesg = new Mesg();
+//				ThreeStandard threeStandard = threeStandardApplication.getThreeStandard(list.get(i).getId());
+//				Document document=null;
+//				try {
+//					document = DocumentHelper.parseText(content);
+//					Element root = document.getRootElement();
+//					Element bsSgmt = root.element("BaseInf").element("BsSgmt");
+//					Element name =bsSgmt.element("Name");
+//					name.setText(threeStandard.getName());
+//					Element iDType = bsSgmt.element("IDType");
+//					iDType.setText(threeStandard.getCredentialType());
+//					Element iDNum = bsSgmt.element("IDNum");
+//					iDNum.setText(threeStandard.getCredentialNumber());
+//					Element cstCode = bsSgmt.element("CstCode");
+//					cstCode.setText(String.valueOf(threeStandard.getCustomerCode()));
+//					MesgType mesgType = mesgTypeApplication.getMesgType(mesgDTO.getMesgType());
+//					mesg.setMesgType(mesgType);
+//					Packet packet = packetApplication.getPacket(mesgDTO.getPacketId());
+//					mesg.setPacket(packet);
+//					mesg.setContent(document.asXML().toString());
+//					mesgs.add(mesg);
+//				} catch (DocumentException e1) {
+//					// TODO Auto-generated catch block
+//					e1.printStackTrace();
+//				}			
+//			}
+			ForkJoinPool pool = new ForkJoinPool(5);
+			BaseTask task = new BaseTask(list, mesg, userAccount);
+	        Future<List> result =  pool.submit(task);
+	        try {
+	            mesgs = result.get();
+	        } catch (InterruptedException e) {
+	            e.printStackTrace();
+	        } catch (ExecutionException e) {
+	            e.printStackTrace();
+	        }
+		}else if(mesg.getMesgType().getMesgType().equals("账户信息正常报送记录")){
+			ForkJoinPool pool = new ForkJoinPool(5);
+			AcctTask task = new AcctTask(list, mesg);
+	        Future<List> result =  pool.submit(task);
+	        try {
+	            mesgs = result.get();
+	        } catch (InterruptedException e) {
+	            e.printStackTrace();
+	        } catch (ExecutionException e) {
+	            e.printStackTrace();
+	        }
+		}else if(mesg.getMesgType().getMesgType().equals("合同信息正常报送记录")){
+			ForkJoinPool pool = new ForkJoinPool(5);
+			ConTask task = new ConTask(list, mesg);
+	        Future<List> result =  pool.submit(task);
+	        try {
+	            mesgs = result.get();
+	        } catch (InterruptedException e) {
+	            e.printStackTrace();
+	        } catch (ExecutionException e) {
+	            e.printStackTrace();
+	        }
+		}else if(mesg.getMesgType().getMesgType().equals("抵质押合同信息正常报送记录")){
+			ForkJoinPool pool = new ForkJoinPool(5);
+			CccTask task = new CccTask(list, mesg);
+	        Future<List> result =  pool.submit(task);
+	        try {
+	            mesgs = result.get();
+	        } catch (InterruptedException e) {
+	            e.printStackTrace();
+	        } catch (ExecutionException e) {
+	            e.printStackTrace();
+	        }
+		}else{
+			ForkJoinPool pool = new ForkJoinPool(5);
+			OthTask task = new OthTask(list, mesg);
+	        Future<List> result =  pool.submit(task);
+	        try {
+	            mesgs = result.get();
+	        } catch (InterruptedException e) {
+	            e.printStackTrace();
+	        } catch (ExecutionException e) {
+	            e.printStackTrace();
+	        }
+		}
+		Long insertstart=System.currentTimeMillis();
+		application.creatMesgs(mesgs);
+		Long insertend=System.currentTimeMillis();
+		Long end = new Date().getTime();
+		String e = sdf.format(end);
+		System.out.println("插入耗时:"+(insertend-insertstart));
+		System.out.println("开始时间:"+s);
+		System.out.println("结束时间:"+e);
+		return InvokeResult.success();
+	}
+	
 	private String fillBatchRule(String content, List<BatchRule> rules, int rowNum) throws DocumentException{
 		Document document = DocumentHelper.parseText(content);  
 		for (BatchRule rule : rules) {
+			if(!rule.getInUse()){
+				continue;
+			}
 			int ruleType = rule.getRuleType();
 			String prop = rule.getRuleProperties();
 			JSONObject obj = JSON.parseObject(prop);
-			Element element = (Element) document.selectNodes(rule.getXpath()).get(0);
+			Element element = (Element) document.selectNodes("/Document/"+rule.getXpath().replace(".", "/")).get(0);
 			switch (ruleType) {
 			case 0://自增
-				Long start = obj.getLong("start");//起始
+				Long start = obj.getLong("startValue");//起始
 				int size = obj.getIntValue("stepSize");//步长
 				Long total = start + size*rowNum;
 				element.setText(total.toString());
@@ -262,7 +370,38 @@ public class MesgFacadeImpl implements MesgFacade {
 				obj.getString("dickName");
 				break;
 			case 2://自定义
-				obj.getString("userDefine");
+				JSONObject vProp = JSON.parseObject(obj.getString("custom"));
+				String templete =  vProp.getString("templete");//变量模板
+				JSONArray variables = vProp.getJSONArray("variables");//变量配置
+				for (int i = 0; i < variables.size(); i++) {
+					JSONObject variable = (JSONObject) variables.get(i);
+					int vType = variable.getInteger("vType");//变量类型
+					String vName = variable.getString("vName");//变量名称
+					switch (vType) {
+					case 0://自增
+						Long initValue = variable.getLong("initValue");//初值
+						Integer increment = variable.getInteger("increment");//增量
+						Long vTotal = initValue + increment*rowNum;
+						if(variable.getBoolean("isWidth")){//是否设置宽度
+							Integer dataWidth = variable.getInteger("dataWidth");//数值宽度
+							String sn=String.format("%0"+dataWidth+"d", vTotal);	    
+							templete = templete.replace(vName, sn);
+						}else{
+							templete = templete.replace(vName, vTotal.toString());
+						}
+						break;
+					case 1://随机
+						String randomArea = variable.getString("randomArea");
+						String[] values = randomArea.split(",");
+						int n =(int) (Math.random()*values.length);
+						templete = templete.replace(vName, values[n]);
+						break;
+
+					default:
+						break;
+					}
+				}
+				element.setText(templete);
 				break;
 			default:
 				break;
@@ -533,106 +672,7 @@ public class MesgFacadeImpl implements MesgFacade {
         }      
     }
 	
-	public InvokeResult creatMesgsByInput(MesgDTO mesgDTO,int startOfThreeStandard,int endOfThreeStandard,String currentUserId){
-		Long start = new Date().getTime();
-		SimpleDateFormat sdf = new SimpleDateFormat("yyyy-MM-dd hh:mm:ss"); 
-		String s = sdf.format(start);		
-		List<ThreeStandard> list= queryThreeStandardByInput(startOfThreeStandard,endOfThreeStandard,currentUserId);		
-		List<Mesg> mesgs= new ArrayList<Mesg>();		
-		Mesg mesg = application.getMesg(mesgDTO.getId());		
-		if(mesg.getMesgType().getMesgType().equals("基本信息正常报送记录")){
-//			for(int i = 0; i < list.size(); i++){
-//				Mesg mesg = new Mesg();
-//				ThreeStandard threeStandard = threeStandardApplication.getThreeStandard(list.get(i).getId());
-//				Document document=null;
-//				try {
-//					document = DocumentHelper.parseText(content);
-//					Element root = document.getRootElement();
-//					Element bsSgmt = root.element("BaseInf").element("BsSgmt");
-//					Element name =bsSgmt.element("Name");
-//					name.setText(threeStandard.getName());
-//					Element iDType = bsSgmt.element("IDType");
-//					iDType.setText(threeStandard.getCredentialType());
-//					Element iDNum = bsSgmt.element("IDNum");
-//					iDNum.setText(threeStandard.getCredentialNumber());
-//					Element cstCode = bsSgmt.element("CstCode");
-//					cstCode.setText(String.valueOf(threeStandard.getCustomerCode()));
-//					MesgType mesgType = mesgTypeApplication.getMesgType(mesgDTO.getMesgType());
-//					mesg.setMesgType(mesgType);
-//					Packet packet = packetApplication.getPacket(mesgDTO.getPacketId());
-//					mesg.setPacket(packet);
-//					mesg.setContent(document.asXML().toString());
-//					mesgs.add(mesg);
-//				} catch (DocumentException e1) {
-//					// TODO Auto-generated catch block
-//					e1.printStackTrace();
-//				}			
-//			}
-			ForkJoinPool pool = new ForkJoinPool(5);
-			BaseTask task = new BaseTask(list, mesg, currentUserId);
-	        Future<List> result =  pool.submit(task);
-	        try {
-	            mesgs = result.get();
-	        } catch (InterruptedException e) {
-	            e.printStackTrace();
-	        } catch (ExecutionException e) {
-	            e.printStackTrace();
-	        }
-		}else if(mesg.getMesgType().getMesgType().equals("账户信息正常报送记录")){
-			ForkJoinPool pool = new ForkJoinPool(5);
-			AcctTask task = new AcctTask(list, mesg);
-	        Future<List> result =  pool.submit(task);
-	        try {
-	            mesgs = result.get();
-	        } catch (InterruptedException e) {
-	            e.printStackTrace();
-	        } catch (ExecutionException e) {
-	            e.printStackTrace();
-	        }
-		}else if(mesg.getMesgType().getMesgType().equals("合同信息正常报送记录")){
-			ForkJoinPool pool = new ForkJoinPool(5);
-			ConTask task = new ConTask(list, mesg);
-	        Future<List> result =  pool.submit(task);
-	        try {
-	            mesgs = result.get();
-	        } catch (InterruptedException e) {
-	            e.printStackTrace();
-	        } catch (ExecutionException e) {
-	            e.printStackTrace();
-	        }
-		}else if(mesg.getMesgType().getMesgType().equals("抵质押合同信息正常报送记录")){
-			ForkJoinPool pool = new ForkJoinPool(5);
-			CccTask task = new CccTask(list, mesg);
-	        Future<List> result =  pool.submit(task);
-	        try {
-	            mesgs = result.get();
-	        } catch (InterruptedException e) {
-	            e.printStackTrace();
-	        } catch (ExecutionException e) {
-	            e.printStackTrace();
-	        }
-		}else{
-			ForkJoinPool pool = new ForkJoinPool(5);
-			OthTask task = new OthTask(list, mesg);
-	        Future<List> result =  pool.submit(task);
-	        try {
-	            mesgs = result.get();
-	        } catch (InterruptedException e) {
-	            e.printStackTrace();
-	        } catch (ExecutionException e) {
-	            e.printStackTrace();
-	        }
-		}
-		Long insertstart=System.currentTimeMillis();
-		application.creatMesgs(mesgs);
-		Long insertend=System.currentTimeMillis();
-		Long end = new Date().getTime();
-		String e = sdf.format(end);
-		System.out.println("插入耗时:"+(insertend-insertstart));
-		System.out.println("开始时间:"+s);
-		System.out.println("结束时间:"+e);
-		return InvokeResult.success();
-	}
+	
 	
 	public InvokeResult updateMesg(MesgDTO mesgDTO) {		
 		Mesg mesg = MesgAssembler.toEntity(mesgDTO);		
@@ -891,5 +931,22 @@ public class MesgFacadeImpl implements MesgFacade {
 	   	}
 	   	Integer max = (Integer) getQueryChannelService().createJpqlQuery(jpql.toString()).setParameters(conditionVals).singleResult();
 	   	return max;
+	}
+	
+	/**
+	 * 查询批量配置
+	 * @param mesgTypeId 模板类型ID
+	 * @param createBy 创建人
+	 * @return BatchConfig
+	 */
+	@SuppressWarnings("unchecked")
+	public BatchConfig getBatchConfig(Long mesgTypeId, String createBy) {
+		List<Object> conditionVals = new ArrayList<Object>();
+	   	StringBuilder jpql = new StringBuilder("select _batchConfig from BatchConfig _batchConfig   where 1=1 ");
+	   		jpql.append(" and _batchConfig.createdBy = ?");
+	   		conditionVals.add(createBy);
+	   		jpql.append(" and _batchConfig.mesgType.id = ? ");
+	   		conditionVals.add(mesgTypeId);
+		return (BatchConfig) getQueryChannelService().createJpqlQuery(jpql.toString()).setParameters(conditionVals).singleResult();
 	}
 }

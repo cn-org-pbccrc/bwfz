@@ -90,6 +90,14 @@ public class BatchConfigController {
 		}
 	}
 	
+	/**
+	 * 获取报文xmlNode对象
+	 * @param id
+	 * @return
+	 * @throws SAXException
+	 * @throws IOException
+	 * @throws ParserConfigurationException
+	 */
 	@ResponseBody
 	@RequestMapping("/getNodes/{id}")
 	public InvokeResult getNodes(@PathVariable Long id) throws SAXException, IOException, ParserConfigurationException {

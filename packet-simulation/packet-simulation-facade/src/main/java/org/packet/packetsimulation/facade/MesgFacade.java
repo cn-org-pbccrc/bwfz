@@ -16,13 +16,26 @@ public interface MesgFacade {
 	
 	public InvokeResult verifyMesgType(Long id);
 	
-	public InvokeResult creatMesgs(MesgDTO mesg,String realPath,String[] values);
+	/**
+	 * 批量
+	 * @param mesg 记录
+	 * @param ids 三标ID数组
+	 * @return
+	 */
+	public InvokeResult batchMesg(MesgDTO mesg, String[] ids ,String userAccount);
 	
-	public InvokeResult creatMesgsByInput(MesgDTO mesg,int startOfThreeStandard,int endOfThreeStandard,String currentUserId);
+	/**
+	 * 批量
+	 * @param mesg 记录
+	 * @param start 三标起始位置
+	 * @param end 三标结束位置
+	 * @return
+	 */
+	public InvokeResult batchMesg(MesgDTO mesg, int start, int end, String userAccount);
 	
 	public Long queryCountOfThreeStandard(String currentUserId);
 	
-	public InvokeResult creatBatch(MesgDTO mesg,String realPath,int batchNumber);
+	public InvokeResult creatBatch(MesgDTO mesg, String realPath, int batchNumber);
 	
 	public InvokeResult updateMesg(MesgDTO mesg);
 	

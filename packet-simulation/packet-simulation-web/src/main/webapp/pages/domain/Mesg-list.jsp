@@ -484,7 +484,6 @@ function initFun(){
     	    		    		{ name: 'ids', value: items.join(',')},
     	    		    	    { name: 'start', value: dialog.find('#startID').val()},
     	    		    	    { name: 'end', value: dialog.find('#endID').val()},
-    	    		    	    { name: 'currentUserId', value: currentUserId},
     	    		    	    { name: 'mesgType', value: mesgType},
     	   	     	 			{ name: 'packetId', value:packetId},		        
     	    		     	];

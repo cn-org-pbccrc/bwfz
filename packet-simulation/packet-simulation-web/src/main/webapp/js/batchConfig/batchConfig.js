@@ -4,12 +4,9 @@ var batchConfig = function(){
 	var mesgTypeSelect = null;
 	var paragraphSelect = null;
 	var dialog = null;
-	var staticQueryLeftTable = null;
-	var staticQueryRightTable = null;
-	var dynamicQueryLeftTable = null;
-	var dynamicQueryRightTable = null;
-	var showColumnLeftTable = null;
-	var showColumnRightTable = null;
+	var batchConfigDialog = null;
+	var configLeftTable = null;
+	var configRightTable = null;
 	var dataGrid = null;
 	/*
 	 新增方法
@@ -61,15 +58,15 @@ var batchConfig = function(){
 	var init = function(data, id){
 		dialog = $(data);
 		dialog.find('.modal-header').find('.modal-title').html(id ? '修改批量规则':'添加批量规则');
-		staticQueryLeftTable = dialog.find('#staticQueryLeftTable');
-		staticQueryRightTable = dialog.find('#staticQueryRightTable');
+		configLeftTable = dialog.find('#configLeftTable');
+		configRightTable = dialog.find('#configRightTable');
 		mesgTypeSelect = dialog.find('#mesgTypeSelect');
 		paragraphSelect = dialog.find('#paragraphSelect');
 		initLayout();
 		fillSelectData(id);
 		fillWidgetTypeSelect(dialog.find('.select[data-role="ruleType"]'));
 		fillQueryOperationSelect(dialog.find('.select[data-role="ruleType"]'));
-		dialog.find('#generalQuerySave').on('click',function(){
+		dialog.find('#batchConfigSave').on('click',function(){
 			$(this).attr('disabled', 'disabled');
 			save(id);
 		}).end().modal({
@@ -93,7 +90,7 @@ var batchConfig = function(){
 	};
 	var initLayout = function(){
 		var width = $(window).width() * 0.73;
-		dialog.find('.query-condition').each(function(){
+		dialog.find('.mesg-coloum').each(function(){
 			var leftWidth =  width * 0.3;
 			var $this = $(this);
 			var padding = width>1150 ? 8 : 14*1150/width;
@@ -199,8 +196,6 @@ var batchConfig = function(){
 					var xmlNodeColumns = data.xmlNodeColumns;
 				});
 				dialog.on('tableSelectComplete.koala', $.proxy(fillRightTable, this));
-//				dialog.find('#generalQuery_queryName').val(batchConfigObject.queryName);
-//				dialog.find('#generalQuery_description').val(batchConfigObject.description);
 			}).fail(function(){
 				dialog.find('.modal-content').message({
 					type: 'error',
@@ -208,9 +203,10 @@ var batchConfig = function(){
 				});
 			});
 	};
+	
 	//清除右边表格填充内容
 	var clearSelectedItem = function(){
-		staticQueryRightTable.children().remove();
+		configRightTable.children().remove();
 	};
 
 	//填充左边表格列
@@ -229,7 +225,7 @@ var batchConfig = function(){
 			}
 		}
 		var xmlNodeRowsHtml = xmlNodeRows.join('');
-		staticQueryLeftTable.html(xmlNodeRowsHtml)
+		configLeftTable.html(xmlNodeRowsHtml)
 			.find('a[data-role="add"]')
 			.on('click', function(){
 				var $this = $(this);
@@ -241,25 +237,29 @@ var batchConfig = function(){
 				var row = $(' <tr><td class="column-name">'+cnName+'<input data-role="cnName" type="hidden" value="'+cnName+'"/><input data-role="enName" type="hidden" value="'+enName+'"/><input data-role="xpath" type="hidden" value="'+xpath+'"/><input data-role="fieldType" type="hidden" value="'+fieldType+'"/></td>' +
 						'<td class="column-paragraph">'+paragraph+'<input data-role="fieldName" type="hidden" value="'+paragraph+'"/></td>'+
 					'<td class="query-operation"><div class="btn-group select" data-role="ruleType"></div></td>' +
-					'<td class="value">起始值：&nbsp<input data-role="startValue" class="form-control" required="true" style="width:30%!important;" value="0"/>&nbsp;步长：&nbsp;<input data-role="stepSize" class="form-control" required="true" style="width:30%!important;" value="1"/><span class="required" >*</span></td>' +
+					'<td class="value">起始值：&nbsp<input data-role="startValue" class="form-control" required="true" rgExp="/^[0-9]{1,}$/" data-content="只能输入数字" placeholder="只能输入数字" style="width:30%!important;" value="0"/>&nbsp;步长：&nbsp;<input data-role="stepSize" class="form-control" required="true" rgExp="/^[0-9]{1,}$/" data-content="只能输入数字" placeholder="只能输入数字" style="width:30%!important;" value="1"/><span class="required" >*</span></td>' +
 					'<td class="visibility"><div class="checker"><span class="checked"><input type="checkbox" style="opacity: 0;" data-role="inUse" checked="true"></span></div></td><td class="delete-btn"><a data-role="delete" data-value="'+cnName+'"><span class="glyphicon glyphicon-remove">删除</span></a></td></tr>');
 				var ruleType =  row.find('[data-role="ruleType"]');
 				fillQueryOperationSelect(ruleType);
 				ruleType.on('change', function(){
 					var valueTd = row.find('.value');
 					if($(this).getValue() == '0'){
-						valueTd.html('起始值：&nbsp<input data-role="startValue" class="form-control" required="true" style="width:30%!important;" value="0"/>&nbsp;步长：&nbsp;<input data-role="stepSize" class="form-control" required="true" style="width:30%!important;" value="1"/><span class="required" >*</span>');
+						valueTd.html('起始值：&nbsp<input data-role="startValue" class="form-control" required="true" rgExp="/^[0-9]{1,}$/" data-content="只能输入数字" placeholder="只能输入数字" style="width:30%!important;" value="0"/>&nbsp;步长：&nbsp;<input data-role="stepSize" class="form-control" required="true" rgExp="/^[0-9]{1,}$/" data-content="只能输入数字" placeholder="只能输入数字" style="width:30%!important;" value="1"/><span class="required" >*</span>');
 					}else if($(this).getValue() == '1'){
 						valueTd.html('<div class="btn-group select" data-role="dicType"></div>');
 						fillWidgetTypeSelect(row.find('[data-role="dicType"]'));
 					}else{
-						valueTd.html('<input data-role="custom" class="form-control" required="true"/><span class="required" >*</span>');
+						valueTd.html('<input data-role="custom" class="form-control" required="true" /><span class="required" >*</span>');
+						valueTd.find('[data-role="custom"]').on('click', function(e){
+							openCustomRuleConfig(this);
+						});
 					}
 				});
 				$this.closest('tr').hide();
-				row.appendTo(staticQueryRightTable).find('[data-role="delete"]').on('click', function(){
+				row.appendTo(configRightTable).find('[data-role="delete"]').on('click', function(){
 					removeQueryRightTableRow($(this));
 				});
+				
 				row.find('[data-role="inUse"]').on('click', function(){
 					if(this.checked){
 						$(this).parent().addClass('checked');
@@ -269,7 +269,7 @@ var batchConfig = function(){
 				});
 			});
 	};
-
+	
 	//填充右边表格
 	var fillRightTable = function(){
 		var batchRules = batchConfigObject.batchRules;
@@ -277,13 +277,13 @@ var batchConfig = function(){
 			var  batchRule = batchRules[i];
 			var cnName = batchRule.cnName;//中文名
 			var enName = batchRule.enName;//英文名
-			var paragraph = staticQueryLeftTable.find('a[data-value="'+cnName+'"]').data('paragraph');//所属段中文名
+			var paragraph = configLeftTable.find('a[data-value="'+cnName+'"]').data('paragraph');//所属段中文名
 			var xpath = batchRule.xpath;
 			var fieldType = batchRule.ruleType;
 			var row = $(' <tr><td class="column-name">'+cnName+'<input data-role="cnName" type="hidden" value="'+cnName+'"/><input data-role="enName" type="hidden" value="'+enName+'"/><input data-role="xpath" type="hidden" value="'+xpath+'"/><input data-role="fieldType" type="hidden" value="'+fieldType+'"/></td>' +
 					'<td class="column-paragraph">'+paragraph+'<input data-role="fieldName" type="hidden" value="'+paragraph+'"/></td>'+
 				'<td class="query-operation"><div class="btn-group select" data-role="ruleType"></div></td>' +
-				'<td class="value">起始值：&nbsp<input data-role="startValue" class="form-control" required="true" style="width:30%!important;" value="0"/>&nbsp;步长：&nbsp;<input data-role="stepSize" class="form-control" required="true" style="width:30%!important;" value="1"/><span class="required" >*</span></td>' +
+				'<td class="value">起始值：&nbsp<input data-role="startValue" class="form-control" required="true" rgExp="/^[0-9]{1,}$/" data-content="只能输入数字" placeholder="只能输入数字" style="width:30%!important;" value="0"/>&nbsp;步长：&nbsp;<input data-role="stepSize" class="form-control" required="true" rgExp="/^[0-9]{1,}$/" data-content="只能输入数字" placeholder="只能输入数字" style="width:30%!important;" value="1"/><span class="required" >*</span></td>' +
 				'<td class="visibility"><div class="checker"><span class="checked"><input type="checkbox" style="opacity: 0;" data-role="inUse" checked="checked"></span></div></td><td class="delete-btn"><a data-role="delete" data-value="'+cnName+'"><span class="glyphicon glyphicon-remove">删除</span></a></td></tr>');
 			var ruleType =  row.find('[data-role="ruleType"]');
 			fillQueryOperationSelect(ruleType);
@@ -292,12 +292,15 @@ var batchConfig = function(){
 				var row = $(this).closest('tr');
 				var valueTd = row.find('.value');
 				if($(this).getValue() == '0'){
-					valueTd.html('起始值：&nbsp<input data-role="startValue" class="form-control" required="true" style="width:30%!important;" value="0"/>&nbsp;步长：&nbsp;<input data-role="stepSize" class="form-control" required="true" style="width:30%!important;" value="1"/><span class="required" >*</span>');
+					valueTd.html('起始值：&nbsp<input data-role="startValue" class="form-control" required="true" rgExp="/^[0-9]{1,}$/" data-content="只能输入数字" placeholder="只能输入数字" style="width:30%!important;" value="0"/>&nbsp;步长：&nbsp;<input data-role="stepSize" class="form-control" required="true" rgExp="/^[0-9]{1,}$/" data-content="只能输入数字" placeholder="只能输入数字" style="width:30%!important;" value="1"/><span class="required" >*</span>');
 				}else if($(this).getValue() == '1'){
 					valueTd.html('<div class="btn-group select" data-role="dicType"></div>');
 					fillWidgetTypeSelect(row.find('[data-role="dicType"]'));
 				}else{
 					valueTd.html('<input data-role="custom" class="form-control" required="true"/><span class="required" >*</span>');
+					valueTd.find('[data-role="custom"]').on('click', function(e){
+						openCustomRuleConfig(this);
+					});
 				}
 			});
 			ruleType.setValue(batchRule.ruleType);
@@ -309,6 +312,9 @@ var batchConfig = function(){
 				valueTd.find('[data-role="dicType"]').setValue(jsonObj.dicType);
 			}else{
 				valueTd.find('[data-role="custom"]').val(jsonObj.custom);
+				valueTd.find('[data-role="custom"]').on('click', function(){
+					openCustomRuleConfig(this);
+				});
 			}
 			row.find('[data-role="delete"]').on('click', function(){
 				removeQueryRightTableRow($(this));
@@ -321,13 +327,143 @@ var batchConfig = function(){
 				}
 			});
 			!batchRule.inUse && row.find('[data-role="inUse"]').prop('checked','').parent().removeClass('checked');;
-			staticQueryRightTable.append(row);
+			configRightTable.append(row);
 			hideQueryLeftTableRow(cnName);
 		}
 	};
+	
+	var openCustomRuleConfig = function(self){
+		 var self = $(self);
+	        batchConfigDialog = $('<div class="modal fade"><div class="modal-dialog" style="width:900px;"><div class="modal-content"><div class="modal-header"><button type="button" class="close" data-dismiss="modal" aria-hidden="true">&times;</button><h4 class="modal-title">自定义规则配置</h4></div><div class="modal-body"><p>One fine body&hellip;</p></div><div class="modal-footer"><button type="button" class="btn btn-default" data-dismiss="modal">取消</button><button type="button" class="btn btn-success" id="save">保存</button></div></div></div></div>');
+	        $.get(contextPath+'/pages/domain/BatchConfig-detailConfig.jsp').done(function(html){
+	               batchConfigDialog.find('.modal-body').html(html);
+	               if(self.val()){
+						var obj =  JSON.parse(self.val());
+						batchConfigDialog.find('#templeteID').val(obj.templete);
+						var propTable = batchConfigDialog.find('#propTable');
+						var variables= obj.variables;
+						for(key in variables){
+							addRow(propTable, variables[key]);
+						}
+					}
+	                batchConfigDialog.modal({
+	                    keyboard:false,
+	                    backdrop:false
+	                }).on({
+	                    'hidden.bs.modal': function(){
+	                        $(this).remove();
+	                    }
+	                });
+	                batchConfigDialog.find('[data-role="addRow"]').on('click', function(e){
+	                	addRow();
+	                })
+	                batchConfigDialog.find('#save').on('click',{grid: self}, function(e){
+	                	if(!validateVariables()){
+	                		batchConfigDialog.find('#save').removeAttr('disabled');
+	            			return false;
+	            		}
+	                    var data = {};
+	                    var variables = [];
+	                    data.templete = batchConfigDialog.find('#templeteID').val();
+	                    var propTable = batchConfigDialog.find('#propTable');
+	                    propTable.find('tr').each(function(index,tr){
+	            			var $tr = $(tr);
+		                    var vType = $tr.find('[data-role="vType"]').getValue();
+		        			var properties = {};
+		        			properties.vType = vType;
+		        			properties.vName = $tr.find('input[data-role="vName"]').val();
+		        			if (vType == '0'){
+		        				properties.initValue = $tr.find('input[data-role="initValue"]').val();
+		        				properties.increment = $tr.find('input[data-role="increment"]').val();
+		        				properties.isWidth = $tr.find('input[data-role="isWidth"]').is(':checked');
+		        				properties.dataWidth = $tr.find('input[data-role="dataWidth"]').val();
+		        				
+		        			}else if (vType == '1'){
+		        				properties.randomArea = $tr.find('[data-role="randomArea"]').val();
+		        			}
+		        			variables.push(properties);
+		                  })
+		                  data.variables = variables;
+	                    batchConfigDialog.modal('hide');
+	                    self.val(JSON.stringify(data));
+	                });
+	        });
+	
+	}
+	
+	var addRow = function(propTable, variable){
+		var row = $('<tr><td class="v-name"><input  data-role="vName" required="true" style="display: inline; " class="form-control" type="text" /></td>'
+		+'<td class="v-type"><div class="btn-group select" id="variableTypeSelect" data-role="vType"></div></td>'
+		+'<td class="v-properties">初值：<input data-role="initValue" class="form-control" required="true" rgExp="/^[0-9]{1,}$/" data-content="只能输入数字" placeholder="只能输入数字" style="width:20%!important;display:inline" value="0"/>&nbsp;&nbsp;增量：&nbsp;<input data-role="increment" class="form-control" required="true" rgExp="/^[0-9]{1,}$/" data-content="只能输入数字" placeholder="数字" style="width:10%!important;display:inline" value="1"/>&nbsp;&nbsp;'
+		+'<div class="checker"><span class="checked"><input type="checkbox" style="opacity: 0;" data-role="isWidth" checked="checked"></span></div>&nbsp;数字宽度：&nbsp;<input data-role="dataWidth" class="form-control" required="true" rgExp="/^[0-9]{1,}$/" data-content="只能输入数字" placeholder="数字" style="width:10%!important;display:inline" value="1"/></td>'
+		+'<td class="delete-btn"><a data-role="delete"><span class="glyphicon glyphicon-remove">删除</span></a></td>')
+	
+		if(!propTable){
+			propTable=$('#propTable')
+		}
+		var vType = row.find('[data-role="vType"]')
+		fillVTypeSelect(vType);
+		var valueTd = row.find('.v-properties');
+		vType.on('change', function(){
+			var row = $(this).closest('tr');
+			var valueTd = row.find('.v-properties');
+			if($(this).getValue() == '0'){
+				valueTd.html('<td class="v-properties">初值：<input data-role="initValue" class="form-control" required="true" rgExp="/^[0-9]{1,}$/" data-content="只能输入数字" placeholder="只能输入数字" style="width:20%!important;display:inline" value="0"/>&nbsp;&nbsp;增量：&nbsp;<input data-role="increment" class="form-control" required="true" rgExp="/^[0-9]{1,}$/" data-content="只能输入数字" placeholder="数字" style="width:10%!important;display:inline" value="1"/>&nbsp;&nbsp;'
+						+'<div class="checker"><span class="checked"><input type="checkbox" style="opacity: 0;" data-role="isWidth" checked="checked"></span></div>&nbsp;数字宽度：&nbsp;<input data-role="dataWidth" class="form-control" required="true" rgExp="/^[0-9]{1,}$/" data-content="只能输入数字" placeholder="数字" style="width:10%!important;display:inline" value="1"/></td>');
+				valueTd.find('[data-role="isWidth"]').on('click', function(){
+					if(this.checked){
+						$(this).parent().addClass('checked');
+					}else{
+						$(this).parent().removeClass('checked');
+					}
+				});
+			}else if($(this).getValue() == '1'){
+				valueTd.html('枚举值(以,分隔)：<input data-role="randomArea" class="form-control" style="width:75%;display:inline !important" required="true" placeholder="请输入以英文逗号分隔的枚举值"/><span style="display:inline" class="required" >*</span>');
+			}
+		});
+		if(variable){
+			vType.setValue(variable.vType);
+			row.find('input[data-role="vName"]').val(variable.vName);
+			if(variable.vType==0){
+			row.find('input[data-role="initValue"]').val(variable.initValue);
+			row.find('input[data-role="increment"]').val(variable.increment);
+			row.find('input[data-role="dataWidth"]').val(variable.dataWidth);
+			!variable.isWidth && row.find('[data-role="isWidth"]').prop('checked','').parent().removeClass('checked');;
+			}else{
+				row.find('input[data-role="randomArea"]').val(variable.randomArea)
+			}
+		}
+		row.appendTo(propTable).find('[data-role="delete"]').on('click', function(){
+			removeRow($(this));
+		});
+		row.find('[data-role="isWidth"]').on('click', function(){
+			if(this.checked){
+				$(this).parent().addClass('checked');
+			}else{
+				$(this).parent().removeClass('checked');
+			}
+		});
+		
+	}
+	
+	//删除行
+	var removeRow = function($this){
+		$this.closest('tr').remove();
+	};
+	
+	//填充变量类型
+	var fillVTypeSelect = function(select){
+		select.select({
+			contents: [
+						{value: '0', title: '自增',selected: true},
+						{value: '1', title: '随机'}
+					]
+		});
+	};
+	
 	 //隐藏查询条件左边的行
 	var hideQueryLeftTableRow = function(column){
-		staticQueryLeftTable.find('a[data-value="'+column+'"]')
+		configLeftTable.find('a[data-value="'+column+'"]')
 			.closest('tr')
 			.hide();
 	};
@@ -335,7 +471,7 @@ var batchConfig = function(){
 	var removeQueryRightTableRow = function($this){
 		var column = $this.data('value');
 		$this.closest('tr').remove();
-		staticQueryLeftTable.find('a[data-value="'+column+'"]')
+		configLeftTable.find('a[data-value="'+column+'"]')
 			.closest('tr')
 			.show();
 	};
@@ -365,7 +501,7 @@ var batchConfig = function(){
 	 */
 	var save = function(id){
 		if(!validate()){
-			dialog.find('#generalQuerySave').removeAttr('disabled');
+			dialog.find('#batchConfigSave').removeAttr('disabled');
 			return false;
 		}
 		var url = baseUrl + 'add.koala';
@@ -384,7 +520,7 @@ var batchConfig = function(){
 					content: data.errorMessage
 				});
 			}
-			dialog.find('#generalQuerySave').removeAttr('disabled');
+			dialog.find('#batchConfigSave').removeAttr('disabled');
 		});
 	};
 	/*
@@ -400,31 +536,54 @@ var batchConfig = function(){
 //			return false;
 //		}
 		var flag = true;
-		dialog.find('.generalQuery').find('input[required=true],input[rgExp]').each(function(){
+		dialog.find('.batchRule').find('input[required=true],input[rgExp]').each(function(){
 			var $this = $(this);
 			var value = $this.val();
 			if($this.attr('required') && !checkNotNull(value)){
-				showErrorMessage($this, '请填入该选项内容');
+				showErrorMessage(dialog, $this, '请填入该选项内容');
 				flag = false;
 				return false;
 			}
 			var rgExp = $this.attr('rgExp');
 			if(rgExp && !value.match(eval(rgExp))){
-				showErrorMessage($this, $this.data('content'));
+				showErrorMessage(dialog, $this, $this.data('content'));
 				flag = false;
 				return false;
 			}
 		});
 		return flag;
 	};
+	/*
+	 * 数据验证  成功返回true  失败返回false
+	 */
+	var validateVariables = function(){
+		var flag = true;
+		batchConfigDialog.find('textarea[required=true],input[required=true],input[rgExp]').each(function(){
+			var $this = $(this);
+			var value = $this.val();
+			if($this.attr('required') && !checkNotNull(value)){
+				showErrorMessage(batchConfigDialog, $this, '请填入该选项内容');
+				flag = false;
+				return false;
+			}
+			var rgExp = $this.attr('rgExp');
+			if(rgExp && !value.match(eval(rgExp))){
+				showErrorMessage(batchConfigDialog, $this, $this.data('content'));
+				flag = false;
+				return false;
+			}
+		});
+		return flag;
+	};
+	
 	/**
 	 * 显示提示信息
 	 */
-	var showErrorMessage = function($element, content){
+	var showErrorMessage = function(container, $element, content){
 		$element.popover({
 			content: content,
 			trigger: 'manual',
-			container: dialog
+			container: container
 		}).popover('show').on({
 				'blur': function(){
 					$element.popover('destroy');
@@ -436,10 +595,11 @@ var batchConfig = function(){
 				}
 			}).focus().parent().addClass('has-error');
 	};
+	
 	var getAllData = function(){
 		var data = {};
 		data['mesgTypeDTO.id'] = mesgTypeSelect.getValue();
-		staticQueryRightTable.find('tr').each(function(index,tr){
+		configRightTable.find('tr').each(function(index,tr){
 			var $tr = $(tr);
 			data['batchRules['+index+'].enName'] = $tr.find('input[data-role="enName"]').val();
 			data['batchRules['+index+'].cnName'] = $tr.find('input[data-role="cnName"]').val();
@@ -461,35 +621,9 @@ var batchConfig = function(){
 				data['batchRules['+index+'].inUse'] = inUse;
 			}
 		});
-//		dynamicQueryRightTable.find('tr').each(function(index,tr){
-//			var $tr = $(tr);
-//			data['dynamicQueryConditions['+index+'].fieldName'] = $tr.find('input[data-role="fieldName"]').val();
-//			data['dynamicQueryConditions['+index+'].fieldType'] = $tr.find('input[data-role="fieldType"]').val();
-//			data['dynamicQueryConditions['+index+'].label'] = $tr.find('input[data-role="label"]').val();
-//			data['dynamicQueryConditions['+index+'].queryOperation'] = $tr.find('[data-role="queryOperation"]').getValue();
-//			data['dynamicQueryConditions['+index+'].widgetTypeDTO'] = $tr.find('[data-role="widgetType"]').getValue();
-//		});
-//		showColumnRightTable.find('tr').each(function(index,tr){
-//			var $tr = $(tr);
-//			data['fieldDetails['+index+'].fieldName'] = $tr.find('input[data-role="fieldName"]').val();
-//			data['fieldDetails['+index+'].label'] = $tr.find('input[data-role="label"]').val();
-//		});
 		return data;
 	};
-	var preview = function(id, dataSourceId){
-		$.get(contextPath + "/dataSource/checkDataSourceById.koala?id=" + dataSourceId).done(function(data){
-			if (data.success) {
-				var previewWindow = window.open(contextPath + '/previewTemplate/'+id+'.koala', '预览');
-				previewWindow.resizeTo(previewWindow.screen.width, previewWindow.screen.height);
-			} else {
-				$('#generalQueryGrid').message({
-					type: 'error',
-					content: data.errorMessage
-				});
-			}
-		});
-		
-	};
+	
 	/**
 	 * 检查变量是否不为空  true:不空   false:空
 	 */
@@ -504,8 +638,7 @@ var batchConfig = function(){
 	return {
 		add: add,
 		modify: modify,
-		del: delDataResource,
-		preview: preview
+		del: delDataResource
 	};
 };
 

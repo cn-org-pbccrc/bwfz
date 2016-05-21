@@ -53,5 +53,10 @@
             <type>test-jar</type>  
             <scope>test</scope> 
         </dependency> 
+          <!-- http://mvnrepository.com/artifact/jaxen/jaxen -->
+		<dependency>
+		    <groupId>jaxen</groupId>
+		    <artifactId>jaxen</artifactId>
+		</dependency> 
     </dependencies> 
 </project>
