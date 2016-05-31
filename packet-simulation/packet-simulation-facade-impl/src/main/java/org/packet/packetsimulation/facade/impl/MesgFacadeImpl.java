@@ -10,6 +10,7 @@ import java.text.SimpleDateFormat;
 import java.util.ArrayList;
 import java.util.Date;
 import java.util.HashSet;
+import java.util.Iterator;
 import java.util.List;
 import java.util.Set;
 import java.util.concurrent.ExecutionException;
@@ -115,6 +116,8 @@ public class MesgFacadeImpl implements MesgFacade {
 		mesg.setMesgType(mesgType);
 		if(mesgDTO.getPacketId()!=null){
 			Packet packet = packetApplication.getPacket(mesgDTO.getPacketId());
+			packet.setMesgNum(packet.getMesgNum() + 1);
+			packetApplication.updatePacket(packet);
 			mesg.setPacket(packet);
 		}
 		application.creatMesg(mesg);
@@ -647,11 +650,14 @@ public class MesgFacadeImpl implements MesgFacade {
 	}
 	
 	public InvokeResult removeMesgs(Long[] ids) {
-		Set<Mesg> mesgs= new HashSet<Mesg>();
+		Set<Mesg> mesgs = new HashSet<Mesg>();	
+		Packet packet = packetApplication.getPacket(application.getMesg(ids[0]).getPacket().getId());
 		for (Long id : ids) {
 			mesgs.add(application.getMesg(id));
 		}
 		application.removeMesgs(mesgs);
+		packet.setMesgNum(packet.getMesgNum() - new Long(mesgs.size()));
+		packetApplication.updatePacket(packet);
 		return InvokeResult.success();
 	}
 	

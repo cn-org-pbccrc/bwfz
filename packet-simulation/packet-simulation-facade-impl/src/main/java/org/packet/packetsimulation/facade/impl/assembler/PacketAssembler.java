@@ -21,7 +21,7 @@ public class PacketAssembler {
      	    result.setFileVersion(packet.getFileVersion());
      	    result.setDataType(packet.getDataType());
      	    result.setRecordType(packet.getRecordType());
-     	    result.setMesgNum(packet.getMesgCountOfPacket(packet).toString());
+     	    result.setMesgNum(packet.getMesgCountOfPacket(packet));
      	    result.setReserve(packet.getReserve());
      	    result.setCreatedBy(packet.getCreatedBy());
      	    if(packet.getOrigSendDate() != null){

@@ -32,10 +32,6 @@
             							<div style="margin-left:5px;margin-right: 25px;float:left;">
             								<input name="packetName" class="form-control" type="text" style="width:160px;" id="packetNameID"  />
         								</div>          
-          								<label class="control-label" style="width:130px;float:left;">文件格式版本号:</label>
-            							<div style="margin-left:5px;margin-right: 25px;float:left;">
-            								<input name="fileVersion" class="form-control" type="text" style="width:160px;" id="fileVersionID"  />
-        								</div>
                       					<label class="control-label" style="width:130px;float:left;">数据提供机构代码:</label>
             							<div style="margin-left:5px;margin-right: 25px;float:left;">
             								<input name="origSender" class="form-control" type="text" style="width:160px;" id="origSenderID"  />

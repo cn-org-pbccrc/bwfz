@@ -25,7 +25,7 @@ public class PacketDTO implements Serializable {
 	
 	private String recordType;
 
-	private String mesgNum;
+	private Long mesgNum;
 	
 	private String reserve;
 
@@ -45,11 +45,11 @@ public class PacketDTO implements Serializable {
 		this.dataType = dataType;
 	}
 
-	public String getMesgNum() {
+	public Long getMesgNum() {
 		return mesgNum;
 	}
 
-	public void setMesgNum(String mesgNum) {
+	public void setMesgNum(Long mesgNum) {
 		this.mesgNum = mesgNum;
 	}
 
