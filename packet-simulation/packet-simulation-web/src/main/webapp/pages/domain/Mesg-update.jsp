@@ -33,6 +33,7 @@
 	<input type="hidden" id="mesgTypeID" name="mesgType" />
 	<input type="hidden" id="mesgFromID" name="mesgFrom" />
 	<input type="hidden" id="createByID" name="createBy" />
+	<input type="hidden" id="mesgNumID" name="mesgNum" />
 	<div class="form-group">
 		<p>
 			<label class="rgt">用例名称 :</label> 

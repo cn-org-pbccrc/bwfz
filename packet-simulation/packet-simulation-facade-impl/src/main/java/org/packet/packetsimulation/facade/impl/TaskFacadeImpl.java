@@ -65,9 +65,9 @@ public class TaskFacadeImpl implements TaskFacade {
 		for (Long id : ids) {
 			tasks.add(application.getTask(id));
 			List<TaskPacket> taskPacketList = findTaskPacketsByTaskId(id);
-			Set<TaskPacket> taskPackets= new HashSet<TaskPacket>();
+			Set<TaskPacket> taskPackets = new HashSet<TaskPacket>();
 			taskPackets.addAll(taskPacketList);
-			deleteFile(new File(savePath+id));
+			deleteFile(new File(savePath + id));
 			taskPacketApplication.removeTaskPackets(taskPackets);
 		}
 		application.removeTasks(tasks);

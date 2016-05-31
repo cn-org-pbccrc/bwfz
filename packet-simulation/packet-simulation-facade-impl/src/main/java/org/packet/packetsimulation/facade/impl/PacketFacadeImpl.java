@@ -101,7 +101,9 @@ public class PacketFacadeImpl implements PacketFacade {
 	
 	public InvokeResult creatPacket(PacketDTO packetDTO) {
 		packetDTO.setDataType(0);
-		application.creatPacket(PacketAssembler.toEntity(packetDTO));
+		Packet packet = PacketAssembler.toEntity(packetDTO);
+		packet.setMesgNum(0L);
+		application.creatPacket(packet);
 		return InvokeResult.success();
 	}
 	
@@ -147,7 +149,7 @@ public class PacketFacadeImpl implements PacketFacade {
 		for (Long id : ids) {
 			packets.add(application.getPacket(id));
 			List<Mesg> mesgList = findMesgsByPacketId(id);
-			Set<Mesg> mesgs= new HashSet<Mesg>();
+			Set<Mesg> mesgs = new HashSet<Mesg>();
 			mesgs.addAll(mesgList);
 			mesgApplication.removeMesgs(mesgs);
 		}		
@@ -345,7 +347,7 @@ public class PacketFacadeImpl implements PacketFacade {
 			modelAndView.setView(view);
 			return modelAndView;
 		}
-		packetDTO.setMesgNum(mesgNum);
+		packetDTO.setMesgNum(Long.parseLong(mesgNum));
 		int totalLines = ReadAppointedLine.getTotalLines(uploadFile);
 		if(Integer.parseInt(line.substring(37,47))!=(totalLines-1)){
 			br.close();

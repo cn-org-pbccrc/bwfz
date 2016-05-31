@@ -62,7 +62,7 @@ public class Packet extends KoalaAbstractEntity{
 	private String recordType;
 	
 	@Column(name = "MESGNUM")
-	private String mesgNum;
+	private Long mesgNum;
 	
 	@Column(name = "RESERVE")
 	private String reserve;
@@ -132,11 +132,11 @@ public class Packet extends KoalaAbstractEntity{
 		this.dataType = dataType;
 	}
 
-	public String getMesgNum() {
+	public Long getMesgNum() {
 		return mesgNum;
 	}
 
-	public void setMesgNum(String mesgNum) {
+	public void setMesgNum(Long mesgNum) {
 		this.mesgNum = mesgNum;
 	}
 
