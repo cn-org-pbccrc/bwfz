@@ -566,19 +566,14 @@ public class XmlNode implements Serializable, Cloneable{
 	}
 	
 	public String toEditHtmlTabStringForUpdate(String templateName, XmlNode xmlNodeForUpdate){
-		//System.out.println("haaaaaaaaaaaaaaaaaaaaaaaaaa:"+xmlNodeForUpdate.nodes.get(0).getNodes().get(0).getTagName());
-		//System.out.println("haaaaaaaaaaaaaaaaaaaaaaaaaa:"+xmlNodeForUpdate.nodes.get(0).getNodes().get(1).getTagName());
 		List<String> tabs = new ArrayList<String>();
 		for(int i = 0; i < xmlNodeForUpdate.nodes.get(0).getNodes().size(); i++){
 			tabs.add(xmlNodeForUpdate.nodes.get(0).getNodes().get(i).getTagName());
 		}
 		String result = UL_TAG;
-		//String result = "<!DOCTYPE html><html><head lang='en'><meta charset='UTF-8'><link href='"+realPath+"/lib/bootstrap/css/bootstrap.min.css' rel='stylesheet'></head><body>"+UL_TAG;
 		String tabClass="active";
 		String showContentClass="tab-pane fade active in true";
 		String contentClass="tab-pane fade false";
-		//System.out.println("看看到底nodes是多少个:"+nodes.size());
-		//System.out.println("看看到底nodes(0)是啥:"+nodes.get(0).getTagName());
 		List<XmlNode> tabNodes=nodes.get(0).getNodes();
 		String contentStr="<div class='tab-content info' id='"+nodes.get(0).getTagName()+"'>";
 		int j = 0;
@@ -638,10 +633,7 @@ public class XmlNode implements Serializable, Cloneable{
 			}
 		}
 		result=result + UL_ENDTAG;
-		//contentStr=contentStr+DIV_ENDTAG;
-		//contentStr=contentStr+DIV_ENDTAG+"<script src='"+realPath+"/lib/jquery-1.11.3.min.js'></script><script src='"+realPath+"/lib/Koala_ToolTip.js'></script><script>$(function(){$('[data-toggle=\"tooltip\"]').tooltip();});</script></body></html>";
 		contentStr=contentStr+DIV_ENDTAG+"<script>$(function(){$('[data-toggle=\"tooltip\"]').tooltip();});</script>";
-		//System.out.println("臭米米33333333333333333333333:"+result+contentStr);
 		return result+contentStr;
 	}
 	

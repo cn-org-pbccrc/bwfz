@@ -19,29 +19,53 @@ public class ThreeStandard extends KoalaAbstractEntity {
 	
 	private static final long serialVersionUID = 6516533873270292621L;
 	
+	/**
+	 * 姓名
+	 */
 	@Column(name = "NAME")
 	private String name;
 	
+	/**
+	 * 证件类型
+	 */
 	@Column(name = "CREDENTIAL_TYPE")
 	private String credentialType;
 	
+	/**
+	 * 证件号码
+	 */
 	@Column(name = "CREDENTIAL_NUMBER")
 	private String credentialNumber;
 	
+	/**
+	 * 所属机构代码
+	 */
 	@Column(name = "ORGANIZATION_CODE")
 	private String organizationCode;
 	
+	/**
+	 * 客户资料标识号
+	 */
 //	@GeneratedValue(strategy = GenerationType.AUTO) 
 //  @Column(name = "CUSTOMER_CODE",nullable=false,insertable=false,updatable=false,columnDefinition="numeric(6,0) IDENTITY")
 	@Column(name = "CUSTOMER_CODE")
 	private Integer customerCode;
 	
+	/**
+	 * 账户标识号
+	 */
 	@Column(name = "ACCT_CODE")
 	private String acctCode;
 	
+	/**
+	 * 合同标识号
+	 */
 	@Column(name = "CON_CODE")
 	private String conCode;
 	
+	/**
+	 * 抵质押合同标识号
+	 */
 	@Column(name = "CCC")
 	private String ccc;
 

@@ -21,7 +21,7 @@
                         <div class="form-group">
                             <span class="control-label">查询器名称:</span>
                             <div class="btn-group">
-                                <input type="text" class="form-control queryName" id="generalQuery_queryName" required=true  required=true rgExp='/^[a-zA-Z0-9_]{1,}$/' data-content="只能输入数字、字母及下划线" placeholder="只能输入数字、字母及下划线"/>
+                                <input type="text" class="form-control queryName" id="generalQuery_queryName"  required=true rgExp='/^[a-zA-Z0-9_]{1,}$/' data-content="只能输入数字、字母及下划线" placeholder="只能输入数字、字母及下划线"/>
                                 <span class="required">*</span>
                             </div>
                         </div>

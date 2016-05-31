@@ -218,11 +218,11 @@ function initFun(){
     	            },
     	            'shown.bs.modal': function(){
  	                	var columns = [
- 	                    	{ title:'报文类型', name:'mesgType' , width: 350},
- 	                    	{ title:'类型代码', name:'code', width: 200},
+ 	                    	{ title:'报文类型', name:'mesgType' , width: 250},
+ 	                    	{ title:'类型代码', name:'code', width: 120},
  	                    	//{ title:'模板名称', name:'filePath', width: 150},
  	                    	//{ title:'显示顺序', name:'sort', width: 120},
- 	                    	{ title:'创建人员', name:'createdBy',width: 120}	    	                    
+ 	                    	{ title:'创建人员', name:'createdBy'}	    	                    
  	                	];//<!-- definition columns end -->
  	                	//查询出当前表单所需要得数据。
  	                	dialog.find('.selectPacketGrid').grid({

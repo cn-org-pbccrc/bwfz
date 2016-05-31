@@ -52,6 +52,7 @@ var batchConfig = function(){
 			});
 		});
 	};
+	
 	/**
 	 * 初始化
 	 */
@@ -88,6 +89,12 @@ var batchConfig = function(){
 			$(this).closest('.grid-body').find('.grid-table-head').css('left', -$(this).scrollLeft());
 		});
 	};
+	
+	//窗口大小变化调节各组建大小
+	window.onresize=function(){
+		initLayout();
+	}
+	
 	var initLayout = function(){
 		var width = $(window).width() * 0.73;
 		dialog.find('.mesg-coloum').each(function(){
@@ -107,6 +114,7 @@ var batchConfig = function(){
 			$this.find('.grid-table-head').find('table').css('width', rightWidth);
 		});
 	};
+	
 	/**
 	 * 填充选择框
 	 */
@@ -184,6 +192,7 @@ var batchConfig = function(){
 				});
 		});
 	};
+	
 	/*
 	 *修改填充数据
 	 */
@@ -214,15 +223,28 @@ var batchConfig = function(){
 		var xmlNodeRows = new Array();
 //		alert(xmlNodeColumns.nodes.length)
 		for(var i=0;i< xmlNodeColumns.length;i++){
-			for (var int = 0; int < xmlNodeColumns[i].nodes.length; int++) {
-				xmlNodeRows.push('<tr><td class="column-name">'+xmlNodeColumns[i].nodes[int].cnName+'</td><td class="paragraph-name">'+xmlNodeColumns[i].cnName+'</td><td class="operation">'
-						+'<a data-value="'+xmlNodeColumns[i].nodes[int].cnName
-						+'" data-ename="'+xmlNodeColumns[i].nodes[int].tagName
+			for (var j = 0; j < xmlNodeColumns[i].nodes.length; j++) {
+				var col = xmlNodeColumns[i].nodes;
+				var repeatArea = col[j].peerNodes;
+				xmlNodeRows.push('<tr><td class="column-name">'+xmlNodeColumns[i].nodes[j].cnName+'</td><td class="paragraph-name">'+xmlNodeColumns[i].cnName+'</td><td class="operation">'
+						+'<a data-value="'+xmlNodeColumns[i].nodes[j].cnName
+						+'" data-ename="'+xmlNodeColumns[i].nodes[j].tagName
 						+'" data-paragraph="'+xmlNodeColumns[i].cnName
-						+'" data-path="'+xmlNodeColumns[i].nodes[int].path
-						+'" data-type="'+xmlNodeColumns[i].nodes[int].nodeType
+						+'" data-path="'+xmlNodeColumns[i].nodes[j].path
+						+'" data-type="'+xmlNodeColumns[i].nodes[j].nodeType
 						+'" data-role="add"><span class="glyphicon glyphicon-plus">添加</span></a></td></tr>');
-			}
+				if(repeatArea&&repeatArea.length > 0){
+					for (var m = 0; m < repeatArea[0].nodes.length; m++) {
+						xmlNodeRows.push('<tr><td class="column-name">'+repeatArea[0].nodes[m].cnName+'</td><td class="paragraph-name">'+xmlNodeColumns[i].cnName+'</td><td class="operation">'
+								+'<a data-value="'+repeatArea[0].nodes[m].cnName
+								+'" data-ename="'+repeatArea[0].nodes[m].tagName
+								+'" data-paragraph="'+xmlNodeColumns[i].cnName
+								+'" data-path="'+repeatArea[0].nodes[m].path
+								+'" data-type="'+repeatArea[0].nodes[m].nodeType
+								+'" data-role="add"><span class="glyphicon glyphicon-plus">添加</span></a></td></tr>');
+						}
+					}
+				}
 		}
 		var xmlNodeRowsHtml = xmlNodeRows.join('');
 		configLeftTable.html(xmlNodeRowsHtml)
@@ -248,11 +270,14 @@ var batchConfig = function(){
 					}else if($(this).getValue() == '1'){
 						valueTd.html('<div class="btn-group select" data-role="dicType"></div>');
 						fillWidgetTypeSelect(row.find('[data-role="dicType"]'));
-					}else{
-						valueTd.html('<input data-role="custom" class="form-control" required="true" /><span class="required" >*</span>');
+					}else if($(this).getValue() == '2'){
+						valueTd.html('<input data-role="custom" class="form-control" required="true" readonly /><span class="required" >*</span>');
 						valueTd.find('[data-role="custom"]').on('click', function(e){
 							openCustomRuleConfig(this);
 						});
+					}else{
+						valueTd.html('<div class="btn-group select" data-role="threeStandardColoum"></div>');
+						fillThreeStandardSelect(row.find('[data-role="threeStandardColoum"]'));
 					}
 				});
 				$this.closest('tr').hide();
@@ -296,11 +321,14 @@ var batchConfig = function(){
 				}else if($(this).getValue() == '1'){
 					valueTd.html('<div class="btn-group select" data-role="dicType"></div>');
 					fillWidgetTypeSelect(row.find('[data-role="dicType"]'));
-				}else{
-					valueTd.html('<input data-role="custom" class="form-control" required="true"/><span class="required" >*</span>');
+				}else if($(this).getValue() == '2'){
+					valueTd.html('<input data-role="custom" class="form-control" required="true" readonly /><span class="required" >*</span>');
 					valueTd.find('[data-role="custom"]').on('click', function(e){
-						openCustomRuleConfig(this);
+					openCustomRuleConfig(this);
 					});
+				}else{
+					valueTd.html('<div class="btn-group select" data-role="threeStandardColoum"></div>');
+					fillThreeStandardSelect(row.find('[data-role="threeStandardColoum"]'));
 				}
 			});
 			ruleType.setValue(batchRule.ruleType);
@@ -310,11 +338,13 @@ var batchConfig = function(){
 				valueTd.find('[data-role="stepSize"]').val(jsonObj.stepSize);
 			}else if(batchRule.ruleType == '1'){
 				valueTd.find('[data-role="dicType"]').setValue(jsonObj.dicType);
-			}else{
+			}else if(batchRule.ruleType == '2'){
 				valueTd.find('[data-role="custom"]').val(jsonObj.custom);
 				valueTd.find('[data-role="custom"]').on('click', function(){
 					openCustomRuleConfig(this);
 				});
+			}else{
+				valueTd.find('[data-role="threeStandardColoum"]').setValue(jsonObj.threeStandardColoum);
 			}
 			row.find('[data-role="delete"]').on('click', function(){
 				removeQueryRightTableRow($(this));
@@ -476,7 +506,7 @@ var batchConfig = function(){
 			.show();
 	};
 
-	//填充条件
+	//填充数据字典
 	var fillWidgetTypeSelect = function(select){
 		select.select({
 			contents: [
@@ -485,14 +515,32 @@ var batchConfig = function(){
 			]
 		});
 	};
-	//填充条件
+	
+	//填充规则类型
 	var fillQueryOperationSelect = function(select){
 		select.select({
 			contents: [
 				{value: '0', title: '自增',selected: true},
 				{value: '1', title: '数据字典'},
 				{value: '2', title: '自定义'},
+				{value: '3', title: '三标信息'}
 			]
+		});
+	};
+	
+	//填充三标信息
+	var fillThreeStandardSelect = function(select){
+		select.select({
+			contents: [
+			           {value: 'name', title: '姓名',selected: true},
+			           {value: 'credentialType', title: '证件类型'},
+			           {value: 'credentialNumber', title: '证件号码'},
+			           {value: 'organizationCode', title: '机构代码'},
+			           {value: 'customerCode', title: '客户资料标识号'},
+			           {value: 'acctCode', title: '账户标识号'},
+			           {value: 'conCode', title: '合同标识号'},
+			           {value: 'ccc', title: '抵质押合同标识号'}
+			           ]
 		});
 	};
 
@@ -612,8 +660,10 @@ var batchConfig = function(){
 				properties.stepSize = $tr.find('input[data-role="stepSize"]').val();
 			}else if (ruleType == '1'){
 				properties.dicType = $tr.find('[data-role="dicType"]').getValue();
-			}else{
+			}else if (ruleType == '2'){
 				properties.custom = $tr.find('input[data-role="custom"]').val();
+			}else{
+				properties.threeStandardColoum = $tr.find('[data-role="threeStandardColoum"]').getValue();
 			}
 			data['batchRules['+index+'].ruleProperties'] = JSON.stringify(properties);
 			var inUse = $tr.find('input[data-role="inUse"]').is(':checked');

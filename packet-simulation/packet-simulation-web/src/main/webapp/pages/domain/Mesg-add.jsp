@@ -18,6 +18,7 @@
   float: left;
   width: 30%;
   text-align:right;
+  padding-top:6px;
   font: "Microsoft Yahei", "宋体", verdana;
 }
 #main p .lft {
@@ -43,7 +44,7 @@ legend {
 <body>
 <div id="main">
 	<div id="rootwizard">
-		<div class="navbar">
+		<div class="navbar" style="margin-bottom:5px;">
 	    	<div class="navbar-inner">
 				<ul>
 	  				<li><a href="#tab1" data-toggle="tab">选择模板</a></li>
@@ -53,16 +54,16 @@ legend {
 		</div>
 		<div class="tab-content">
 			<div class="tab-pane" id="tab1">
-				<div id="searchQueryDiv" style="margin:5px">
+				<div id="searchQueryDiv" style="margin-bottom:10px;">
 					<table border="0" cellspacing="0" cellpadding="0"> 							
   						<tr>
   							<td>
   								<div class="form-group">
-  									<label class="control-label" style="width:130px;float:left;">报文类型:</label>
+  									<label class="control-label" style="width:130px;float:left;text-align:right;margin-top:6px;">报文类型:</label>
             						<div style="margin-left:5px;margin-right: 25px;float:left;">
             							<input name="mesgType" class="form-control" type="text" style="width:160px;" id="mesgTypeID"  />
         							</div>
-  									<label class="control-label" style="width:130px;float:left;">类型代码:</label>
+  									<label class="control-label" style="width:130px;float:left;text-align:right;margin-top:6px;">类型代码:</label>
             						<div style="margin-left:5px;margin-right: 25px;float:left;">
             							<input name="code" class="form-control" type="text" style="width:160px;" id="codeID"  />
         							</div>                        			
