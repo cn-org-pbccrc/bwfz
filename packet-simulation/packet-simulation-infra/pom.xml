@@ -16,6 +16,20 @@
         <project.type>infra</project.type>  
         <base.package>org.packet.packetsimulation.infra</base.package> 
     </properties>  
+    <repositories>
+		<repository>
+			<id>nexus</id>
+			<name>Team Nexus Repository</name>
+			<url>http://192.168.60.34:8081/nexus/content/groups/public</url>
+		</repository>
+	</repositories>
+	<pluginRepositories>
+		<pluginRepository>
+			<id>nexus</id>
+			<name>Team Nexus Repository</name>
+			<url>http://192.168.60.34:8081/nexus/content/groups/public</url>
+		</pluginRepository>
+	</pluginRepositories>
     <dependencies> 
         <dependency> 
             <groupId>org.packet</groupId>  
@@ -32,5 +46,37 @@
 		<artifactId>jackson-mapper-asl</artifactId>
 		<version>1.9.4</version>
 	</dependency>
+	<!-- ibm mq dependency , by nexus -->
+		<dependency>
+			<groupId>com.ibm.mq</groupId>
+			<artifactId>mq</artifactId>
+			<version>7.5</version>
+		</dependency>
+		<dependency>
+			<groupId>com.ibm.mq</groupId>
+			<artifactId>jmqi</artifactId>
+			<version>7.5</version>
+		</dependency>
+		<dependency>
+			<groupId>com.ibm.mq</groupId>
+			<artifactId>header</artifactId>
+			<version>7.5</version>
+		</dependency>
+		<dependency>
+			<groupId>com.ibm.mq</groupId>
+			<artifactId>pcf</artifactId>
+			<version>7.5</version>
+		</dependency>
+		<dependency>
+			<groupId>com.ibm.mq</groupId>
+			<artifactId>commonservices</artifactId>
+			<version>7.5</version>
+		</dependency>
+		<dependency>
+			<groupId>javax.resource</groupId>
+			<artifactId>connector-api</artifactId>
+			<version>1.5</version>
+		</dependency>
+		<!-- mq related end -->
     </dependencies> 
 </project>
