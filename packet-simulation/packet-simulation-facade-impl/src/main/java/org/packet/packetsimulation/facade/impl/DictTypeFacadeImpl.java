@@ -191,6 +191,7 @@ public class DictTypeFacadeImpl implements DictTypeFacade {
 
 			dictTypeTree = new DictTypeDTO();
 			dictTypeTree.setId(-1l);
+			dictTypeTree.setDictName("root");
 			dictTypeTree.setChildTypesSet(new HashSet<DictTypeDTO>());
 			for (DictTypeDTO dictType : allDictTypes) {
 				// DictType

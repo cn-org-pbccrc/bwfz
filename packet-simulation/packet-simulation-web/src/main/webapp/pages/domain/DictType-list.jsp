@@ -533,28 +533,55 @@ $(function (){
 			});
 	        $.get(baseUrl + 'loadDictType.koala').done(function(json){
 
-	        	data = json.data.childTypesSet;
+	        	data = json.data;//.childTypesSet;
 	     
 	        	$('#departmentTree2').empty();
 	        	$('#departmentTree2').loader('hide');
 	            var zNodes = new Array();
-	            $.each(data, function(){
-	                var zNode = {};
-	               // if(this.organizationType == 'Company'){
-	                //    zNode.type = 'parent';
-	                //}else{
-	                 //   zNode.icon = 'glyphicon glyphicon-list-alt'
-	                //}
-	                zNode.type = 'parent';
-	                //console.log(this);
-	                //alert('this id is '+this.id);
-	                this.title = this.dictName;
-	                zNode.menu = this;
-	                if(this.childTypesSet && this.childTypesSet.length > 0){
-	                    zNode.children = getChildrenData( this.childTypesSet);
-	                }
-	                zNodes.push(zNode);
-	            });
+	            //console.log(this);
+                var zNode = {};
+               // if(this.organizationType == 'Company'){
+                //    zNode.type = 'parent';
+                //}else{
+                 //   zNode.icon = 'glyphicon glyphicon-list-alt'
+                //}
+                zNode.type = 'parent';
+                //console.log(this);
+                //alert('this id is '+this.id);
+              //  this.title = this.dictName;
+                zNode.menu = {};
+                zNode.menu.title=data.dictName;
+                zNode.menu.id=-1;
+                //zNode.data.id=-1;
+                if(data.childTypesSet && data.childTypesSet.length > 0){
+                    zNode.children = getChildrenData( data.childTypesSet);
+                }
+                zNodes.push(zNode);
+	
+                
+                //  该方法处理出来的树没有root，当首次使用树时，树为空，无法添加node
+// 	            $.each(data, function(){
+//
+// 	            	console.log(this);
+// 	                var zNode = {};
+// 	               // if(this.organizationType == 'Company'){
+// 	                //    zNode.type = 'parent';
+// 	                //}else{
+// 	                 //   zNode.icon = 'glyphicon glyphicon-list-alt'
+// 	                //}
+// 	                zNode.type = 'parent';
+// 	                //console.log(this);
+// 	                //alert('this id is '+this.id);
+// 	                this.title = this.dictName;
+// 	                zNode.menu = this;
+// 	                if(this.childTypesSet && this.childTypesSet.length > 0){
+// 	                    zNode.children = getChildrenData( this.childTypesSet);
+// 	                }
+// 	                zNodes.push(zNode);
+// 	            });
+	            
+	            //var treeNodes = new Array();
+	            //var treeRootNode
 	            var dataSourceTree = {
 	                data: zNodes,
 	                delay: 400
@@ -675,14 +702,19 @@ $(function (){
 	    	var nodes=new Array();
 	        $.each(items, function(){
 	            var zNode = {};
+// 	            console.log('znode is ' + this);
+// 	            $.each(this,function(index,data){ 
+// 	        	 console.info(index+" "+data); 
+// 	            });
+//	 	        	 })
 	            //if(this.organizationType == 'Company'){
 	                zNode.type = 'parent';
 	            //}else{
 	             //   zNode.icon = 'glyphicon glyphicon-list-alt'
 	            //}
 	            this.title = this.dictName;
-	            zNode.menu = this;
-	            if(this.childTypesSet && this.childTypesSet.length > 0){
+	           zNode.menu = this;
+	           if(this.childTypesSet && this.childTypesSet.length > 0){
 	                zNode.children = getChildrenData( this.childTypesSet);
 	            }
 	            nodes.push(zNode);
@@ -713,6 +745,10 @@ $(function (){
 				// 初始化右侧下面的显示
 				dictId = org.id;
 				
+				// 如果id为负数，不需要展示右侧的数据项
+				if(dictId<0){
+					return;
+				}
 				grid.data('koala.grid').options.url="${pageContext.request.contextPath}/DictItem/pageJsonByDictId/"+org.id+".koala";
 				grid.data('koala.grid').refresh();
 				//	alert('init ---- ');
