@@ -26,6 +26,7 @@
 		<property name="packagesToScan">
 			<list>
 								<value>org.packet.packetsimulation.core.domain</value>
+								<value>org.packet.packetsimulationGeneration.core.domain</value>
                 				<value>org.openkoala.gqc.core.domain</value>
                 				<value>org.openkoala.businesslog.model</value>
                 				<value>org.openkoala.security.core.domain</value>

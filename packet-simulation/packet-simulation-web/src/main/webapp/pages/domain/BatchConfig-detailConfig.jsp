@@ -30,11 +30,11 @@
 		</div>
 			<div class="panel panel-default table-responsive">
 				<div class="panel-heading">已选列<button data-role="addRow"  class="btn btn-primary" style="padding:2px 4px;float:right;" type="button"><span class="glyphicon glyphicon-plus"></span></button></div>
-				<table	class="table table-responsive table-bordered grid batchRuleSelected">
+				<table	class="table table-responsive table-bordered grid batchRuleSelected" >
 					<tr>
 						<td>
 							<div class="grid-body">
-								<div class="grid-table-head"  style="width:100%">
+								<div class="grid-table-head"  style="width:800px">
 									<table class="table table-bordered" >
 										<tr>
 											<th class="v-name">变量</th>
@@ -44,9 +44,9 @@
 										</tr>
 									</table>
 								</div>
-								<div class="grid-table-body" style="overflow-x: hidden">
+								<div class="grid-table-body" style="overflow-x: hidden;width:800px">
 									<table
-										class="table table-bordered table-hover table-striped staticQueryRightTable"
+										class="table table-bordered table-hover table-striped staticQueryRightTable" style="width:800px"
 										id="propTable">
 									</table>
 								</div>

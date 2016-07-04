@@ -36,6 +36,7 @@
 <script src="${contextPath}/lib/bootstrap-wizard/jquery.bootstrap.wizard.js"></script>
 <script src="${contextPath}/lib/bootstrap-wizard/prettify.js"></script>
 <script src="${contextPath}/lib/bootstrap-switch/js/bootstrap-switch.js"></script>
+<script src="${contextPath}/lib/bootstrap-contextMenu/bootstrap-contextmenu.js"></script>
 <script src="${contextPath}/lib/bootstrap-upload/js/fileinput.min.js"></script>
 <script src="${contextPath}/lib/bootstrap-upload/js/fileinput_locale_zh.js"></script>  
 

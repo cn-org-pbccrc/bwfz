@@ -651,13 +651,16 @@ public class MesgFacadeImpl implements MesgFacade {
 	
 	public InvokeResult removeMesgs(Long[] ids) {
 		Set<Mesg> mesgs = new HashSet<Mesg>();	
-		Packet packet = packetApplication.getPacket(application.getMesg(ids[0]).getPacket().getId());
+		Mesg mesg = application.getMesg(ids[0]);
 		for (Long id : ids) {
 			mesgs.add(application.getMesg(id));
 		}
-		application.removeMesgs(mesgs);
-		packet.setMesgNum(packet.getMesgNum() - new Long(mesgs.size()));
-		packetApplication.updatePacket(packet);
+		if(mesg.getPacket()!= null){
+			Packet packet = packetApplication.getPacket(application.getMesg(ids[0]).getPacket().getId());
+			application.removeMesgs(mesgs);
+			packet.setMesgNum(packet.getMesgNum() - new Long(mesgs.size()));
+			packetApplication.updatePacket(packet);
+		}
 		return InvokeResult.success();
 	}
 	

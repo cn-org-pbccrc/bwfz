@@ -276,6 +276,7 @@ public class PacketController {
 		// toString()使用平台默认编码，也可以显式的指定如toString("GBK")
 		return out.toString();
     }
+	
 	public static String encrypt(String data, String key) throws Exception {
 		byte[] bt = encrypt(data.getBytes(), key.getBytes());
 		byte[] strs =Base64.encodeBase64(bt, true);

@@ -59,7 +59,7 @@ public class BatchConfig extends KoalaAbstractEntity {
 	private Date createDate;
 	
 	/**
-	 * 静态查询条件
+	 * 批量规则
 	 */
 	
 	@ElementCollection(fetch = FetchType.EAGER)
