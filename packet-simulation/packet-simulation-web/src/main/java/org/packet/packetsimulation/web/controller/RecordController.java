@@ -1,57 +1,54 @@
 package org.packet.packetsimulation.web.controller;
 
-import javax.inject.Inject;
-
-import org.springframework.web.bind.WebDataBinder;
-
 import java.text.SimpleDateFormat;
 import java.util.Date;
+import java.util.List;
 
+import javax.inject.Inject;
+
+import org.dayatang.utils.Page;
+import org.openkoala.gqc.facade.dto.GeneralQueryDTO;
+import org.openkoala.koala.commons.InvokeResult;
+import org.packet.packetsimulation.facade.RecordFacade;
+import org.packet.packetsimulation.facade.RecordSegmentFacade;
+import org.packet.packetsimulation.facade.dto.RecordDTO;
+import org.packet.packetsimulation.facade.dto.RecordSegmentDTO;
+import org.packet.packetsimulationGeneration.core.domain.RecordType;
 import org.springframework.beans.propertyeditors.CustomDateEditor;
 import org.springframework.stereotype.Controller;
+import org.springframework.web.bind.WebDataBinder;
 import org.springframework.web.bind.annotation.InitBinder;
+import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.ResponseBody;
-import org.springframework.web.bind.annotation.PathVariable;
-import org.dayatang.utils.Page;
-import org.packet.packetsimulation.facade.dto.*;
-import org.packet.packetsimulation.facade.RecordTypeFacade;
-import org.openkoala.koala.commons.InvokeResult;
-import org.openkoala.security.shiro.CurrentUser;
 
 @Controller
-@RequestMapping("/RecordType")
-public class RecordTypeController {
+@RequestMapping("/Record")
+public class RecordController {
 		
 	@Inject
-	private RecordTypeFacade recordTypeFacade;
+	private RecordFacade recordFacade;
+	
+	@Inject
+	private RecordSegmentFacade recordSegmentFacade;
 	
 	@ResponseBody
 	@RequestMapping("/add")
-	public InvokeResult add(RecordTypeDTO recordTypeDTO) {
-		recordTypeDTO.setCreatedBy(CurrentUser.getUserAccount());
-		return recordTypeFacade.creatRecordType(recordTypeDTO);
+	public InvokeResult add(RecordDTO recordDTO) {
+		return recordFacade.creatRecord(recordDTO);
 	}
 	
 	@ResponseBody
 	@RequestMapping("/update")
-	public InvokeResult update(RecordTypeDTO recordTypeDTO) {
-		return recordTypeFacade.updateRecordType(recordTypeDTO);
-	}
-	
-	@ResponseBody
-	@RequestMapping("/updateHeader")
-	public InvokeResult updateHeader(RecordTypeDTO recordTypeDTO) {
-		RecordTypeDTO  dto = (RecordTypeDTO) recordTypeFacade.getRecordType(recordTypeDTO.getId()).getData();
-		dto.setHeaderItems(recordTypeDTO.getHeaderItems());
-		return recordTypeFacade.updateRecordType(dto);
+	public InvokeResult update(RecordDTO recordDTO) {
+		return recordFacade.updateRecord(recordDTO);
 	}
 	
 	@ResponseBody
 	@RequestMapping("/pageJson")
-	public Page pageJson(RecordTypeDTO recordTypeDTO, @RequestParam int page, @RequestParam int pagesize) {
-		Page<RecordTypeDTO> all = recordTypeFacade.pageQueryRecordType(recordTypeDTO, page, pagesize);
+	public Page pageJson(RecordDTO recordDTO, @RequestParam int page, @RequestParam int pagesize) {
+		Page<RecordDTO> all = recordFacade.pageQueryRecord(recordDTO, page, pagesize);
 		return all;
 	}
 	
@@ -63,15 +60,21 @@ public class RecordTypeController {
         for (int i = 0; i < value.length; i ++) {
         	        					idArrs[i] = Long.parseLong(value[i]);
 						        }
-        return recordTypeFacade.removeRecordTypes(idArrs);
+        return recordFacade.removeRecords(idArrs);
 	}
 	
 	@ResponseBody
 	@RequestMapping("/get/{id}")
 	public InvokeResult get(@PathVariable Long id) {
-		return recordTypeFacade.getRecordType(id);
+		return recordFacade.getRecord(id);
 	}
 	
+	@ResponseBody
+	@RequestMapping("/findRecordSegmentByRecordType/{id}")
+	public List<RecordSegmentDTO> findRecordSegmentByRecordType(@PathVariable Long id) {
+		List<RecordSegmentDTO> dtos = recordSegmentFacade.findRecordSegmentByRecordType(id);
+		return dtos;
+	}
 		
     @InitBinder    
     public void initBinder(WebDataBinder binder) {  

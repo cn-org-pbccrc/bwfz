@@ -29,7 +29,7 @@
 			</div>
 		</div>
 			<div class="panel panel-default table-responsive">
-				<div class="panel-heading">已选列<button data-role="addRow"  class="btn btn-primary" style="padding:2px 4px;float:right;" type="button"><span class="glyphicon glyphicon-plus"></span></button></div>
+				<div class="panel-heading">变量配置<button data-role="addRow"  class="btn btn-primary" style="padding:2px 4px;float:right;" type="button"><span class="glyphicon glyphicon-plus"></span></button></div>
 				<table	class="table table-responsive table-bordered grid batchRuleSelected" >
 					<tr>
 						<td>

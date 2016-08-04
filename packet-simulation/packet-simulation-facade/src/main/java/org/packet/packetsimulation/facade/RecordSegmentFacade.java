@@ -21,7 +21,7 @@ public interface RecordSegmentFacade {
 	
 	public Page<RecordSegmentDTO> pageQueryRecordSegment(RecordSegmentDTO recordSegment, int currentPage, int pageSize);
 	
-	public RecordTypeDTO findRecordTypeByRecordSegment(Long id);
+	public List<RecordSegmentDTO> findRecordSegmentByRecordType(Long id);
 
 
 	

@@ -1,7 +1,15 @@
 package org.packet.packetsimulationGeneration.core.domain;
 
+import java.util.ArrayList;
+import java.util.List;
+
+import javax.persistence.CollectionTable;
 import javax.persistence.Column;
+import javax.persistence.ElementCollection;
 import javax.persistence.Entity;
+import javax.persistence.FetchType;
+import javax.persistence.JoinColumn;
+import javax.persistence.OrderColumn;
 import javax.persistence.Table;
 
 import org.openkoala.koala.commons.domain.KoalaAbstractEntity;
@@ -57,7 +65,22 @@ public class RecordType extends KoalaAbstractEntity{
 //	@CollectionTable(name = "RECORD_SEGMENT", joinColumns = @JoinColumn(name = "RECORD_ID"))
 //	@OrderColumn(name = "ORDER_COLUMN")
 //	private List<RecordSegment> recordSegments = new ArrayList<RecordSegment>();
-	
+	/**
+	 * 文件头数据项
+	 */
+	@ElementCollection(fetch = FetchType.EAGER)
+	@CollectionTable(name = "HEADER_ITEM", joinColumns = @JoinColumn(name = "TYPE_ID"))
+	@OrderColumn(name = "ORDER_COLUMN")
+	private List<RecordItem> headerItems = new ArrayList<RecordItem>();
+
+	public List<RecordItem> getHeaderItems() {
+		return headerItems;
+	}
+
+	public void setHeaderItems(List<RecordItem> headerItems) {
+		this.headerItems = headerItems;
+	}
+
 	public String getRecordType() {
 		return recordType;
 	}

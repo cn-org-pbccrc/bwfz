@@ -1,6 +1,11 @@
 package org.packet.packetsimulation.facade.dto;
 
 import java.io.Serializable;
+import java.util.ArrayList;
+import java.util.List;
+
+import org.packet.packetsimulationGeneration.core.domain.RecordItem;
+import org.packet.packetsimulationGeneration.facade.dto.RecordItemDTO;
 
 public class RecordTypeDTO implements Serializable {
 
@@ -19,6 +24,19 @@ public class RecordTypeDTO implements Serializable {
 	private String code;
 
 	private String recordType;
+
+	/**
+	 * 数据项
+	 */
+	private List<RecordItemDTO> headerItems = new ArrayList<RecordItemDTO>();
+
+	public List<RecordItemDTO> getHeaderItems() {
+		return headerItems;
+	}
+
+	public void setHeaderItems(List<RecordItemDTO> headerItems) {
+		this.headerItems = headerItems;
+	}
 
 	public void setTransform(String transform) {
 		this.transform = transform;

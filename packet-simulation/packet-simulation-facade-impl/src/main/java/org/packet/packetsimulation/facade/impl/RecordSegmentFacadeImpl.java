@@ -52,7 +52,10 @@ public class RecordSegmentFacadeImpl implements RecordSegmentFacade {
 	}
 	
 	public InvokeResult updateRecordSegment(RecordSegmentDTO recordSegmentDTO) {
-		application.updateRecordSegment(RecordSegmentAssembler.toEntity(recordSegmentDTO));
+		RecordSegment recordSegment = RecordSegmentAssembler.toEntity(recordSegmentDTO);
+		recordSegment.setRecordType(recordTypeApplication
+				.getRecordType(recordSegmentDTO.getRecordTypeDTO().getId()));
+		application.updateRecordSegment(recordSegment);
 		return InvokeResult.success();
 	}
 	
@@ -111,9 +114,18 @@ public class RecordSegmentFacadeImpl implements RecordSegmentFacade {
 	}
 
 	@Override
-	public RecordTypeDTO findRecordTypeByRecordSegment(Long id) {
-		// TODO Auto-generated method stub
-		return null;
+	public List<RecordSegmentDTO> findRecordSegmentByRecordType(Long id) {
+
+		List<Object> conditionVals = new ArrayList<Object>();
+	   	StringBuilder jpql = new StringBuilder("select _segment from RecordSegment _segment  where 1=1 ");
+	   	
+	   	if (id != null ) {
+	   		jpql.append(" and _segment.recordType.id = ? ");
+	   		conditionVals.add(id);
+	   	}
+	   	List<RecordSegment> segmentList = getQueryChannelService().createJpqlQuery(jpql.toString()).setParameters(conditionVals).list();
+	   	return  RecordSegmentAssembler.toDTOs(segmentList);
+		
 	}
 	
 	

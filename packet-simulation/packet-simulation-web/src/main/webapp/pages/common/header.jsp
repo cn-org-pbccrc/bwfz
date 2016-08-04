@@ -22,6 +22,6 @@
 <link href="<%=contextPath %>/lib/bootstrap/css/bootstrap.min.css" rel="stylesheet" type="text/css" />
 <link href="<%=contextPath %>lib/bootstrap-datetimepicker/css/bootstrap-datetimepicker.min.css" rel="stylesheet" type="text/css">
 <link href="<%=contextPath %>/css/koala.css" rel="stylesheet" type="text/css" />
-<link href="<%=contextPath %>/css/zxcss.css" rel="stylesheet" type="text/css"/>
+<%-- <link href="<%=contextPath %>/css/zxcss.css" rel="stylesheet" type="text/css"/> --%>
 <link href="<%=contextPath %>/css/main.css" rel="stylesheet" type="text/css" />
 <link href="<%=contextPath %>/lib/bootstrap-wizard/prettify.css" rel="stylesheet" type="text/css" >
