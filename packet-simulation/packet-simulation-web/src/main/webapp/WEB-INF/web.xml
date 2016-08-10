@@ -137,4 +137,17 @@
 	</jsp-config>
 
 	<distributable />
+	
+	<!--  数据字典开机启动 -->
+	<servlet>
+		<description></description>
+		<display-name>DictStartServlet</display-name>
+		<servlet-name>DictStartServlet</servlet-name>
+		<servlet-class>org.packet.packetsimulation.web.listener.DictStartServlet</servlet-class>
+		<load-on-startup>1</load-on-startup>
+	</servlet>
+	<servlet-mapping>
+		<servlet-name>DictStartServlet</servlet-name>
+		<url-pattern>/DictStartServlet</url-pattern>
+	</servlet-mapping>
 </web-app>
