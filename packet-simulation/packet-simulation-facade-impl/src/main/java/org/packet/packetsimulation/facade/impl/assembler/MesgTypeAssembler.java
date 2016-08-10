@@ -18,6 +18,7 @@ public class MesgTypeAssembler {
      	    	result.setMesgType(mesgType.getMesgType());
      	    	result.setSort(mesgType.getSort());
      	    	result.setCode(mesgType.getCode());
+     	    	result.setBizType(mesgType.getBizType());
      	    	result.setCountTag(mesgType.getCountTag());
      	    	result.setTransform(mesgType.getTransform());
      	    	result.setXml(mesgType.getXml());
@@ -46,6 +47,7 @@ public class MesgTypeAssembler {
          result.setMesgType (mesgTypeDTO.getMesgType());
          result.setSort(mesgTypeDTO.getSort());       
 	     result.setCode(mesgTypeDTO.getCode());
+	     result.setBizType(mesgTypeDTO.getBizType());
 	     result.setCountTag(mesgTypeDTO.getCountTag());
 	     result.setTransform(mesgTypeDTO.getTransform());
 	     result.setXml(mesgTypeDTO.getXml());

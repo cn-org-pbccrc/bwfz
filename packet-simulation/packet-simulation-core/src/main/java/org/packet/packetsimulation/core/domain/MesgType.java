@@ -25,8 +25,11 @@ public class MesgType extends KoalaAbstractEntity{
 	@Column(name = "MESG_TYPE") 
 	private String mesgType; 
 	
-	@Column(name = "CODE",length=4)
+	@Column(name = "CODE",length=20)
 	private String code;
+	
+	@Column(name = "BIZ_TYPE",length=20)
+	private String bizType;
 	
 	@Column(name = "SORT") 
 	private Integer sort;
@@ -42,6 +45,14 @@ public class MesgType extends KoalaAbstractEntity{
 	
 	@Column(name = "TRANSFORM",length=5000) 
 	private String transform;
+
+	public String getBizType() {
+		return bizType;
+	}
+
+	public void setBizType(String bizType) {
+		this.bizType = bizType;
+	}
 
 	public String getTransform() {
 		return transform;

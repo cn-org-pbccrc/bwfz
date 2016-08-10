@@ -59,7 +59,7 @@ public class MesgBatchFacadeImpl implements MesgBatchFacade {
 		MesgType mesgType = mesgTypeApplication.getMesgType(dto.getMesgType());
 		try {
 			XmlNode xmlNode = XmlUtil.getXmlNodeByXmlContent(dto.getXml(),mesgType.getCountTag());
-			dto.setXml(xmlNode.toHtmlTabString(mesgType.getMesgType()));
+			dto.setXml(xmlNode.toHtmlTabString(mesgType.getCode()));
 		} catch (SAXException e) {
 			// TODO Auto-generated catch block
 			e.printStackTrace();

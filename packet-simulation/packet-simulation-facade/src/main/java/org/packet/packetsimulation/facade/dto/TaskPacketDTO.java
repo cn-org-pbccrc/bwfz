@@ -62,6 +62,11 @@ public class TaskPacketDTO implements Serializable {
 	 * 创建者
 	 */
 	private String createdBy;
+	
+	 /**
+	 * 业务类型
+	 */
+	private String bizType;
 		
 	public Integer getSendState() {
 		return sendState;
@@ -251,5 +256,13 @@ public class TaskPacketDTO implements Serializable {
 
 	public void setReceiveDate(Date receiveDate) {
 		this.receiveDate = receiveDate;
+	}
+
+	public String getBizType() {
+		return bizType;
+	}
+
+	public void setBizType(String bizType) {
+		this.bizType = bizType;
 	}
 }

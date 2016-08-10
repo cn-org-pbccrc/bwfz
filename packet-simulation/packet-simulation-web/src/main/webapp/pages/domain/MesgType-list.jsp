@@ -44,6 +44,7 @@ function initFun(){
 	        	columns: [
 	            	{ title: '报文类型', name: 'mesgType', width: 240},
 	            	{ title: '类型代码', name: 'code', width: 140},
+	            	{ title: '业务类型', name: 'bizType', width: 140},
 	            	{ title: '显示顺序', name: 'sort', width: 140},
 	            	{ title: '创建人员', name: 'createdBy', width: 160},
 	            	{ title: '操作', width: 120, render: function (rowdata, name, index)
@@ -166,7 +167,13 @@ function initFun(){
             	if (!Validation.notNull(dialog, dialog.find('#mesgTypeID'), dialog.find('#mesgTypeID').val(), '请输入报文类型')) {
 	    			return false;
 	    	    }
-            	if (!Validation.checkByRegExp(dialog, dialog.find('#codeID'), '^[0-9]{4}$', dialog.find('#codeID').val(), '类型代码应为4位数字')) {
+//             	if (!Validation.checkByRegExp(dialog, dialog.find('#codeID'), '^[0-9]{4}$', dialog.find('#codeID').val(), '类型代码应为4位数字')) {
+//  			    	return false;
+//  				}
+            	if (!Validation.notNull(dialog, dialog.find('#bizTypeID'), dialog.find('#mesgTypeID').val(), '请输入业务类型')) {
+	    			return false;
+	    	    }
+            	if (!Validation.checkByRegExp(dialog, dialog.find('#bizTypeID'), '^[0-9]{2}$', dialog.find('#bizTypeID').val(), '业务类型应为2位数字')) {
  			    	return false;
  				}
             	if (!Validation.notNull(dialog, dialog.find('#transformID'), dialog.find('#transformID').val(), '请输入转换模板')) {
@@ -222,7 +229,13 @@ function initFun(){
                 	if (!Validation.notNull(dialog, dialog.find('#mesgTypeID'), dialog.find('#mesgTypeID').val(), '请输入报文类型')) {
     	    			return false;
     	    	    }
-                	if (!Validation.checkByRegExp(dialog, dialog.find('#codeID'), '^[0-9]{4}$', dialog.find('#codeID').val(), '类型代码应为4位数字')) {
+//                 	if (!Validation.checkByRegExp(dialog, dialog.find('#codeID'), '^[0-9]{4}$', dialog.find('#codeID').val(), '类型代码应为4位数字')) {
+//      			    	return false;
+//      				}
+                	if (!Validation.notNull(dialog, dialog.find('#bizTypeID'), dialog.find('#bizTypeID').val(), '请输入业务类型')) {
+    	    			return false;
+    	    	    }
+                	if (!Validation.checkByRegExp(dialog, dialog.find('#bizTypeID'), '^[0-9]{2}$', dialog.find('#bizTypeID').val(), '业务类型应为2位数字')) {
      			    	return false;
      				}
                 	if (!Validation.notNull(dialog, dialog.find('#transformID'), dialog.find('#transformID').val(), '请输入转换模板')) {

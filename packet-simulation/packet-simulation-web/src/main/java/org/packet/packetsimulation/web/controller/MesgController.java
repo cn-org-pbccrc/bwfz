@@ -158,6 +158,7 @@ public class MesgController {
         String mesgContent=mesgFacade.getMesgForSend(idArrs, mesgTypeCode.getCode(),CurrentUser.getUserAccount());
         map.put("mesgContent", mesgContent);
         map.put("mesgType", mesgTypeCode.getCode());
+        map.put("bizType", mesgTypeCode.getBizType());
 		return InvokeResult.success(map);
 	}
 	

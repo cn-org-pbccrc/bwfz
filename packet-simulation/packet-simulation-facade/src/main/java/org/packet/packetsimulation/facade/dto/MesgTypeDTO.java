@@ -19,8 +19,10 @@ public class MesgTypeDTO implements Serializable {
 	private String mesgType;
 	
 	//private String mesgTypeStr;
-
+	
 	private String code;
+
+	private String bizType;
 	
 	private String countTag;
 	
@@ -29,6 +31,14 @@ public class MesgTypeDTO implements Serializable {
 	private String createdBy;
 	
 	private String transform;
+
+	public String getBizType() {
+		return bizType;
+	}
+
+	public void setBizType(String bizType) {
+		this.bizType = bizType;
+	}
 
 	public String getTransform() {
 		return transform;

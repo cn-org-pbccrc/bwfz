@@ -520,7 +520,14 @@ public class XmlNode implements Serializable, Cloneable{
 			int index = 1;
 			for(XmlNode xmlNode : nodes){
 				List<XmlNode> childNode = xmlNode.getNodes();
-				JSONObject jsonObject = JSON.parseObject(PropertiesManager.getProperties(xmlNode.getTagName(),templateName));
+				String jsonString = PropertiesManager.getProperties(xmlNode.getTagName(),templateName);
+				JSONObject jsonObject = null;
+				try {
+					 jsonObject = JSON.parseObject(jsonString);
+				} catch (Exception e) {
+					e.printStackTrace();
+					System.out.println(jsonString);
+				}
 				if(childNode.size()<=0){
 					List<XmlNode> peerNodes = xmlNode.getPeerNodes();
 					if(null!=peerNodes && peerNodes.size()>0){

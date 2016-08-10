@@ -721,6 +721,7 @@ function initFun(){
     	            	var json=json.data;
     	            	dialog.find("#mesgContentID").val(json.mesgContent);
     	            	dialog.find("#selectedRecordTypeID").val(json.mesgType);
+    	            	dialog.find("#bizTypeID").val(json.bizType);
 	                });    	            
     	        });
     	        dialog.find('#send').on('click',{grid: grid}, function(e){
@@ -729,7 +730,7 @@ function initFun(){
     	                   if(result.success ){
     	                        dialog.modal('hide');
     	                        e.data.grid.data('koala.grid').refresh();
-    	                        $("#taskPacketGrid").getGrid().refresh()
+    	                        $("#taskPacketGrid").getGrid().refresh();
     	                        e.data.grid.message({
     	                            type: 'success',
     	                            content: '发送成功'

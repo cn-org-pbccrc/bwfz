@@ -98,7 +98,7 @@ public class MesgFacadeImpl implements MesgFacade {
 		MesgType mesgType = mesgTypeApplication.getMesgType(dto.getMesgType());
 		try {
 			XmlNode xmlNode = XmlUtil.getXmlNodeByXmlContent(dto.getContent(),mesgType.getCountTag());
-			dto.setContent(xmlNode.toHtmlTabString(mesgType.getMesgType()));
+			dto.setContent(xmlNode.toHtmlTabString(mesgType.getCode()));
 			//System.out.println("巨头现身吧:"+xmlNode.toHtmlTabString(mesgType.getFilePath()));
 		} catch (SAXException e) {
 			e.printStackTrace();
@@ -713,7 +713,7 @@ public class MesgFacadeImpl implements MesgFacade {
 		try {
 			XmlNode xmlNode = XmlUtil.getXmlNodeByXmlContent(mesgType.getXml(),mesgType.getCountTag());
 			XmlNode xmlNodeForUpdate = XmlUtil.getXmlNodeByXmlContent(mesg.getContent(),mesgType.getCountTag());
-			content = xmlNode.toEditHtmlTabStringForUpdate(mesgType.getMesgType(), xmlNodeForUpdate);
+			content = xmlNode.toEditHtmlTabStringForUpdate(mesgType.getCode(), xmlNodeForUpdate);
 		} catch (SAXException e) {
 			// TODO Auto-generated catch block
 			e.printStackTrace();
@@ -774,7 +774,7 @@ public class MesgFacadeImpl implements MesgFacade {
 	public String getMesgForSend(Long[] ids, String mesgType, String userAccount) {
 		EmployeeUser employeeUser = findEmployeeUserByCreatedBy(userAccount);
 		StringBuffer mesgBuffer = new StringBuffer("");
-		String currentOrgNO = employeeUser.getDepartment().getSn();
+		String currentOrgNO = employeeUser.getDepartment()!=null?employeeUser.getDepartment().getSn():employeeUser.getCompany().getSn();
 		SimpleDateFormat dateFormat = new SimpleDateFormat("yyyyMMddhhmmss");
 		String currentDate = dateFormat.format(new Date());
 		Integer dateType = PACKETCONSTANT.TASKPACKET_DATATYPE_NORMAL;
@@ -791,7 +791,7 @@ public class MesgFacadeImpl implements MesgFacade {
 	public String getFileHeaderForSend(String mesgType, String userAccount) {
 		EmployeeUser employeeUser = findEmployeeUserByCreatedBy(userAccount);
 		StringBuffer mesgBuffer = new StringBuffer("");
-		String currentOrgNO = employeeUser.getDepartment().getSn();
+		String currentOrgNO = employeeUser.getDepartment()!=null?employeeUser.getDepartment().getSn():employeeUser.getCompany().getSn();
 		SimpleDateFormat dateFormat = new SimpleDateFormat("yyyyMMddhhmmss");
 		String currentDate = dateFormat.format(new Date());
 		Integer dateType = PACKETCONSTANT.TASKPACKET_DATATYPE_NORMAL;
@@ -812,7 +812,7 @@ public class MesgFacadeImpl implements MesgFacade {
 		String orgCode= employeeUser.getDepartment()!=null?employeeUser.getDepartment().getSn():employeeUser.getCompany().getSn();
 		String frontPosition =orgCode
 				+ dateFormat.format(new Date())
-				+ taskPacketDTO.getSelectedRecordType()
+				+ taskPacketDTO.getBizType()
 				+ PACKETCONSTANT.TASKPACKET_DATATYPE_NORMAL
 				+ PACKETCONSTANT.TASKPACKET_TRANSPORTDIRECTION_REPORT;
 		Integer maxPacketNo=findMaxPacketNumberByFrontPositionAndCreatedBy(frontPosition, taskPacketDTO.getCreatedBy());
@@ -823,7 +823,7 @@ public class MesgFacadeImpl implements MesgFacade {
 	    createPacketFile(filePath, frontPosition+sn, mesgContent);
 		TaskPacket taskPacket=TaskPacketAssembler.toEntity(taskPacketDTO);
 		taskPacket.setTask(task);
-		taskPacket.setSelectedOrigSender(employeeUser.getDepartment().getSn());
+		taskPacket.setSelectedOrigSender(orgCode);
 		taskPacket.setFrontPosition(frontPosition);
 		taskPacket.setPacketNumber(maxPacketNo+1);
 		taskPacket.setSelectedPacketName(frontPosition+sn);

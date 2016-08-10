@@ -123,7 +123,7 @@ public class FeedBackFacadeImpl implements FeedBackFacade {
 		Element root = ((org.w3c.dom.Document) doc).getDocumentElement(); 
 		XmlNode xmlNode = new XmlNode();
 		xmlNode=XmlUtil.parseElement(root,xmlNode,null); 
-		String html = xmlNode.toHtmlTabString(mesgType.getMesgType());
+		String html = xmlNode.toHtmlTabString(mesgType.getCode());
 		Result result = new Result(html, mesgType.getTransform(), mesgType.getCode());
 		return InvokeResult.success(result);
 	}

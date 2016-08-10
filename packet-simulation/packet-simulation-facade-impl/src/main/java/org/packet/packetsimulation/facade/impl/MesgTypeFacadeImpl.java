@@ -176,7 +176,7 @@ public class MesgTypeFacadeImpl implements MesgTypeFacade {
 		MesgType mesgType = application.getMesgType(id);
 		try {
 			XmlNode xmlNode = XmlUtil.getXmlNodeByXmlContent(mesgType.getXml(),mesgType.getCountTag());
-			return InvokeResult.success(xmlNode.toEditHtmlTabString(mesgType.getMesgType()));
+			return InvokeResult.success(xmlNode.toEditHtmlTabString(mesgType.getCode()));
 		} catch (SAXException e) {
 			// TODO Auto-generated catch block
 			e.printStackTrace();
@@ -195,7 +195,7 @@ public class MesgTypeFacadeImpl implements MesgTypeFacade {
 		MesgType mesgType = findMesgTypeByCode(code);
 		try {
 			XmlNode xmlNode = XmlUtil.getXmlNodeByXmlContent(mesgType.getXml(),mesgType.getCountTag());
-			return InvokeResult.success(xmlNode.toEditHtmlTabString(mesgType.getMesgType()));
+			return InvokeResult.success(xmlNode.toEditHtmlTabString(mesgType.getCode()));
 		} catch (SAXException e) {
 			// TODO Auto-generated catch block
 			e.printStackTrace();
@@ -212,7 +212,7 @@ public class MesgTypeFacadeImpl implements MesgTypeFacade {
 	public InvokeResult getEditHtmlByMesgType(MesgType mesgType) {
 		try {
 			XmlNode xmlNode = XmlUtil.getXmlNodeByXmlContent(mesgType.getXml(),mesgType.getCountTag());
-			return InvokeResult.success(xmlNode.toEditHtmlTabString(mesgType.getMesgType()));
+			return InvokeResult.success(xmlNode.toEditHtmlTabString(mesgType.getCode()));
 		} catch (SAXException e) {
 			// TODO Auto-generated catch block
 			e.printStackTrace();

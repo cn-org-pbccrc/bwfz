@@ -23,6 +23,12 @@
 			    </div>
 	</div>
 	<div class="form-group">
+                    <label class="col-lg-3 control-label">业务类型:</label>
+	                    <div class="col-lg-9">
+                           <input name="bizType" style="display:inline; width:94%;" class="form-control"  type="text"  id="bizTypeID" />
+			    </div>
+	</div>
+	<div class="form-group">
                     <label class="col-lg-3 control-label">统计标签:</label>
 	                    <div class="col-lg-9">
                            <input name="countTag" style="display:inline; width:94%;" class="form-control"  type="text"  id="countTagID" />

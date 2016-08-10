@@ -22,6 +22,20 @@ public class PACKETCONSTANT {
 	/** 传输方向-反馈 */
 	public static final Integer TASKPACKET_TRANSPORTDIRECTION_FEEDBACK=1;
 	
+
+	
+	
+	
+	
+	/** 文件头起始标识*/
+	public static final String HEADER_START="A";
 	/** 文件格式版本号*/
 	public static final String TASKPACKET_FILEVERSION="1.0";
+	/** 预留字段*/
+	public static final String HEADER_RESERVED="                              ";
+	
+	
+	
+	
+	
 }

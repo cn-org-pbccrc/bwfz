@@ -59,6 +59,7 @@ import org.packet.packetsimulation.application.PacketApplication;
 import org.packet.packetsimulation.core.domain.FileName;
 import org.packet.packetsimulation.core.domain.Mesg;
 import org.packet.packetsimulation.core.domain.MesgType;
+import org.packet.packetsimulation.core.domain.PACKETCONSTANT;
 import org.packet.packetsimulation.core.domain.Packet;
 import org.packet.packetsimulation.core.domain.TaskPacket;
 import org.packet.packetsimulation.facade.PacketFacade;
@@ -222,13 +223,13 @@ public class PacketFacadeImpl implements PacketFacade {
 	   	List<Mesg> mesgList = findMesgsByPacketId(packetId);
 	   	if(null!=mesgList && mesgList.size()>0){
 	   		counter = fillStringToHead(10,""+mesgList.size(),"0");
-	   		result = "A" + packet.getFileVersion() + packet.getOrigSender() + dateFormat.format(origSendDate) + packet.getRecordType() + packet.getDataType() + counter + "                              " + "\r\n";
+	   		result = PACKETCONSTANT.HEADER_START + packet.getFileVersion() + packet.getOrigSender() + dateFormat.format(origSendDate) + packet.getRecordType() + packet.getDataType() + counter + PACKETCONSTANT.HEADER_RESERVED + "\r\n";
 	   		for(Mesg mesg : mesgList){  			
 				result = result + mesg.getContent() + "\r\n";
 	   		}
 	   	}else{
 	   		counter = fillStringToHead(10,"0","0");
-	   		result = "A" + packet.getFileVersion() + packet.getOrigSender() + dateFormat.format(origSendDate) + packet.getRecordType() + packet.getDataType() + counter + "                              " + "\r\n";
+	   		result = PACKETCONSTANT.HEADER_START + packet.getFileVersion() + packet.getOrigSender() + dateFormat.format(origSendDate) + packet.getRecordType() + packet.getDataType() + counter + PACKETCONSTANT.HEADER_RESERVED + "\r\n";
 	   	}
 		return result;
 	}

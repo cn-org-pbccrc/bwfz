@@ -113,7 +113,7 @@ public class BatchConfigFacadeImpl implements BatchConfigFacade {
 	@Override
 	public InvokeResult getNodes(Long id) throws SAXException, IOException, ParserConfigurationException {
 		MesgType mesgType = mesgTypeApplication.getMesgType(id);
-		XmlNode node = XmlUtil.getXmlNodeByXmlContent1(mesgType.getXml(), mesgType.getCountTag(), mesgType.getMesgType());
+		XmlNode node = XmlUtil.getXmlNodeByXmlContent1(mesgType.getXml(), mesgType.getCountTag(), mesgType.getCode());
 		return InvokeResult.success(node);
 	}
 

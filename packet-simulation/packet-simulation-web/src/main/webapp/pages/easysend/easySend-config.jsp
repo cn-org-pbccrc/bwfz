@@ -11,6 +11,7 @@
 				<input name="taskName" style="display: inline; width: 94%;"
 					class="form-control" type="text" dataType="Require" id="taskNameID" />
 				<input name="selectedRecordType" class="form-control" type="hidden" id="selectedRecordTypeID" />
+				<input name="bizType" class="form-control" type="hidden" id="bizTypeID" />
 				<span class="required">*</span>
 			</div>
 		</div>
