@@ -43,7 +43,9 @@ public class MesgTypeController {
 	@RequestMapping("/add")
 	public InvokeResult add(MesgTypeDTO mesgTypeDTO) {
 		try{
-		    JSONObject.parseObject(mesgTypeDTO.getTransform());
+			if(!mesgTypeDTO.getTransform().equals("")){
+				JSONObject.parseObject(mesgTypeDTO.getTransform());				
+			}
 		}catch(Exception e){
 			e.printStackTrace();
 			return InvokeResult.failure("转换模板不是合法的Json字符串");
@@ -61,7 +63,9 @@ public class MesgTypeController {
 	@RequestMapping("/update")
 	public InvokeResult update(MesgTypeDTO mesgTypeDTO) {
 		try{
-		    JSONObject.parseObject(mesgTypeDTO.getTransform());
+			if(!mesgTypeDTO.getTransform().equals("")){
+				JSONObject.parseObject(mesgTypeDTO.getTransform());				
+			}
 		}catch(Exception e){
 			e.printStackTrace();
 			return InvokeResult.failure("转换模板不是合法的Json字符串");
@@ -151,8 +155,8 @@ public class MesgTypeController {
     
     @ResponseBody
   	@RequestMapping("/getEditHtmlByCode")
-  	public InvokeResult getEditHtmlByCode(@RequestParam String code) {
-      	return mesgTypeFacade.getEditHtmlByCode(code);
+  	public InvokeResult getEditHtmlByCode(@RequestParam String code, @RequestParam String sourceCode, @RequestParam String xml) {
+      	return mesgTypeFacade.getEditHtmlByCode(code, sourceCode, xml);
   	}
     
     @ResponseBody

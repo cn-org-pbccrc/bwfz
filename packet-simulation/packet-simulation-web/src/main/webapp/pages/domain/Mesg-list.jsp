@@ -103,8 +103,8 @@ function initFun(){
     	        ],
     	        url:"${pageContext.request.contextPath}/Mesg/pageJson/" + packetId + ".koala",
     	        columns: [								 	
-    	        	{ title: '报文类型', name: 'mesgTypeStr', width: 400},
     	            { title: '用例名称', name: 'remark', width: 300},
+    	        	{ title: '报文类型', name: 'mesgTypeStr', width: 400},
     	            { title: '操作', width: 180, render: function (rowdata, name, index)
     	            	{
     	                	var param = '"' + rowdata.id + '"';
@@ -211,7 +211,8 @@ function initFun(){
 			    +'</div></div>');
     	    $.get('<%=path%>/Mesg-add.jsp').done(function(html){
     	        dialog.modal({
-    	            keyboard:false
+    	            keyboard:false,
+	                backdrop: 'static'
     	        }).on({
     	            'hidden.bs.modal': function(){
     	                $(this).remove();
@@ -244,6 +245,7 @@ function initFun(){
     	            dialog.find('.selectPacketGrid').getGrid().search(params);
     	        });
     	        dialog.find('#sub').on('click',{grid: grid}, function(e){
+    	        	var flag = true;
     				var info = dialog.find($(".info")).attr('id');
     				var xml = '<?xml version="1.0" encoding="UTF-8"?><Document><'+info+'>';
     				dialog.find($(".true")).each(function(){
@@ -254,10 +256,24 @@ function initFun(){
     							if($(this).attr('save')=='true'){
     								var name = ($(this).attr('name'));
         	    					var value = ($(this).val());
-        							xml += '<' + name + '>' + value + '</' + name + '>';
+        	    					if(value.indexOf('<') >= 0){
+        	    						value = value.replace(/</g,'&lt;');
+        	    					}
+        	    					if(value.indexOf('>') >= 0){
+        	    						value = value.replace(/>/g,'&gt;');
+        	    					}
+        	    					if(value.indexOf('&') >= 0){
+        	    						value = value.replace(/&/g,'&amp;');
+        	    					}
+        	    					if(value.indexOf('"') >= 0){
+        	    						value = value.replace(/"/g,'&quot;');
+        	    					}
+        	    					if(value.indexOf("'") >= 0){
+        	    						value = value.replace(/'/g,'&apos;');
+        	    					}
+    								xml += '<' + name + '>' + value + '</' + name + '>';
     							}
-    						}
-    						else{
+    						}else{
     							var name = ($(this).attr('name')); 
     							xml += '<' + name + '>';
     							$(this).parent().parent().find($("[subName]")).each(function(){
@@ -292,7 +308,7 @@ function initFun(){
     						alert(result.errorMessage);
        	                    dialog.find('.modal-dialog').append('<div class="errMsg" style="float:left;position:absolute;max-width:500px;min-height:200px;bottom:20px;left:20px;background-color:#4cae4c;color:white;">'+result.errorMessage+ '</div>');
       				    }
-          	        });    	        
+          	        });  				      				        
         	    });
     	    });
  	    },
@@ -319,7 +335,8 @@ function initFun(){
 	                }
 	            });
 	            dialog.modal({
-	                keyboard:false
+	                keyboard:false,
+	                backdrop: 'static'
 	            }).on({
 	                'hidden.bs.modal': function(){
 	                    $(this).remove();
@@ -336,10 +353,24 @@ function initFun(){
 								if($(this).attr('save')=='true'){
 									var name = ($(this).attr('name'));
 			    					var value = ($(this).val());
+			    					if(value.indexOf('<') >= 0){
+        	    						value = value.replace(/</g,'&lt;');
+        	    					}
+        	    					if(value.indexOf('>') >= 0){
+        	    						value = value.replace(/>/g,'&gt;');
+        	    					}
+        	    					if(value.indexOf('&') >= 0){
+        	    						value = value.replace(/&/g,'&amp;');
+        	    					}
+        	    					if(value.indexOf('"') >= 0){
+        	    						value = value.replace(/"/g,'&quot;');
+        	    					}
+        	    					if(value.indexOf("'") >= 0){
+        	    						value = value.replace(/'/g,'&apos;');
+        	    					}
 									xml += '<' + name + '>' + value + '</' + name + '>';
 								}								
-							}
-							else{
+							}else{
 								var name = ($(this).attr('name')); 
 								xml += '<' + name + '>';
 								$(this).parent().parent().find($("[subName]")).each(function(){
@@ -546,7 +577,8 @@ var openDetailsPageOfMesg = function(id){
             }
         });
         dialog.modal({
-        	keyboard:false
+        	keyboard:false,
+            backdrop: 'static'
         }).on({
             'hidden.bs.modal': function(){
             	$(this).remove();
@@ -616,6 +648,51 @@ function removeField(obj){
 	    $(obj).children("span").attr("class","glyphicon glyphicon-check");
 	}
 }
+
+function validateXML(xmlContent){ 
+    //errorCode 0是xml正确，1是xml错误，2是无法验证 
+    var xmlDoc,errorMessage,errorCode = 0; 
+    // code for IE 
+    if (window.ActiveXObject){ 
+        xmlDoc = new ActiveXObject("Microsoft.XMLDOM"); 
+        xmlDoc.async="false"; 
+        xmlDoc.loadXML(xmlContent); 
+        if(xmlDoc.parseError.errorCode!=0){ 
+            errorCode = 1; 
+            errorMessage="错误code: " + xmlDoc.parseError.errorCode + "\n"; 
+            errorMessage=errorMessage+"错误原因: " + xmlDoc.parseError.reason; 
+            errorMessage=errorMessage+"错误位置: " + xmlDoc.parseError.line; 
+        }else{ 
+            errorCode = 0;
+            errorMessage = "格式正确"; 
+        } 
+    } 
+    // code for Mozilla, Firefox, Opera, chrome, safari,etc. 
+    else if (document.implementation.createDocument){ 
+        var parser = new DOMParser(); 
+        xmlDoc = parser.parseFromString(xmlContent,"text/xml"); 
+        var error = xmlDoc.getElementsByTagName("parsererror"); 
+        if(error.length > 0){ 
+        	if(xmlDoc.documentElement.nodeName=="parsererror"){ 
+                errorCode = 1; 
+                errorMessage = xmlDoc.documentElement.childNodes[0].nodeValue; 
+            }else{ 
+                errorCode = 1; 
+                errorMessage = xmlDoc.getElementsByTagName("parsererror")[0].innerHTML; 
+            } 
+        }else{ 
+            errorCode = 0;
+            errorMessage = "格式正确"; 
+        } 
+    }else{ 
+        errorCode = 2; 
+        errorMessage = "浏览器不支持验证，无法验证xml正确性"; 
+    } 
+    return { 
+        "errorMessage":errorMessage,  
+        "errorCode":errorCode 
+    };
+} 
 </script>
 </body>
 </html>

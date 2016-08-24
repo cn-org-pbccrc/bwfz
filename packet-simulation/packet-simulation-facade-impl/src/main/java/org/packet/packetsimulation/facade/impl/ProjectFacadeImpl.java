@@ -14,6 +14,7 @@ import java.text.MessageFormat;
 import java.util.ArrayList;
 import java.util.Date;
 import java.util.HashSet;
+import java.util.Iterator;
 import java.util.List;
 import java.util.Set;
 
@@ -24,8 +25,14 @@ import org.dayatang.domain.InstanceFactory;
 import org.dayatang.querychannel.QueryChannelService;
 import org.dayatang.utils.Page;
 import org.openkoala.koala.commons.InvokeResult;
+import org.openkoala.security.core.domain.Authorization;
+import org.openkoala.security.facade.dto.RoleDTO;
+import org.openkoala.security.org.core.domain.EmployeeUser;
+import org.packet.packetsimulation.application.MissionApplication;
 import org.packet.packetsimulation.application.ProjectApplication;
+import org.packet.packetsimulation.core.domain.Mission;
 import org.packet.packetsimulation.core.domain.Project;
+import org.packet.packetsimulation.facade.MissionFacade;
 import org.packet.packetsimulation.facade.ProjectFacade;
 import org.packet.packetsimulation.facade.dto.ProjectDTO;
 import org.packet.packetsimulation.facade.impl.assembler.ProjectAssembler;
@@ -35,6 +42,12 @@ public class ProjectFacadeImpl implements ProjectFacade {
 
 	@Inject
 	private ProjectApplication  application;
+	
+	@Inject
+	private MissionApplication  missionApplication;
+	
+	@Inject
+	private MissionFacade  missionFacade;
 
 	private QueryChannelService queryChannel;
 
@@ -50,8 +63,8 @@ public class ProjectFacadeImpl implements ProjectFacade {
 	}
 	
 	public InvokeResult creatProject(ProjectDTO projectDTO) {
-		//application.creatProject(ProjectAssembler.toEntity(projectDTO));
-		//创建测试用对象
+		application.creatProject(ProjectAssembler.toEntity(projectDTO));
+		/*//创建测试用对象
         City beijing = new City();
         beijing.setName("北京");
         beijing.setCode("010");
@@ -107,7 +120,7 @@ public class ProjectFacadeImpl implements ProjectFacade {
            
            } catch (Exception ex) {
             ex.printStackTrace();
-           }
+           }*/
 		return InvokeResult.success();
 	}
 	
@@ -125,6 +138,14 @@ public class ProjectFacadeImpl implements ProjectFacade {
 		Set<Project> projects= new HashSet<Project>();
 		for (Long id : ids) {
 			projects.add(application.getProject(id));
+			List<Mission> missions = findMissionsByProjectId(id);
+			if(missions != null){
+				Long[] missionIds = new Long[missions.size()];
+				for(int i = 0; i < missions.size(); i++){
+					missionIds[i] = missions.get(i).getId();
+				}
+				missionFacade.removeMissions(missionIds);
+			}			
 		}
 		application.removeProjects(projects);
 		return InvokeResult.success();
@@ -134,9 +155,26 @@ public class ProjectFacadeImpl implements ProjectFacade {
 		return ProjectAssembler.toDTOs(application.findAllProject());
 	}
 	
-	public Page<ProjectDTO> pageQueryProject(ProjectDTO queryVo, int currentPage, int pageSize) {
+	public Page<ProjectDTO> pageQueryProject(ProjectDTO queryVo, int currentPage, int pageSize, String currentUserAccount) {
 		List<Object> conditionVals = new ArrayList<Object>();
 	   	StringBuilder jpql = new StringBuilder("select _project from Project _project   where 1=1 ");
+		if(currentUserAccount != null){
+			EmployeeUser employeeUser = findEmployeeUserByCurrentUserAccount(currentUserAccount);
+			Long employeeUserId = employeeUser.getId();
+			List<Authorization> authorizations = findAuthorizationsByEmployeeUserId(employeeUserId);
+			int flag = 0;
+			for(int i = 0; i < authorizations.size(); i++){
+				if(authorizations.get(i).getAuthority().getId() == 1){
+					flag = 1;
+					break;
+				}
+			}
+			if(flag == 0){
+				jpql.append(" and _project.employeeUser.id = ?");
+		   		conditionVals.add(employeeUserId);
+			}
+		}
+		
 	   	if (queryVo.getProjectName() != null && !"".equals(queryVo.getProjectName())) {
 	   		jpql.append(" and _project.projectName like ?");
 	   		conditionVals.add(MessageFormat.format("%{0}%", queryVo.getProjectName()));
@@ -172,5 +210,64 @@ public class ProjectFacadeImpl implements ProjectFacade {
         return new Page<ProjectDTO>(pages.getStart(), pages.getResultCount(),pageSize, ProjectAssembler.toDTOs(pages.getData()));
 	}
 	
+	public Page<ProjectDTO> pagingQueryProjectsByCurrentUser(int page, int pagesize, String currentUserAccount){
+		StringBuilder jpql = new StringBuilder("select _project from Project _project where _project.id in (select _mission.project.id from Mission _mission where _mission.employeeUser.id = (select _employeeUser.id from EmployeeUser _employeeUser  where _employeeUser.userAccount = ?) and _mission.disabled = ?)");
+		List<Object> conditionVals = new ArrayList<Object>();
+		conditionVals.add(currentUserAccount);
+		conditionVals.add(false);
+		Page<Project> pages = getQueryChannelService()
+				   .createJpqlQuery(jpql.toString())
+				   .setParameters(conditionVals)
+				   .setPage(page, pagesize)
+				   .pagedList();
+		return new Page<ProjectDTO>(pages.getStart(), pages.getResultCount(),pagesize, ProjectAssembler.toDTOs(pages.getData()));
+	}
 	
+	@SuppressWarnings("unchecked")
+	private EmployeeUser findEmployeeUserByCurrentUserAccount(String currentUserAccount){
+		List<Object> conditionVals = new ArrayList<Object>();
+	   	StringBuilder jpql = new StringBuilder("select _employeeUser from EmployeeUser _employeeUser  where 1=1 ");	   	
+	   	if (currentUserAccount != null ) {
+	   		jpql.append(" and _employeeUser.userAccount = ? ");
+	   		conditionVals.add(currentUserAccount);
+	   	}
+	   	EmployeeUser employeeUser = (EmployeeUser) getQueryChannelService().createJpqlQuery(jpql.toString()).setParameters(conditionVals).singleResult();
+	   	return employeeUser;
+	}
+	
+	@SuppressWarnings("unchecked")
+	private List<Authorization> findAuthorizationsByEmployeeUserId(Long employeeUserId){
+		List<Object> conditionVals = new ArrayList<Object>();
+	   	StringBuilder jpql = new StringBuilder("select _authorization from Authorization _authorization  where 1=1 ");   	
+	   	if (employeeUserId != null ) {
+	   		jpql.append(" and _authorization.actor.id = ? ");
+	   		conditionVals.add(employeeUserId);
+	   	}
+	   	List<Authorization> authorizations = getQueryChannelService().createJpqlQuery(jpql.toString()).setParameters(conditionVals).list();
+	   	return authorizations;
+	}
+	
+	@SuppressWarnings("unchecked")
+	private List<Mission> findMissionsByCurrentUserAccount(String currentUserAccount){
+		List<Object> conditionVals = new ArrayList<Object>();
+	   	StringBuilder jpql = new StringBuilder("select _mission from Mission _mission  where 1=1 ");	   	
+	   	if (currentUserAccount != null ) {
+	   		jpql.append(" and _mission.employeeUser.userAccount = ? ");
+	   		conditionVals.add(currentUserAccount);
+	   	}
+	   	List<Mission> missions = getQueryChannelService().createJpqlQuery(jpql.toString()).setParameters(conditionVals).list();
+	   	return missions;
+	}
+	
+	@SuppressWarnings("unchecked")
+	private List<Mission> findMissionsByProjectId(Long projectId){
+		List<Object> conditionVals = new ArrayList<Object>();
+	   	StringBuilder jpql = new StringBuilder("select _mission from Mission _mission  where 1=1 ");	   	
+	   	if (projectId != null ) {
+	   		jpql.append(" and _mission.project.id = ? ");
+	   		conditionVals.add(projectId);
+	   	}
+	   	List<Mission> missions = getQueryChannelService().createJpqlQuery(jpql.toString()).setParameters(conditionVals).list();
+	   	return missions;
+	}
 }

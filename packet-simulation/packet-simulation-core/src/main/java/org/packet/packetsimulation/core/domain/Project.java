@@ -15,7 +15,7 @@ import org.openkoala.koala.commons.domain.KoalaAbstractEntity;
 import org.openkoala.security.org.core.domain.EmployeeUser;
 
 @Entity 
-@Table(name = "PROJECTS") 
+@Table(name = "PROJECT") 
 public class Project extends KoalaAbstractEntity {
 
 	private static final long serialVersionUID = -4748565962108778092L;
@@ -111,7 +111,11 @@ public class Project extends KoalaAbstractEntity {
 			
 	public void setEmployeeUser(EmployeeUser employeeUser) { 
 		this.employeeUser = employeeUser; 
-	} 
+	}
+	
+	public static String findProjectNameBy(Long missionId){
+		return get(Project.class, get(Mission.class, missionId).getProject().getId()).getProjectName();
+	}
 
 	@Override
 	public String[] businessKeys() {

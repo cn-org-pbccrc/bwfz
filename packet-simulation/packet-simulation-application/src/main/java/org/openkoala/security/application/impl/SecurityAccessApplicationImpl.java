@@ -7,12 +7,26 @@ import javax.inject.Named;
 
 import org.openkoala.security.application.SecurityAccessApplication;
 import org.openkoala.security.core.domain.*;
+import org.packet.packetsimulation.core.domain.Mission;
+import org.packet.packetsimulation.core.domain.Project;
 
 @Named
 public class SecurityAccessApplicationImpl implements SecurityAccessApplication {
 
     public List<Role> findAllRolesByUserAccount(String userAccount) {
         return User.findAllRolesBy(userAccount);
+    }
+    
+    public List<Mission> findAllMissionsByUserAccount(String userAccount) {
+        return User.findAllMissionsBy(userAccount);
+    }
+    
+    public String getMissionNameByMissionId(Long missionId){
+    	return Mission.findMissionNameBy(missionId);
+    }
+    
+    public String getProjectNameByMissionId(Long missionId){
+    	return Project.findProjectNameBy(missionId);
     }
 
     public User getUserById(Long userId) {

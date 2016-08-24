@@ -657,10 +657,10 @@ public class MesgFacadeImpl implements MesgFacade {
 		}
 		if(mesg.getPacket()!= null){
 			Packet packet = packetApplication.getPacket(application.getMesg(ids[0]).getPacket().getId());
-			application.removeMesgs(mesgs);
 			packet.setMesgNum(packet.getMesgNum() - new Long(mesgs.size()));
 			packetApplication.updatePacket(packet);
 		}
+		application.removeMesgs(mesgs);
 		return InvokeResult.success();
 	}
 	
@@ -777,9 +777,8 @@ public class MesgFacadeImpl implements MesgFacade {
 		String currentOrgNO = employeeUser.getDepartment()!=null?employeeUser.getDepartment().getSn():employeeUser.getCompany().getSn();
 		SimpleDateFormat dateFormat = new SimpleDateFormat("yyyyMMddhhmmss");
 		String currentDate = dateFormat.format(new Date());
-		Integer dateType = PACKETCONSTANT.TASKPACKET_DATATYPE_NORMAL;
-		String counter = String.format("%010d", ids.length);
-		mesgBuffer.append("A").append(PACKETCONSTANT.TASKPACKET_FILEVERSION).append(currentOrgNO).append(currentDate).append(mesgType).append(dateType).append(counter).append("\r\n");
+		String counter = String.format("%08d", ids.length);
+		mesgBuffer.append("A").append(PACKETCONSTANT.TASKPACKET_FILEVERSION).append(currentOrgNO).append(currentDate).append(mesgType).append(counter).append("                             ").append("\r\n");
 		for (Long id : ids) {
 			Mesg mesg=application.getMesg(id);
 			mesgBuffer.append(mesg.getContent()).append("\r\n");
@@ -802,17 +801,24 @@ public class MesgFacadeImpl implements MesgFacade {
 	
 	@Transactional
 	@Override
-	public InvokeResult createTask(TaskDTO taskDTO, TaskPacketDTO taskPacketDTO, String mesgContent,String filePath) {
+	public InvokeResult createTask(TaskDTO taskDTO, TaskPacketDTO taskPacketDTO, String mesgContent, String oriMesgType, String filePath) {
 		Task task=TaskAssembler.toEntity(taskDTO);
 		task.setTaskFrom(1);
 		taskApplication.creatTask(task);
-		taskPacketDTO.setTaskId(task.getId());
+		taskPacketDTO.setTaskId(task.getId());		
 		EmployeeUser employeeUser = findEmployeeUserByCreatedBy(taskDTO.getTaskCreator());
 		SimpleDateFormat dateFormat=new SimpleDateFormat("yyyyMMdd");
 		String orgCode= employeeUser.getDepartment()!=null?employeeUser.getDepartment().getSn():employeeUser.getCompany().getSn();
+		String selectedBizType;
+		if(!oriMesgType.equals("")){
+			MesgType mesgType = findMesgTypeByCode(oriMesgType);
+			selectedBizType = mesgType.getBizType();
+		}else{
+			selectedBizType = taskPacketDTO.getSelectedBizType();
+		}
 		String frontPosition =orgCode
 				+ dateFormat.format(new Date())
-				+ taskPacketDTO.getBizType()
+				+ selectedBizType
 				+ PACKETCONSTANT.TASKPACKET_DATATYPE_NORMAL
 				+ PACKETCONSTANT.TASKPACKET_TRANSPORTDIRECTION_REPORT;
 		Integer maxPacketNo=findMaxPacketNumberByFrontPositionAndCreatedBy(frontPosition, taskPacketDTO.getCreatedBy());
@@ -895,6 +901,17 @@ public class MesgFacadeImpl implements MesgFacade {
 	   	}
 	   	Integer max = (Integer) getQueryChannelService().createJpqlQuery(jpql.toString()).setParameters(conditionVals).singleResult();
 	   	return max;
+	}
+	
+	public MesgType findMesgTypeByCode(String code) {
+		List<Object> conditionVals = new ArrayList<Object>();
+	 	StringBuilder jpql = new StringBuilder("select _mesgType from MesgType _mesgType   where 1=1");
+	 	if (code != null ) {
+	   		jpql.append(" and _mesgType.code =? ");
+	   		conditionVals.add(code);
+	   	}
+	   	MesgType mesgType = (MesgType) getQueryChannelService().createJpqlQuery(jpql.toString()).setParameters(conditionVals).singleResult();
+	   	return mesgType;
 	}
 	
 	/**

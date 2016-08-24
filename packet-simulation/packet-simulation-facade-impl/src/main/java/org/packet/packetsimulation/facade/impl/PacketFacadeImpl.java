@@ -55,10 +55,11 @@ import org.openkoala.security.facade.impl.assembler.UserAssembler;
 import org.openkoala.security.org.core.domain.EmployeeUser;
 import org.packet.packetsimulation.application.MesgApplication;
 import org.packet.packetsimulation.application.MesgTypeApplication;
+import org.packet.packetsimulation.application.MissionApplication;
 import org.packet.packetsimulation.application.PacketApplication;
-import org.packet.packetsimulation.core.domain.FileName;
 import org.packet.packetsimulation.core.domain.Mesg;
 import org.packet.packetsimulation.core.domain.MesgType;
+import org.packet.packetsimulation.core.domain.Mission;
 import org.packet.packetsimulation.core.domain.PACKETCONSTANT;
 import org.packet.packetsimulation.core.domain.Packet;
 import org.packet.packetsimulation.core.domain.TaskPacket;
@@ -86,6 +87,9 @@ public class PacketFacadeImpl implements PacketFacade {
 	
 	@Inject
 	private MesgApplication  mesgApplication;
+	
+	@Inject
+	private MissionApplication  missionApplication;
 
 	private QueryChannelService queryChannel;
 
@@ -100,16 +104,21 @@ public class PacketFacadeImpl implements PacketFacade {
 		return InvokeResult.success(PacketAssembler.toDTO(application.getPacket(id)));
 	}
 	
-	public InvokeResult creatPacket(PacketDTO packetDTO) {
+	public InvokeResult creatPacket(PacketDTO packetDTO, Long missionId) {
 		packetDTO.setDataType(0);
 		Packet packet = PacketAssembler.toEntity(packetDTO);
+		Mission mission = missionApplication.getMission(missionId);
 		packet.setMesgNum(0L);
+		packet.setMission(mission);
 		application.creatPacket(packet);
 		return InvokeResult.success();
 	}
 	
 	public InvokeResult updatePacket(PacketDTO packetDTO) {
-		application.updatePacket(PacketAssembler.toEntity(packetDTO));
+		Packet packet = PacketAssembler.toEntity(packetDTO);
+		Mission mission = missionApplication.getMission(packetDTO.getMissionId());
+		packet.setMission(mission);
+		application.updatePacket(packet);
 		return InvokeResult.success();
 	}
 	
@@ -163,7 +172,7 @@ public class PacketFacadeImpl implements PacketFacade {
 	}
 	
 	@SuppressWarnings("unchecked")
-	public Page<PacketDTO> pageQueryPacket(PacketDTO queryVo, int currentPage, int pageSize,String currentUserId) {
+	public Page<PacketDTO> pageQueryPacket(PacketDTO queryVo, int currentPage, int pageSize, String currentUserId, Long missionId) {
 		//String userAccount = CurrentUser.getUserAccount();
 		List<Object> conditionVals = new ArrayList<Object>();
 	   	StringBuilder jpql = new StringBuilder("select _packet from Packet _packet where 1=1 ");	
@@ -203,7 +212,11 @@ public class PacketFacadeImpl implements PacketFacade {
 	   	if (currentUserId != null) {
 	   		jpql.append(" and _packet.createdBy = ?");
 	   		conditionVals.add(currentUserId);
-	   	}		
+	   	}
+	   	if (missionId != null) {
+	   		jpql.append(" and _packet.mission.id = ?");
+	   		conditionVals.add(missionId);
+	   	}
         Page<Packet> pages = getQueryChannelService()
 		   .createJpqlQuery(jpql.toString())
 		   .setParameters(conditionVals)

@@ -11,6 +11,7 @@ import org.openkoala.koala.commons.InvokeResult;
 import org.openkoala.security.facade.SecurityAccessFacade;
 import org.openkoala.security.facade.dto.PermissionDTO;
 import org.openkoala.security.facade.dto.RoleDTO;
+import org.packet.packetsimulation.facade.dto.MissionDTO;
 
 import com.google.common.collect.Sets;
 
@@ -23,7 +24,7 @@ public class ShiroUser implements Serializable {
 
 	private static final long serialVersionUID = 573154901435223916L;
 
-	private SecurityAccessFacade securityAccessFacade;
+	private static SecurityAccessFacade securityAccessFacade;
 
 	private String userAccount;
 
@@ -34,12 +35,21 @@ public class ShiroUser implements Serializable {
 	private String email;
 
 	private String telePhone;
+	
+	private String missionName;
+	
+	private Long missionId;
+	
+	private String projectName;
 
 	public ShiroUser(String userAccount, String name) {
 		super();
 		this.userAccount = userAccount;
 		this.name = name;
 		this.roleName = getRoleNameByUserAccount();
+		this.missionId = getMissionIdByUserAccount();
+		this.missionName = getMissionNameByMissionId(this.missionId);
+		this.projectName = getProjectNameByMissionId(this.missionId);
 	}
 
 	public Set<String> getRoles() {
@@ -66,6 +76,33 @@ public class ShiroUser implements Serializable {
 			return "暂未分配角色"; 
 		}
 		return "暂未分配角色";
+	}
+	
+	@SuppressWarnings("unchecked")
+	public Long getMissionIdByUserAccount() {
+		InvokeResult result = getSecurityAccessFacade().findMissionsByUserAccount(userAccount);
+		if (result.isSuccess()) {
+			List<MissionDTO> missions = (List<MissionDTO>) result.getData();
+			if (!missions.isEmpty()) {
+				return missions.get(0).getId();
+			}
+			return null; 
+		}
+		return null;
+	}
+	
+	public static String getMissionNameByMissionId(Long missionId){
+		if(missionId == null){
+			return "暂未分配任务";
+		}
+		return getSecurityAccessFacade().getMissionNameByMissionId(missionId);
+	}
+	
+	public static String getProjectNameByMissionId(Long missionId){
+		if(missionId == null){
+			return "暂未分配项目";
+		}
+		return getSecurityAccessFacade().getProjectNameByMissionId(missionId);
 	}
 
 	public String getUserAccount() {
@@ -100,12 +137,36 @@ public class ShiroUser implements Serializable {
 		this.telePhone = telePhone;
 	}
 
+	public String getMissionName() {
+		return missionName;
+	}
+
+	public void setMissionName(String missionName) {
+		this.missionName = missionName;
+	}
+
+	public Long getMissionId() {
+		return missionId;
+	}
+
+	public void setMissionId(Long missionId) {
+		this.missionId = missionId;
+	}
+
+	public String getProjectName() {
+		return projectName;
+	}
+
+	public void setProjectName(String projectName) {
+		this.projectName = projectName;
+	}
+
 	@Override
 	public String toString() {
 		return new ToStringBuilder(this).append(getUserAccount()).append(getName()).append(getRoleName()).append(getTelePhone()).append(getEmail()).build();
 	}
 
-	public SecurityAccessFacade getSecurityAccessFacade() {
+	public static SecurityAccessFacade getSecurityAccessFacade() {
 		if (securityAccessFacade == null) {
 			securityAccessFacade = InstanceFactory.getInstance(SecurityAccessFacade.class);
 		}

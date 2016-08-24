@@ -36,6 +36,12 @@ public interface SecurityAccessFacade {
      * @param userAccount 用户名
      */
     InvokeResult findRolesByUserAccount(String userAccount);
+    
+    InvokeResult findMissionsByUserAccount(String userAccount);
+    
+    String getMissionNameByMissionId(Long missionId);
+    
+    String getProjectNameByMissionId(Long missionId);
 
     /**
      * 根据用户账号查找其拥有的所有菜单资源集合。

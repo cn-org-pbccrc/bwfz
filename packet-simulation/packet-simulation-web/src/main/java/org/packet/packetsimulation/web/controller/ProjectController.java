@@ -13,6 +13,7 @@ import org.springframework.beans.propertyeditors.CustomDateEditor;
 import org.springframework.stereotype.Controller;
 import org.springframework.web.bind.annotation.InitBinder;
 import org.springframework.web.bind.annotation.RequestMapping;
+import org.springframework.web.bind.annotation.RequestMethod;
 import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.ResponseBody;
 import org.springframework.web.bind.annotation.PathVariable;
@@ -21,6 +22,8 @@ import org.packet.packetsimulation.facade.dto.*;
 import org.packet.packetsimulation.facade.ProjectFacade;
 import org.openkoala.gqc.infra.util.ReadAppointedLine;
 import org.openkoala.koala.commons.InvokeResult;
+import org.openkoala.security.facade.dto.RoleDTO;
+import org.openkoala.security.shiro.CurrentUser;
 
 @Controller
 @RequestMapping("/Project")
@@ -42,9 +45,10 @@ public class ProjectController {
 	}
 	
 	@ResponseBody
-	@RequestMapping("/pageJson")
+	@RequestMapping(value = "/pageJson", method = RequestMethod.POST)
 	public Page pageJson(ProjectDTO projectDTO, @RequestParam int page, @RequestParam int pagesize) {
-		Page<ProjectDTO> all = projectFacade.pageQueryProject(projectDTO, page, pagesize);
+		String currentUserAccount = CurrentUser.getUserAccount();
+		Page<ProjectDTO> all = projectFacade.pageQueryProject(projectDTO, page, pagesize, currentUserAccount);
 		return all;
 	}
 	
@@ -65,6 +69,12 @@ public class ProjectController {
 		return projectFacade.getProject(id);		
 	}
 	
+	@ResponseBody
+	@RequestMapping("/pagingQueryProjectsByCurrentUser")
+	public Page<ProjectDTO> pagingQueryProjectsByCurrentUser(@RequestParam int page, @RequestParam int pagesize) {
+		String currentUserAccount = CurrentUser.getUserAccount();		
+		return projectFacade.pagingQueryProjectsByCurrentUser(page, pagesize, currentUserAccount);
+	}
 		
     @InitBinder    
     public void initBinder(WebDataBinder binder) {  
@@ -74,6 +84,5 @@ public class ProjectController {
         //CustomDateEditor 可以换成自己定义的编辑器。  
         //注册一个Date 类型的绑定器 。
         binder.setAutoGrowCollectionLimit(Integer.MAX_VALUE);
-    }
-	
+    }	
 }

@@ -104,6 +104,7 @@ function initFun(){
 	                     	                         	                         						                return date;
 	                     	                         	                         						             }	
 	                         	                         	                         	                         },
+	                         	                         	                         	                      	{ title: '业务类型', name: 'bizType', width: 60},
 	                         	                         	                         	                         { title: '记录类型', name: 'recordType', width: 100},
 	                         	                         	                         	                         { title: '数据类型', name: 'dataType', width: 60,
 	                         	                         	                         	                 		 render: function(item, name, index){
@@ -190,7 +191,8 @@ function initFun(){
 	        	+'</div></div>');
 	        $.get('<%=path%>/Packet-add.jsp').done(function(html){
 	            dialog.modal({
-	                keyboard:false
+	                keyboard:false,
+	                backdrop: 'static'
 	            }).on({
 	                'hidden.bs.modal': function(){
 	                    $(this).remove();
@@ -252,7 +254,8 @@ function initFun(){
         		'createdBy' :  currentUserId
     			},function(html){
         			dialog.modal({
-           			keyboard:false
+           			keyboard:false,
+	                backdrop: 'static'
         		}).on({
             		'hidden.bs.modal': function(){
                 		$(this).remove();
@@ -299,7 +302,8 @@ function initFun(){
 	                        //dialog.find('#packetNameID').val(json['packetName']).attr('disabled', 'disabled');
 	                });
 	                dialog.modal({
-	                    keyboard:false
+	                    keyboard:false,
+		                backdrop: 'static'
 	                }).on({
 	                    'hidden.bs.modal': function(){
 	                        $(this).remove();
@@ -446,7 +450,8 @@ var openPacketView = function(id){
        	   dialog.find("#packetViewID").html("<div style='width:780px;overflow:auto;'><xmp>"+json+"</xmp></div>");
           });
            dialog.modal({
-               keyboard:false
+               keyboard:false,
+               backdrop: 'static'
            }).on({
                'hidden.bs.modal': function(){
                    $(this).remove();

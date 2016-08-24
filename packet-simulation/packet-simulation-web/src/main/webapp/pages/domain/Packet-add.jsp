@@ -32,12 +32,12 @@
                      </div>
                      </div>
                      </div>
-<!-- 		         <div class="form-group"> -->
-<!--                     <label class="col-lg-3 control-label">记录类型:</label> -->
-<!-- 	                    <div class="col-lg-9"> -->
-<!--                            <input name="recordType" style="display:inline; width:94%;" class="form-control"  type="text"  id="recordTypeID" /> -->
-<!-- 			    </div> -->
-<!-- 	</div> -->
+		         <div class="form-group">
+                    <label class="col-lg-3 control-label">业务类型:</label>
+	                    <div class="col-lg-9">
+                           <input name="bizType" style="display:inline; width:94%;" class="form-control"  type="text"  id="bizTypeID" />
+			    </div>
+	</div>
 <div class="form-group">
                             <label class="col-lg-3 control-label">记录类型:</label>
                             <div class="col-lg-9">

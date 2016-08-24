@@ -11,6 +11,8 @@ import java.util.UUID;
 
 import javax.persistence.Column;
 import javax.persistence.Entity;
+import javax.persistence.JoinColumn;
+import javax.persistence.ManyToOne;
 import javax.persistence.NamedQueries;
 import javax.persistence.NamedQuery;
 import javax.persistence.Table;
@@ -57,7 +59,10 @@ public class Packet extends KoalaAbstractEntity{
 	
 	@Column(name = "DATATYPE")
 	private Integer dataType;
-
+	
+	@Column(name = "BIZTYPE")
+	private String bizType;
+	
 	@Column(name = "RECORDTYPE")
 	private String recordType;
 	
@@ -67,7 +72,12 @@ public class Packet extends KoalaAbstractEntity{
 	@Column(name = "RESERVE")
 	private String reserve;
 	
+	@ManyToOne
+	@JoinColumn(name = "MISSION_ID")
+	private Mission mission;
+	
 	public Packet() {
+		
 	}
 	  
     public Packet(String packetName) {
@@ -146,6 +156,22 @@ public class Packet extends KoalaAbstractEntity{
 
 	public void setReserve(String reserve) {
 		this.reserve = reserve;
+	}
+
+	public Mission getMission() {
+		return mission;
+	}
+
+	public void setMission(Mission mission) {
+		this.mission = mission;
+	}
+
+	public String getBizType() {
+		return bizType;
+	}
+
+	public void setBizType(String bizType) {
+		this.bizType = bizType;
 	}
 
 	private void isExistPacketName(String packetName) {

@@ -9,7 +9,6 @@ import javax.xml.parsers.ParserConfigurationException;
 
 import org.dayatang.utils.Page;
 import org.openkoala.koala.commons.InvokeResult;
-import org.packet.packetsimulation.core.domain.FileName;
 import org.packet.packetsimulation.core.domain.Packet;
 import org.packet.packetsimulation.facade.dto.*;
 import org.springframework.web.servlet.ModelAndView;
@@ -19,7 +18,7 @@ public interface PacketFacade {
 
 	public InvokeResult getPacket(Long id);
 	
-	public InvokeResult creatPacket(PacketDTO packet);
+	public InvokeResult creatPacket(PacketDTO packet, Long missionId);
 	
 	public ModelAndView uploadPacket(PacketDTO packetDTO, String ctxPath, String xsdPath) throws FileNotFoundException, IOException, ParseException, ParserConfigurationException, SAXException;
 	
@@ -33,7 +32,7 @@ public interface PacketFacade {
 	
 	public List<PacketDTO> findAllPacket();
 	
-	public Page<PacketDTO> pageQueryPacket(PacketDTO packet, int currentPage, int pageSize,String currentUserId);
+	public Page<PacketDTO> pageQueryPacket(PacketDTO packet, int currentPage, int pageSize, String currentUserId, Long missionId);
 	
 	public String downloadCSV(Long id);	
 }

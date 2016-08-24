@@ -1,5 +1,6 @@
 package org.packet.packetsimulation.web.controller;
 
+import java.io.ByteArrayInputStream;
 import java.io.File;
 import java.text.SimpleDateFormat;
 import java.util.Date;
@@ -8,6 +9,9 @@ import java.util.Map;
 
 import javax.inject.Inject;
 import javax.servlet.http.HttpServletRequest;
+import javax.xml.parsers.DocumentBuilder;
+import javax.xml.parsers.DocumentBuilderFactory;
+import javax.xml.parsers.ParserConfigurationException;
 
 import org.dayatang.utils.Page;
 import org.openkoala.koala.commons.InvokeResult;
@@ -29,6 +33,8 @@ import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.ResponseBody;
+import org.w3c.dom.Document;
+import org.xml.sax.InputSource;
 
 @Controller
 @RequestMapping("/Mesg")
@@ -190,7 +196,7 @@ public class MesgController {
 	 */
 	@ResponseBody
 	@RequestMapping("/send")
-	public InvokeResult send(TaskDTO taskDTO, TaskPacketDTO taskPacketDTO, @RequestParam String mesgContent, HttpServletRequest request) {
+	public InvokeResult send(TaskDTO taskDTO, TaskPacketDTO taskPacketDTO, @RequestParam String mesgContent, @RequestParam String oriMesgType, HttpServletRequest request) {
 		String ctxPath = request.getSession().getServletContext().getRealPath("/") + File.separator + "uploadFiles" + File.separator + "easySendFiles" + File.separator;
 		File file = new File(ctxPath);    	
 		if (!file.exists()) {    	
@@ -200,7 +206,7 @@ public class MesgController {
 		taskDTO.setTaskCreator(taskCreator);
 		taskDTO.setTaskCreatedTime(new Date());
 		taskPacketDTO.setCreatedBy(taskCreator);
-		mesgFacade.createTask(taskDTO, taskPacketDTO, mesgContent,ctxPath);
+		mesgFacade.createTask(taskDTO, taskPacketDTO, mesgContent, oriMesgType, ctxPath);
 		return InvokeResult.success();
 	}
 	

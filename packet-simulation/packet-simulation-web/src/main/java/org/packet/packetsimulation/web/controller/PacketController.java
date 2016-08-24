@@ -44,6 +44,7 @@ import org.dom4j.io.OutputFormat;
 import org.dom4j.io.XMLWriter;
 import org.openkoala.gqc.infra.util.ReadAppointedLine;
 import org.openkoala.koala.commons.InvokeResult;
+import org.openkoala.security.shiro.CurrentUser;
 import org.packet.packetsimulation.application.PacketApplication;
 import org.packet.packetsimulation.core.domain.Packet;
 import org.packet.packetsimulation.facade.PacketFacade;
@@ -91,7 +92,11 @@ public class PacketController {
 	@ResponseBody
 	@RequestMapping("/add")
 	public InvokeResult add(PacketDTO packetDTO) {
-		return packetFacade.creatPacket(packetDTO);
+		Long missionId = CurrentUser.getMissionId();
+		if(missionId == null){
+			return InvokeResult.failure("暂未分配任务,不能创建报文");
+		}
+		return packetFacade.creatPacket(packetDTO, missionId);
 	}
 	
 	@ResponseBody
@@ -110,7 +115,8 @@ public class PacketController {
 	@ResponseBody
 	@RequestMapping("/pageJson/{currentUserId}")
 	public Page pageJson(PacketDTO packetDTO, @RequestParam int page, @RequestParam int pagesize,@PathVariable String currentUserId){
-		Page<PacketDTO> all = packetFacade.pageQueryPacket(packetDTO, page, pagesize,currentUserId);
+		Long missionId = CurrentUser.getMissionId();
+		Page<PacketDTO> all = packetFacade.pageQueryPacket(packetDTO, page, pagesize, currentUserId, missionId);
 		return all;
 	}
 	
