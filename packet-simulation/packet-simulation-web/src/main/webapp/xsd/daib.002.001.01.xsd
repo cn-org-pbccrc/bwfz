@@ -1,0 +1,22 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<xs:schema xmlns:xs="http://www.w3.org/2001/XMLSchema"  elementFormDefault="qualified">
+    <xs:element name="Document" type="Document"/>
+    <xs:complexType name="Document">
+        <xs:sequence>
+            <xs:element name="BsInfDlt" type="BsInfDltTp"/><!-- 借款人基本信息删除请求记录 -->
+        </xs:sequence>
+    </xs:complexType>
+    <xs:complexType name="BsInfDltTp">
+        <xs:sequence>
+            <xs:element name="BsInfDltSgmt" type="BsInfDltSgmtTp"/>
+        </xs:sequence>
+    </xs:complexType>
+    <xs:complexType name="BsInfDltSgmtTp">
+        <xs:sequence>
+            <xs:element name="InfSurcCode"/><!-- 信息来源编码 -->
+            <xs:element name="Name"/><!-- 姓名 -->
+            <xs:element name="IDType"/><!-- 证件类型 -->
+            <xs:element name="IDNum"/><!-- 证件号码 -->
+        </xs:sequence>
+ </xs:complexType>
+</xs:schema>

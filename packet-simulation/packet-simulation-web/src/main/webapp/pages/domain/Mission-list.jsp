@@ -1,4 +1,5 @@
 <%@ page language="java" contentType="text/html; charset=UTF-8" pageEncoding="UTF-8"%>
+<%@include file="/commons/taglibs.jsp"%>
 <div class="missionDetail" id="missionDetail">
 <!DOCTYPE html>
 <html>
@@ -112,7 +113,7 @@ $(function (){
 	                buttons: [
 	                        {content: '<button class="btn btn-primary" type="button"><span class="glyphicon glyphicon-plus"><span>添加</button>', action: 'add'},
 	                        {content: '<button class="btn btn-success" type="button"><span class="glyphicon glyphicon-edit"><span>修改</button>', action: 'modify'},
-	                        {content: '<button class="btn btn-danger" type="button"><span class="glyphicon glyphicon-remove"><span>删除</button>', action: 'delete'},
+	                        {content: '<button class="btn btn-danger" type="button"><span class="glyphicon glyphicon-remove"><span>删除</button>', action: 'delete'},	                      
 	                        {content: '<button class="btn btn-success" type="button"><span class="glyphicon glyphicon-search"><span>高级搜索<span class="caret"></span></button>', action: 'search'},
 	                        {content: '<button class="btn btn-danger" type="button"><span class="glyphicon glyphicon-wrench"></span>&nbsp;禁用</button>', action : 'forbidden'},
 	                        {content: '<button class="btn btn-success" type="button"><span class="glyphicon glyphicon-wrench"></span>&nbsp;激活</button>', action : 'available'}
@@ -310,7 +311,7 @@ $(function (){
 	                        }else{
 	                            dialog.find('.modal-content').message({
 	                            type: 'error',
-	                            content: result.actionError
+	                            content: result.errorMessage
 	                            });
 	                        }
 	                    });
@@ -548,11 +549,11 @@ var openDetailsPage = function(id){
             <div style="margin-left:15px;float:left;">
             <input name="name" class="form-control" type="text" style="width:180px;" id="nameID"  />
         </div>
-                      <label class="control-label" style="width:100px;float:left;">任务负责人:&nbsp;</label>
-    	  <div style="margin-left:15px;float:left;">
-	      <div class="btn-group select" id="director_SELECT"></div>
-	        <input type="hidden" id="directorID_" name="director" />
-	      </div>
+<!--                       <label class="control-label" style="width:100px;float:left;">任务负责人:&nbsp;</label> -->
+<!--     	  <div style="margin-left:15px;float:left;"> -->
+<!-- 	      <div class="btn-group select" id="director_SELECT"></div> -->
+<!-- 	        <input type="hidden" id="directorID_" name="director" /> -->
+<!-- 	      </div> -->
 	  </div>
             </div>
                   <div class="form-group">
@@ -568,11 +569,11 @@ var openDetailsPage = function(id){
                 <span class="input-group-addon"><span class="glyphicon glyphicon-th"></span></span>
             </div>
        </div>
-                      <label class="control-label" style="width:100px;float:left;">任务状态:&nbsp;</label>
-    	  <div style="margin-left:15px;float:left;">
-	      <div class="btn-group select" id="status_SELECT"></div>
-	        <input type="hidden" id="statusID_" name="status" />
-	      </div>
+<!--                       <label class="control-label" style="width:100px;float:left;">任务状态:&nbsp;</label> -->
+<!--     	  <div style="margin-left:15px;float:left;"> -->
+<!-- 	      <div class="btn-group select" id="status_SELECT"></div> -->
+<!-- 	        <input type="hidden" id="statusID_" name="status" /> -->
+<!-- 	      </div> -->
 	  </div>
             </div>
                   <div class="form-group">

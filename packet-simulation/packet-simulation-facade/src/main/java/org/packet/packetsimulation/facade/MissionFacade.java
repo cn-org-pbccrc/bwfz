@@ -15,9 +15,11 @@ public interface MissionFacade {
 	
 	public InvokeResult updateMission(MissionDTO mission);
 	
+	public InvokeResult renewMission(MissionDTO mission);
+	
 	public InvokeResult removeMission(Long id);
 	
-	public InvokeResult removeMissions(Long[] ids);
+	public InvokeResult removeMissions(Long[] ids, String savePath);
 	
 	public List<MissionDTO> findAllMission();
 	

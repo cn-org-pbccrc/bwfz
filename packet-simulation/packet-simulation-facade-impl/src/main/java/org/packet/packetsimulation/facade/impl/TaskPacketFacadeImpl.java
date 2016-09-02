@@ -118,7 +118,7 @@ public class TaskPacketFacadeImpl implements TaskPacketFacade {
 		   		counter = fillStringToHead(10,"0","0");
 		   		result = "A" + packet.getFileVersion() + packet.getOrigSender() + dateFormat2.format(packet.getOrigSendDate()) + packet.getRecordType() + packet.getDataType() + counter + "                              " + "\r\n";
 		   	}
-		    File f = new File(ctxPath+frontPosition+"0"+sn+".csv");//新建一个文件对象
+		    File f = new File(ctxPath+frontPosition+sn+".csv");//新建一个文件对象
 	        FileWriter fw;
 	        try {
 	        	fw=new FileWriter(f);//新建一个FileWriter	    
@@ -148,7 +148,8 @@ public class TaskPacketFacadeImpl implements TaskPacketFacade {
 			taskPacket.setSelectedFileVersion("-");
 			taskPacket.setSelectedOrigSender("-");			
 			taskPacket.setSelectedDataType(0);
-			taskPacket.setSelectedRecordType("-");
+			taskPacket.setSelectedBizType("-");
+			taskPacket.setSelectedRecordType("-");			
 			taskPacket.setCompression(1);
 			taskPacket.setEncryption(1);
 			taskPacket.setSerialNumber(max + 1);			
@@ -386,9 +387,13 @@ public class TaskPacketFacadeImpl implements TaskPacketFacade {
 	}
 	
 	@SuppressWarnings("unchecked")
-	public Page<TaskPacketDTO> pageQueryTaskPacket(TaskPacketDTO queryVo, int currentPage, int pageSize, int taskPacketFrom) {
+	public Page<TaskPacketDTO> pageQueryTaskPacket(TaskPacketDTO queryVo, int currentPage, int pageSize, int taskPacketFrom, Long missionId) {
 		List<Object> conditionVals = new ArrayList<Object>();
 		StringBuilder jpql = new StringBuilder("select _taskPacket from TaskPacket _taskPacket   where 1=1");
+		if (missionId != null) {
+	   		jpql.append(" and _taskPacket.task.mission.id = ?");
+	   		conditionVals.add(missionId);
+	   	}
 		if (!"".equals(queryVo.getPacketFrom())) {
 			jpql.append(" and _taskPacket.packetFrom = ?");
 			conditionVals.add(taskPacketFrom);

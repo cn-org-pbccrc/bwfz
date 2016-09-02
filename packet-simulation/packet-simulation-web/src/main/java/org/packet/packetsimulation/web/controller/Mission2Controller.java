@@ -6,7 +6,6 @@ import javax.servlet.http.HttpServletRequest;
 import org.springframework.web.bind.WebDataBinder;
 
 import java.io.File;
-import java.io.IOException;
 import java.text.SimpleDateFormat;
 import java.util.Date;
 
@@ -14,49 +13,48 @@ import org.springframework.beans.propertyeditors.CustomDateEditor;
 import org.springframework.stereotype.Controller;
 import org.springframework.web.bind.annotation.InitBinder;
 import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RequestMethod;
 import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.ResponseBody;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.dayatang.utils.Page;
-import org.packet.packetsimulation.core.domain.Project;
 import org.packet.packetsimulation.facade.dto.*;
-import org.packet.packetsimulation.facade.ProjectFacade;
-import org.openkoala.gqc.infra.util.ReadAppointedLine;
+import org.packet.packetsimulation.facade.MissionFacade;
 import org.openkoala.koala.commons.InvokeResult;
-import org.openkoala.security.core.ProjectCodeIsExistedException;
-import org.openkoala.security.facade.dto.RoleDTO;
 import org.openkoala.security.shiro.CurrentUser;
 
 @Controller
-@RequestMapping("/Project")
-public class ProjectController {
+@RequestMapping("/Mission2")
+public class Mission2Controller {
 		
 	@Inject
-	private ProjectFacade projectFacade;
+	private MissionFacade missionFacade;
 	
 	@ResponseBody
 	@RequestMapping("/add")
-	public InvokeResult add(ProjectDTO projectDTO) {
-		try {
-			Project.isExistProjectCode(projectDTO.getProjectCode());
-		} catch(ProjectCodeIsExistedException e) {
-			return InvokeResult.failure(e.getMessage());
-		}
-		return projectFacade.creatProject(projectDTO);
+	public InvokeResult add(MissionDTO missionDTO) {
+		return missionFacade.creatMission(missionDTO);
 	}
 	
 	@ResponseBody
 	@RequestMapping("/update")
-	public InvokeResult update(ProjectDTO projectDTO) {
-		return projectFacade.updateProject(projectDTO);
+	public InvokeResult update(MissionDTO missionDTO) {
+		if(missionDTO.getDisabled() == true){
+			return InvokeResult.failure("任务无效，请先激活!");
+		}
+		return missionFacade.updateMission(missionDTO);
 	}
 	
 	@ResponseBody
-	@RequestMapping(value = "/pageJson", method = RequestMethod.POST)
-	public Page pageJson(ProjectDTO projectDTO, @RequestParam int page, @RequestParam int pagesize) {
+	@RequestMapping("/renew")
+	public InvokeResult renew(MissionDTO missionDTO) {
+		return missionFacade.renewMission(missionDTO);
+	}
+	
+	@ResponseBody
+	@RequestMapping("/pageJson/{projectId}")
+	public Page pageJson(MissionDTO missionDTO, @RequestParam int page, @RequestParam int pagesize, @PathVariable Long projectId) {
 		String currentUserAccount = CurrentUser.getUserAccount();
-		Page<ProjectDTO> all = projectFacade.pageQueryProject(projectDTO, page, pagesize, currentUserAccount);
+		Page<MissionDTO> all = missionFacade.pageQueryMission(missionDTO, page, pagesize, projectId, currentUserAccount);
 		return all;
 	}
 	
@@ -69,20 +67,38 @@ public class ProjectController {
         	        					idArrs[i] = Long.parseLong(value[i]);
 						        }
         String savePath = request.getSession().getServletContext().getRealPath("/")+File.separator+"uploadFiles"+File.separator;
-        return projectFacade.removeProjects(idArrs, savePath);
+        return missionFacade.removeMissions(idArrs, savePath);
 	}
 	
 	@ResponseBody
 	@RequestMapping("/get/{id}")
 	public InvokeResult get(@PathVariable Long id) {
-		return projectFacade.getProject(id);		
+		return missionFacade.getMission(id);
 	}
 	
 	@ResponseBody
-	@RequestMapping("/pagingQueryProjectsByCurrentUser")
-	public Page<ProjectDTO> pagingQueryProjectsByCurrentUser(@RequestParam int page, @RequestParam int pagesize) {
+	@RequestMapping("/getProject/{id}")
+	public InvokeResult getProject(@PathVariable Long id) {
+		return missionFacade.getProject(id);
+	}
+	
+	@ResponseBody
+	@RequestMapping("/suspend")
+	public InvokeResult suspend(@RequestParam Long missionId) {
+		return missionFacade.suspend(missionId);
+	}
+	
+	@ResponseBody
+	@RequestMapping("/activate")
+	public InvokeResult activate(@RequestParam Long missionId) {
+		return missionFacade.activate(missionId);
+	}
+	
+	@ResponseBody
+	@RequestMapping("/pagingQueryMissionsByCurrentUser/{projectId}")
+	public Page<MissionDTO> pagingQueryMissionsByCurrentUser(@RequestParam int page, @RequestParam int pagesize, @PathVariable Long projectId) {
 		String currentUserAccount = CurrentUser.getUserAccount();		
-		return projectFacade.pagingQueryProjectsByCurrentUser(page, pagesize, currentUserAccount);
+		return missionFacade.pagingQueryMissionsByCurrentUser(page, pagesize, projectId, currentUserAccount);
 	}
 		
     @InitBinder    
@@ -93,5 +109,6 @@ public class ProjectController {
         //CustomDateEditor 可以换成自己定义的编辑器。  
         //注册一个Date 类型的绑定器 。
         binder.setAutoGrowCollectionLimit(Integer.MAX_VALUE);
-    }	
+    }
+	
 }

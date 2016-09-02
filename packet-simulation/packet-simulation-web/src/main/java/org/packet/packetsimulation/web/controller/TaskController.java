@@ -20,6 +20,7 @@ import org.dayatang.utils.Page;
 import org.packet.packetsimulation.facade.dto.*;
 import org.packet.packetsimulation.facade.TaskFacade;
 import org.openkoala.koala.commons.InvokeResult;
+import org.openkoala.security.shiro.CurrentUser;
 
 @Controller
 @RequestMapping("/Task")
@@ -31,7 +32,11 @@ public class TaskController {
 	@ResponseBody
 	@RequestMapping("/add")
 	public InvokeResult add(TaskDTO taskDTO) {
-		return taskFacade.creatTask(taskDTO);
+		Long missionId = CurrentUser.getMissionId();
+		if(missionId == null){
+			return InvokeResult.failure("暂未分配任务,不能创建批次");
+		}
+		return taskFacade.creatTask(taskDTO, missionId);
 	}
 	
 	@ResponseBody
@@ -43,7 +48,8 @@ public class TaskController {
 	@ResponseBody
 	@RequestMapping("/pageJson/{currentUserId}")
 	public Page pageJson(TaskDTO taskDTO, @RequestParam int page, @RequestParam int pagesize, @PathVariable String currentUserId) {
-		Page<TaskDTO> all = taskFacade.pageQueryTask(taskDTO, page, pagesize, currentUserId);
+		Long missionId = CurrentUser.getMissionId();
+		Page<TaskDTO> all = taskFacade.pageQueryTask(taskDTO, page, pagesize, currentUserId, missionId);
 		return all;
 	}
 	

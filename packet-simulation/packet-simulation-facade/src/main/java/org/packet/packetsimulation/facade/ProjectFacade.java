@@ -17,7 +17,7 @@ public interface ProjectFacade {
 	
 	public InvokeResult removeProject(Long id);
 	
-	public InvokeResult removeProjects(Long[] ids);
+	public InvokeResult removeProjects(Long[] ids, String savePath);
 	
 	public List<ProjectDTO> findAllProject();
 	

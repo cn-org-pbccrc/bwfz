@@ -1,4 +1,5 @@
 <%@ page language="java" contentType="text/html; charset=UTF-8" pageEncoding="UTF-8"%>
+<%@include file="/commons/taglibs.jsp"%>
 <!DOCTYPE html>
 <html>
 <head>
@@ -107,14 +108,15 @@ $(function (){
 	         return grid.grid({
 	                identity:"id",
 	                buttons: [
-	                        {content: '<button class="btn btn-primary" type="button"><span class="glyphicon glyphicon-plus"><span>添加</button>', action: 'add'},
-	                        {content: '<button class="btn btn-success" type="button"><span class="glyphicon glyphicon-edit"><span>修改</button>', action: 'modify'},
-	                        {content: '<button class="btn btn-danger" type="button"><span class="glyphicon glyphicon-remove"><span>删除</button>', action: 'delete'},
-	                        {content: '<button class="btn btn-success" type="button"><span class="glyphicon glyphicon-search"><span>高级搜索<span class="caret"></span></button>', action: 'search'},
-	                        {content: '<button class="btn btn-danger" type="button"><span class="glyphicon glyphicon-wrench"></span>&nbsp;禁用</button>', action : 'forbidden'},
-	                        {content: '<button class="btn btn-success" type="button"><span class="glyphicon glyphicon-wrench"></span>&nbsp;激活</button>', action : 'available'}
+	                        {content: '<ks:hasSecurityResource identifier="missionManagerAdd"><button class="btn btn-primary" type="button"><span class="glyphicon glyphicon-plus"><span>添加</button></ks:hasSecurityResource>', action: 'add'},
+	                        {content: '<ks:hasSecurityResource identifier="missionManagerUpdate"><button class="btn btn-success" type="button"><span class="glyphicon glyphicon-edit"><span>修改</button></ks:hasSecurityResource>', action: 'modify'},
+	                        {content: '<ks:hasSecurityResource identifier="missionManagerTerminate"><button class="btn btn-danger" type="button"><span class="glyphicon glyphicon-remove"><span>删除</button></ks:hasSecurityResource>', action: 'delete'},
+	                        {content: '<ks:hasSecurityResource identifier="missionManagerRenew"><button class="btn btn-info" type="button"><span class="glyphicon glyphicon-edit"><span>更新</button></ks:hasSecurityResource>', action: 'renew'},
+	                        {content: '<ks:hasSecurityResource identifier="missionManagerQuery"><button class="btn btn-success" type="button"><span class="glyphicon glyphicon-search"><span>高级搜索<span class="caret"></span></button></ks:hasSecurityResource>', action: 'search'},
+	                        {content: '<ks:hasSecurityResource identifier="missionManagerForbidden"><button class="btn btn-danger" type="button"><span class="glyphicon glyphicon-wrench"></span>&nbsp;禁用</button></ks:hasSecurityResource>', action : 'forbidden'},
+	                        {content: '<ks:hasSecurityResource identifier="missionManagerAvailable"><button class="btn btn-success" type="button"><span class="glyphicon glyphicon-wrench"></span>&nbsp;激活</button></ks:hasSecurityResource>', action : 'available'}
 	                    ],
-	                url:"${pageContext.request.contextPath}/Mission/pageJson/" + projectId + ".koala",
+	                url:"${pageContext.request.contextPath}/Mission2/pageJson/" + projectId + ".koala",
 	                columns: [
 	                     	                         	                         { title: '任务名称', name: 'name', width: 110},
 	                         	                         	                         	                         { title: '任务负责人', name: 'directorName', width: 80},
@@ -178,6 +180,25 @@ $(function (){
 	                            callBack: remove
 	                        });
 	                   },
+	                   'renew': function(event, data){
+	                        var indexs = data.data;
+	                        var $this = $(this);
+	                        if(indexs.length == 0){
+	                            $this.message({
+	                                type: 'warning',
+	                                content: '请选择一条记录进行更新'
+	                            })
+	                            return;
+	                        }
+	                        if(indexs.length > 1){
+	                            $this.message({
+	                                type: 'warning',
+	                                content: '只能选择一条记录进行更新'
+	                            })
+	                            return;
+	                        }
+	                       self.renew(indexs[0], $this);
+	                    },
 	                   'forbidden' : function(event, data) {
 							var indexs = data.data;
 							var $this = $(this);
@@ -217,7 +238,7 @@ $(function (){
 							self.available(indexs[0] , $this);
 					   },
 	                   'search' : function() {						
-	       					$("#missionQueryDiv").slideToggle("slow");						 
+	       					$("#missionQueryDiv2").slideToggle("slow");						 
 	       			   }
 	         });
 	    },
@@ -244,7 +265,7 @@ $(function (){
 	            userId = directorID.find('input');
 	            dialog.find('#save').on('click',{grid: grid}, function(e){
 		              if(!Validator.Validate(dialog.find('form')[0],3))return;
-		              $.post('${pageContext.request.contextPath}/Mission/add.koala?projectId=' + projectId, dialog.find('form').serialize()).done(function(result){
+		              $.post('${pageContext.request.contextPath}/Mission2/add.koala?projectId=' + projectId, dialog.find('form').serialize()).done(function(result){
 		                   if(result.success ){
 		                        dialog.modal('hide');
 		                        e.data.grid.data('koala.grid').refresh();
@@ -296,7 +317,57 @@ $(function (){
 	                });
 	                dialog.find('#save').on('click',{grid: grid}, function(e){
 	                    if(!Validator.Validate(dialog.find('form')[0],3))return;
-	                    $.post('${pageContext.request.contextPath}/Mission/update.koala?id='+id, dialog.find('form').serialize()).done(function(result){
+	                    $.post('${pageContext.request.contextPath}/Mission2/update.koala?id='+id, dialog.find('form').serialize()).done(function(result){
+	                        if(result.success){
+	                            dialog.modal('hide');
+	                            e.data.grid.data('koala.grid').refresh();
+	                            e.data.grid.message({
+	                            type: 'success',
+	                            content: '保存成功'
+	                            });
+	                        }else{
+	                            dialog.find('.modal-content').message({
+	                            type: 'error',
+	                            content: result.errorMessage
+	                            });
+	                        }
+	                    });
+	                });
+	        });
+	    },
+	    renew: function(id, grid){
+	        var self = this;
+	        var dialog = $('<div class="modal fade"><div class="modal-dialog"><div class="modal-content"><div class="modal-header"><button type="button" class="close" data-dismiss="modal" aria-hidden="true">&times;</button><h4 class="modal-title">修改</h4></div><div class="modal-body"><p>One fine body&hellip;</p></div><div class="modal-footer"><button type="button" class="btn btn-default" data-dismiss="modal">取消</button><button type="button" class="btn btn-success" id="save">保存</button></div></div></div></div>');
+	        $.get('<%=path%>/Mission-renew.jsp').done(function(html){
+	               dialog.find('.modal-body').html(html);
+	               self.initPage(dialog.find('form'));
+	               $.get( '${pageContext.request.contextPath}/Mission/get/' + id + '.koala').done(function(json){
+	                       json = json.data;
+	                        var elm;
+	                        var director = json.director;
+	                        for(var index in json){
+	                            elm = dialog.find('#'+ index + 'ID');
+	                            if(index == 'status'){
+	                                elm.setValue(json[index]);
+	                            }else if(index == 'director'){
+	                            	dialog.find('#directorID_').val(director);
+	                            }else{
+	                                elm.val(json[index]);
+	                            }
+	                        }
+	                        dialog.find('#nameID').val(json['name']).attr('disabled', 'disabled');
+	                });
+	                dialog.modal({
+	                    keyboard:false,
+		                backdrop: 'static'
+	                }).on({
+	                    'hidden.bs.modal': function(){
+	                        $(this).remove();
+	                    }
+	                });
+	                dialog.find('#save').on('click',{grid: grid}, function(e){
+	                    if(!Validator.Validate(dialog.find('form')[0],3))return;
+	                    $.post('${pageContext.request.contextPath}/Mission2/renew.koala?id='+id+'&name='+dialog.find('#nameID').val(), dialog.find('form').serialize()).done(function(result){
 	                        if(result.success){
 	                            dialog.modal('hide');
 	                            e.data.grid.data('koala.grid').refresh();
@@ -419,7 +490,7 @@ $(function (){
 	    },
 	    remove: function(ids, grid){
 	    	var data = [{ name: 'ids', value: ids.join(',') }];
-	    	$.post('${pageContext.request.contextPath}/Mission/delete.koala', data).done(function(result){
+	    	$.post('${pageContext.request.contextPath}/Mission2/delete.koala', data).done(function(result){
 	                        if(result.success){
 	                            grid.data('koala.grid').refresh();
 	                            grid.message({
@@ -439,7 +510,7 @@ $(function (){
 		 */
 		forbidden: function(id, grid) {
 			var dataGrid = grid;
-			$.post(contextPath + '/Mission/suspend.koala?missionId=' + id).done(function(data) {			    
+			$.post(contextPath + '/Mission2/suspend.koala?missionId=' + id).done(function(data) {			    
 				if (data.success == true) {				
 					dataGrid.message({
 						type : 'success',
@@ -464,7 +535,7 @@ $(function (){
 		 */
 		available: function(id, grid) {
 			var dataGrid = grid;
-			$.post(contextPath + '/Mission/activate.koala?missionId=' + id).done(function(data) {		    
+			$.post(contextPath + '/Mission2/activate.koala?missionId=' + id).done(function(data) {		    
 				if (data.success == true) {				
 					dataGrid.message({
 						type : 'success',
@@ -536,7 +607,7 @@ var openDetailsPage = function(id){
 <form name=<%=formId%> id=<%=formId%> target="_self" class="form-horizontal">
 <input type="hidden" name="page" value="0">
 <input type="hidden" name="pagesize" value="10">
-<div id="missionQueryDiv" hidden="true">
+<div id="missionQueryDiv2" hidden="true">
 <table border="0" cellspacing="0" cellpadding="0">
   <tr>
     <td>
@@ -545,11 +616,11 @@ var openDetailsPage = function(id){
             <div style="margin-left:15px;float:left;">
             <input name="name" class="form-control" type="text" style="width:180px;" id="nameID"  />
         </div>
-                      <label class="control-label" style="width:100px;float:left;">任务负责人:&nbsp;</label>
-    	  <div style="margin-left:15px;float:left;">
-	      <div class="btn-group select" id="director_SELECT"></div>
-	        <input type="hidden" id="directorID_" name="director" />
-	      </div>
+<!--                       <label class="control-label" style="width:100px;float:left;">任务负责人:&nbsp;</label> -->
+<!--     	  <div style="margin-left:15px;float:left;"> -->
+<!-- 	      <div class="btn-group select" id="director_SELECT"></div> -->
+<!-- 	        <input type="hidden" id="directorID_" name="director" /> -->
+<!-- 	      </div> -->
 	  </div>
             </div>
                   <div class="form-group">
@@ -565,11 +636,11 @@ var openDetailsPage = function(id){
                 <span class="input-group-addon"><span class="glyphicon glyphicon-th"></span></span>
             </div>
        </div>
-                      <label class="control-label" style="width:100px;float:left;">任务状态:&nbsp;</label>
-    	  <div style="margin-left:15px;float:left;">
-	      <div class="btn-group select" id="status_SELECT"></div>
-	        <input type="hidden" id="statusID_" name="status" />
-	      </div>
+<!--                       <label class="control-label" style="width:100px;float:left;">任务状态:&nbsp;</label> -->
+<!--     	  <div style="margin-left:15px;float:left;"> -->
+<!-- 	      <div class="btn-group select" id="status_SELECT"></div> -->
+<!-- 	        <input type="hidden" id="statusID_" name="status" /> -->
+<!-- 	      </div> -->
 	  </div>
             </div>
                   <div class="form-group">

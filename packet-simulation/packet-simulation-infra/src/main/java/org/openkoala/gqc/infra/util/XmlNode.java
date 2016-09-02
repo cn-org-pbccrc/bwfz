@@ -243,8 +243,8 @@ public class XmlNode implements Serializable, Cloneable{
 					}else{
 						String value = xmlNode.getValue();
 						//System.out.println("value:"+value);
-						if(value==null){
-							value="";
+						if(value == null){
+							value = "";
 						}
 						//System.out.println("name2:"+PropertiesManager.getProperties(xmlNode.getTagName(),templateName)+";value2:"+value);
 						htmlStr = htmlStr + "<p><label class='rgt'>"+JSON.parseObject(PropertiesManager.getProperties(xmlNode.getTagName(),templateName)).getString("0")+" :</label><label class='lft' value='" + value + "' name='" + xmlNode.getTagName() + "'>" + value + "</label></p>";
@@ -257,8 +257,12 @@ public class XmlNode implements Serializable, Cloneable{
 							//System.out.println("name3:"+PropertiesManager.getProperties(xmlNode.getTagName(),templateName)+";value3:"+xmlNode.getValue());
 							htmlStr = htmlStr + getTabContents(childNodes,null,templateName);
 						}else{
+							String value = node.getValue();
+							if(value == null){
+								value = "";
+							}
 							//System.out.println("name4:"+PropertiesManager.getProperties(xmlNode.getTagName(),templateName)+";value4:"+xmlNode.getValue());
-							htmlStr = htmlStr + "<p><label class='rgt'>"+JSON.parseObject(PropertiesManager.getProperties(node.getTagName(),templateName)).getString("0")+" :</label><label class='lft' value='" + node.getValue() + "' subName='" + node.getTagName() + "'>" + node.getValue() + "</label></p>";
+							htmlStr = htmlStr + "<p><label class='rgt'>"+JSON.parseObject(PropertiesManager.getProperties(node.getTagName(),templateName)).getString("0")+" :</label><label class='lft' value='" + value + "' subName='" + node.getTagName() + "'>" + value + "</label></p>";
 						}
 					}
 					htmlStr = htmlStr +"</fieldset>";

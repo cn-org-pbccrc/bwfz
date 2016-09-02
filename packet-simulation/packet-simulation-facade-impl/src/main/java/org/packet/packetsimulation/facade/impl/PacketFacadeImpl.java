@@ -19,6 +19,7 @@ import java.util.ArrayList;
 import java.util.Date;
 import java.util.HashMap;
 import java.util.HashSet;
+import java.util.Iterator;
 import java.util.List;
 import java.util.Map;
 import java.util.Set;
@@ -38,6 +39,7 @@ import javax.xml.validation.Validator;
 import org.dayatang.domain.InstanceFactory;
 import org.dayatang.querychannel.QueryChannelService;
 import org.dayatang.utils.Page;
+import org.dom4j.DocumentException;
 import org.dom4j.DocumentHelper;
 import org.dom4j.io.OutputFormat;
 import org.dom4j.io.XMLWriter;
@@ -154,7 +156,7 @@ public class PacketFacadeImpl implements PacketFacade {
 		return InvokeResult.success();
 	}
 	
-	public InvokeResult removePackets(Long[] ids, String savePath) {
+	public InvokeResult removePackets(Long[] ids) {
 		Set<Packet> packets= new HashSet<Packet>();
 		for (Long id : ids) {
 			packets.add(application.getPacket(id));
@@ -235,14 +237,14 @@ public class PacketFacadeImpl implements PacketFacade {
    		String result;
 	   	List<Mesg> mesgList = findMesgsByPacketId(packetId);
 	   	if(null!=mesgList && mesgList.size()>0){
-	   		counter = fillStringToHead(10,""+mesgList.size(),"0");
-	   		result = PACKETCONSTANT.HEADER_START + packet.getFileVersion() + packet.getOrigSender() + dateFormat.format(origSendDate) + packet.getRecordType() + packet.getDataType() + counter + PACKETCONSTANT.HEADER_RESERVED + "\r\n";
+	   		counter = fillStringToHead(8,""+mesgList.size(),"0");
+	   		result = PACKETCONSTANT.HEADER_START + packet.getFileVersion() + packet.getOrigSender() + dateFormat.format(origSendDate) + packet.getRecordType() + counter + PACKETCONSTANT.HEADER_RESERVED + "\r\n";
 	   		for(Mesg mesg : mesgList){  			
 				result = result + mesg.getContent() + "\r\n";
 	   		}
 	   	}else{
-	   		counter = fillStringToHead(10,"0","0");
-	   		result = PACKETCONSTANT.HEADER_START + packet.getFileVersion() + packet.getOrigSender() + dateFormat.format(origSendDate) + packet.getRecordType() + packet.getDataType() + counter + PACKETCONSTANT.HEADER_RESERVED + "\r\n";
+	   		counter = fillStringToHead(8,"0","0");
+	   		result = PACKETCONSTANT.HEADER_START + packet.getFileVersion() + packet.getOrigSender() + dateFormat.format(origSendDate) + packet.getRecordType() + counter + PACKETCONSTANT.HEADER_RESERVED + "\r\n";
 	   	}
 		return result;
 	}
@@ -274,17 +276,17 @@ public class PacketFacadeImpl implements PacketFacade {
 	
 	@Transactional
 	@Override
-	public ModelAndView uploadPacket(PacketDTO packetDTO, String ctxPath, String xsdPath) throws IOException, ParseException, ParserConfigurationException, SAXException {
+	public ModelAndView uploadPacket(PacketDTO packetDTO, String ctxPath, String xsdPath, Long missionId) throws IOException, ParseException, ParserConfigurationException, SAXException {
 		ModelAndView modelAndView = new ModelAndView("index");
 		MappingJacksonJsonView view = new MappingJacksonJsonView();
 		Map<String,String> attributes = new HashMap();
 		File uploadFile = new File(ctxPath + packetDTO.getPacketName());
-		BufferedReader br = new BufferedReader(new InputStreamReader(new FileInputStream(ctxPath + packetDTO.getPacketName())));  
+		BufferedReader br = new BufferedReader(new InputStreamReader(new FileInputStream(ctxPath + packetDTO.getPacketName()), "UTF-8"));  
 		String line = br.readLine();	
-		if(line.length()!=77){
+		if(line.length() != 85){
 			br.close();
 			uploadFile.delete();
-			attributes.put("error","文件头长度应为77位!");
+			attributes.put("error","文件头长度应为85位!");
 			view.setAttributesMap(attributes);
 			modelAndView.setView(view);
 			return modelAndView;
@@ -332,38 +334,37 @@ public class PacketFacadeImpl implements PacketFacade {
 			return modelAndView;
 		}
 		packetDTO.setOrigSendDate(origSendDate);
-		String recordType = line.substring(32,36);
-		if(!recordType.matches("^[0-9]{4}$")){
+		String recordType = line.substring(32,47);
+		if(!recordType.matches("^[.0-9a-z]{15}$")){
 			br.close();
 			uploadFile.delete();
-			attributes.put("error","记录类型应为4位数字!");
+			attributes.put("error","文件类型应为15位数字!");
+			view.setAttributesMap(attributes);
+			modelAndView.setView(view);
+			return modelAndView;
+		}
+		if(MesgType.getByCode(recordType) != null && recordType.equals("daic.004.001.01")){
+			br.close();
+			uploadFile.delete();
+			attributes.put("error","文件类型不存在!");
 			view.setAttributesMap(attributes);
 			modelAndView.setView(view);
 			return modelAndView;
 		}
 		packetDTO.setRecordType(recordType);
-		Integer dataType = Integer.valueOf(line.substring(36,37));
-		if(!(dataType==0)){
+		packetDTO.setDataType(0);
+		String mesgNum = line.substring(47,55);
+		if(!mesgNum.matches("^[0-9]{8}$")){
 			br.close();
 			uploadFile.delete();
-			attributes.put("error","数据类型应为'0'!");
-			view.setAttributesMap(attributes);
-			modelAndView.setView(view);
-			return modelAndView;
-		}
-		packetDTO.setDataType(dataType);
-		String mesgNum = line.substring(37,47);
-		if(!line.substring(37,47).matches("^[0-9]{10}$")){
-			br.close();
-			uploadFile.delete();
-			attributes.put("error","信息记录数应为10位数字!");
+			attributes.put("error","信息记录数应为8位数字!");
 			view.setAttributesMap(attributes);
 			modelAndView.setView(view);
 			return modelAndView;
 		}
 		packetDTO.setMesgNum(Long.parseLong(mesgNum));
 		int totalLines = ReadAppointedLine.getTotalLines(uploadFile);
-		if(Integer.parseInt(line.substring(37,47))!=(totalLines-1)){
+		if(Integer.parseInt(mesgNum) != (totalLines - 1)){
 			br.close();
 			uploadFile.delete();
 			attributes.put("error","信息记录数和文件中记录行数不一致!");
@@ -371,10 +372,12 @@ public class PacketFacadeImpl implements PacketFacade {
 			modelAndView.setView(view);
 			return modelAndView;
 		}
+		MesgType mesgType = findMesgTypeByRecordType(recordType);
 		Packet packet = PacketAssembler.toEntity(packetDTO);
-		application.creatPacket(packet);
+		Mission mission = missionApplication.getMission(missionId);
+		packet.setMission(mission);
 		int n = 1;
-		List<Mesg> mesgs= new ArrayList<Mesg>();
+		List<Mesg> mesgs = new ArrayList<Mesg>();
 		while((line=br.readLine())!=null){
 			DocumentBuilderFactory dbf = DocumentBuilderFactory.newInstance();
 			DocumentBuilder db = dbf.newDocumentBuilder();
@@ -385,53 +388,13 @@ public class PacketFacadeImpl implements PacketFacade {
 				e.printStackTrace();
 				br.close();
 				uploadFile.delete();
-				attributes.put("error","第"+n+"条记录xml格式不正确:"+e.getMessage());
+				attributes.put("error", "第" + n + "条记录xml格式不正确:" + e.getMessage());
 				view.setAttributesMap(attributes);
 				modelAndView.setView(view);
 				return modelAndView;
 			}
-			Element root = ((org.w3c.dom.Document) doc).getDocumentElement();
-			String filePath = null;			
-			if(root.getFirstChild().getNodeName().equals("AcctInf")){
-				filePath = "账户信息正常报送记录";
-			}else if(root.getFirstChild().getNodeName().equals("BaseInf")){
-				filePath = "基本信息正常报送记录";
-			}else if(root.getFirstChild().getNodeName().equals("CtrctInf")){
-				filePath = "合同信息正常报送记录";
-			}else if(root.getFirstChild().getNodeName().equals("MotgaCltalCtrctInf")){
-				filePath = "抵质押合同信息正常报送记录";
-			}else if(root.getFirstChild().getNodeName().equals("CtfItgInf")){
-				filePath = "证件整合信息正常报送记录";
-			}else if(root.getFirstChild().getNodeName().equals("FalMmbsInf")){
-				filePath = "家族成员信息正常报送记录";
-			}else if(root.getFirstChild().getNodeName().equals("BsInfIdCagsInf")){
-				filePath = "基本信息标识变更信息记录";
-			}else if(root.getFirstChild().getNodeName().equals("CtrctInfIdCagsInf")){
-				filePath = "合同信息标识变更信息记录";
-			}else if(root.getFirstChild().getNodeName().equals("AcctInfIdCagsInf")){
-				filePath = "账户信息标识变更信息记录";
-			}else if(root.getFirstChild().getNodeName().equals("MotgaCltalCtrctInfIdCagsInf")){
-				filePath = "抵质押合同信息标识变更信息记录";
-			}else if(root.getFirstChild().getNodeName().equals("BsInfDlt")){
-				filePath = "基本信息删除请求记录";
-			}else if(root.getFirstChild().getNodeName().equals("CtrctInfDlt")){
-				filePath = "合同信息按段删除请求记录";
-			}else if(root.getFirstChild().getNodeName().equals("AcctInfDlt")){
-				filePath = "账户信息按段删除请求记录";
-			}else if(root.getFirstChild().getNodeName().equals("CtrctInfEntDlt")){
-				filePath = "合同信息整笔删除请求记录";
-			}else if(root.getFirstChild().getNodeName().equals("AcctInfEntDlt")){
-				filePath = "账户信息整笔删除请求记录";
-			}else if(root.getFirstChild().getNodeName().equals("MotgaCltalCtrctInfEntDlt")){
-				filePath = "抵质押合同信息整笔删除请求记录";
-			}else if(root.getFirstChild().getNodeName().equals("ActMdfc")){
-				filePath = "账户修改请求记录";
-			}else if(root.getFirstChild().getNodeName().equals("CtrctMdfc")){
-				filePath = "合同修改请求记录";
-			}
 			try{
-				Validatexml(xsdPath+filePath+".xsd",line);
-				MesgType mesgType = findMesgTypeByFilePath(filePath);
+				Validatexml(xsdPath + recordType + ".xsd", line);
 				Mesg mesg = new Mesg();
 				mesg.setMesgType(mesgType);
 				mesg.setPacket(packet);
@@ -443,15 +406,38 @@ public class PacketFacadeImpl implements PacketFacade {
 				e.printStackTrace();
 				br.close();
 				uploadFile.delete();
-				attributes.put("error","第"+n+"条记录schema校验不通过:"+e.getMessage());
+				attributes.put("error", "第" + n + "条记录schema校验不通过:" + e.getMessage());
 				view.setAttributesMap(attributes);
 				modelAndView.setView(view);
 				return modelAndView;
 			}
 			n++;
 		}
+		String bizType = "";
+		if(!mesgType.getBizType().equals("")){
+			bizType = mesgType.getBizType();
+		}else{
+			String xmlContent = ReadAppointedLine.readAppointedLineNumber(new File(ctxPath + packetDTO.getPacketName()), 2 ,n);
+			org.dom4j.Document document;
+			try {
+				document = org.dom4j.DocumentHelper.parseText(xmlContent);
+				org.dom4j.Element root = document.getRootElement();
+				Iterator iter1 = root.elementIterator();
+				org.dom4j.Element element1 = (org.dom4j.Element) iter1.next();
+				Iterator iter2 = element1.elementIterator();
+				org.dom4j.Element element2 = (org.dom4j.Element) iter2.next();
+				Iterator iter3 = element2.elementIterator();
+				org.dom4j.Element element3 = (org.dom4j.Element) iter3.next();
+				bizType = element3.getText();
+			} catch (DocumentException e) {
+				// TODO Auto-generated catch block
+				e.printStackTrace();
+			}
+		}		
+		packet.setBizType(bizType);
 		br.close();
 		uploadFile.delete();
+		application.creatPacket(packet);
 		mesgApplication.creatMesgs(mesgs);
 		attributes.put("data","上传并解析成功!");
 		view.setAttributesMap(attributes);
@@ -459,12 +445,12 @@ public class PacketFacadeImpl implements PacketFacade {
 		return modelAndView;
 	}
 	
-	private MesgType findMesgTypeByFilePath(String filePath){
+	private MesgType findMesgTypeByRecordType(String recordType){
 		List<Object> conditionVals = new ArrayList<Object>();
 		StringBuilder jpql = new StringBuilder("select _mesgType from MesgType _mesgType  where 1=1 ");
-		if (filePath != null && !"".equals(filePath)) {
-			jpql.append(" and _mesgType.mesgType = ? ");
-			conditionVals.add(filePath);
+		if (recordType != null && !"".equals(recordType)) {
+			jpql.append(" and _mesgType.code = ? ");
+			conditionVals.add(recordType);
 		}
 		MesgType mesgType = (MesgType) getQueryChannelService().createJpqlQuery(jpql.toString()).setParameters(conditionVals).singleResult();
 		return mesgType;

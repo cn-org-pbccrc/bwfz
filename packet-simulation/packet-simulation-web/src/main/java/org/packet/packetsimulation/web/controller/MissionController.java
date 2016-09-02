@@ -1,9 +1,11 @@
 package org.packet.packetsimulation.web.controller;
 
 import javax.inject.Inject;
+import javax.servlet.http.HttpServletRequest;
 
 import org.springframework.web.bind.WebDataBinder;
 
+import java.io.File;
 import java.text.SimpleDateFormat;
 import java.util.Date;
 
@@ -36,7 +38,16 @@ public class MissionController {
 	@ResponseBody
 	@RequestMapping("/update")
 	public InvokeResult update(MissionDTO missionDTO) {
+		if(missionDTO.getDisabled() == true){
+			return InvokeResult.failure("任务无效，请先激活!");
+		}
 		return missionFacade.updateMission(missionDTO);
+	}
+	
+	@ResponseBody
+	@RequestMapping("/renew")
+	public InvokeResult renew(MissionDTO missionDTO) {
+		return missionFacade.renewMission(missionDTO);
 	}
 	
 	@ResponseBody
@@ -49,13 +60,14 @@ public class MissionController {
 	
 	@ResponseBody
 	@RequestMapping("/delete")
-	public InvokeResult remove(@RequestParam String ids) {
+	public InvokeResult remove(@RequestParam String ids, HttpServletRequest request) {
 		String[] value = ids.split(",");
         Long[] idArrs = new Long[value.length];
         for (int i = 0; i < value.length; i ++) {
         	        					idArrs[i] = Long.parseLong(value[i]);
 						        }
-        return missionFacade.removeMissions(idArrs);
+        String savePath = request.getSession().getServletContext().getRealPath("/")+File.separator+"uploadFiles"+File.separator;
+        return missionFacade.removeMissions(idArrs, savePath);
 	}
 	
 	@ResponseBody

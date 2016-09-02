@@ -450,107 +450,99 @@ function initFun(){
     	batch: function(id, grid){
     		$.get( '${pageContext.request.contextPath}/Mesg/initBatch/' + id + '.koala').done(function(json){
 	    		json = json.data;
-	     		mesgType = json["mesgType"];
-	     		if(mesgType==1||mesgType==2||mesgType==3||mesgType==4||mesgType==5||mesgType==6){
-	     			packetId = json["packetId"];
-    	    	    var width = 180;
-    	    	    $.get(contextPath + '/pages/auth/three-standard-select.jsp').done(function(data) {	    		
-    	    	 	    var dialog = $(data);
-    	    	 	    //显示对话框数据
-    	    	 	    dialog.modal({
-    	    	 	    	keyboard: false,
-    	    	 	    	backdrop: false // 指定当前页为静态页面，如果不写后台页面就是黑色。
-    	    	 	    }).on({
-    	    	 	    	'hidden.bs.modal': function(){
-    	    	 	    	    $(this).remove();
-    	    	 	    	},
-    	    	 	    	'shown.bs.modal': function(){
-    	    	 	    	    var columns = [
-    	    	 	    	        { title:'姓名', name:'name' , width: 2*width/3},
-    	    	 	    	        { title:'证件类型', name:'credentialType', width: width/2,
-    	    	 	    	            render: function(item, name, index){
-    		                 				if(item[name] == '0'){
-    		                     				return '身份证';
-    		                 				}else if(item[name] == '1'){
-    		                     				return '军官证';
-    		                 				}else if(item[name] == '2'){
-    		                	 				return '护照';
-    		                 				}
-    		             				}		
-    	    	 	    	        },
-    	    	 	    	        { title:'证件号', name:'credentialNumber', width: width},
-    	    	 	    	        { title:'机构代码', name:'organizationCode', width: width},
-    	    	 	    	        { title:'客户资料标识号', name:'customerCode', width: 2*width/3},
-    	    	 	    	        { title: '账户标识号', name: 'acctCode', width: 3*width/4},
-                     	            { title: '合同标识号', name: 'conCode', width: 2*width/3},
-                     	            { title: '抵质押合同标识号', name: 'ccc', width: width},
-    	    	 	    	        { title:'创建日期', name:'createdDate', width: 2*width/3},
-    	    	 	    	        { title:'创建者', name:'createdBy', width: width/2}
-    	    	 	    	    ];//<!-- definition columns end -->
-    	    	 	    	    //查询出当前表单所需要得数据。
-    	    	 	    	    dialog.find('.selectThreeStandardGrid').grid({
-    	    	 	    	        identity: 'id',
-    	    	 	    	        columns: columns,
-    	    	 	    	        url: contextPath + '/ThreeStandard/pageJson/' + currentUserId + '.koala'
-    	    	 	    	    });
-							}
-    	    	 	    });//<!-- 显示对话框数据结束-->
-						dialog.find('#selectThreeStandardGridSave').on('click',{grid: grid}, function(e){   	    	 	    		
-							var reg = new RegExp(/^[0-9]*$/);
-							if (!reg.test(dialog.find('#startID').val()) || !reg.test(dialog.find('#endID').val())) {
-    	    	 	    		dialog.find('.modal-content').message({
-	    		 	                type: 'error',
-	    		 	                content: "批量起始或结束行号应为数字"
+	    		packetId = json["packetId"];
+	    	    var width = 180;
+	    	    $.get(contextPath + '/pages/auth/three-standard-select.jsp').done(function(data) {	    		
+	    	 	    var dialog = $(data);
+	    	 	    //显示对话框数据
+	    	 	    dialog.modal({
+	    	 	    	keyboard: false,
+	    	 	    	backdrop: false // 指定当前页为静态页面，如果不写后台页面就是黑色。
+	    	 	    }).on({
+	    	 	    	'hidden.bs.modal': function(){
+	    	 	    	    $(this).remove();
+	    	 	    	},
+	    	 	    	'shown.bs.modal': function(){
+	    	 	    	    var columns = [
+	    	 	    	        { title:'姓名', name:'name' , width: 2*width/3},
+	    	 	    	        { title:'证件类型', name:'credentialType', width: width/2,
+	    	 	    	            render: function(item, name, index){
+		                 				if(item[name] == '0'){
+		                     				return '身份证';
+		                 				}else if(item[name] == '1'){
+		                     				return '军官证';
+		                 				}else if(item[name] == '2'){
+		                	 				return '护照';
+		                 				}
+		             				}		
+	    	 	    	        },
+	    	 	    	        { title:'证件号', name:'credentialNumber', width: width},
+	    	 	    	        { title:'机构代码', name:'organizationCode', width: width},
+	    	 	    	        { title:'客户资料标识号', name:'customerCode', width: 2*width/3},
+	    	 	    	        { title: '账户标识号', name: 'acctCode', width: 3*width/4},
+                 	            { title: '合同标识号', name: 'conCode', width: 2*width/3},
+                 	            { title: '抵质押合同标识号', name: 'ccc', width: width},
+	    	 	    	        { title:'创建日期', name:'createdDate', width: 2*width/3},
+	    	 	    	        { title:'创建者', name:'createdBy', width: width/2}
+	    	 	    	    ];//<!-- definition columns end -->
+	    	 	    	    //查询出当前表单所需要得数据。
+	    	 	    	    dialog.find('.selectThreeStandardGrid').grid({
+	    	 	    	        identity: 'id',
+	    	 	    	        columns: columns,
+	    	 	    	        url: contextPath + '/ThreeStandard/pageJson/' + currentUserId + '.koala'
+	    	 	    	    });
+						}
+	    	 	    });//<!-- 显示对话框数据结束-->
+					dialog.find('#selectThreeStandardGridSave').on('click',{grid: grid}, function(e){   	    	 	    		
+						var reg = new RegExp(/^[0-9]*$/);
+						if (!reg.test(dialog.find('#startID').val()) || !reg.test(dialog.find('#endID').val())) {
+	    	 	    		dialog.find('.modal-content').message({
+    		 	                type: 'error',
+    		 	                content: "批量起始或结束行号应为数字"
+    		 	            });
+	    	 	    		return false;
+	    	 			}
+	    		    	var items = dialog.find('.selectThreeStandardGrid').data('koala.grid').selectedRowsIndex();   
+	    		    	if(items.length == 0 && (dialog.find('#startID').val()==null||dialog.find('#startID').val()=="") && (dialog.find('#endID').val()==null||dialog.find('#endID').val()=="")){
+							dialog.find('.selectThreeStandardGrid').message({
+	    		    	    	type: 'warning',
+	    		    	        content: '请选择需要关联的三标信息！'
+	    		    	    });
+	    		    	}
+	    		    	var data = [{ name: 'id', value: id},
+	    		    		{ name: 'ids', value: items.join(',')},
+	    		    	    { name: 'start', value: dialog.find('#startID').val()},
+	    		    	    { name: 'end', value: dialog.find('#endID').val()},
+	    		    	    { name: 'mesgType', value: mesgType},
+	   	     	 			{ name: 'packetId', value:packetId},		        
+	    		     	];
+	    		    	document.getElementById("selectThreeStandardGridSave").disabled = true;
+	    		    	dialog.find('.modal-progress').html("<html><body><img src='${pageContext.request.contextPath}/images/loading.gif'  alt='上海鲜花港 - 郁金香' /></body></html>");
+	    		    	$.post('${pageContext.request.contextPath}/Mesg/batch.koala', data).done(function(result){
+	    		 	        if(result.success ){
+	    		 	        	dialog.modal('hide');
+	    		 	            e.data.grid.data('koala.grid').refresh();
+	    		 	            e.data.grid.message({
+	    		 	            	type: 'success',
+	    		 	                content: '批量成功'
 	    		 	            });
-    	    	 	    		return false;
-    	    	 			}
-    	    		    	var items = dialog.find('.selectThreeStandardGrid').data('koala.grid').selectedRowsIndex();   
-    	    		    	if(items.length == 0 && (dialog.find('#startID').val()==null||dialog.find('#startID').val()=="") && (dialog.find('#endID').val()==null||dialog.find('#endID').val()=="")){
-								dialog.find('.selectThreeStandardGrid').message({
-    	    		    	    	type: 'warning',
-    	    		    	        content: '请选择需要关联的三标信息！'
-    	    		    	    });
-    	    		    	}
-    	    		    	var data = [{ name: 'id', value: id},
-    	    		    		{ name: 'ids', value: items.join(',')},
-    	    		    	    { name: 'start', value: dialog.find('#startID').val()},
-    	    		    	    { name: 'end', value: dialog.find('#endID').val()},
-    	    		    	    { name: 'mesgType', value: mesgType},
-    	   	     	 			{ name: 'packetId', value:packetId},		        
-    	    		     	];
-    	    		    	document.getElementById("selectThreeStandardGridSave").disabled = true;
-    	    		    	dialog.find('.modal-progress').html("<html><body><img src='${pageContext.request.contextPath}/images/loading.gif'  alt='上海鲜花港 - 郁金香' /></body></html>");
-    	    		    	$.post('${pageContext.request.contextPath}/Mesg/batch.koala', data).done(function(result){
-    	    		 	        if(result.success ){
-    	    		 	        	dialog.modal('hide');
-    	    		 	            e.data.grid.data('koala.grid').refresh();
-    	    		 	            e.data.grid.message({
-    	    		 	            	type: 'success',
-    	    		 	                content: '批量成功'
-    	    		 	            });
-    	    		 	        }else{
-    	    		 	        	dialog.find('.modal-progress').empty();
-    	    		 	        	document.getElementById("selectThreeStandardGridSave").disabled = false;
-    	    		 	            dialog.find('.modal-content').message({
-    	    		 	                type: 'error',
-    	    		 	                content: result.errorMessage
-    	    		 	            });
-    	    		 	        }
-    	    		 	    });                        
-    	    		    });
-						//兼容IE8 IE9
-    	    		    if(window.ActiveXObject){
-    	    		    	if(parseInt(navigator.userAgent.toLowerCase().match(/msie ([\d.]+)/)[1]) < 10){
-    	    		    		dialog.trigger('shown.bs.modal');
-    	    		    	}
-    	    		    }    	  
-    	     	    });            	    	                
-    	    	}else{
-					grid.message({
-	                	type: 'error',
-	                    content: "只有正常报送记录才能进行批量"
-	                });
-	            }
+	    		 	        }else{
+	    		 	        	dialog.find('.modal-progress').empty();
+	    		 	        	document.getElementById("selectThreeStandardGridSave").disabled = false;
+	    		 	            dialog.find('.modal-content').message({
+	    		 	                type: 'error',
+	    		 	                content: result.errorMessage
+	    		 	            });
+	    		 	        }
+	    		 	    });                        
+	    		    });
+					//兼容IE8 IE9
+	    		    if(window.ActiveXObject){
+	    		    	if(parseInt(navigator.userAgent.toLowerCase().match(/msie ([\d.]+)/)[1]) < 10){
+	    		    		dialog.trigger('shown.bs.modal');
+	    		    	}
+	    		    }    	  
+	     	    });
     	    });
     	},	
     	batchConfig: function(id, grid){

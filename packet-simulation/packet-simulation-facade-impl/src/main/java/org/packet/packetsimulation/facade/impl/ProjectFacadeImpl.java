@@ -134,17 +134,13 @@ public class ProjectFacadeImpl implements ProjectFacade {
 		return InvokeResult.success();
 	}
 	
-	public InvokeResult removeProjects(Long[] ids) {
+	public InvokeResult removeProjects(Long[] ids, String savePath) {
 		Set<Project> projects= new HashSet<Project>();
 		for (Long id : ids) {
 			projects.add(application.getProject(id));
-			List<Mission> missions = findMissionsByProjectId(id);
-			if(missions != null){
-				Long[] missionIds = new Long[missions.size()];
-				for(int i = 0; i < missions.size(); i++){
-					missionIds[i] = missions.get(i).getId();
-				}
-				missionFacade.removeMissions(missionIds);
+			List<Long> missionIds = findMissionIdsByProjectId(id);
+			if(missionIds != null){
+				missionFacade.removeMissions(missionIds.toArray(new Long[missionIds.size()]), savePath);
 			}			
 		}
 		application.removeProjects(projects);
@@ -260,14 +256,14 @@ public class ProjectFacadeImpl implements ProjectFacade {
 	}
 	
 	@SuppressWarnings("unchecked")
-	private List<Mission> findMissionsByProjectId(Long projectId){
+	private List<Long> findMissionIdsByProjectId(Long projectId){
 		List<Object> conditionVals = new ArrayList<Object>();
-	   	StringBuilder jpql = new StringBuilder("select _mission from Mission _mission  where 1=1 ");	   	
+	   	StringBuilder jpql = new StringBuilder("select _mission.id from Mission _mission  where 1=1 ");	   	
 	   	if (projectId != null ) {
 	   		jpql.append(" and _mission.project.id = ? ");
 	   		conditionVals.add(projectId);
 	   	}
-	   	List<Mission> missions = getQueryChannelService().createJpqlQuery(jpql.toString()).setParameters(conditionVals).list();
-	   	return missions;
+	   	List<Long> missionIds = getQueryChannelService().createJpqlQuery(jpql.toString()).setParameters(conditionVals).list();
+	   	return missionIds;
 	}
 }

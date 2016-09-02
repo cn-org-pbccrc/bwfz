@@ -160,8 +160,8 @@ public class MesgController {
 		for (int i = 0; i < value.length; i++) {
 			idArrs[i] = Long.parseLong(value[i]);
 		}
-		MesgTypeDTO mesgTypeCode=(MesgTypeDTO) mesgTypeFacade.getMesgType(mesgType).getData();
-        String mesgContent=mesgFacade.getMesgForSend(idArrs, mesgTypeCode.getCode(),CurrentUser.getUserAccount());
+		MesgTypeDTO mesgTypeCode = (MesgTypeDTO) mesgTypeFacade.getMesgType(mesgType).getData();
+        String mesgContent = mesgFacade.getMesgForSend(idArrs, mesgTypeCode.getCode(),CurrentUser.getUserAccount());
         map.put("mesgContent", mesgContent);
         map.put("mesgType", mesgTypeCode.getCode());
         map.put("bizType", mesgTypeCode.getBizType());
@@ -197,12 +197,17 @@ public class MesgController {
 	@ResponseBody
 	@RequestMapping("/send")
 	public InvokeResult send(TaskDTO taskDTO, TaskPacketDTO taskPacketDTO, @RequestParam String mesgContent, @RequestParam String oriMesgType, HttpServletRequest request) {
+		Long missionId = CurrentUser.getMissionId();
+		if(missionId == null){
+			return InvokeResult.failure("暂未分配任务,不能快速发送");
+		}
 		String ctxPath = request.getSession().getServletContext().getRealPath("/") + File.separator + "uploadFiles" + File.separator + "easySendFiles" + File.separator;
 		File file = new File(ctxPath);    	
 		if (!file.exists()) {    	
 			file.mkdirs();    	
 		}	
 		String taskCreator=CurrentUser.getUserAccount();
+		taskDTO.setMissionId(missionId);
 		taskDTO.setTaskCreator(taskCreator);
 		taskDTO.setTaskCreatedTime(new Date());
 		taskPacketDTO.setCreatedBy(taskCreator);

@@ -20,6 +20,8 @@ import org.packet.packetsimulation.facade.dto.*;
 import org.packet.packetsimulation.facade.impl.assembler.MissionAssembler;
 import org.packet.packetsimulation.facade.impl.assembler.ProjectAssembler;
 import org.packet.packetsimulation.facade.MissionFacade;
+import org.packet.packetsimulation.facade.PacketFacade;
+import org.packet.packetsimulation.facade.TaskFacade;
 import org.packet.packetsimulation.application.MissionApplication;
 import org.packet.packetsimulation.application.PacketApplication;
 import org.packet.packetsimulation.application.ProjectApplication;
@@ -36,6 +38,12 @@ public class MissionFacadeImpl implements MissionFacade {
 	
 	@Inject
 	private ProjectApplication  projectApplication;
+	
+	@Inject
+	private PacketFacade packetFacade;
+	
+	@Inject
+	private TaskFacade taskFacade;
 
 	private QueryChannelService queryChannel;
 
@@ -75,18 +83,30 @@ public class MissionFacadeImpl implements MissionFacade {
 		return InvokeResult.success();
 	}
 	
+	public InvokeResult renewMission(MissionDTO missionDTO){
+		Mission mission = MissionAssembler.toEntity(missionDTO);
+		Project project = projectApplication.getProject(missionDTO.getProjectId());
+		mission.setProject(project);
+		application.updateMission(mission);
+		return InvokeResult.success();
+	}
+	
 	public InvokeResult removeMission(Long id) {
 		application.removeMission(application.getMission(id));
 		return InvokeResult.success();
 	}
 	
-	public InvokeResult removeMissions(Long[] ids) {
+	public InvokeResult removeMissions(Long[] ids, String savePath) {
 		Set<Mission> missions= new HashSet<Mission>();
 		for (Long id : ids) {
 			missions.add(application.getMission(id));
-			List<Packet> packets = findPacketsByMissionId(id);
-			if(packets != null){				
-				packetApplication.removePackets(packets);
+			List<Long> packetIds = findPacketIdsByMissionId(id);
+			if(packetIds != null){				
+				packetFacade.removePackets(packetIds.toArray(new Long[packetIds.size()]));
+			}
+			List<Long> taskIds = findTaskIdsByMissionId(id);
+			if(taskIds != null){
+				taskFacade.removeAllTasks(taskIds.toArray(new Long[taskIds.size()]), savePath);
 			}
 		}
 		application.removeMissions(missions);
@@ -134,6 +154,8 @@ public class MissionFacadeImpl implements MissionFacade {
 			if(flag == 0){
 				jpql.append(" and _mission.employeeUser.id = ?");
 		   		conditionVals.add(employeeUserId);
+		   		jpql.append(" and _mission.disabled = ?");
+		   		conditionVals.add(false);
 			}
 		}
 	   	if (projectId != null ) {
@@ -214,14 +236,26 @@ public class MissionFacadeImpl implements MissionFacade {
 	}
 	
 	@SuppressWarnings("unchecked")
-	private List<Packet> findPacketsByMissionId(Long missionId){
+	private List<Long> findPacketIdsByMissionId(Long missionId){
 		List<Object> conditionVals = new ArrayList<Object>();
-	   	StringBuilder jpql = new StringBuilder("select _packet from Packet _packet  where 1=1 ");	   	
+	   	StringBuilder jpql = new StringBuilder("select _packet.id from Packet _packet  where 1=1 ");	   	
 	   	if (missionId != null ) {
 	   		jpql.append(" and _packet.mission.id = ? ");
 	   		conditionVals.add(missionId);
 	   	}
-	   	List<Packet> packets = getQueryChannelService().createJpqlQuery(jpql.toString()).setParameters(conditionVals).list();
-	   	return packets;
+	   	List<Long> packetIds = getQueryChannelService().createJpqlQuery(jpql.toString()).setParameters(conditionVals).list();
+	   	return packetIds;
+	}
+	
+	@SuppressWarnings("unchecked")
+	private List<Long> findTaskIdsByMissionId(Long missionId){
+		List<Object> conditionVals = new ArrayList<Object>();
+	   	StringBuilder jpql = new StringBuilder("select _task.id from Task _task  where 1=1 ");	   	
+	   	if (missionId != null ) {
+	   		jpql.append(" and _task.mission.id = ? ");
+	   		conditionVals.add(missionId);
+	   	}
+	   	List<Long> taskIds = getQueryChannelService().createJpqlQuery(jpql.toString()).setParameters(conditionVals).list();
+	   	return taskIds;
 	}
 }

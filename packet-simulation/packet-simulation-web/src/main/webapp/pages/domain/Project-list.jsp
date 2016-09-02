@@ -239,7 +239,7 @@ $(function (){
 	                    }else{
 	                        dialog.find('.modal-content').message({
 	                            type: 'error',
-	                            content: result.actionError
+	                            content: result.errorMessage
 	                        });
 	                     }
 	              });
@@ -265,6 +265,7 @@ $(function (){
 	                                elm.val(json[index]);
 	                            }
 	                        }
+	                        dialog.find('#projectCodeID').val(json['projectCode']).attr('disabled', 'disabled');
 	                });
 	                dialog.modal({
 	                    keyboard:false,
@@ -320,7 +321,7 @@ $(function (){
 		    			    return false;
 		    		  }
 	                  if(!Validator.Validate(dialog.find('form')[0],3))return;
-	                  $.post('${pageContext.request.contextPath}/Project/update.koala?id='+id, dialog.find('form').serialize()).done(function(result){
+	                  $.post('${pageContext.request.contextPath}/Project/update.koala?id='+id+'&projectCode='+dialog.find('#projectCodeID').val(), dialog.find('form').serialize()).done(function(result){
 	                        if(result.success){
 	                            dialog.modal('hide');
 	                            e.data.grid.data('koala.grid').refresh();
@@ -331,7 +332,7 @@ $(function (){
 	                        }else{
 	                            dialog.find('.modal-content').message({
 	                            type: 'error',
-	                            content: result.actionError
+	                            content: result.errorMessage
 	                            });
 	                        }
 	                    });

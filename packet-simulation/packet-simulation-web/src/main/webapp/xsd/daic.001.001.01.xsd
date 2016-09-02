@@ -1,0 +1,49 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<xs:schema xmlns:xs="http://www.w3.org/2001/XMLSchema"  elementFormDefault="qualified">
+	<xs:element name="Document" type="Document"/>
+	<xs:complexType name="Document">
+		<xs:sequence>
+			<xs:element name="CtrctInf" type="CtrctInfTp"/><!-- 个人授信协议信息记录 -->
+		</xs:sequence>
+  </xs:complexType> 
+  
+  <xs:complexType name="CtrctInfTp">
+  	<xs:sequence>
+  		<xs:element name="CtrctBsSgmt" type="CtrctBsSgmtTp"/><!-- 合同基础段 -->
+  		<xs:element name="CtrctInfSgmt" type="CtrctInfSgmtTp"/><!-- 合同信息段 -->
+  		</xs:sequence>
+  </xs:complexType> 
+  
+  <xs:complexType name="CtrctBsSgmtTp"><!-- 合同基础段 -->
+    	<xs:sequence>
+    		<xs:element name="InfRecTp"/><!-- 信息记录类型 -->
+    		<xs:element name="ContractCode"/><!--合同标识号 -->
+    		<xs:element name="RptDate"/><!-- 信息报告日期 -->
+    		<xs:element name="RptDateCode"/><!-- 报告时点说明代码 -->
+    		<xs:element name="BrerNum"/><!-- 受信人数 -->
+    		<xs:element name="CtrctCertRel" type="CtrctCertRelTp" minOccurs="0" maxOccurs="unbounded"/><!-- 受信人信息 -->
+    		<xs:element name="AcctMngmtOrgCode"/><!-- 账户管理机构代码 --> 
+     </xs:sequence>
+  </xs:complexType>
+  
+  <xs:complexType name="CtrctCertRelTp"><!-- 受信人信息 -->
+  	<xs:sequence>
+  		<xs:element name="Name"/>
+      <xs:element name="IDType"/>
+      <xs:element name="IDNum"/>
+    </xs:sequence>
+  </xs:complexType>
+  
+  <xs:complexType name="CtrctInfSgmtTp"><!-- 合同信息段 -->
+  	<xs:sequence>
+      <xs:element name="CreditLim"/><!-- 授信额度 -->
+      <xs:element name="Cy"/><!-- 币种 -->
+      <xs:element name="CreLimUses"/><!-- 授信额度用途 -->
+      <xs:element name="LimLoopFlg"/><!-- 额度循环标志 -->
+      <xs:element name="ConEffDate"/><!-- 额度生效日期 -->
+      <xs:element name="ConExpDate"/><!-- 额度到期日期 -->
+      <xs:element name="ConStatus"/><!-- 协议状态 -->
+      <xs:element name="ConTxtCode" minOccurs="0"/><!-- 合同文本编号 -->
+    </xs:sequence>
+  </xs:complexType>      
+</xs:schema>

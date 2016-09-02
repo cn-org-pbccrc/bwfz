@@ -35,6 +35,7 @@ import org.openkoala.koala.commons.InvokeResult;
 import org.openkoala.security.org.core.domain.EmployeeUser;
 import org.packet.packetsimulation.application.MesgApplication;
 import org.packet.packetsimulation.application.MesgTypeApplication;
+import org.packet.packetsimulation.application.MissionApplication;
 import org.packet.packetsimulation.application.PacketApplication;
 import org.packet.packetsimulation.application.TaskApplication;
 import org.packet.packetsimulation.application.TaskPacketApplication;
@@ -43,6 +44,7 @@ import org.packet.packetsimulation.core.domain.BatchConfig;
 import org.packet.packetsimulation.core.domain.BatchRule;
 import org.packet.packetsimulation.core.domain.Mesg;
 import org.packet.packetsimulation.core.domain.MesgType;
+import org.packet.packetsimulation.core.domain.Mission;
 import org.packet.packetsimulation.core.domain.PACKETCONSTANT;
 import org.packet.packetsimulation.core.domain.Packet;
 import org.packet.packetsimulation.core.domain.Task;
@@ -83,6 +85,9 @@ public class MesgFacadeImpl implements MesgFacade {
 	
 	@Inject
 	private ThreeStandardApplication threeStandardApplication;
+	
+	@Inject
+	private MissionApplication  missionApplication;
 	
 	private QueryChannelService queryChannel;
 
@@ -802,8 +807,10 @@ public class MesgFacadeImpl implements MesgFacade {
 	@Transactional
 	@Override
 	public InvokeResult createTask(TaskDTO taskDTO, TaskPacketDTO taskPacketDTO, String mesgContent, String oriMesgType, String filePath) {
-		Task task=TaskAssembler.toEntity(taskDTO);
+		Task task = TaskAssembler.toEntity(taskDTO);
+		Mission mission = missionApplication.getMission(taskDTO.getMissionId());
 		task.setTaskFrom(1);
+		task.setMission(mission);
 		taskApplication.creatTask(task);
 		taskPacketDTO.setTaskId(task.getId());		
 		EmployeeUser employeeUser = findEmployeeUserByCreatedBy(taskDTO.getTaskCreator());

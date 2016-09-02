@@ -20,7 +20,7 @@ public interface PacketFacade {
 	
 	public InvokeResult creatPacket(PacketDTO packet, Long missionId);
 	
-	public ModelAndView uploadPacket(PacketDTO packetDTO, String ctxPath, String xsdPath) throws FileNotFoundException, IOException, ParseException, ParserConfigurationException, SAXException;
+	public ModelAndView uploadPacket(PacketDTO packetDTO, String ctxPath, String xsdPath, Long missionId) throws FileNotFoundException, IOException, ParseException, ParserConfigurationException, SAXException;
 	
 	public InvokeResult updatePacket(PacketDTO packet);
 	
@@ -28,7 +28,7 @@ public interface PacketFacade {
 	
 	public InvokeResult removePacket(Long id);
 	
-	public InvokeResult removePackets(Long[] ids, String savePath);
+	public InvokeResult removePackets(Long[] ids);
 	
 	public List<PacketDTO> findAllPacket();
 	
