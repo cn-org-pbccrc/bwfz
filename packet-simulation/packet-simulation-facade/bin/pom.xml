@@ -1,0 +1,42 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<project xmlns="http://maven.apache.org/POM/4.0.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/xsd/maven-4.0.0.xsd">  
+    <modelVersion>4.0.0</modelVersion>  
+    <parent> 
+        <groupId>org.packet</groupId>  
+        <artifactId>packet-simulation</artifactId>  
+        <version>1.0.0-SNAPSHOT</version> 
+    </parent>  
+    <artifactId>packet-simulation-facade</artifactId>  
+    <name>packet-simulation-facade</name>  
+    <packaging>jar</packaging>  
+    <url>http://maven.apache.org</url>  
+    <properties> 
+        <project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>  
+        <project.type>facade</project.type>  
+        <base.package>org.packet.packetsimulation.facade.dto</base.package> 
+    </properties>  
+    <dependencies> 
+        <dependency> 
+            <groupId>org.dayatang.dddlib</groupId>  
+            <artifactId>dddlib-utils</artifactId> 
+        </dependency>  
+        <dependency> 
+            <groupId>org.openkoala.koalacommons</groupId>  
+            <artifactId>koala-commons-facade</artifactId> 
+        </dependency>
+        <dependency> 
+            <groupId>org.springframework</groupId>  
+            <artifactId>spring-webmvc</artifactId> 
+        </dependency>  
+        <dependency> 
+            <groupId>org.springframework</groupId>  
+            <artifactId>spring-context-support</artifactId> 
+        </dependency>
+        <dependency> 
+            <groupId>org.packet</groupId>  
+            <artifactId>packet-simulation-core</artifactId>  
+            <version>${project.parent.version}</version> 
+        </dependency>  
+    </dependencies> 
+</project>
