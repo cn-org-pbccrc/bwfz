@@ -29,9 +29,6 @@ import org.openkoala.security.facade.impl.assembler.PermissionAssembler;
 import org.openkoala.security.facade.impl.assembler.RoleAssembler;
 import org.openkoala.security.facade.impl.assembler.UrlAccessResourceAssembler;
 import org.openkoala.security.facade.impl.assembler.UserAssembler;
-import org.packet.packetsimulation.core.domain.Mission;
-import org.packet.packetsimulation.facade.dto.MissionDTO;
-import org.packet.packetsimulation.facade.impl.assembler.MissionAssembler;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -89,28 +86,7 @@ public class SecurityAccessFacadeImpl implements SecurityAccessFacade {
 			LOGGER.error(e.getMessage(), e);
 			return InvokeResult.failure("根据用户名查找所有的角色失败。");
 		}
-	}
-	
-	public InvokeResult findMissionsByUserAccount(String userAccount) {
-		try {
-			List<MissionDTO> results = new ArrayList<MissionDTO>();
-			for (Mission mission : securityAccessApplication.findAllMissionsByUserAccount(userAccount)) {
-				results.add(MissionAssembler.toDTO(mission));
-			}
-			return InvokeResult.success(results);
-		} catch (Exception e) {
-			LOGGER.error(e.getMessage(), e);
-			return InvokeResult.failure("根据用户名查找所有的任务失败。");
-		}
 
-	}
-	
-	public String getMissionNameByMissionId(Long missionId){
-		return securityAccessApplication.getMissionNameByMissionId(missionId);
-	}
-	
-	public String getProjectNameByMissionId(Long missionId){
-		return securityAccessApplication.getProjectNameByMissionId(missionId);
 	}
 
 	public List<MenuResourceDTO> findMenuResourceByUserAccount(String userAccount) {

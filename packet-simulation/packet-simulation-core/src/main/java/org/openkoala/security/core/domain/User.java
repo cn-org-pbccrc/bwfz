@@ -15,7 +15,6 @@ import org.openkoala.security.core.TelePhoneIsExistedException;
 import org.openkoala.security.core.UserAccountIsExistedException;
 import org.openkoala.security.core.UserNotHasRoleException;
 import org.openkoala.security.core.UserPasswordException;
-import org.packet.packetsimulation.core.domain.Mission;
 
 /**
  * 位于系统外部，与系统交互的人，是使用软件的人。
@@ -187,18 +186,6 @@ public class User extends Actor {
         return results;
     }
 
-    public static List<Mission> findAllMissionsBy(String userAccount) {
-        List<Mission> results = getRepository()
-                .createNamedQuery("Mission.findAllMissionsByUserAccount")
-                .addParameter("disabled", false)
-                .addParameter("userAccount", userAccount)
-                .list();
-        if (results.isEmpty()) {
-            throw new SecurityException("user do have not a mission");
-        }
-        return results;
-    }
-    
     /**
      * 根据账户查找拥有的所有权限Permission
      *

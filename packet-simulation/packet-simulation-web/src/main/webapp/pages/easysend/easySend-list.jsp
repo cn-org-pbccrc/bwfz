@@ -101,7 +101,7 @@ legend {
 	<div class="right-content" style="padding: 5px; width: 74%">
 		<form id="mesgSearchForm" target="_self"
 			class="form-horizontal searchCondition">
-			<input name="mesgType" id="mesgType"  class="form-control" code=""
+			<input name="mesgType" id="mesgType"  class="form-control"
 				type="hidden" />
 		</form>
 		<div data-role="mesgGrid" id="mesgGrid"></div>
@@ -388,13 +388,6 @@ function initFun(){
     	    add: function(grid){
     	        var self = this;
     	        var mesgType=$("#mesgType").val();
-    	        if($("#mesgType").attr('code') == "daic.004.001.01"){
-    	        	grid.message({
-                		type: 'error',
-                    	content: "此处不能选择更正记录，请在快速发送模块中转换"
-                	});
-    	        	return;
-    	        }
     	        if(!mesgType){
     	        	grid.message({
                 		type: 'warning',
@@ -412,8 +405,7 @@ function initFun(){
     	        	+'</div></div>');
     	        $.get('<%=path%>/easyMesg-add.jsp').done(function(html){
     	            dialog.modal({
-    	                keyboard:false,
-    	                backdrop: 'static'
+    	                keyboard:false
     	            }).on({
     	                'hidden.bs.modal': function(){
     	                    $(this).remove();
@@ -513,8 +505,7 @@ function initFun(){
 	                        }
 	                });
 	                dialog.modal({
-	                    keyboard:false,
-		                backdrop: 'static'
+	                    keyboard:false
 	                }).on({
 	                    'hidden.bs.modal': function(){
 	                        $(this).remove();
@@ -668,8 +659,7 @@ function initFun(){
 		    	        	+'</div></div>');
 		    	        $.get('<%=path%>/easySend-config.jsp').done(function(html){
 		    	        	cfgDialog.modal({
-		    	                keyboard:false,
-		    	                backdrop: 'static'
+		    	                keyboard:false
 		    	            }).on({
 		    	                'hidden.bs.modal': function(){
 		    	                    $(this).remove();
@@ -719,8 +709,7 @@ function initFun(){
     	        	+'</div></div>');
     	        $.get('<%=path%>/easySend-config.jsp').done(function(html){
     	            dialog.modal({
-    	                keyboard:false,
-    	                backdrop: 'static'
+    	                keyboard:false
     	            }).on({
     	                'hidden.bs.modal': function(){
     	                    $(this).remove();
@@ -732,9 +721,7 @@ function initFun(){
     	            	var json=json.data;
     	            	dialog.find("#mesgContentID").val(json.mesgContent);
     	            	dialog.find("#selectedRecordTypeID").val(json.mesgType);
-    	            	if(json.bizType != ''){
-    	            		dialog.find("#selectedBizTypeID").val(json.bizType);
-    	            	}
+    	            	dialog.find("#bizTypeID").val(json.bizType);
 	                });    	            
     	        });
     	        dialog.find('#send').on('click',{grid: grid}, function(e){
@@ -874,7 +861,7 @@ function initFun(){
 											{
 												'selectChildren' : function(
 														event, data) {
-													showMesgTempletes(data.id, data.code);
+													showMesgTempletes(data.id);
 												}
 											});
 						});
@@ -901,8 +888,7 @@ var openDetailsPageOfMesg = function(id){
                     }
            });
             dialog.modal({
-                keyboard:false,
-                backdrop: 'static'
+                keyboard:false
             }).on({
                 'hidden.bs.modal': function(){
                     $(this).remove();
@@ -919,8 +905,7 @@ var openSourceFile = function(id){
                    dialog.find("#contentID").html("<div style='width:780px;overflow:auto;'><xmp>"+json+"</xmp></div>");
            });
             dialog.modal({
-                keyboard:false,
-                backdrop: 'static'
+                keyboard:false
             }).on({
                 'hidden.bs.modal': function(){
                     $(this).remove();
@@ -962,10 +947,9 @@ var openSourceFile = function(id){
 			callBack : remove
 		});
 	}
- var showMesgTempletes = function(id, code) {
+ var showMesgTempletes = function(id) {
 		var form = $("#mesgSearchForm");
 		$("#mesgType").val(id);
-		$("#mesgType").attr('code', code)
 		var params = {};
 		form.find('.form-control').each(function() {
 			var $this = $(this);

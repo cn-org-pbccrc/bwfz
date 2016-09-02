@@ -31,7 +31,7 @@ public class TaskPacketDTO implements Serializable {
 	private Date selectedOrigSendDateEnd;
 	
 	private Integer selectedDataType;
-	
+
 	private String selectedRecordType;
 			
 	private Integer compression;
@@ -66,7 +66,7 @@ public class TaskPacketDTO implements Serializable {
 	 /**
 	 * 业务类型
 	 */
-	private String selectedBizType;
+	private String bizType;
 		
 	public Integer getSendState() {
 		return sendState;
@@ -154,7 +154,9 @@ public class TaskPacketDTO implements Serializable {
 
 	public Integer getEncryption() {
 		return encryption;
-	}			
+	}
+		
+			
 	
 	public void setSelectedPacketName(String selectedPacketName) { 
 		this.selectedPacketName = selectedPacketName;
@@ -163,7 +165,9 @@ public class TaskPacketDTO implements Serializable {
 	public String getSelectedPacketName() {
 		return this.selectedPacketName;
 	}
-
+		
+			
+	
 	public void setCompression(Integer compression) { 
 		this.compression = compression;
 	}
@@ -189,11 +193,7 @@ public class TaskPacketDTO implements Serializable {
 		this.version = version;
 	}
 
-	public void setVersion(int version) {
-		this.version = version;
-	}
-
-	@Override
+    @Override
 	public int hashCode() {
 		final int prime = 31;
 		int result = 1;
@@ -258,11 +258,11 @@ public class TaskPacketDTO implements Serializable {
 		this.receiveDate = receiveDate;
 	}
 
-	public String getSelectedBizType() {
-		return selectedBizType;
+	public String getBizType() {
+		return bizType;
 	}
 
-	public void setSelectedBizType(String selectedBizType) {
-		this.selectedBizType = selectedBizType;
+	public void setBizType(String bizType) {
+		this.bizType = bizType;
 	}
 }

@@ -7,13 +7,10 @@ import java.util.List;
 import java.util.ArrayList;
 import java.util.Map;
 import java.util.Set;
-import java.io.BufferedReader;
 import java.io.File;
 import java.io.FileInputStream;
 import java.io.FileWriter;
 import java.io.IOException;
-import java.io.InputStream;
-import java.io.InputStreamReader;
 import java.text.DateFormat;
 import java.text.MessageFormat;
 import java.text.ParseException;
@@ -30,7 +27,6 @@ import org.packet.packetsimulation.facade.dto.*;
 import org.packet.packetsimulation.facade.impl.assembler.MesgAssembler;
 import org.packet.packetsimulation.facade.impl.assembler.TaskPacketAssembler;
 import org.packet.packetsimulation.facade.TaskPacketFacade;
-import org.packet.packetsimulation.application.MissionApplication;
 import org.packet.packetsimulation.application.PacketApplication;
 import org.packet.packetsimulation.application.TaskApplication;
 import org.packet.packetsimulation.application.TaskPacketApplication;
@@ -49,9 +45,6 @@ public class TaskPacketFacadeImpl implements TaskPacketFacade {
 	
 	@Inject
 	private PacketApplication  packetApplication;
-	
-	@Inject
-	private MissionApplication  missionApplication;
 
 	private QueryChannelService queryChannel;
 
@@ -76,25 +69,24 @@ public class TaskPacketFacadeImpl implements TaskPacketFacade {
 	
 	public InvokeResult creatTaskPackets(TaskPacketDTO taskPacketDTO, String ctxPath, String[] flags, String[] coms, String[] encs) throws ParseException {
 		Set<TaskPacket> taskPackets= new HashSet<TaskPacket>();
-		Integer maxSerialNumber = findMaxSerialNumber(taskPacketDTO.getTaskId());
+		Integer maxSerialNumber = findMaxSerialNumber(taskPacketDTO.getTaskId());				
 		for (int i = 0; i < flags.length; i++) {
 			DateFormat dateFormat1 = new SimpleDateFormat("yyyyMMdd");			
 			TaskPacket taskPacket = TaskPacketAssembler.toEntity(taskPacketDTO);
 			Task task = taskApplication.getTask(taskPacketDTO.getTaskId());			
 			taskPacket.setTask(task);
 			Packet packet = packetApplication.getPacket(Long.parseLong(flags[i]));
-			String frontPosition = packet.getOrigSender() + dateFormat1.format(packet.getOrigSendDate()) + packet.getBizType() + PACKETCONSTANT.TASKPACKET_DATATYPE_NORMAL + PACKETCONSTANT.TASKPACKET_TRANSPORTDIRECTION_REPORT;
+			String frontPosition = packet.getOrigSender() + dateFormat1.format(packet.getOrigSendDate()) + packet.getRecordType() + "0";
 			Integer maxPacketNumber = findMaxPacketNumberByFrontPositionAndCreatedBy(frontPosition, packet.getCreatedBy());
 			if(maxPacketNumber > 9998){
 				return InvokeResult.failure("流水号最大值为9999!");
 			}
 			String sn = String.format("%04d", maxPacketNumber + 1);
-			taskPacket.setSelectedPacketName(frontPosition + sn);
+			taskPacket.setSelectedPacketName(frontPosition + "0" + sn);
 			taskPacket.setSelectedFileVersion(packet.getFileVersion());
 			taskPacket.setSelectedOrigSender(packet.getOrigSender());
 			taskPacket.setSelectedOrigSendDate(packet.getOrigSendDate());
 			taskPacket.setSelectedDataType(packet.getDataType());
-			taskPacket.setSelectedBizType(packet.getBizType());
 			taskPacket.setSelectedRecordType(packet.getRecordType());
 			taskPacket.setCompression(Integer.valueOf(coms[i]));
 			taskPacket.setEncryption(Integer.valueOf(encs[i]));
@@ -118,7 +110,7 @@ public class TaskPacketFacadeImpl implements TaskPacketFacade {
 		   		counter = fillStringToHead(10,"0","0");
 		   		result = "A" + packet.getFileVersion() + packet.getOrigSender() + dateFormat2.format(packet.getOrigSendDate()) + packet.getRecordType() + packet.getDataType() + counter + "                              " + "\r\n";
 		   	}
-		    File f = new File(ctxPath+frontPosition+sn+".csv");//新建一个文件对象
+		    File f = new File(ctxPath+frontPosition+"0"+sn+".csv");//新建一个文件对象
 	        FileWriter fw;
 	        try {
 	        	fw=new FileWriter(f);//新建一个FileWriter	    
@@ -148,8 +140,7 @@ public class TaskPacketFacadeImpl implements TaskPacketFacade {
 			taskPacket.setSelectedFileVersion("-");
 			taskPacket.setSelectedOrigSender("-");			
 			taskPacket.setSelectedDataType(0);
-			taskPacket.setSelectedBizType("-");
-			taskPacket.setSelectedRecordType("-");			
+			taskPacket.setSelectedRecordType("-");
 			taskPacket.setCompression(1);
 			taskPacket.setEncryption(1);
 			taskPacket.setSerialNumber(max + 1);			
@@ -186,29 +177,19 @@ public class TaskPacketFacadeImpl implements TaskPacketFacade {
 		}else{
 			path = ctxPath + "easySendFiles" + File.separator + taskPacket.getSelectedPacketName() + ".csv";
 		}
-		StringBuffer sb = new StringBuffer();
-		try {
-			readToBuffer(sb, path);
-		} catch (IOException e) {
-			// TODO Auto-generated catch block
-			e.printStackTrace();
-		}
-        return sb.toString();
+	    File file = new File(path);
+	    try {
+	        FileInputStream in = new FileInputStream(file);
+	        int size = in.available();
+	        byte[] buffer = new byte[size];
+	        in.read(buffer);
+	        in.close();
+	        str = new String(buffer,"UTF-8");
+	    } catch (IOException e) {
+	    	e.printStackTrace();
+	    }
+	    return str;
 	}
-	
-	public static void readToBuffer(StringBuffer buffer, String filePath) throws IOException {
-        InputStream is = new FileInputStream(filePath);
-        String line; // 用来保存每行读取的内容
-        BufferedReader reader = new BufferedReader(new InputStreamReader(is));
-        line = reader.readLine(); // 读取第一行
-        while (line != null) { // 如果 line 为空说明读完了
-            buffer.append(line); // 将读到的内容添加到 buffer 中
-            buffer.append("\n"); // 添加换行符
-            line = reader.readLine(); // 读取下一行
-        }
-        reader.close();
-        is.close();
-    }
 	
 	private String fillStringToHead(int length,String target,String filler){
 		if(null!=target && target.length()<length && null!=filler && !"".equals(filler)){
@@ -387,17 +368,13 @@ public class TaskPacketFacadeImpl implements TaskPacketFacade {
 	}
 	
 	@SuppressWarnings("unchecked")
-	public Page<TaskPacketDTO> pageQueryTaskPacket(TaskPacketDTO queryVo, int currentPage, int pageSize, int taskPacketFrom, Long missionId) {
+	public Page<TaskPacketDTO> pageQueryTaskPacket(TaskPacketDTO queryVo, int currentPage, int pageSize, int taskPacketFrom) {
 		List<Object> conditionVals = new ArrayList<Object>();
 		StringBuilder jpql = new StringBuilder("select _taskPacket from TaskPacket _taskPacket   where 1=1");
-		if (missionId != null) {
-	   		jpql.append(" and _taskPacket.task.mission.id = ?");
-	   		conditionVals.add(missionId);
-	   	}
 		if (!"".equals(queryVo.getPacketFrom())) {
 			jpql.append(" and _taskPacket.packetFrom = ?");
 			conditionVals.add(taskPacketFrom);
-		}
+		}	
 		if (queryVo.getSelectedPacketName() != null && !"".equals(queryVo.getSelectedPacketName())) {
 			jpql.append(" and _taskPacket.selectedPacketName like ?");
 			conditionVals.add(MessageFormat.format("%{0}%", queryVo.getSelectedPacketName()));

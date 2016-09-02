@@ -6,6 +6,4 @@ public interface RoleHandle {
 	
 	void resetRoleName(String name);
 	
-	void switchOverMissionOfUser(Long missionId);
-	
 }

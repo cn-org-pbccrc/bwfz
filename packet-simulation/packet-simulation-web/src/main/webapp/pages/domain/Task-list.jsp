@@ -140,8 +140,7 @@ function initFun(){
 	        	+'</div></div>');
 	        $.get('<%=path%>/Task-add.jsp').done(function(html){
 	            dialog.modal({
-	                keyboard:false,
-	                backdrop: 'static'
+	                keyboard:false
 	            }).on({
 	                'hidden.bs.modal': function(){
 	                    $(this).remove();
@@ -187,8 +186,7 @@ function initFun(){
 	                        }
 	                });
 	                dialog.modal({
-	                    keyboard:false,
-		                backdrop: 'static'
+	                    keyboard:false
 	                }).on({
 	                    'hidden.bs.modal': function(){
 	                        $(this).remove();
@@ -302,8 +300,7 @@ var openDetailsPage = function(id){
                         }
                });
                 dialog.modal({
-                    keyboard:false,
-	                backdrop: 'static'
+                    keyboard:false
                 }).on({
                     'hidden.bs.modal': function(){
                         $(this).remove();

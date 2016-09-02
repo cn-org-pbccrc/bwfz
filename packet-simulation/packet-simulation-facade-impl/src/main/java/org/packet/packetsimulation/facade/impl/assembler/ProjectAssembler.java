@@ -43,7 +43,7 @@ public class ProjectAssembler {
 			return null;
 		}
 	 	Project result  = new Project();
-	 	EmployeeUser employeeUser = new EmployeeUser();
+	 	EmployeeUser employeeUser =new EmployeeUser();
 	 	employeeUser.setId(Long.valueOf(projectDTO.getProjectManager()));
         result.setId (projectDTO.getId());
          result.setVersion (projectDTO.getVersion());

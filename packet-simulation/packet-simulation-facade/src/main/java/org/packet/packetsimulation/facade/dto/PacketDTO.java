@@ -23,15 +23,11 @@ public class PacketDTO implements Serializable {
 	
 	private Integer dataType;
 	
-	private String bizType;
-	
 	private String recordType;
 
 	private Long mesgNum;
 	
 	private String reserve;
-	
-	private Long missionId;
 
 	public String getFileVersion() {
 		return fileVersion;
@@ -129,22 +125,6 @@ public class PacketDTO implements Serializable {
 		this.packetName = packetName;
 	}
 	
-	public Long getMissionId() {
-		return missionId;
-	}
-
-	public void setMissionId(Long missionId) {
-		this.missionId = missionId;
-	}
-
-	public String getBizType() {
-		return bizType;
-	}
-
-	public void setBizType(String bizType) {
-		this.bizType = bizType;
-	}
-
 	@Override
 	public int hashCode() {
 		final int prime = 31;

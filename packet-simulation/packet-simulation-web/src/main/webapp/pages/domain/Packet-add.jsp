@@ -32,12 +32,18 @@
                      </div>
                      </div>
                      </div>
+<!-- 		         <div class="form-group"> -->
+<!--                     <label class="col-lg-3 control-label">记录类型:</label> -->
+<!-- 	                    <div class="col-lg-9"> -->
+<!--                            <input name="recordType" style="display:inline; width:94%;" class="form-control"  type="text"  id="recordTypeID" /> -->
+<!-- 			    </div> -->
+<!-- 	</div> -->
 <div class="form-group">
-                            <label class="col-lg-3 control-label">文件类型:</label>
+                            <label class="col-lg-3 control-label">记录类型:</label>
                             <div class="col-lg-9">
                                 <div class="btn-group select" id="select-mesg">
                                     <button data-toggle="item" class="btn btn-default" type="button">
-                                        选择类型
+                                        选择记录
                                     </button>
                                     <button data-toggle="dropdown" class="btn btn-default dropdown-toggle" type="button">
                                         <span class="caret"></span>
@@ -45,13 +51,7 @@
                                     <input type="hidden" data-toggle="value" name="recordType" id="recordTypeID">
                                 </div>
                             </div>
-                        </div>       
-                        		         <div class="form-group">
-                    <label class="col-lg-3 control-label">业务类型:</label>
-	                    <div class="col-lg-9">
-                           <input name="bizType" style="display:inline; width:94%;" class="form-control"  type="text"  id="bizTypeID" />
-			    </div>
-	</div>                 
+                        </div>                        
 	</form>
 <script type="text/javascript">
 </script>

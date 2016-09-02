@@ -11,7 +11,6 @@ import java.io.StringWriter;
 import java.text.SimpleDateFormat;
 import java.util.ArrayList;
 import java.util.Date;
-import java.util.Iterator;
 import java.util.List;
 
 import javax.inject.Inject;
@@ -23,7 +22,6 @@ import javax.xml.parsers.ParserConfigurationException;
 import org.dayatang.domain.InstanceFactory;
 import org.dayatang.querychannel.QueryChannelService;
 import org.dayatang.utils.Page;
-import org.dom4j.DocumentException;
 import org.dom4j.DocumentHelper;
 import org.dom4j.io.OutputFormat;
 import org.dom4j.io.XMLWriter;
@@ -117,22 +115,6 @@ public class FeedBackFacadeImpl implements FeedBackFacade {
 		String path = ctxPath + taskPacket.getSelectedPacketName() + ".csv";
 		int totalLines = ReadAppointedLine.getTotalLines(new File(path));
 		String xmlContent = ReadAppointedLine.readAppointedLineNumber(new File(path),id+1,totalLines);
-		if(xmlContent.indexOf("<MdfcSgmt>") != -1){
-			try {
-				org.dom4j.Document document = org.dom4j.DocumentHelper.parseText(xmlContent);
-				org.dom4j.Element root = document.getRootElement();
-				org.dom4j.Element element = root.element("CrdtInfMdfc").element("MdfcSgmt");
-				Iterator iterInner = element.elementIterator();
-				org.dom4j.Element elementOption = (org.dom4j.Element) iterInner.next();//获取<MdfcSgmt>下一级元素
-                String tagName = elementOption.getName();
-                xmlContent = xmlContent.replace("<MdfcSgmt><" + tagName + ">", "<MdfcSgmt-" + tagName + ">");
-                xmlContent = xmlContent.replace("</"+ tagName + "></MdfcSgmt>" , "</MdfcSgmt-" + tagName + ">");               
-			} catch (DocumentException e) {
-				// TODO Auto-generated catch block
-				e.printStackTrace();
-			}
-			
-		}
 		//String a = "<?xml version='1.0' encoding='UTF-8'?><Document xmlns:xsi='http://www.w3.org/2001/XMLSchema-instance'xsi:noNamespaceSchemaLocation='file:/C:/daec.001.001.01-en.xsd'><SceIdInf><SceId>00000</SceId></SceIdInf><ContIdInf><CtrctNbInt>CtrctNbInt0</CtrctNbInt><CdOfDtaPdgOgztn>00000000000000</CdOfDtaPdgOgztn></ContIdInf><ConSumInf><CtrctNbTe>CtrctNbTe0</CtrctNbTe><InfmRepDt>2006-05-04</InfmRepDt><Inf><Nm>Nm0</Nm><IDNb>IDNb0</IDNb><IDTp>0</IDTp></Inf><Inf><Nm>Nm1</Nm><IDNb>IDNb1</IDNb><IDTp>0</IDTp></Inf><CtrctMatrDt>2006-05-04</CtrctMatrDt><CtrctEfctDt>2006-05-04</CtrctEfctDt><CrdtLmtCurcy>AAA</CrdtLmtCurcy><CrdtLmtAdjDt>2006-05-04</CrdtLmtAdjDt><CrdtLmtAmt>49999999.50</CrdtLmtAmt><CrdtLmtReLo>1</CrdtLmtReLo><CtrctSts>1</CtrctSts><CtrctStsChgDt>2006-05-04</CtrctStsChgDt></ConSumInf></Document>";
 		DocumentBuilderFactory factory = DocumentBuilderFactory.newInstance();
 		DocumentBuilder builder = factory.newDocumentBuilder();
@@ -140,7 +122,7 @@ public class FeedBackFacadeImpl implements FeedBackFacade {
 		//获得根元素结点  
 		Element root = ((org.w3c.dom.Document) doc).getDocumentElement(); 
 		XmlNode xmlNode = new XmlNode();
-		xmlNode = XmlUtil.parseElement(root,xmlNode,null); 
+		xmlNode=XmlUtil.parseElement(root,xmlNode,null); 
 		String html = xmlNode.toHtmlTabString(mesgType.getCode());
 		Result result = new Result(html, mesgType.getTransform(), mesgType.getCode());
 		return InvokeResult.success(result);
@@ -208,8 +190,9 @@ public class FeedBackFacadeImpl implements FeedBackFacade {
 		String currentOrgNO = employeeUser.getDepartment().getSn();
 		SimpleDateFormat dateFormat = new SimpleDateFormat("yyyyMMddhhmmss");
 		String currentDate = dateFormat.format(new Date());
-		String counter = String.format("%08d", 1);
-		packetHead.append("A").append(PACKETCONSTANT.TASKPACKET_FILEVERSION).append(currentOrgNO).append(currentDate).append(code).append(counter).append("                             ").append("\r\n");
+		Integer dataType = PACKETCONSTANT.TASKPACKET_DATATYPE_NORMAL;
+		String counter = String.format("%010d", 1);
+		packetHead.append("A").append(PACKETCONSTANT.TASKPACKET_FILEVERSION).append(currentOrgNO).append(currentDate).append(code).append(dataType).append(counter).append("                              ").append("\r\n");
 		return packetHead.toString();
 	}
 	

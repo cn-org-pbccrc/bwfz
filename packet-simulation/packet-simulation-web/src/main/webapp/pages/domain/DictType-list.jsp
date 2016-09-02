@@ -119,8 +119,7 @@ $(function (){
 	        	+'</div></div>');
 	        $.get('<%=path%>/DictItem-add.jsp').done(function(html){
 	            dialog.modal({
-	                keyboard:false,
-	                backdrop: 'static'
+	                keyboard:false
 	            }).on({
 	                'hidden.bs.modal': function(){
 	                    $(this).remove();
@@ -184,8 +183,7 @@ $(function (){
 	                        }
 	                });
 	                dialog.modal({
-	                    keyboard:false,
-		                backdrop: 'static'
+	                    keyboard:false
 	                }).on({
 	                    'hidden.bs.modal': function(){
 	                        $(this).remove();
@@ -784,8 +782,7 @@ $(function (){
                      }
             });
              dialog.modal({
-                 keyboard:false,
-	                backdrop: 'static'
+                 keyboard:false
              }).on({
                  'hidden.bs.modal': function(){
                      $(this).remove();

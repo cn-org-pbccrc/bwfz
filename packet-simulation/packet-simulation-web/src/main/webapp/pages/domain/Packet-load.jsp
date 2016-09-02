@@ -40,7 +40,7 @@
 </script>
 </head>
 <body>
-<form name="form" method="POST" enctype="multipart/form-data">	
+<form name="form" method="POST" enctype="multipart/form-data">
 	<div id="fileQueue"></div>
 	<input id="input-id" type="file" class="file" data-preview-file-type="text" />
 </form>

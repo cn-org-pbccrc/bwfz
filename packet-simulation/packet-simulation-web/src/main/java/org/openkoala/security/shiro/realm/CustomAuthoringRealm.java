@@ -171,15 +171,6 @@ public class CustomAuthoringRealm extends AuthorizingRealm implements RoleHandle
 		shiroUser.setRoleName(roleName);
 		this.doGetAuthorizationInfo(principalCollection);
 	}
-	
-	public void switchOverMissionOfUser(Long missionId) {
-		PrincipalCollection principalCollection = CurrentUser.getPrincipals();
-		ShiroUser shiroUser = (ShiroUser) principalCollection.getPrimaryPrincipal();
-		shiroUser.setMissionId(missionId);
-		shiroUser.setMissionName(ShiroUser.getMissionNameByMissionId(missionId));
-		shiroUser.setProjectName(ShiroUser.getProjectNameByMissionId(missionId));
-		this.doGetAuthorizationInfo(principalCollection);
-	}
 
 	@Override
 	public void resetRoleName(String name) {

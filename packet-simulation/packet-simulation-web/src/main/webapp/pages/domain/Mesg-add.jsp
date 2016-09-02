@@ -146,17 +146,9 @@ legend {
 					return false;
 				}
 				$("#content").empty();
-				if(items[0].code == "daic.004.001.01"){
-					$('#main').find('.selectPacketGrid').message({
-						type : 'error',
-						content : '此处不能选择更正记录，请在快速发送模块中转换'
-					});
-					return false;
-				}else{
-					$.get('${pageContext.request.contextPath}/MesgType/getEditHtmlByMesgType/' + items[0].id + '.koala').done(function(data) {
-						$("#content").append(data.data);
-					});
-				}				
+				$.get('${pageContext.request.contextPath}/MesgType/getEditHtmlByMesgType/' + items[0].id + '.koala').done(function(data) {
+					$("#content").append(data.data);
+				});
 			},
 			'onTabClick' : function() {
 				return false;

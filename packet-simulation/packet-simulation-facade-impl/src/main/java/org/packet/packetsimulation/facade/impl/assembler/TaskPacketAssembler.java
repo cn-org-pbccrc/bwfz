@@ -27,7 +27,6 @@ public class TaskPacketAssembler {
      	    	result.setSelectedOrigSender(taskPacket.getSelectedOrigSender());
      	    	result.setSelectedOrigSendDate(taskPacket.getSelectedOrigSendDate());
      	    	result.setSelectedDataType(taskPacket.getSelectedDataType());
-     	    	result.setSelectedBizType(taskPacket.getSelectedBizType());
      	    	result.setSelectedRecordType(taskPacket.getSelectedRecordType());
      	    	result.setCompression (taskPacket.getCompression());
      	    	result.setEncryption (taskPacket.getEncryption());
@@ -64,7 +63,6 @@ public class TaskPacketAssembler {
 		result.setSelectedOrigSender(taskPacketDTO.getSelectedOrigSender());
 		result.setSelectedOrigSendDate(taskPacketDTO.getSelectedOrigSendDate());
 		result.setSelectedDataType(taskPacketDTO.getSelectedDataType());
-		result.setSelectedBizType(taskPacketDTO.getSelectedBizType());
 		result.setSelectedRecordType(taskPacketDTO.getSelectedRecordType());
 		result.setCompression (taskPacketDTO.getCompression());
 		result.setEncryption (taskPacketDTO.getEncryption());

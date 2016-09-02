@@ -36,14 +36,6 @@ public final class CurrentUser {
 	public static String getRoleName() {
 		return getPrincipal().getRoleName();
 	}
-	
-	public static String getMissionName() {
-		return getPrincipal().getMissionName();
-	}
-	
-	public static Long getMissionId() {
-		return getPrincipal().getMissionId();
-	}
 
     /**
      * 获取当前用户的联系电话

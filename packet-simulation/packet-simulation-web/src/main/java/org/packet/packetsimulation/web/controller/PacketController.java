@@ -44,9 +44,7 @@ import org.dom4j.io.OutputFormat;
 import org.dom4j.io.XMLWriter;
 import org.openkoala.gqc.infra.util.ReadAppointedLine;
 import org.openkoala.koala.commons.InvokeResult;
-import org.openkoala.security.shiro.CurrentUser;
 import org.packet.packetsimulation.application.PacketApplication;
-import org.packet.packetsimulation.core.domain.PACKETCONSTANT;
 import org.packet.packetsimulation.core.domain.Packet;
 import org.packet.packetsimulation.facade.PacketFacade;
 import org.packet.packetsimulation.facade.dto.PacketDTO;
@@ -93,11 +91,7 @@ public class PacketController {
 	@ResponseBody
 	@RequestMapping("/add")
 	public InvokeResult add(PacketDTO packetDTO) {
-		Long missionId = CurrentUser.getMissionId();
-		if(missionId == null){
-			return InvokeResult.failure("暂未分配任务,不能创建报文");
-		}
-		return packetFacade.creatPacket(packetDTO, missionId);
+		return packetFacade.creatPacket(packetDTO);
 	}
 	
 	@ResponseBody
@@ -116,8 +110,7 @@ public class PacketController {
 	@ResponseBody
 	@RequestMapping("/pageJson/{currentUserId}")
 	public Page pageJson(PacketDTO packetDTO, @RequestParam int page, @RequestParam int pagesize,@PathVariable String currentUserId){
-		Long missionId = CurrentUser.getMissionId();
-		Page<PacketDTO> all = packetFacade.pageQueryPacket(packetDTO, page, pagesize, currentUserId, missionId);
+		Page<PacketDTO> all = packetFacade.pageQueryPacket(packetDTO, page, pagesize,currentUserId);
 		return all;
 	}
 	
@@ -126,10 +119,11 @@ public class PacketController {
 	public InvokeResult remove(@RequestParam String ids, HttpServletRequest request) {
 		String[] value = ids.split(",");
         Long[] idArrs = new Long[value.length];
+        String savePath = request.getSession().getServletContext().getRealPath("/")+File.separator+"loadFiles"+File.separator;
         for (int i = 0; i < value.length; i ++) {
         	        					idArrs[i] = Long.parseLong(value[i]);
 						        }
-        return packetFacade.removePackets(idArrs);
+        return packetFacade.removePackets(idArrs, savePath);
 	}
 	
 	@ResponseBody
@@ -142,7 +136,6 @@ public class PacketController {
 	@RequestMapping("/downloadCSV/{id}")
 	public void downloadCSV(@PathVariable Long id,HttpServletRequest request, HttpServletResponse response) {	
 		String downloadCSV = packetFacade.downloadCSV(id);
-		System.out.println(PACKETCONSTANT.HEADER_RESERVED.length());
 		Packet packet = application.getPacket(id);
 		response.setContentType("application/csv;charset=UTF-8");
 		response.setHeader("Content-Disposition", "attachment; filename=" + packet.getPacketName() + ".csv");
@@ -227,22 +220,13 @@ public class PacketController {
 				}
 			}
 		}
+
 	}
 	
 	@ResponseBody
 	@RequestMapping("/load")
 	public ModelAndView load(PacketDTO packetDTO, HttpServletRequest request, HttpServletResponse response) throws IOException, ParseException, ParserConfigurationException, SAXException {
-		request.setCharacterEncoding("utf-8");
 		ModelAndView modelAndView = new ModelAndView("index");
-		MappingJacksonJsonView view = new MappingJacksonJsonView();
-		Map<String,String> attributes = new HashMap();
-		Long missionId = CurrentUser.getMissionId();
-		if(missionId == null){
-			attributes.put("error", "暂未分配任务,不能上传报文");
-			view.setAttributesMap(attributes);
-			modelAndView.setView(view);
-			return modelAndView;
-		}
 		MultipartHttpServletRequest multipartRequest = (MultipartHttpServletRequest) request;	
 		Map<String, MultipartFile> fileMap = multipartRequest.getFileMap();
 		String ctxPath = request.getSession().getServletContext().getRealPath("/") + File.separator + "loadFiles" + File.separator + packetDTO.getCreatedBy() + File.separator;	
@@ -258,7 +242,7 @@ public class PacketController {
 			File uploadFile = new File(ctxPath + fileName);
 			FileCopyUtils.copy(mf.getBytes(), uploadFile);
 			packetDTO.setPacketName(fileName);
-			return packetFacade.uploadPacket(packetDTO, ctxPath, xsdPath, missionId);
+			return packetFacade.uploadPacket(packetDTO, ctxPath, xsdPath);
 		}
 		return modelAndView;
 	}

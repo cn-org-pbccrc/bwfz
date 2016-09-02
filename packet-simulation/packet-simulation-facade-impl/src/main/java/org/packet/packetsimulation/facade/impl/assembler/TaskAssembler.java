@@ -23,7 +23,6 @@ public class TaskAssembler {
      	    	result.setTaskStatus (task.getTaskStatus());
      	    	result.setPacketNum (task.getPacketCountOfTask(task).toString());
      	    	result.setTaskFrom(task.getTaskFrom());
-     	    	result.setMissionId(task.getMission().getId());
      	    return result;
 	 }
 	

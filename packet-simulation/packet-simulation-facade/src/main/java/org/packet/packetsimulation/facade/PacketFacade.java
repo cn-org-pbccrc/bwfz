@@ -9,6 +9,7 @@ import javax.xml.parsers.ParserConfigurationException;
 
 import org.dayatang.utils.Page;
 import org.openkoala.koala.commons.InvokeResult;
+import org.packet.packetsimulation.core.domain.FileName;
 import org.packet.packetsimulation.core.domain.Packet;
 import org.packet.packetsimulation.facade.dto.*;
 import org.springframework.web.servlet.ModelAndView;
@@ -18,9 +19,9 @@ public interface PacketFacade {
 
 	public InvokeResult getPacket(Long id);
 	
-	public InvokeResult creatPacket(PacketDTO packet, Long missionId);
+	public InvokeResult creatPacket(PacketDTO packet);
 	
-	public ModelAndView uploadPacket(PacketDTO packetDTO, String ctxPath, String xsdPath, Long missionId) throws FileNotFoundException, IOException, ParseException, ParserConfigurationException, SAXException;
+	public ModelAndView uploadPacket(PacketDTO packetDTO, String ctxPath, String xsdPath) throws FileNotFoundException, IOException, ParseException, ParserConfigurationException, SAXException;
 	
 	public InvokeResult updatePacket(PacketDTO packet);
 	
@@ -28,11 +29,11 @@ public interface PacketFacade {
 	
 	public InvokeResult removePacket(Long id);
 	
-	public InvokeResult removePackets(Long[] ids);
+	public InvokeResult removePackets(Long[] ids, String savePath);
 	
 	public List<PacketDTO> findAllPacket();
 	
-	public Page<PacketDTO> pageQueryPacket(PacketDTO packet, int currentPage, int pageSize, String currentUserId, Long missionId);
+	public Page<PacketDTO> pageQueryPacket(PacketDTO packet, int currentPage, int pageSize,String currentUserId);
 	
 	public String downloadCSV(Long id);	
 }

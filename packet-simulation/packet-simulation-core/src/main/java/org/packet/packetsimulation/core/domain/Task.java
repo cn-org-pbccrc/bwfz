@@ -4,8 +4,6 @@ import java.util.Date;
 
 import javax.persistence.Column;
 import javax.persistence.Entity;
-import javax.persistence.JoinColumn;
-import javax.persistence.ManyToOne;
 import javax.persistence.NamedQueries;
 import javax.persistence.NamedQuery;
 import javax.persistence.Table;
@@ -48,10 +46,6 @@ public class Task extends KoalaAbstractEntity{
 	
 	@Column(name = "TASK_FROM")
 	private Integer taskFrom;
-	
-	@ManyToOne
-	@JoinColumn(name = "MISSION_ID")
-	private Mission mission;
 
 	public String getTaskName() {
 		return taskName;
@@ -115,14 +109,6 @@ public class Task extends KoalaAbstractEntity{
 
 	public void setTaskFrom(Integer taskFrom) {
 		this.taskFrom = taskFrom;
-	}
-
-	public Mission getMission() {
-		return mission;
-	}
-
-	public void setMission(Mission mission) {
-		this.mission = mission;
 	}
 
 	@Override

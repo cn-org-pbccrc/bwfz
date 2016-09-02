@@ -57,6 +57,7 @@ legend {
 <input type="hidden" name="pagesize" value="10">
 </form>
 <!-- grid -->
+ <img src="/Mesg/toLookImage.koala">  
 <div id=<%=gridId%>></div>
 </div>
 <script type="text/javascript">
@@ -103,8 +104,8 @@ function initFun(){
     	        ],
     	        url:"${pageContext.request.contextPath}/Mesg/pageJson/" + packetId + ".koala",
     	        columns: [								 	
-    	            { title: '用例名称', name: 'remark', width: 300},
     	        	{ title: '报文类型', name: 'mesgTypeStr', width: 400},
+    	            { title: '用例名称', name: 'remark', width: 300},
     	            { title: '操作', width: 180, render: function (rowdata, name, index)
     	            	{
     	                	var param = '"' + rowdata.id + '"';
@@ -211,8 +212,7 @@ function initFun(){
 			    +'</div></div>');
     	    $.get('<%=path%>/Mesg-add.jsp').done(function(html){
     	        dialog.modal({
-    	            keyboard:false,
-	                backdrop: 'static'
+    	            keyboard:false
     	        }).on({
     	            'hidden.bs.modal': function(){
     	                $(this).remove();
@@ -245,7 +245,6 @@ function initFun(){
     	            dialog.find('.selectPacketGrid').getGrid().search(params);
     	        });
     	        dialog.find('#sub').on('click',{grid: grid}, function(e){
-    	        	var flag = true;
     				var info = dialog.find($(".info")).attr('id');
     				var xml = '<?xml version="1.0" encoding="UTF-8"?><Document><'+info+'>';
     				dialog.find($(".true")).each(function(){
@@ -256,24 +255,10 @@ function initFun(){
     							if($(this).attr('save')=='true'){
     								var name = ($(this).attr('name'));
         	    					var value = ($(this).val());
-        	    					if(value.indexOf('<') >= 0){
-        	    						value = value.replace(/</g,'&lt;');
-        	    					}
-        	    					if(value.indexOf('>') >= 0){
-        	    						value = value.replace(/>/g,'&gt;');
-        	    					}
-        	    					if(value.indexOf('&') >= 0){
-        	    						value = value.replace(/&/g,'&amp;');
-        	    					}
-        	    					if(value.indexOf('"') >= 0){
-        	    						value = value.replace(/"/g,'&quot;');
-        	    					}
-        	    					if(value.indexOf("'") >= 0){
-        	    						value = value.replace(/'/g,'&apos;');
-        	    					}
-    								xml += '<' + name + '>' + value + '</' + name + '>';
+        							xml += '<' + name + '>' + value + '</' + name + '>';
     							}
-    						}else{
+    						}
+    						else{
     							var name = ($(this).attr('name')); 
     							xml += '<' + name + '>';
     							$(this).parent().parent().find($("[subName]")).each(function(){
@@ -308,7 +293,7 @@ function initFun(){
     						alert(result.errorMessage);
        	                    dialog.find('.modal-dialog').append('<div class="errMsg" style="float:left;position:absolute;max-width:500px;min-height:200px;bottom:20px;left:20px;background-color:#4cae4c;color:white;">'+result.errorMessage+ '</div>');
       				    }
-          	        });  				      				        
+          	        });    	        
         	    });
     	    });
  	    },
@@ -335,8 +320,7 @@ function initFun(){
 	                }
 	            });
 	            dialog.modal({
-	                keyboard:false,
-	                backdrop: 'static'
+	                keyboard:false
 	            }).on({
 	                'hidden.bs.modal': function(){
 	                    $(this).remove();
@@ -353,24 +337,10 @@ function initFun(){
 								if($(this).attr('save')=='true'){
 									var name = ($(this).attr('name'));
 			    					var value = ($(this).val());
-			    					if(value.indexOf('<') >= 0){
-        	    						value = value.replace(/</g,'&lt;');
-        	    					}
-        	    					if(value.indexOf('>') >= 0){
-        	    						value = value.replace(/>/g,'&gt;');
-        	    					}
-        	    					if(value.indexOf('&') >= 0){
-        	    						value = value.replace(/&/g,'&amp;');
-        	    					}
-        	    					if(value.indexOf('"') >= 0){
-        	    						value = value.replace(/"/g,'&quot;');
-        	    					}
-        	    					if(value.indexOf("'") >= 0){
-        	    						value = value.replace(/'/g,'&apos;');
-        	    					}
 									xml += '<' + name + '>' + value + '</' + name + '>';
 								}								
-							}else{
+							}
+							else{
 								var name = ($(this).attr('name')); 
 								xml += '<' + name + '>';
 								$(this).parent().parent().find($("[subName]")).each(function(){
@@ -450,99 +420,107 @@ function initFun(){
     	batch: function(id, grid){
     		$.get( '${pageContext.request.contextPath}/Mesg/initBatch/' + id + '.koala').done(function(json){
 	    		json = json.data;
-	    		packetId = json["packetId"];
-	    	    var width = 180;
-	    	    $.get(contextPath + '/pages/auth/three-standard-select.jsp').done(function(data) {	    		
-	    	 	    var dialog = $(data);
-	    	 	    //显示对话框数据
-	    	 	    dialog.modal({
-	    	 	    	keyboard: false,
-	    	 	    	backdrop: false // 指定当前页为静态页面，如果不写后台页面就是黑色。
-	    	 	    }).on({
-	    	 	    	'hidden.bs.modal': function(){
-	    	 	    	    $(this).remove();
-	    	 	    	},
-	    	 	    	'shown.bs.modal': function(){
-	    	 	    	    var columns = [
-	    	 	    	        { title:'姓名', name:'name' , width: 2*width/3},
-	    	 	    	        { title:'证件类型', name:'credentialType', width: width/2,
-	    	 	    	            render: function(item, name, index){
-		                 				if(item[name] == '0'){
-		                     				return '身份证';
-		                 				}else if(item[name] == '1'){
-		                     				return '军官证';
-		                 				}else if(item[name] == '2'){
-		                	 				return '护照';
-		                 				}
-		             				}		
-	    	 	    	        },
-	    	 	    	        { title:'证件号', name:'credentialNumber', width: width},
-	    	 	    	        { title:'机构代码', name:'organizationCode', width: width},
-	    	 	    	        { title:'客户资料标识号', name:'customerCode', width: 2*width/3},
-	    	 	    	        { title: '账户标识号', name: 'acctCode', width: 3*width/4},
-                 	            { title: '合同标识号', name: 'conCode', width: 2*width/3},
-                 	            { title: '抵质押合同标识号', name: 'ccc', width: width},
-	    	 	    	        { title:'创建日期', name:'createdDate', width: 2*width/3},
-	    	 	    	        { title:'创建者', name:'createdBy', width: width/2}
-	    	 	    	    ];//<!-- definition columns end -->
-	    	 	    	    //查询出当前表单所需要得数据。
-	    	 	    	    dialog.find('.selectThreeStandardGrid').grid({
-	    	 	    	        identity: 'id',
-	    	 	    	        columns: columns,
-	    	 	    	        url: contextPath + '/ThreeStandard/pageJson/' + currentUserId + '.koala'
-	    	 	    	    });
-						}
-	    	 	    });//<!-- 显示对话框数据结束-->
-					dialog.find('#selectThreeStandardGridSave').on('click',{grid: grid}, function(e){   	    	 	    		
-						var reg = new RegExp(/^[0-9]*$/);
-						if (!reg.test(dialog.find('#startID').val()) || !reg.test(dialog.find('#endID').val())) {
-	    	 	    		dialog.find('.modal-content').message({
-    		 	                type: 'error',
-    		 	                content: "批量起始或结束行号应为数字"
-    		 	            });
-	    	 	    		return false;
-	    	 			}
-	    		    	var items = dialog.find('.selectThreeStandardGrid').data('koala.grid').selectedRowsIndex();   
-	    		    	if(items.length == 0 && (dialog.find('#startID').val()==null||dialog.find('#startID').val()=="") && (dialog.find('#endID').val()==null||dialog.find('#endID').val()=="")){
-							dialog.find('.selectThreeStandardGrid').message({
-	    		    	    	type: 'warning',
-	    		    	        content: '请选择需要关联的三标信息！'
-	    		    	    });
-	    		    	}
-	    		    	var data = [{ name: 'id', value: id},
-	    		    		{ name: 'ids', value: items.join(',')},
-	    		    	    { name: 'start', value: dialog.find('#startID').val()},
-	    		    	    { name: 'end', value: dialog.find('#endID').val()},
-	    		    	    { name: 'mesgType', value: mesgType},
-	   	     	 			{ name: 'packetId', value:packetId},		        
-	    		     	];
-	    		    	document.getElementById("selectThreeStandardGridSave").disabled = true;
-	    		    	dialog.find('.modal-progress').html("<html><body><img src='${pageContext.request.contextPath}/images/loading.gif'  alt='上海鲜花港 - 郁金香' /></body></html>");
-	    		    	$.post('${pageContext.request.contextPath}/Mesg/batch.koala', data).done(function(result){
-	    		 	        if(result.success ){
-	    		 	        	dialog.modal('hide');
-	    		 	            e.data.grid.data('koala.grid').refresh();
-	    		 	            e.data.grid.message({
-	    		 	            	type: 'success',
-	    		 	                content: '批量成功'
-	    		 	            });
-	    		 	        }else{
-	    		 	        	dialog.find('.modal-progress').empty();
-	    		 	        	document.getElementById("selectThreeStandardGridSave").disabled = false;
-	    		 	            dialog.find('.modal-content').message({
+	     		mesgType = json["mesgType"];
+	     		if(mesgType==1||mesgType==2||mesgType==3||mesgType==4||mesgType==5||mesgType==6){
+	     			packetId = json["packetId"];
+    	    	    var width = 180;
+    	    	    $.get(contextPath + '/pages/auth/three-standard-select.jsp').done(function(data) {	    		
+    	    	 	    var dialog = $(data);
+    	    	 	    //显示对话框数据
+    	    	 	    dialog.modal({
+    	    	 	    	keyboard: false,
+    	    	 	    	backdrop: false // 指定当前页为静态页面，如果不写后台页面就是黑色。
+    	    	 	    }).on({
+    	    	 	    	'hidden.bs.modal': function(){
+    	    	 	    	    $(this).remove();
+    	    	 	    	},
+    	    	 	    	'shown.bs.modal': function(){
+    	    	 	    	    var columns = [
+    	    	 	    	        { title:'姓名', name:'name' , width: 2*width/3},
+    	    	 	    	        { title:'证件类型', name:'credentialType', width: width/2,
+    	    	 	    	            render: function(item, name, index){
+    		                 				if(item[name] == '0'){
+    		                     				return '身份证';
+    		                 				}else if(item[name] == '1'){
+    		                     				return '军官证';
+    		                 				}else if(item[name] == '2'){
+    		                	 				return '护照';
+    		                 				}
+    		             				}		
+    	    	 	    	        },
+    	    	 	    	        { title:'证件号', name:'credentialNumber', width: width},
+    	    	 	    	        { title:'机构代码', name:'organizationCode', width: width},
+    	    	 	    	        { title:'客户资料标识号', name:'customerCode', width: 2*width/3},
+    	    	 	    	        { title: '账户标识号', name: 'acctCode', width: 3*width/4},
+                     	            { title: '合同标识号', name: 'conCode', width: 2*width/3},
+                     	            { title: '抵质押合同标识号', name: 'ccc', width: width},
+    	    	 	    	        { title:'创建日期', name:'createdDate', width: 2*width/3},
+    	    	 	    	        { title:'创建者', name:'createdBy', width: width/2}
+    	    	 	    	    ];//<!-- definition columns end -->
+    	    	 	    	    //查询出当前表单所需要得数据。
+    	    	 	    	    dialog.find('.selectThreeStandardGrid').grid({
+    	    	 	    	        identity: 'id',
+    	    	 	    	        columns: columns,
+    	    	 	    	        url: contextPath + '/ThreeStandard/pageJson/' + currentUserId + '.koala'
+    	    	 	    	    });
+							}
+    	    	 	    });//<!-- 显示对话框数据结束-->
+						dialog.find('#selectThreeStandardGridSave').on('click',{grid: grid}, function(e){   	    	 	    		
+							var reg = new RegExp(/^[0-9]*$/);
+							if (!reg.test(dialog.find('#startID').val()) || !reg.test(dialog.find('#endID').val())) {
+    	    	 	    		dialog.find('.modal-content').message({
 	    		 	                type: 'error',
-	    		 	                content: result.errorMessage
+	    		 	                content: "批量起始或结束行号应为数字"
 	    		 	            });
-	    		 	        }
-	    		 	    });                        
-	    		    });
-					//兼容IE8 IE9
-	    		    if(window.ActiveXObject){
-	    		    	if(parseInt(navigator.userAgent.toLowerCase().match(/msie ([\d.]+)/)[1]) < 10){
-	    		    		dialog.trigger('shown.bs.modal');
-	    		    	}
-	    		    }    	  
-	     	    });
+    	    	 	    		return false;
+    	    	 			}
+    	    		    	var items = dialog.find('.selectThreeStandardGrid').data('koala.grid').selectedRowsIndex();   
+    	    		    	if(items.length == 0 && (dialog.find('#startID').val()==null||dialog.find('#startID').val()=="") && (dialog.find('#endID').val()==null||dialog.find('#endID').val()=="")){
+								dialog.find('.selectThreeStandardGrid').message({
+    	    		    	    	type: 'warning',
+    	    		    	        content: '请选择需要关联的三标信息！'
+    	    		    	    });
+    	    		    	}
+    	    		    	var data = [{ name: 'id', value: id},
+    	    		    		{ name: 'ids', value: items.join(',')},
+    	    		    	    { name: 'start', value: dialog.find('#startID').val()},
+    	    		    	    { name: 'end', value: dialog.find('#endID').val()},
+    	    		    	    { name: 'mesgType', value: mesgType},
+    	   	     	 			{ name: 'packetId', value:packetId},		        
+    	    		     	];
+    	    		    	document.getElementById("selectThreeStandardGridSave").disabled = true;
+    	    		    	dialog.find('.modal-progress').html("<html><body><img src='${pageContext.request.contextPath}/images/loading.gif'  alt='上海鲜花港 - 郁金香' /></body></html>");
+    	    		    	$.post('${pageContext.request.contextPath}/Mesg/batch.koala', data).done(function(result){
+    	    		 	        if(result.success ){
+    	    		 	        	dialog.modal('hide');
+    	    		 	            e.data.grid.data('koala.grid').refresh();
+    	    		 	            e.data.grid.message({
+    	    		 	            	type: 'success',
+    	    		 	                content: '批量成功'
+    	    		 	            });
+    	    		 	        }else{
+    	    		 	        	dialog.find('.modal-progress').empty();
+    	    		 	        	document.getElementById("selectThreeStandardGridSave").disabled = false;
+    	    		 	            dialog.find('.modal-content').message({
+    	    		 	                type: 'error',
+    	    		 	                content: result.errorMessage
+    	    		 	            });
+    	    		 	        }
+    	    		 	    });                        
+    	    		    });
+						//兼容IE8 IE9
+    	    		    if(window.ActiveXObject){
+    	    		    	if(parseInt(navigator.userAgent.toLowerCase().match(/msie ([\d.]+)/)[1]) < 10){
+    	    		    		dialog.trigger('shown.bs.modal');
+    	    		    	}
+    	    		    }    	  
+    	     	    });            	    	                
+    	    	}else{
+					grid.message({
+	                	type: 'error',
+	                    content: "只有正常报送记录才能进行批量"
+	                });
+	            }
     	    });
     	},	
     	batchConfig: function(id, grid){
@@ -551,6 +529,17 @@ function initFun(){
     }
     PageLoader.initGridPanel();
 }
+
+var initImg=function(){
+	$.get( '${pageContext.request.contextPath}/mesg/toLookImage.koala').done(function(data){
+    	json = data;
+    	
+        for(var index in json){
+        	mesgTypeOption=mesgTypeOption+'<option value="'+json[index].id+'"> '+json[index].filePath + '</option>';
+        }
+    });
+}
+
 var openDetailsPageOfMesg = function(id){
 	var dialog = $('<div class="modal fade"><div class="modal-dialog" style="width:900px;"><div class="modal-content"><div class="modal-header"><button type="button" class="close" data-dismiss="modal" aria-hidden="true">&times;</button><h4 class="modal-title">查看</h4></div><div class="modal-body"><p>One fine body&hellip;</p></div><div class="modal-footer"><button type="button" class="btn btn-info" data-dismiss="modal">返回</button></div></div></div></div>');
     $.get('<%=path%>/Mesg-view.jsp').done(function(html){
@@ -569,8 +558,7 @@ var openDetailsPageOfMesg = function(id){
             }
         });
         dialog.modal({
-        	keyboard:false,
-            backdrop: 'static'
+        	keyboard:false
         }).on({
             'hidden.bs.modal': function(){
             	$(this).remove();
@@ -640,51 +628,6 @@ function removeField(obj){
 	    $(obj).children("span").attr("class","glyphicon glyphicon-check");
 	}
 }
-
-function validateXML(xmlContent){ 
-    //errorCode 0是xml正确，1是xml错误，2是无法验证 
-    var xmlDoc,errorMessage,errorCode = 0; 
-    // code for IE 
-    if (window.ActiveXObject){ 
-        xmlDoc = new ActiveXObject("Microsoft.XMLDOM"); 
-        xmlDoc.async="false"; 
-        xmlDoc.loadXML(xmlContent); 
-        if(xmlDoc.parseError.errorCode!=0){ 
-            errorCode = 1; 
-            errorMessage="错误code: " + xmlDoc.parseError.errorCode + "\n"; 
-            errorMessage=errorMessage+"错误原因: " + xmlDoc.parseError.reason; 
-            errorMessage=errorMessage+"错误位置: " + xmlDoc.parseError.line; 
-        }else{ 
-            errorCode = 0;
-            errorMessage = "格式正确"; 
-        } 
-    } 
-    // code for Mozilla, Firefox, Opera, chrome, safari,etc. 
-    else if (document.implementation.createDocument){ 
-        var parser = new DOMParser(); 
-        xmlDoc = parser.parseFromString(xmlContent,"text/xml"); 
-        var error = xmlDoc.getElementsByTagName("parsererror"); 
-        if(error.length > 0){ 
-        	if(xmlDoc.documentElement.nodeName=="parsererror"){ 
-                errorCode = 1; 
-                errorMessage = xmlDoc.documentElement.childNodes[0].nodeValue; 
-            }else{ 
-                errorCode = 1; 
-                errorMessage = xmlDoc.getElementsByTagName("parsererror")[0].innerHTML; 
-            } 
-        }else{ 
-            errorCode = 0;
-            errorMessage = "格式正确"; 
-        } 
-    }else{ 
-        errorCode = 2; 
-        errorMessage = "浏览器不支持验证，无法验证xml正确性"; 
-    } 
-    return { 
-        "errorMessage":errorMessage,  
-        "errorCode":errorCode 
-    };
-} 
 </script>
 </body>
 </html>

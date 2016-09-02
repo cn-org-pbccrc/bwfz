@@ -2,10 +2,15 @@ package org.openkoala.gqc.infra.util;
 
 import java.io.*;  
 public class ReadAppointedLine {
+	public static void main(String[] args) {  
+        int lineNumber = 2;  
+        File sourceFile = new File("C://Users//apple//Desktop//messageBag.txt");  
+    }        
+
     public static String readAppointedLineNumber(File sourceFile, int lineNumber, int totalLines) throws IOException {  
-    	InputStream fis = new FileInputStream(sourceFile); //创建文件输入流
-    	InputStreamReader isr = new InputStreamReader(fis); //指定读取流为GBK编码格式
-    	BufferedReader in = new BufferedReader(isr); //创建字符缓存输入流
+    	FileInputStream fis = new FileInputStream(sourceFile); //创建文件输入流
+    	   InputStreamReader isr = new InputStreamReader(fis,"utf-8"); //指定读取流为GBK编码格式
+    	   BufferedReader in = new BufferedReader(isr); //创建字符缓存输入流
     	//FileReader in = new FileReader(sourceFile);  
     	LineNumberReader reader = new LineNumberReader(in);  
         String s = "";  
@@ -27,7 +32,8 @@ public class ReadAppointedLine {
         
         reader.close();  
         in.close(); 
-        return s.toString();     
+        return s;
+        
     }  
 
     public static int getTotalLines(File file) throws IOException {  

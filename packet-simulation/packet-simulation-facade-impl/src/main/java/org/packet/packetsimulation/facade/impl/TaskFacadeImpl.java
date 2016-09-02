@@ -17,8 +17,6 @@ import org.openkoala.koala.commons.InvokeResult;
 import org.packet.packetsimulation.facade.dto.*;
 import org.packet.packetsimulation.facade.impl.assembler.TaskAssembler;
 import org.packet.packetsimulation.facade.TaskFacade;
-import org.packet.packetsimulation.facade.TaskPacketFacade;
-import org.packet.packetsimulation.application.MissionApplication;
 import org.packet.packetsimulation.application.TaskApplication;
 import org.packet.packetsimulation.application.TaskPacketApplication;
 import org.packet.packetsimulation.core.domain.*;
@@ -31,12 +29,6 @@ public class TaskFacadeImpl implements TaskFacade {
 	
 	@Inject
 	private TaskPacketApplication  taskPacketApplication;
-	
-	@Inject
-	private MissionApplication  missionApplication;
-	
-	@Inject
-	private TaskPacketFacade  taskPacketFacade;
 
 	private QueryChannelService queryChannel;
 
@@ -51,11 +43,9 @@ public class TaskFacadeImpl implements TaskFacade {
 		return InvokeResult.success(TaskAssembler.toDTO(application.getTask(id)));
 	}
 	
-	public InvokeResult creatTask(TaskDTO taskDTO, Long missionId) {
-		Task task = TaskAssembler.toEntity(taskDTO);		
-		Mission mission = missionApplication.getMission(missionId);
+	public InvokeResult creatTask(TaskDTO taskDTO) {
+		Task task = TaskAssembler.toEntity(taskDTO);
 		task.setTaskFrom(0);
-		task.setMission(mission);
 		application.creatTask(task);
 		return InvokeResult.success();
 	}
@@ -84,19 +74,6 @@ public class TaskFacadeImpl implements TaskFacade {
 		return InvokeResult.success();
 	}
 	
-	public InvokeResult removeAllTasks(Long[] ids, String savePath) {
-		for (Long id : ids) {
-			Task task = application.getTask(id);
-			List<Long> taskPacketIds = findTaskPacketIdsByTaskId(id);
-			taskPacketFacade.removeTaskPackets(taskPacketIds.toArray(new Long[taskPacketIds.size()]), savePath);
-			if(task.getTaskFrom() == 0){
-				deleteFile(new File(savePath + id));
-				application.removeTask(task);
-			}
-		}
-		return InvokeResult.success();
-	}
-	
 	private void deleteFile(File file) {  
 		if (file.exists()) {//判断文件是否存在  
 			if (file.isFile()) {//判断是否是文件  
@@ -113,19 +90,28 @@ public class TaskFacadeImpl implements TaskFacade {
 		}  
 	}  
 	
+	@SuppressWarnings("unchecked")
+	private List<TaskPacket> findTaskPacketsByTaskId(Long taskId){
+		List<Object> conditionVals = new ArrayList<Object>();
+	   	StringBuilder jpql = new StringBuilder("select _taskPacket from TaskPacket _taskPacket  where 1=1 ");
+	   	
+	   	if (taskId != null ) {
+	   		jpql.append(" and _taskPacket.task.id = ? ");
+	   		conditionVals.add(taskId);
+	   	}
+	   	List<TaskPacket> taskPacketList = getQueryChannelService().createJpqlQuery(jpql.toString()).setParameters(conditionVals).list();
+	   	return taskPacketList;
+	}
+	
 	public List<TaskDTO> findAllTask() {
 		return TaskAssembler.toDTOs(application.findAllTask());
 	}
 	
-	public Page<TaskDTO> pageQueryTask(TaskDTO queryVo, int currentPage, int pageSize, String currentUserId, Long missionId) {
+	public Page<TaskDTO> pageQueryTask(TaskDTO queryVo, int currentPage, int pageSize, String currentUserId) {
 		List<Object> conditionVals = new ArrayList<Object>();
 	   	StringBuilder jpql = new StringBuilder("select _task from Task _task   where 1=1 ");
 	   	jpql.append(" and _task.taskFrom = ?");
 	   	conditionVals.add(0);
-	   	if (missionId != null) {
-	   		jpql.append(" and _task.mission.id = ?");
-	   		conditionVals.add(missionId);
-	   	}
 	   	if (queryVo.getTaskName() != null && !"".equals(queryVo.getTaskName())) {
 	   		jpql.append(" and _task.taskName like ?");
 	   		conditionVals.add(MessageFormat.format("%{0}%", queryVo.getTaskName()));
@@ -168,29 +154,5 @@ public class TaskFacadeImpl implements TaskFacade {
         return new Page<TaskDTO>(pages.getStart(), pages.getResultCount(),pageSize, TaskAssembler.toDTOs(pages.getData()));
 	}
 	
-	@SuppressWarnings("unchecked")
-	private List<TaskPacket> findTaskPacketsByTaskId(Long taskId){
-		List<Object> conditionVals = new ArrayList<Object>();
-	   	StringBuilder jpql = new StringBuilder("select _taskPacket from TaskPacket _taskPacket  where 1=1 ");
-	   	
-	   	if (taskId != null ) {
-	   		jpql.append(" and _taskPacket.task.id = ? ");
-	   		conditionVals.add(taskId);
-	   	}
-	   	List<TaskPacket> taskPacketList = getQueryChannelService().createJpqlQuery(jpql.toString()).setParameters(conditionVals).list();
-	   	return taskPacketList;
-	}
 	
-	@SuppressWarnings("unchecked")
-	private List<Long> findTaskPacketIdsByTaskId(Long taskId){
-		List<Object> conditionVals = new ArrayList<Object>();
-	   	StringBuilder jpql = new StringBuilder("select _taskPacket.id from TaskPacket _taskPacket  where 1=1 ");
-	   	
-	   	if (taskId != null ) {
-	   		jpql.append(" and _taskPacket.task.id = ? ");
-	   		conditionVals.add(taskId);
-	   	}
-	   	List<Long> taskPacketIds = getQueryChannelService().createJpqlQuery(jpql.toString()).setParameters(conditionVals).list();
-	   	return taskPacketIds;
-	}
 }

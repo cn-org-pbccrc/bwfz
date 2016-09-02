@@ -9,8 +9,6 @@
 	<input type="hidden" id="versionID" name="version" />
 	<input type="hidden" id="dataTypeID" name="dataType" />
 	<input type="hidden" id="recordTypeID" name="recordType" />
-	<input type="hidden" id="mesgNumID" name="mesgNum" />
-	<input type="hidden" id="missionIdID" name="missionId" />
 	 				<div class="form-group">
                     <label class="col-lg-3 control-label">报文名称:</label>
 	                    <div class="col-lg-9">
@@ -38,12 +36,6 @@
                      </div>
                      </div>
                      </div>
-                     		         <div class="form-group">
-                    <label class="col-lg-3 control-label">业务类型:</label>
-	                    <div class="col-lg-9">
-                           <input name="bizType" style="display:inline; width:94%;" class="form-control"  type="text"  id="bizTypeID" />
-			    </div>
-	</div>
 <!-- 	         <div class="form-group"> -->
 <!--                     <label class="col-lg-3 control-label">记录类型:</label> -->
 <!-- 	                    <div class="col-lg-9"> -->

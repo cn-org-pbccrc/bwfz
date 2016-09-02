@@ -20,7 +20,6 @@ public class PacketAssembler {
      	    result.setPacketName(packet.getPacketName());
      	    result.setFileVersion(packet.getFileVersion());
      	    result.setDataType(packet.getDataType());
-     	    result.setBizType(packet.getBizType());
      	    result.setRecordType(packet.getRecordType());
      	    result.setMesgNum(packet.getMesgCountOfPacket(packet));
      	    result.setReserve(packet.getReserve());
@@ -29,7 +28,6 @@ public class PacketAssembler {
      	    	result.setOrigSendDate(new Date(packet.getOrigSendDate().getTime()));
      	    }     	   	
      	    result.setOrigSender(packet.getOrigSender());
-     	    result.setMissionId(packet.getMission().getId());
      	return result;
 	 }
 	
@@ -54,7 +52,6 @@ public class PacketAssembler {
         result.setPacketName(packetDTO.getPacketName());
         result.setFileVersion(packetDTO.getFileVersion());
   	    result.setDataType(packetDTO.getDataType());
-  	    result.setBizType(packetDTO.getBizType());
   	    result.setRecordType(packetDTO.getRecordType());
   	    result.setMesgNum(packetDTO.getMesgNum());
   	    result.setReserve(packetDTO.getReserve()); 

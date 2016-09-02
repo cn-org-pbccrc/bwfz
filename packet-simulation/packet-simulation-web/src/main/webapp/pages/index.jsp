@@ -271,100 +271,10 @@
                         }
                     }
                 });
+                // ------------ switchOverRoleOfUser end ---------------
             });
-            // ------------ switchOverRoleOfUser end ---------------
-            $('#userManager').find("li[data-target=#missionsToggle]").click(function(){
-                $.get(contextPath + '/pages/auth/mission-switch.jsp').done(function(html){
-                    //var dialog = $(data);
-                    var dialog = $('<div class="modal fade"><div class="modal-dialog" style="width:1040px;">'
-						+'<div class="modal-content"><div class="modal-header"><button type="button" class="close" '
-			    		+'data-dismiss="modal" aria-hidden="true">&times;</button>'
-			    		+'<h4 class="modal-title">新增</h4></div><div class="modal-body">'
-			    		+'<p>One fine body&hellip;</p></div></div>'
-			    		+'</div></div>');
-                    dialog.modal({
-                        keyboard: false
-                    }).on({
-                        'hidden.bs.modal': function(){
-                            $(this).remove();
-                            
-                        },
-
-                        'shown.bs.modal': function(){ //弹窗初始化完毕后，初始化url选择表格
-                            var columns = [{
-                                title : "项目名称",
-                                name : "projectName",
-                                width : 120
-                            }, {
-                                title : "项目编码",
-                                name : "projectCode",
-                                width : 90
-                            }, {
-                                title : "项目经理",
-                                name : "projectManagerName",
-                                width : 90
-                            }, {
-                                title : "项目开始时间",
-                                name : "projectstartDate",
-                                width : 120
-                            }, {
-                                title : "项目结束时间",
-                                name : "projectendDate",
-                                width : 120
-                            }, {
-                                title : "备注",
-                                name : "projectRemark",
-                                width : 120
-                            }];
-
-                            dialog.find('.selectProjectGrid').grid({
-                                identity: 'id',
-                                columns: columns,
-                                url: contextPath + '/Project/pagingQueryProjectsByCurrentUser.koala'
-                            });
-                        }
-
-                    }).find('.modal-body').html(html);
-                    //兼容IE8 IE9
-                    if(window.ActiveXObject){
-                        if(parseInt(navigator.userAgent.toLowerCase().match(/msie ([\d.]+)/)[1]) < 10){
-                            dialog.trigger('shown.bs.modal');
-                        }
-                    }
-                    dialog.find('#sub').on('click',function(){
-                        var items = dialog.find('.selectMissionGrid').data('koala.grid').selectedRows();
-                        if(items.length == 0){
-                            dialog.find('.selectMissionGrid').message({
-                                type: 'warning',
-                                content: '请选择要切换的任务'
-                            });
-                            return;
-                        }
-                        if(items.length>1){
-                            dialog.find('.selectMissionGrid').message({
-                                type:'warning',
-                                content:'只能选择一个任务'
-                            });
-                            return;
-                        }
-                        $.post(contextPath + '/auth/currentUser/switchOverMissionOfUser.koala', "missionId=" + items[0].id,function(data){
-                            if(data.success){
-                                dialog.find('.selectMissionGrid').message({
-                                    type:'success',
-                                    content:'切换任务成功！'
-                                });
-                                window.location.href=contextPath+"/index.koala";
-                            }else{
-                                dialog.find('.selectMissionGrid').message({
-                                    type:'error',
-                                    content:'系统错误！'
-                                });
-                            }
-                        });
-                    });
-                }); 
             
-            });		
+        
         });
         /**
     	 * 显示详细信息
@@ -399,28 +309,14 @@
                         <li data-toggle="modal" data-target="#changeEmailOfUser"><a href="#" class="glyphicon glyphicon-envelope">&nbsp;更改邮箱</a></li>
                         <li data-toggle="modal" data-target="#changeTelePhoneOfUser"><a href="#" class="glyphicon glyphicon-earphone">&nbsp;更改电话</a></li>
                         <li data-toggle='modal' data-target="#rolesToggle"><a href="#" class="glyphicon glyphicon-repeat">&nbsp;切换角色</a></li>
-                        <li data-toggle='modal' data-target="#missionsToggle"><a href="#" class="glyphicon glyphicon-share-alt">&nbsp;切换任务</a></li>
                     </ul>
-                </div>              
+                </div>
                 <!--角色信息-->
                 <div class="btn-group navbar-right">
                     <label for = "roles" class = "user_name">角色: </label>
 	            	<span id="roles" style="font-size: 12px"><ks:user property="roleName" /></span>
                     <ul class="dropdown-menu" id="allRolesId"></ul>
-                </div>        
-                
-                <div class="btn-group navbar-right">
-                    <label for = "missions" class = "user_name">任务: </label>
-	            	<span id="missions" style="font-size: 12px"><ks:user property="missionName" /></span>
-                    &nbsp; &nbsp;
                 </div>
-                
-                <div class="btn-group navbar-right">
-                    <label for = "projects" class = "user_name">项目: </label>
-	            	<span id="projects" style="font-size: 12px"><ks:user property="projectName" /></span>
-                    &nbsp; &nbsp;
-                </div>
-                                  
 	            <!-- 账号信息 -->
 	            <div class="btn-group navbar-right">
                     <span>

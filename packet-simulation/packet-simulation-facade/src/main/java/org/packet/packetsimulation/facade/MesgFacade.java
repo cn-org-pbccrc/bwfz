@@ -70,7 +70,7 @@ public interface MesgFacade {
 	 * @param filePath
 	 * @return
 	 */
-	public InvokeResult createTask(TaskDTO taskDTO, TaskPacketDTO taskPacketDTO, String mesgContent, String oriMesgType, String filePath);
+	public InvokeResult createTask(TaskDTO taskDTO, TaskPacketDTO taskPacketDTO, String mesgContent,String filePath);
 	
 	/**
 	 * 获取发送前文件头内容

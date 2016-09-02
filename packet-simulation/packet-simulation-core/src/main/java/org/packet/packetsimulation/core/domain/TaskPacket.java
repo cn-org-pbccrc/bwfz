@@ -77,12 +77,6 @@ public class TaskPacket extends KoalaAbstractEntity{
 	 */
 	@Column(name = "SELECTED_DATATYPE")
 	private Integer selectedDataType;
-	
-	/**
-	 * 业务类型
-	 */
-	@Column(name = "SELECTED_BIZTYPE")
-	private String selectedBizType;
 
 	/**
 	 * 记录类型
@@ -269,14 +263,6 @@ public class TaskPacket extends KoalaAbstractEntity{
 
 	public void setCreatedBy(String createdBy) {
 		this.createdBy = createdBy;
-	}
-
-	public String getSelectedBizType() {
-		return selectedBizType;
-	}
-
-	public void setSelectedBizType(String selectedBizType) {
-		this.selectedBizType = selectedBizType;
 	}
 
 	@Override

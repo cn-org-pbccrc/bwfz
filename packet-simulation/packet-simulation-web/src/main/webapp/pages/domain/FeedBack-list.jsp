@@ -96,7 +96,7 @@ $(function (){
 	                         	                         	                     { title: '操作', width: 120, render: function (rowdata, name, index)
 	                                 {
 	                                     var param = '"' + rowdata.id + '"';
-	                                     var h = "<a href='javascript:transformMessage(" + param + ")'><span class='glyphicon glyphicon glyphicon-transfer'></span>&nbsp记录转换</a> &nbsp&nbsp  <a href='javascript:openXml(" + param + ")'><span class='glyphicon glyphicon glyphicon-eye-open'></span>&nbsp查看源数据</a>";
+	                                     var h = "<a href='javascript:openDetailsPage(" + param + ")'><span class='glyphicon glyphicon glyphicon-transfer'></span>&nbsp记录转换</a> &nbsp&nbsp  <a href='javascript:openXml(" + param + ")'><span class='glyphicon glyphicon glyphicon-eye-open'></span>&nbsp查看源数据</a>";
 	                                     return h;
 	                                 }
 	                             }
@@ -159,8 +159,7 @@ $(function (){
 	        	+'</div></div>');	    	       	       	     
 	        $.get('<%=path%>/Project-add.jsp').done(function(html){
 	            dialog.modal({
-	                keyboard:false,
-	                backdrop: 'static'
+	                keyboard:false
 	            }).on({
 	                'hidden.bs.modal': function(){
 	                    $(this).remove();
@@ -254,8 +253,7 @@ $(function (){
 	                        }
 	                });
 	                dialog.modal({
-	                    keyboard:false,
-		                backdrop: 'static'
+	                    keyboard:false
 	                }).on({
 	                    'hidden.bs.modal': function(){
 	                        $(this).remove();
@@ -518,13 +516,12 @@ function getPath(obj){
     });
     grid.getGrid().search(params);
 }
-var transformMessage = function(id){
+var openDetailsPage = function(id){
 	var dialog = $('<div class="modal fade"><div class="modal-dialog" style="width:900px;"><div class="modal-content"><div class="modal-header"><button type="button" class="close" data-dismiss="modal" aria-hidden="true">&times;</button><h4 class="modal-title">记录类型转换</h4></div><div class="modal-body"><p>One fine body&hellip;</p></div></div></div></div>');
 	$.get('<%=path%>/FeedBack-view.jsp?id='+id).done(function(html){
 	    dialog.find('.modal-body').html(html);		
-        $.get('${pageContext.request.contextPath}/FeedBack/get/' + id + '.koala?taskPacketId='+taskPacketId).done(function(json){
+        $.get( '${pageContext.request.contextPath}/FeedBack/get/' + id + '.koala?taskPacketId='+taskPacketId).done(function(json){
         	json = json.data;
-        	var oriMesgType = json['mesgType'];
             dialog.find("#content1").html(json['html']);
             if(json['transform']!=''){
             	var obj = eval("("+json['transform']+")");
@@ -552,23 +549,18 @@ var transformMessage = function(id){
                 			var code = obj['modify']['code'];
     						var map = obj.modify.map
     						var flag = JSON.stringify(map);
-                			dialog.find('#transform').append("&nbsp;&nbsp;&nbsp;<div class='radio'><span><input value="+code+" sourceCode="+oriMesgType+" flag="+flag+" catagory="+key+" type='radio'  name='transform' style='opacity: 0;'></span></div><span>修改</span>");
+                			dialog.find('#transform').append("&nbsp;&nbsp;&nbsp;<div class='radio'><span><input value="+code+" flag="+flag+" catagory="+key+" type='radio'  name='transform' style='opacity: 0;'></span></div><span>修改</span>");
                 			break;
                 	}
     			}
                 var transform = dialog.find('[name="transform"]').first();
              	transform.parent().addClass("checked");
-             	transform.attr("checked","checked");          	
-             	var transform = $('[name="transform"]');
-            	transform.on('click', function() {
-            		transform.parent().removeClass('checked');
-            		$(this).parent().addClass('checked');
-            	});
+             	transform.attr("checked","checked");
             }else{
             	dialog.find('#transform').append("<a>无</a>");
             	dialog.find("#next").attr('class','disabled');
-            }
-            dialog.find('#sub').click(function(){
+            }         	
+			dialog.find('#sub').click(function(){
 				if (!Validation.notNull(dialog, dialog.find('#taskNameID'), dialog.find('#taskNameID').val(), '请输入任务名称')) {
 	    			return false;
 	    	  	}
@@ -576,12 +568,11 @@ var transformMessage = function(id){
 	    			return false;
 	    	  	}
 				var data = [{ name: 'taskName', value: dialog.find("#taskNameID").val()},
-				            { name: 'selectedRecordType', value: $("input[name='transform']:checked").val()},
+				            { name: 'selectedRecordType', value: code},
 				            { name: 'sendChannel', value: dialog.find("#sendChannelID").val()},
-				            { name: 'encryption', value: $("input[name='encryption']:checked").val()},
-				            { name: 'compression', value: $("input[name='compression']:checked").val()},
-				            { name: 'mesgContent', value: dialog.find("#mesgContentID").val()},
-				            { name: 'oriMesgType', value: oriMesgType}
+				            { name: 'encryption', value: dialog.find('[name="encryption"]').val()},
+				            { name: 'compression', value: dialog.find('[name="compression"]').val()},
+				            { name: 'mesgContent', value: dialog.find("#mesgContentID").val()}
 				            ];
      	    	$.post('${pageContext.request.contextPath}/Mesg/send.koala', data).done(function(result){	     
      	        	if(result.success ){
@@ -617,8 +608,7 @@ var openXml = function(id){
         	   dialog.find("#xmlID").html("<xmp>"+json+"</xmp>");
            });
             dialog.modal({
-                keyboard:false,
-                backdrop: 'static'
+                keyboard:false
             }).on({
                 'hidden.bs.modal': function(){
                     $(this).remove();

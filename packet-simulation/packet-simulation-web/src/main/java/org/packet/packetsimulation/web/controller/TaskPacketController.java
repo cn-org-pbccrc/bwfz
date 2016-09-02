@@ -82,9 +82,8 @@ public class TaskPacketController {
 	@ResponseBody
 	@RequestMapping("/pageJson")
 	public Page pageJson(TaskPacketDTO taskPacketDTO, @RequestParam int page, @RequestParam int pagesize) {
-		Long missionId = CurrentUser.getMissionId();
 		taskPacketDTO.setCreatedBy(CurrentUser.getUserAccount());
-		Page<TaskPacketDTO> all = taskPacketFacade.pageQueryTaskPacket(taskPacketDTO, page, pagesize, 2, missionId);
+		Page<TaskPacketDTO> all = taskPacketFacade.pageQueryTaskPacket(taskPacketDTO, page, pagesize, 2);
 		return all;
 	}
 	

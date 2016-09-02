@@ -20,7 +20,7 @@
 		<repository>
 			<id>nexus</id>
 			<name>Team Nexus Repository</name>
-			<url>http://192.168.62.162:8081/nexus/content/groups/public</url>
+			<url>http://192.168.60.34:8081/nexus/content/groups/public</url>
 		</repository>
 	</repositories>
 	<pluginRepositories>

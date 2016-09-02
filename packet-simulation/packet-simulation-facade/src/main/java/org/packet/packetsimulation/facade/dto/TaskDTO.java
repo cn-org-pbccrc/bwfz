@@ -9,26 +9,30 @@ public class TaskDTO implements Serializable {
 	private Long id;
 
 	private int version;
+
 			
 	private String setTime;
+	
 			
 	private String sendChannel;
-				
+	
+			
 	private Date taskCreatedTime;
 	
 	private Date taskCreatedTimeEnd;
 			
 	private String taskStatus;
-				
+	
+			
 	private String packetNum;
+	
 			
 	private String taskCreator;
-					
+		
+				
 	private String taskName;
 		
-	private Integer taskFrom;	
-	
-	private Long missionId;
+	private Integer taskFrom;		
 	
 	public void setSetTime(String setTime) { 
 		this.setTime = setTime;
@@ -37,7 +41,9 @@ public class TaskDTO implements Serializable {
 	public String getSetTime() {
 		return this.setTime;
 	}
-
+		
+			
+	
 	public void setSendChannel(String sendChannel) { 
 		this.sendChannel = sendChannel;
 	}
@@ -126,14 +132,6 @@ public class TaskDTO implements Serializable {
 
 	public void setTaskFrom(Integer taskFrom) {
 		this.taskFrom = taskFrom;
-	}
-
-	public Long getMissionId() {
-		return missionId;
-	}
-
-	public void setMissionId(Long missionId) {
-		this.missionId = missionId;
 	}
 
 	@Override

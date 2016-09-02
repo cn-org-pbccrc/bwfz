@@ -8,7 +8,6 @@ import javax.persistence.Entity;
 import javax.persistence.Table;
 
 import org.openkoala.koala.commons.domain.KoalaAbstractEntity;
-import org.openkoala.security.core.domain.User;
 
 /**
  * @author hbikai
@@ -111,13 +110,6 @@ public class MesgType extends KoalaAbstractEntity{
 		this.countTag = countTag;
 	}
 
-    public static MesgType getByCode(String code) {
-        return getRepository()
-                .createCriteriaQuery(MesgType.class)
-                .eq("code", code)
-                .singleResult();
-    }
-	
 	@Override
 	public String[] businessKeys() {
 		return new String[] { "mesgType"};

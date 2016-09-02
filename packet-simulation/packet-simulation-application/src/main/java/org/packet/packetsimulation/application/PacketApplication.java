@@ -4,11 +4,14 @@ package org.packet.packetsimulation.application;
 import java.util.List;
 import java.util.Set;
 
+import org.packet.packetsimulation.core.domain.FileName;
 import  org.packet.packetsimulation.core.domain.Packet;
 
 public interface PacketApplication {
 
 	public Packet getPacket(Long id);
+	
+	public FileName getFileName(Long id);
 	
 	public void creatPacket(Packet packet);
 	
@@ -18,9 +21,11 @@ public interface PacketApplication {
 	
 	public void removePackets(Set<Packet> packets);
 	
-	public void removePackets(List<Packet> packets);
-	
 	public List<Packet> findAllPacket();
+	
+	public void creatFileName(FileName fileName);
+	
+	public void updateFileName(FileName fileName);
 	
 }
 

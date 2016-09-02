@@ -114,7 +114,7 @@ function initFun(){
 	                        {content: '<button class="btn btn-info" type="button"><span class="glyphicon glyphicon-arrow-up"><span>上移</button>', action: 'up'},
 	                        {content: '<button class="btn btn-info" type="button"><span class="glyphicon glyphicon-arrow-down"><span>下移</button>', action: 'down'},
 	                        {content: '<button class="btn btn-warning" type="button"><span class="glyphicon glyphicon-refresh"><span>刷新</button>', action: 'fresh'},
-// 	                        {content: '<button class="btn btn-primary" type="button"><span class="glyphicon glyphicon-log-out"><span>发送</button>', action: 'send'},
+	                        {content: '<button class="btn btn-primary" type="button"><span class="glyphicon glyphicon-log-out"><span>发送</button>', action: 'send'},
 	                        {content: '<button class="btn btn-success" type="button"><span class="glyphicon glyphicon-search"><span>高级搜索<span class="caret"></span></button>', action: 'search'}
 	                    ],
 	                url:"${pageContext.request.contextPath}/TaskPacket/pageJson/" + taskId + ".koala",
@@ -145,8 +145,7 @@ function initFun(){
                       	                         						                return date;
                       	                         						             }	
 	                     	                         	                        },
-	                     	                         	                        { title: '业务类型', name: 'selectedBizType', width: width/3},
-	                     	                         	                        { title: '数据类型', name: 'selectedDataType', width: width/3,
+	                     	                         	                        { title: '数据类型', name: 'selectedDataType', width: 3*width/4,
 	                     	                         	                        	render: function(item, name, index){
                      	                         						                 if(item[name] == '0'){
                      	                         						                     return '正常';
@@ -278,8 +277,7 @@ function initFun(){
 	        	+'</div></div>');
 	        $.get('<%=path%>/TaskPacket-add.jsp').done(function(html){
 	            dialog.modal({
-	                keyboard:false,
-	                backdrop: 'static'
+	                keyboard:false
 	            }).on({
 	                'hidden.bs.modal': function(){
 	                    $(this).remove();
@@ -335,7 +333,6 @@ function initFun(){
    						            return date;
    						        }	
 	    	                },
-	    	                { title:'业务类型', name: 'bizType', width: 60},
 	    	                { title:'记录类型', name:'recordType', width: 90},
 	    	                { title:'数据类型', name:'dataType', width: 120,
 	    	                    render: function(item, name, index){
@@ -498,6 +495,7 @@ function initFun(){
 	               $.get('${pageContext.request.contextPath}/TaskPacket/get/' + id + '.koala').done(function(json){
 	                       json = json.data;                     
 	                        var elm;
+	                        //packetFrom = json['packetFrom'];	                                                
 	                        for(var index in json){	                            	
 	                            elm = dialog.find('#'+ index + 'ID');
 	                            if(elm.hasClass('select')){
@@ -516,8 +514,7 @@ function initFun(){
 							selectedOrigSendDate = date;
 	                });
 	                dialog.modal({
-	                    keyboard:false,
-		                backdrop: 'static'
+	                    keyboard:false
 	                }).on({
 	                    'hidden.bs.modal': function(){
 	                        $(this).remove();
@@ -607,8 +604,7 @@ function initFun(){
                 'taskId' :  taskId
             },function(html){
 	            dialog.modal({
-	                keyboard:false,
-	                backdrop: 'static'
+	                keyboard:false
 	            }).on({
 	                'hidden.bs.modal': function(){
 	                    $(this).remove();
@@ -797,8 +793,7 @@ var openDetailsPage = function(id){
 			            }
                });
                 dialog.modal({
-                    keyboard:false,
-	                backdrop: 'static'
+                    keyboard:false
                 }).on({
                     'hidden.bs.modal': function(){
                         $(this).remove();
