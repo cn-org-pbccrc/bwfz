@@ -31,10 +31,7 @@ import org.packet.packetsimulation.core.domain.*;
 public class MissionFacadeImpl implements MissionFacade {
 
 	@Inject
-	private MissionApplication  application;
-	
-	@Inject
-	private PacketApplication  packetApplication;
+	private MissionApplication  application;	
 	
 	@Inject
 	private ProjectApplication  projectApplication;
