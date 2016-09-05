@@ -16,14 +16,7 @@ public class ProjectDTO implements Serializable {
 				
 		private String projectManager;
 		
-        private String projectManagerName;
-		
-		public String getProjectManagerName() {
-			return projectManagerName;
-		}
-		public void setProjectManagerName(String projectManagerName) {
-			this.projectManagerName = projectManagerName;
-		}
+        private String projectManagerName;		
 				
 		private Date projectstartDate;
 		
@@ -48,7 +41,12 @@ public class ProjectDTO implements Serializable {
 		return this.projectCode;
 	}
 		
-			
+	public String getProjectManagerName() {
+		return projectManagerName;
+	}
+	public void setProjectManagerName(String projectManagerName) {
+		this.projectManagerName = projectManagerName;
+	}		
 	
 	public void setProjectManager(String projectManager) { 
 		this.projectManager = projectManager;

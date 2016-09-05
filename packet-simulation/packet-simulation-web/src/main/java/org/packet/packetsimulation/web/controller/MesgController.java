@@ -1,43 +1,40 @@
 package org.packet.packetsimulation.web.controller;
 
 import java.io.ByteArrayInputStream;
-import java.io.ByteArrayOutputStream;
 import java.io.File;
-import java.io.FileInputStream;
-import java.io.FileNotFoundException;
-import java.io.IOException;
-import java.io.InputStream;
-import java.io.OutputStream;
 import java.text.SimpleDateFormat;
 import java.util.Date;
 import java.util.HashMap;
 import java.util.Map;
 
-import javax.imageio.stream.FileImageInputStream;
 import javax.inject.Inject;
 import javax.servlet.http.HttpServletRequest;
-import javax.servlet.http.HttpServletResponse;
-import javax.servlet.http.HttpSession;
+import javax.xml.parsers.DocumentBuilder;
+import javax.xml.parsers.DocumentBuilderFactory;
+import javax.xml.parsers.ParserConfigurationException;
 
 import org.dayatang.utils.Page;
 import org.openkoala.koala.commons.InvokeResult;
+import org.openkoala.security.org.facade.SecurityOrgAccessFacade;
+import org.openkoala.security.org.facade.dto.EmployeeUserDTO;
 import org.openkoala.security.shiro.CurrentUser;
 import org.packet.packetsimulation.facade.MesgFacade;
 import org.packet.packetsimulation.facade.MesgTypeFacade;
+import org.packet.packetsimulation.facade.TaskFacade;
 import org.packet.packetsimulation.facade.dto.MesgDTO;
 import org.packet.packetsimulation.facade.dto.MesgTypeDTO;
 import org.packet.packetsimulation.facade.dto.TaskDTO;
 import org.packet.packetsimulation.facade.dto.TaskPacketDTO;
 import org.springframework.beans.propertyeditors.CustomDateEditor;
 import org.springframework.stereotype.Controller;
-import org.springframework.ui.Model;
 import org.springframework.web.bind.WebDataBinder;
 import org.springframework.web.bind.annotation.InitBinder;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RequestMethod;
 import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.ResponseBody;
+import org.w3c.dom.Document;
+import org.xml.sax.InputSource;
 
 @Controller
 @RequestMapping("/Mesg")
@@ -147,55 +144,6 @@ public class MesgController {
 		return mesgFacade.getMesgForUpdate(id);
 	}
 	
-	 public byte[] image2byte(String path){
-		    byte[] data = null;
-		    FileImageInputStream input = null;
-		    try {
-		      input = new FileImageInputStream(new File(path));
-		      ByteArrayOutputStream output = new ByteArrayOutputStream();
-		      byte[] buf = new byte[1024];
-		      int numBytesRead = 0;
-		      while ((numBytesRead = input.read(buf)) != -1) {
-		      output.write(buf, 0, numBytesRead);
-		      }
-		      data = output.toByteArray();
-		      output.close();
-		      input.close();
-		    }
-		    catch (FileNotFoundException ex1) {
-		      ex1.printStackTrace();
-		    }
-		    catch (IOException ex1) {
-		      ex1.printStackTrace();
-		    }
-		    return data;
-		  }
-	 
-	 @RequestMapping(value="/toLookImage",method = RequestMethod.GET)  
-     public void lookImage(HttpServletRequest request,HttpServletResponse response,Model model){  
-         HttpSession seesion = request.getSession();  
-//        Photo photo=photoService.getPhotoById(new BigDecimal(id));  
-        byte[] data= image2byte(request.getSession().getServletContext().getRealPath("/images/global.logo.png"));
-        response.setContentType("img/jpeg");  
-        response.setCharacterEncoding("utf-8");  
-        try {  
-              
-            OutputStream outputStream=response.getOutputStream();  
-            InputStream in=new ByteArrayInputStream(data);  
-              
-            int len=0;  
-            byte[]buf=new byte[1024];  
-            while((len=in.read(buf,0,1024))!=-1){  
-                outputStream.write(buf, 0, len);  
-            }  
-            outputStream.close();  
-        } catch (IOException e) {  
-            // TODO Auto-generated catch block  
-            e.printStackTrace();  
-        }  
-          
-     }
-	
 	/**
 	 * 初始化发送配置界面
 	 * @param ids 记录id
@@ -212,8 +160,8 @@ public class MesgController {
 		for (int i = 0; i < value.length; i++) {
 			idArrs[i] = Long.parseLong(value[i]);
 		}
-		MesgTypeDTO mesgTypeCode=(MesgTypeDTO) mesgTypeFacade.getMesgType(mesgType).getData();
-        String mesgContent=mesgFacade.getMesgForSend(idArrs, mesgTypeCode.getCode(),CurrentUser.getUserAccount());
+		MesgTypeDTO mesgTypeCode = (MesgTypeDTO) mesgTypeFacade.getMesgType(mesgType).getData();
+        String mesgContent = mesgFacade.getMesgForSend(idArrs, mesgTypeCode.getCode(),CurrentUser.getUserAccount());
         map.put("mesgContent", mesgContent);
         map.put("mesgType", mesgTypeCode.getCode());
         map.put("bizType", mesgTypeCode.getBizType());
@@ -248,17 +196,22 @@ public class MesgController {
 	 */
 	@ResponseBody
 	@RequestMapping("/send")
-	public InvokeResult send(TaskDTO taskDTO, TaskPacketDTO taskPacketDTO, @RequestParam String mesgContent, HttpServletRequest request) {
+	public InvokeResult send(TaskDTO taskDTO, TaskPacketDTO taskPacketDTO, @RequestParam String mesgContent, @RequestParam String oriMesgType, HttpServletRequest request) {
+		Long missionId = CurrentUser.getMissionId();
+		if(missionId == null){
+			return InvokeResult.failure("暂未分配任务,不能快速发送");
+		}
 		String ctxPath = request.getSession().getServletContext().getRealPath("/") + File.separator + "uploadFiles" + File.separator + "easySendFiles" + File.separator;
 		File file = new File(ctxPath);    	
 		if (!file.exists()) {    	
 			file.mkdirs();    	
 		}	
 		String taskCreator=CurrentUser.getUserAccount();
+		taskDTO.setMissionId(missionId);
 		taskDTO.setTaskCreator(taskCreator);
 		taskDTO.setTaskCreatedTime(new Date());
 		taskPacketDTO.setCreatedBy(taskCreator);
-		mesgFacade.createTask(taskDTO, taskPacketDTO, mesgContent,ctxPath);
+		mesgFacade.createTask(taskDTO, taskPacketDTO, mesgContent, oriMesgType, ctxPath);
 		return InvokeResult.success();
 	}
 	

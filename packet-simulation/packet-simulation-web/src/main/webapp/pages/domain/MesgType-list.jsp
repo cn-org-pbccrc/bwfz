@@ -154,7 +154,8 @@ function initFun(){
 	        	+'</div></div>');
 	    	$.get('<%=path%>/MesgType-add.jsp').done(function(html){
 	        	dialog.modal({
-	            	keyboard:false
+	            	keyboard:false,
+	                backdrop: 'static'
 	        	}).on({
                 	'hidden.bs.modal': function(){
                     	$(this).remove();
@@ -170,15 +171,12 @@ function initFun(){
 //             	if (!Validation.checkByRegExp(dialog, dialog.find('#codeID'), '^[0-9]{4}$', dialog.find('#codeID').val(), '类型代码应为4位数字')) {
 //  			    	return false;
 //  				}
-            	if (!Validation.notNull(dialog, dialog.find('#bizTypeID'), dialog.find('#mesgTypeID').val(), '请输入业务类型')) {
-	    			return false;
-	    	    }
-            	if (!Validation.checkByRegExp(dialog, dialog.find('#bizTypeID'), '^[0-9]{2}$', dialog.find('#bizTypeID').val(), '业务类型应为2位数字')) {
- 			    	return false;
- 				}
-            	if (!Validation.notNull(dialog, dialog.find('#transformID'), dialog.find('#transformID').val(), '请输入转换模板')) {
-	    			return false;
-	    	    }
+//             	if (!Validation.notNull(dialog, dialog.find('#bizTypeID'), dialog.find('#bizTypeID').val(), '请输入业务类型')) {
+// 	    			return false;
+// 	    	    }
+//             	if (!Validation.checkByRegExp(dialog, dialog.find('#bizTypeID'), '^[0-9]{2}$', dialog.find('#bizTypeID').val(), '业务类型应为2位数字')) {
+//  			    	return false;
+//  				}
             	if (!Validation.notNull(dialog, dialog.find('#xmlID'), dialog.find('#xmlID').val(), '请输入基础模板')) {
 	    			return false;
 	    	    }
@@ -218,7 +216,8 @@ function initFun(){
                 	}
             	});
             	dialog.modal({
-                	keyboard:false
+                	keyboard:false,
+	                backdrop: 'static'
             	}).on({
                 	'hidden.bs.modal': function(){
                     	$(this).remove();
@@ -232,15 +231,12 @@ function initFun(){
 //                 	if (!Validation.checkByRegExp(dialog, dialog.find('#codeID'), '^[0-9]{4}$', dialog.find('#codeID').val(), '类型代码应为4位数字')) {
 //      			    	return false;
 //      				}
-                	if (!Validation.notNull(dialog, dialog.find('#bizTypeID'), dialog.find('#bizTypeID').val(), '请输入业务类型')) {
-    	    			return false;
-    	    	    }
-                	if (!Validation.checkByRegExp(dialog, dialog.find('#bizTypeID'), '^[0-9]{2}$', dialog.find('#bizTypeID').val(), '业务类型应为2位数字')) {
-     			    	return false;
-     				}
-                	if (!Validation.notNull(dialog, dialog.find('#transformID'), dialog.find('#transformID').val(), '请输入转换模板')) {
-    	    			return false;
-    	    	    }
+//                 	if (!Validation.notNull(dialog, dialog.find('#bizTypeID'), dialog.find('#bizTypeID').val(), '请输入业务类型')) {
+//     	    			return false;
+//     	    	    }
+//                 	if (!Validation.checkByRegExp(dialog, dialog.find('#bizTypeID'), '^[0-9]{2}$', dialog.find('#bizTypeID').val(), '业务类型应为2位数字')) {
+//      			    	return false;
+//      				}
                 	if (!Validation.notNull(dialog, dialog.find('#xmlID'), dialog.find('#xmlID').val(), '请输入基础模板')) {
     	    			return false;
     	    	    }
@@ -392,7 +388,8 @@ var openDetailsPageOfMesgType = function(id){
             }
         });
         dialog.modal({
-            keyboard:false
+            keyboard:false,
+            backdrop: 'static'
         }).on({
             'hidden.bs.modal': function(){
                 $(this).remove();

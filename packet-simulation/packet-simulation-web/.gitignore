@@ -2,3 +2,8 @@
 /mem.lock.db
 /mem.h2.db
 *.tmp
+/mem.lock.db
+/mem.h2.db
+/.classpath
+/bin/
+

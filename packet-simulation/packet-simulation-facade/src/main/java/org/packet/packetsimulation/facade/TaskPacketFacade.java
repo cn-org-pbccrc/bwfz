@@ -33,8 +33,8 @@ public interface TaskPacketFacade {
 	
 	public List<TaskPacketDTO> findAllTaskPacket();
 	
-	public Page<TaskPacketDTO> pageQueryTaskPacket(TaskPacketDTO taskPacket, int currentPage, int pageSize,Long taskId);
+	public Page<TaskPacketDTO> pageQueryTaskPacket(TaskPacketDTO taskPacket, int currentPage, int pageSize, Long taskId);
 	
-	public Page<TaskPacketDTO> pageQueryTaskPacket(TaskPacketDTO queryVo, int currentPage, int pageSize, int taskPacketFrom);
+	public Page<TaskPacketDTO> pageQueryTaskPacket(TaskPacketDTO queryVo, int currentPage, int pageSize, int taskPacketFrom, Long missionId);
 }
 

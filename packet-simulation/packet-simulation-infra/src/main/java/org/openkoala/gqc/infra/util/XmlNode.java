@@ -200,8 +200,7 @@ public class XmlNode implements Serializable, Cloneable{
 //		return result;
 //	}
 	
-	public String toHtmlTabString(String templateName){
-		
+	public String toHtmlTabString(String templateName){		
 		String result = UL_TAG;
 		String contentStr="<div class='tab-content info' id='myTabContent'>";
 		String tabClass="active";
@@ -209,16 +208,17 @@ public class XmlNode implements Serializable, Cloneable{
 		List<XmlNode> tabNodes=nodes.get(0).getNodes();
 		if(null!=tabNodes && tabNodes.size()>0){
 			for(XmlNode xmlNode : tabNodes){
+				String tagName = xmlNode.getTagName();
 				List<XmlNode> childNode = xmlNode.getNodes();
-				result = result + "<li class='"+tabClass+"'><a data-toggle='tab' href='#"+xmlNode.getTagName()+"'>"+JSON.parseObject(PropertiesManager.getProperties(xmlNode.getTagName(),templateName)).getString("0")+"</a></li>";
 				tabClass="";
 				if(null!= childNode && childNode.size()>0){
-					contentStr=contentStr+"<div id='"+xmlNode.getTagName()+"' class='"+contentClass+"'>";
+					contentStr=contentStr+"<div id='"+tagName+"' class='"+contentClass+"'>";
 					contentClass="tab-pane fade";
 					contentStr=contentStr+TAB_TABLE_TAG + TR_TAG;
 					contentStr=contentStr+getTabContents(childNode,null,templateName);
 					contentStr=contentStr+TABLE_ENDTAG+DIV_ENDTAG;
 				}
+				result = result + "<li class='"+tabClass+"'><a data-toggle='tab' href='#"+tagName+"'>"+JSON.parseObject(PropertiesManager.getProperties(tagName,templateName)).getString("0")+"</a></li>";
 			}
 		}
 		result=result + UL_ENDTAG;
@@ -228,8 +228,7 @@ public class XmlNode implements Serializable, Cloneable{
 	
 	
 	private String getTabContents(List<XmlNode> nodes,String countTagId,String templateName){
-		if(null!=nodes && nodes.size()>0){
-			
+		if(null!=nodes && nodes.size()>0){			
 			String htmlStr = "";
 			for(XmlNode xmlNode : nodes){
 				List<XmlNode> childNode = xmlNode.getNodes();
@@ -244,8 +243,8 @@ public class XmlNode implements Serializable, Cloneable{
 					}else{
 						String value = xmlNode.getValue();
 						//System.out.println("value:"+value);
-						if(value==null){
-							value="";
+						if(value == null){
+							value = "";
 						}
 						//System.out.println("name2:"+PropertiesManager.getProperties(xmlNode.getTagName(),templateName)+";value2:"+value);
 						htmlStr = htmlStr + "<p><label class='rgt'>"+JSON.parseObject(PropertiesManager.getProperties(xmlNode.getTagName(),templateName)).getString("0")+" :</label><label class='lft' value='" + value + "' name='" + xmlNode.getTagName() + "'>" + value + "</label></p>";
@@ -258,8 +257,12 @@ public class XmlNode implements Serializable, Cloneable{
 							//System.out.println("name3:"+PropertiesManager.getProperties(xmlNode.getTagName(),templateName)+";value3:"+xmlNode.getValue());
 							htmlStr = htmlStr + getTabContents(childNodes,null,templateName);
 						}else{
+							String value = node.getValue();
+							if(value == null){
+								value = "";
+							}
 							//System.out.println("name4:"+PropertiesManager.getProperties(xmlNode.getTagName(),templateName)+";value4:"+xmlNode.getValue());
-							htmlStr = htmlStr + "<p><label class='rgt'>"+JSON.parseObject(PropertiesManager.getProperties(node.getTagName(),templateName)).getString("0")+" :</label><label class='lft' value='" + node.getValue() + "' subName='" + node.getTagName() + "'>" + node.getValue() + "</label></p>";
+							htmlStr = htmlStr + "<p><label class='rgt'>"+JSON.parseObject(PropertiesManager.getProperties(node.getTagName(),templateName)).getString("0")+" :</label><label class='lft' value='" + value + "' subName='" + node.getTagName() + "'>" + value + "</label></p>";
 						}
 					}
 					htmlStr = htmlStr +"</fieldset>";
@@ -485,19 +488,19 @@ public class XmlNode implements Serializable, Cloneable{
 	public String toEditHtmlTabString(String templateName){
 		String result = UL_TAG;
 		//String result = "<!DOCTYPE html><html><head lang='en'><meta charset='UTF-8'><link href='"+realPath+"/lib/bootstrap/css/bootstrap.min.css' rel='stylesheet'></head><body>"+UL_TAG;
-		String tabClass="active";
-		String contentClass="tab-pane fade active in true";
+		String tabClass = "active";
+		String contentClass = "tab-pane fade active in true";
 		//System.out.println("看看到底nodes是多少个:"+nodes.size());
 		//System.out.println("看看到底nodes(0)是啥:"+nodes.get(0).getTagName());
-		List<XmlNode> tabNodes=nodes.get(0).getNodes();
-		String contentStr="<div class='tab-content info' id='"+nodes.get(0).getTagName()+"'>";
-		if(null!=tabNodes && tabNodes.size()>0){
+		List<XmlNode> tabNodes = nodes.get(0).getNodes();
+		String contentStr = "<div class='tab-content info' id='"+nodes.get(0).getTagName()+"'>";
+		if(null != tabNodes && tabNodes.size() > 0){
 			for(XmlNode xmlNode : tabNodes){
 				JSONObject jsonObject = JSON.parseObject(PropertiesManager.getProperties(xmlNode.getTagName(),templateName));
 				List<XmlNode> childNode = xmlNode.getNodes();
 				result = result + "<li class='"+tabClass+"'><a data-toggle='tab' href='#"+xmlNode.getTagName()+"'>"+jsonObject.getString("0") + "<span class='required'>" + jsonObject.getString("2") + "</span><button type='button' style='padding:2px 4px;display:none;' class='btn btn-link' onclick='removeTab(this,\"" + xmlNode.getTagName() + "\");'><span class='glyphicon glyphicon-check'><span></button></a></li>";
-				tabClass="";
-				if(null!= childNode && childNode.size()>0){
+				tabClass = "";
+				if(null != childNode && childNode.size()>0){
 					contentStr=contentStr+"<div id='"+xmlNode.getTagName()+"' class='"+contentClass+"'>";
 					contentClass="tab-pane fade true";
 					contentStr=contentStr+TAB_TABLE_TAG + TR_TAG;
@@ -530,18 +533,21 @@ public class XmlNode implements Serializable, Cloneable{
 				}
 				if(childNode.size()<=0){
 					List<XmlNode> peerNodes = xmlNode.getPeerNodes();
+					String value = xmlNode.getValue();
+					if(value == null){
+						value = "";
+					}
+					if(value.indexOf("'") >= 0){
+						value = value.replaceAll("'", "\'");
+					}
 					if(null!=peerNodes && peerNodes.size()>0){
 						//System.out.println("name01:"+PropertiesManager.getProperties(xmlNode.getTagName(),templateName)+";value01:"+xmlNode.getValue());
-						htmlStr = htmlStr + "<p><label class='rgt'>"+jsonObject.getString("0")+" :</label><label class='lft'><input type='text' value='" + xmlNode.getValue() + "' name='"+xmlNode.getTagName()+ "' save='true' class='form-control' readonly id='"+ xmlNode.getTagName() +"'/><span class='required'>"+jsonObject.getString("2")+"</span></label>";
+						htmlStr = htmlStr + "<p><label class='rgt'>"+jsonObject.getString("0")+" :</label><label class='lft'><input type='text' value='" + value + "' name='"+xmlNode.getTagName()+ "' save='true' class='form-control' readonly id='"+ xmlNode.getTagName() +"'/><span class='required'>"+jsonObject.getString("2")+"</span></label>";
 						htmlStr = htmlStr + "<button type='button' style='padding:2px 4px;' class='btn btn-primary' onclick='cloneHtml(this,\"" + xmlNode.getTagName() + "\");'><span class='glyphicon glyphicon-plus'></span></button></p><div id='"+ xmlNode.getTagName() +"_div'>";
 						htmlStr = htmlStr + getEditTabContents(peerNodes,true,xmlNode.getTagName(),templateName) + "</div>";
-					}else{
-						String value = xmlNode.getValue();
-						if(value==null){
-							value="";
-						}
+					}else{						
 						//System.out.println("name02:"+PropertiesManager.getProperties(xmlNode.getTagName(),templateName)+";value02:"+value);
-						htmlStr = htmlStr + "<p><label class='rgt'>"+jsonObject.getString("0")+" :</label><label class='lft'><input type='text' value='" + value + "' name='"+xmlNode.getTagName()+ "' save='true' class='form-control' data-toggle='tooltip' data-placement='right' title='"+jsonObject.getString("1")+"' onFocus='if (value ==\""+value+"\"){value =\"\"}'/><span class='required'>"+jsonObject.getString("2")+"</span></label><button type='button' style='padding:2px 4px;display:none' class='btn btn-link' onclick='removeField(this);'><span class='glyphicon glyphicon-check'><span></button></p>";
+						htmlStr = htmlStr + "<p><label class='rgt'>"+jsonObject.getString("0")+" :</label><label class='lft'><input type='text' value='" + value + "' name='"+xmlNode.getTagName()+ "' save='true' class='form-control' data-toggle='tooltip' data-placement='right' title='"+jsonObject.getString("1")+"'/><span class='required'>"+jsonObject.getString("2")+"</span></label><button type='button' style='padding:2px 4px;display:none' class='btn btn-link' onclick='removeField(this);'><span class='glyphicon glyphicon-check'><span></button></p>";
 					}
 				}else if(null!= childNode && childNode.size()>0){
 					if(hasPeerNode){
@@ -559,9 +565,16 @@ public class XmlNode implements Serializable, Cloneable{
 							//System.out.println("name03:"+PropertiesManager.getProperties(xmlNode.getTagName(),templateName)+";value03:"+xmlNode.getValue());
 							htmlStr = htmlStr + getEditTabContents(childNodes,false,null,templateName);
 						}else{
+							String value = node.getValue();
+							if(value == null){
+								value = "";
+							}
+							if(value.indexOf("'") >= 0){
+								value = value.replaceAll("'", "\'");
+							}							
 							JSONObject object = JSON.parseObject(PropertiesManager.getProperties(node.getTagName(),templateName));
 							//System.out.println("name04:"+PropertiesManager.getProperties(xmlNode.getTagName(),templateName)+";value04:"+xmlNode.getValue());
-							htmlStr = htmlStr + "<p><label class='rgt'>"+object.getString("0")+" :</label><label class='lft'><input type='text' value='" + node.getValue() + "' subName='"+node.getTagName()+ "' save='true' class='form-control' data-toggle='tooltip' data-placement='right' title='"+object.getString("1")+"' onFocus='if (value ==\""+node.getValue()+"\"){value =\"\"}'/><span class='required'>"+object.getString("2")+"</span></label><button type='button' style='padding:2px 4px;display:none' class='btn btn-link' onclick='removeField(this,\"" + node.getTagName() + "\");'><span class='glyphicon glyphicon-check'><span></button></p>";
+							htmlStr = htmlStr + "<p><label class='rgt'>"+object.getString("0")+" :</label><label class='lft'><input type='text' value='" + value + "' subName='"+node.getTagName()+ "' save='true' class='form-control' data-toggle='tooltip' data-placement='right' title='"+object.getString("1")+"'/><span class='required'>"+object.getString("2")+"</span></label><button type='button' style='padding:2px 4px;display:none' class='btn btn-link' onclick='removeField(this,\"" + node.getTagName() + "\");'><span class='glyphicon glyphicon-check'><span></button></p>";
 						}
 					}
 					htmlStr = htmlStr +"</fieldset>";
@@ -613,18 +626,19 @@ public class XmlNode implements Serializable, Cloneable{
 //			}
 			for(int i = 0; i < tabNodes.size(); i++){				
 				if(tabs.contains(tabNodes.get(i).getTagName())){
+					String tagName = xmlNodeForUpdate.nodes.get(0).getNodes().get(j).getTagName();
 					List<XmlNode> childNode = xmlNodeForUpdate.nodes.get(0).getNodes().get(j).getNodes();
 					List<XmlNode> templateNode = tabNodes.get(i).getNodes();
-					JSONObject jsonObject3 = JSON.parseObject(PropertiesManager.getProperties(xmlNodeForUpdate.nodes.get(0).getNodes().get(j).getTagName(),templateName));
-					result = result + "<li class='"+tabClass+"'><a data-toggle='tab' href='#"+xmlNodeForUpdate.nodes.get(0).getNodes().get(j).getTagName()+"'>"+jsonObject3.getString("0") + "<span class='required'>" + jsonObject3.getString("2") + "</span><button type='button' style='padding:2px 4px;display:none;' class='btn btn-link' onclick='removeTab(this,\"" + xmlNodeForUpdate.nodes.get(0).getNodes().get(j).getTagName() + "\");'><span class='glyphicon glyphicon-check'><span></button></a></li>";
 					tabClass="";
 					if(null != childNode && childNode.size() > 0){
-						contentStr=contentStr+"<div id='"+xmlNodeForUpdate.nodes.get(0).getNodes().get(j).getTagName()+"' class='"+showContentClass+"'>";
+						contentStr=contentStr+"<div id='"+tagName+"' class='"+showContentClass+"'>";
 						showContentClass="tab-pane fade true";
 						contentStr=contentStr+TAB_TABLE_TAG + TR_TAG;
 						contentStr=contentStr+getEditTabContentsForUpdate(childNode,templateNode,false,null,templateName);
-						contentStr=contentStr+TR_ENDTAG+TABLE_ENDTAG+DIV_ENDTAG;
+						contentStr=contentStr+TR_ENDTAG+TABLE_ENDTAG+DIV_ENDTAG;				
 					}
+					JSONObject jsonObject3 = JSON.parseObject(PropertiesManager.getProperties(tagName,templateName));
+					result = result + "<li class='"+tabClass+"'><a data-toggle='tab' href='#"+tagName+"'>"+jsonObject3.getString("0") + "<span class='required'>" + jsonObject3.getString("2") + "</span><button type='button' style='padding:2px 4px;display:none;' class='btn btn-link' onclick='removeTab(this,\"" + tagName + "\");'><span class='glyphicon glyphicon-check'><span></button></a></li>";
 					j++;
 				}else{
 					List<XmlNode> childNode = tabNodes.get(i).getNodes();
@@ -664,19 +678,22 @@ public class XmlNode implements Serializable, Cloneable{
 					List<XmlNode> childNode = nodes.get(i).getNodes();
 					JSONObject jsonObject = JSON.parseObject(PropertiesManager.getProperties(nodes.get(i).getTagName(),templateName));
 					if(childNode.size()<=0){
-						List<XmlNode> peerNodes = nodes.get(i).getPeerNodes();							
+						List<XmlNode> peerNodes = nodes.get(i).getPeerNodes();
+						String value = nodes.get(i).getValue();
+						if(value == null){
+							value = "";
+						}
+						if(value.indexOf("'") >= 0){
+							value = value.replaceAll("'", "&apos;");
+						}
 						if(null!=peerNodes && peerNodes.size()>0){							
 							//System.out.println("name01:"+PropertiesManager.getProperties(xmlNode.getTagName(),templateName)+";value01:"+xmlNode.getValue());
-							htmlStr = htmlStr + "<p><label class='rgt'>"+jsonObject.getString("0")+" :</label><label class='lft'><input type='text' value='" + nodes.get(i).getValue() + "' name='"+nodes.get(i).getTagName()+ "' save='true' class='form-control' readonly id='"+ nodes.get(i).getTagName() +"'/><span class='required'>"+jsonObject.getString("2")+"</span></label>";
+							htmlStr = htmlStr + "<p><label class='rgt'>"+jsonObject.getString("0")+" :</label><label class='lft'><input type='text' value='" + value + "' name='"+nodes.get(i).getTagName()+ "' save='true' class='form-control' readonly id='"+ nodes.get(i).getTagName() +"'/><span class='required'>"+jsonObject.getString("2")+"</span></label>";
 							htmlStr = htmlStr + "<button type='button' style='padding:2px 4px;' class='btn btn-primary' onclick='cloneHtml(this,\"" + nodes.get(i).getTagName() + "\");'><span class='glyphicon glyphicon-plus'></span></button></p><div id='"+ nodes.get(i).getTagName() +"_div'>";
 							htmlStr = htmlStr + getEditTabContents(peerNodes,subNodes,true,nodes.get(i).getTagName(),templateName) + "</div>";
 						}else{
-							String value = nodes.get(i).getValue();
-							if(value==null){
-								value="";
-							}
 							//System.out.println("name02:"+PropertiesManager.getProperties(xmlNode.getTagName(),templateName)+";value02:"+value);
-							htmlStr = htmlStr + "<p><label class='rgt'>"+jsonObject.getString("0")+" :</label><label class='lft'><input type='text' value='" + value + "' name='"+nodes.get(i).getTagName()+ "' save='true' class='form-control' data-toggle='tooltip' data-placement='right' title='"+jsonObject.getString("1")+"' onFocus='if (value ==\""+value+"\"){value =\"\"}'/><span class='required'>"+ jsonObject.getString("2")+"</span></label><button type='button' style='padding:2px 4px;display:none;' class='btn btn-link' onclick='removeField(this);'><span class='glyphicon glyphicon-check'><span></button></p>";
+							htmlStr = htmlStr + "<p><label class='rgt'>"+jsonObject.getString("0")+" :</label><label class='lft'><input type='text' value='" + value + "' name='"+nodes.get(i).getTagName()+ "' save='true' class='form-control' data-toggle='tooltip' data-placement='right' title='"+jsonObject.getString("1")+"'/><span class='required'>"+ jsonObject.getString("2")+"</span></label><button type='button' style='padding:2px 4px;display:none;' class='btn btn-link' onclick='removeField(this);'><span class='glyphicon glyphicon-check'><span></button></p>";
 						}
 					}else if(null!= childNode && childNode.size()>0){
 						if(hasPeerNode){
@@ -694,9 +711,16 @@ public class XmlNode implements Serializable, Cloneable{
 								//System.out.println("name03:"+PropertiesManager.getProperties(xmlNode.getTagName(),templateName)+";value03:"+xmlNode.getValue());
 								htmlStr = htmlStr + getEditTabContentsForUpdate(childNodes,templateNode,false,null,templateName);
 							}else{
+								String value = node.getValue();
+								if(value == null){
+									value = "";
+								}
+								if(value.indexOf("'") >= 0){
+									value = value.replaceAll("'", "\'");
+								}
 								//System.out.println("name04:"+PropertiesManager.getProperties(xmlNode.getTagName(),templateName)+";value04:"+xmlNode.getValue());
 								JSONObject object = JSON.parseObject(PropertiesManager.getProperties(node.getTagName(),templateName));
-								htmlStr = htmlStr + "<p><label class='rgt'>"+object.getString("0")+" :</label><label class='lft'><input type='text' value='" + node.getValue() + "' subName='"+node.getTagName()+ "' save='true' class='form-control' data-toggle='tooltip' data-placement='right' title='"+object.getString("1")+"' onFocus='if (value ==\""+node.getValue()+"\"){value =\"\"}'/><span class='required'>"+object.getString("2") + "</span></label><button type='button' style='padding:2px 4px;display:none;' class='btn btn-link' onclick='removeField(this,\"" + node.getTagName() + "\");'><span class='glyphicon glyphicon-check'><span></button></p>";
+								htmlStr = htmlStr + "<p><label class='rgt'>"+object.getString("0")+" :</label><label class='lft'><input type='text' value='" + value + "' subName='"+node.getTagName()+ "' save='true' class='form-control' data-toggle='tooltip' data-placement='right' title='"+object.getString("1")+"'/><span class='required'>"+object.getString("2") + "</span></label><button type='button' style='padding:2px 4px;display:none;' class='btn btn-link' onclick='removeField(this,\"" + node.getTagName() + "\");'><span class='glyphicon glyphicon-check'><span></button></p>";
 							}
 						}
 						htmlStr = htmlStr +"</fieldset>";
@@ -704,11 +728,14 @@ public class XmlNode implements Serializable, Cloneable{
 					i++;
 				} else {
 					String value = templateNode.get(j).getValue();
-					if(value==null){
-						value="";
+					if(value == null){
+						value = "";
+					}
+					if(value.indexOf("'") >= 0){
+						value = value.replaceAll("'", "\'");
 					}
 					JSONObject jsonObject2 = JSON.parseObject(PropertiesManager.getProperties(templateNode.get(j).getTagName(),templateName));
-					htmlStr = htmlStr + "<p style='display:none'><label class='rgt'>"+jsonObject2.getString("0")+" :</label><label class='lft'><input type='text' value='" + value + "' name='"+templateNode.get(j).getTagName()+ "' save='false' class='form-control' data-toggle='tooltip' data-placement='right' title='"+jsonObject2.getString("1")+"' onFocus='if (value ==\""+value+"\"){value =\"\"}'/><span class='required'>"+jsonObject2.getString("2") + "</span></label><button type='button' style='padding:2px 4px;display:none;' class='btn btn-link' onclick='removeField(this);'><span class='glyphicon glyphicon-unchecked'><span></button></p>";					
+					htmlStr = htmlStr + "<p style='display:none'><label class='rgt'>"+jsonObject2.getString("0")+" :</label><label class='lft'><input type='text' value='" + value + "' name='"+templateNode.get(j).getTagName()+ "' save='false' class='form-control' data-toggle='tooltip' data-placement='right' title='"+jsonObject2.getString("1")+"'/><span class='required'>"+jsonObject2.getString("2") + "</span></label><button type='button' style='padding:2px 4px;display:none;' class='btn btn-link' onclick='removeField(this);'><span class='glyphicon glyphicon-unchecked'><span></button></p>";					
 				}
 			}
 			return htmlStr;
@@ -741,15 +768,29 @@ public class XmlNode implements Serializable, Cloneable{
 						//System.out.println("name03:"+PropertiesManager.getProperties(xmlNode.getTagName(),templateName)+";value03:"+xmlNode.getValue());
 						htmlStr = htmlStr + getEditTabContents(childNodes,false,null,templateName);
 					}else{
+						String value = childNode.get(j).getValue();
+						if(value == null){
+							value = "";
+						}
+						if(value.indexOf("'") >= 0){
+							value = value.replaceAll("'", "\'");
+						}
 						//System.out.println("name04:"+PropertiesManager.getProperties(xmlNode.getTagName(),templateName)+";value04:"+xmlNode.getValue());
 						JSONObject jsonObject2 = JSON.parseObject(PropertiesManager.getProperties(childNode.get(j).getTagName(),templateName));
-						htmlStr = htmlStr + "<p><label class='rgt'>"+jsonObject2.getString("0")+" :</label><label class='lft'><input type='text' value='" + childNode.get(j).getValue() + "' subName='"+childNode.get(j).getTagName()+ "' save='true' class='form-control' data-toggle='tooltip' data-placement='right' title='"+jsonObject2.getString("1")+"' onFocus='if (value ==\""+childNode.get(j).getValue()+"\"){value =\"\"}'/><span class='required'>"+jsonObject2.getString("2")+"</span></label><button type='button' style='padding:2px 4px;display:none;' class='btn btn-link' onclick='removeField(this,\"" + childNode.get(j).getTagName() + "\");'><span class='glyphicon glyphicon-check'><span></button></p>";
+						htmlStr = htmlStr + "<p><label class='rgt'>"+jsonObject2.getString("0")+" :</label><label class='lft'><input type='text' value='" + value + "' subName='"+childNode.get(j).getTagName()+ "' save='true' class='form-control' data-toggle='tooltip' data-placement='right' title='"+jsonObject2.getString("1")+"'/><span class='required'>"+jsonObject2.getString("2")+"</span></label><button type='button' style='padding:2px 4px;display:none;' class='btn btn-link' onclick='removeField(this,\"" + childNode.get(j).getTagName() + "\");'><span class='glyphicon glyphicon-check'><span></button></p>";
 						//System.out.println("擦擦擦:"+htmlStr);
 					}
 					j++;
 				}else{
+					String value = subNodes.get(i).getValue();
+					if(value == null){
+						value = "";
+					}
+					if(value.indexOf("'") >= 0){
+						value = value.replaceAll("'", "\'");
+					}
 					JSONObject jsonObject3 = JSON.parseObject(PropertiesManager.getProperties(subNodes.get(i).getTagName(),templateName));
-					htmlStr = htmlStr + "<p style='display:none'><label class='rgt'>"+jsonObject3.getString("0")+" :</label><label class='lft'><input type='text' value='" + subNodes.get(i).getValue() + "' subName='"+subNodes.get(i).getTagName()+ "' save='false' class='form-control' data-toggle='tooltip' data-placement='right' title='"+jsonObject3.getString("1")+"' onFocus='if (value ==\""+subNodes.get(i).getValue()+"\"){value =\"\"}'/><span class='required'>"+jsonObject3.getString("2")+"</span></label><button type='button' style='padding:2px 4px;display:none;' class='btn btn-link' onclick='removeField(this,\"" + subNodes.get(i).getTagName() + "\");'><span class='glyphicon glyphicon-unchecked'><span></button></p>";
+					htmlStr = htmlStr + "<p style='display:none'><label class='rgt'>"+jsonObject3.getString("0")+" :</label><label class='lft'><input type='text' value='" + value + "' subName='"+subNodes.get(i).getTagName()+ "' save='false' class='form-control' data-toggle='tooltip' data-placement='right' title='"+jsonObject3.getString("1")+"'/><span class='required'>"+jsonObject3.getString("2")+"</span></label><button type='button' style='padding:2px 4px;display:none;' class='btn btn-link' onclick='removeField(this,\"" + subNodes.get(i).getTagName() + "\");'><span class='glyphicon glyphicon-unchecked'><span></button></p>";
 				}						
 			}
 			htmlStr = htmlStr +"</fieldset>";

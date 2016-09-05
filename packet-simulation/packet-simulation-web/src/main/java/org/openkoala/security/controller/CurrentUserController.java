@@ -114,6 +114,20 @@ public class CurrentUserController {
         }
     }
 
+    @ResponseBody
+    @RequestMapping(value = "/switchOverMissionOfUser", method = RequestMethod.POST)
+    public InvokeResult switchOverMissionOfUser(Long missionId) {
+        if (CurrentUser.getMissionId().equals(missionId)) {
+            return InvokeResult.success();
+        }
+        try {
+            roleHandle.switchOverMissionOfUser(missionId);
+            return InvokeResult.success();
+        } catch (Exception e) {
+            return InvokeResult.failure("任务切换失败。");
+        }
+    }
+    
     /**
      * 根据用户账户查询用户详细
      */

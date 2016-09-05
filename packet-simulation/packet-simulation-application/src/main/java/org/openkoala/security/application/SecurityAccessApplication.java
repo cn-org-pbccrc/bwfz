@@ -3,6 +3,7 @@ package org.openkoala.security.application;
 import java.util.List;
 
 import org.openkoala.security.core.domain.*;
+import org.packet.packetsimulation.core.domain.Mission;
 
 /**
  * 权限访问应用，按照使用角色命名，一般都是用户使用该接口，对系统的正常使用。
@@ -20,6 +21,12 @@ public interface SecurityAccessApplication {
      * @return 用户的所有角色集合
      */
     List<Role> findAllRolesByUserAccount(String userAccount);
+    
+    List<Mission> findAllMissionsByUserAccount(String userAccount);
+    
+    String getMissionNameByMissionId(Long missionId);
+    
+    String getProjectNameByMissionId(Long missionId);
 
     /**
      * 根据用户ID得到用户。

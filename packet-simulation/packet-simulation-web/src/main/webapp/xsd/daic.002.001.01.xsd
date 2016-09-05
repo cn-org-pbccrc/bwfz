@@ -1,0 +1,23 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<xs:schema xmlns:xs="http://www.w3.org/2001/XMLSchema"  elementFormDefault="qualified">
+    <xs:element name="Document" type="Document"/>
+    <xs:complexType name="Document">
+        <xs:sequence>
+            <xs:element name="CrdInfDel" type="CrdInfDelTp"/><!-- 信贷信息按段删除请求记录 -->
+        </xs:sequence>
+    </xs:complexType>
+    <xs:complexType name="CrdInfDelTp">
+        <xs:sequence>
+            <xs:element name="CrdInfDelSgmt" type="CrdInfDelSgmtTp"/>
+        </xs:sequence>
+    </xs:complexType>
+    <xs:complexType name="CrdInfDelSgmtTp">
+        <xs:sequence>
+            <xs:element name="DelRecType"/><!-- 待删除记录类型 -->
+            <xs:element name="DelRecCode"/><!-- 待删除业务标识 -->
+            <xs:element name="DelSgmtCode"/><!-- 待删除段段标 -->
+            <xs:element name="DelStartDate"/><!-- 待删除起始日期 -->
+            <xs:element name="DelEndDate"/><!-- 待删除结束日期 -->
+        </xs:sequence>
+    </xs:complexType>   
+</xs:schema>

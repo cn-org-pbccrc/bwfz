@@ -1,4 +1,5 @@
 <%@ page language="java" contentType="text/html; charset=UTF-8" pageEncoding="UTF-8"%>
+<%@include file="/commons/taglibs.jsp"%>
 <!DOCTYPE html>
 <html>
 <head>
@@ -51,8 +52,8 @@ $(function (){
 	                                startTime.datetimepicker('setEndDate', endTimeVal.val());
 	                           }).trigger('changeDate');//加载日期选择器
 	                           startTime.trigger('changeDate');
-	                     //startTime.datetimepicker('setDate', yesterday).trigger('changeDate');
-	                        //   endTime.datetimepicker('setDate',yesterday).trigger('changeDate');
+	                     startTime.datetimepicker('setDate', yesterday).trigger('changeDate');
+	                     endTime.datetimepicker('setDate',yesterday).trigger('changeDate');
 	                	 var startTimeVal2 = form.find('#projectendDateID_start');
 	                     var startTime2 = startTimeVal2.parent();
 	                     var endTimeVal2 = form.find('#projectendDateID_end');
@@ -80,7 +81,8 @@ $(function (){
 	                                startTime2.datetimepicker('setEndDate', endTimeVal2.val());
 	                           }).trigger('changeDate');//加载日期选择器
 	                     startTime2.trigger('changeDate');
-	                     //startTime.datetimepicker('setDate', yesterday).trigger('changeDate');
+	                     startTime2.datetimepicker('setDate', new Date()).trigger('changeDate');
+	                     endTime2.datetimepicker('setDate', new Date()).trigger('changeDate');
 	                	            	        	     },
 	    initGridPanel: function(){
 	         var self = this;
@@ -88,22 +90,23 @@ $(function (){
 	         return grid.grid({
 	                identity:"id",
 	                buttons: [
-	                        {content: '<button class="btn btn-primary" type="button"><span class="glyphicon glyphicon-plus"><span>添加</button>', action: 'add'},
-	                        {content: '<button class="btn btn-success" type="button"><span class="glyphicon glyphicon-edit"><span>修改</button>', action: 'modify'},
-	                        {content: '<button class="btn btn-danger" type="button"><span class="glyphicon glyphicon-remove"><span>删除</button>', action: 'delete'},
-	                        {content: '<button class="btn btn-success" type="button"><span class="glyphicon glyphicon-search"><span>高级搜索<span class="caret"></span></button>', action: 'search'}
+	                        {content: '<ks:hasSecurityResource identifier="projectManagerAdd"><button class="btn btn-primary" type="button"><span class="glyphicon glyphicon-plus"><span>添加</button></ks:hasSecurityResource>', action: 'add'},
+	                        {content: '<ks:hasSecurityResource identifier="projectManagerUpdate"><button class="btn btn-success" type="button"><span class="glyphicon glyphicon-edit"><span>修改</button></ks:hasSecurityResource>', action: 'modify'},
+	                        {content: '<ks:hasSecurityResource identifier="projectManagerTerminate"><button class="btn btn-danger" type="button"><span class="glyphicon glyphicon-remove"><span>删除</button></ks:hasSecurityResource>', action: 'delete'},
+	                        {content: '<ks:hasSecurityResource identifier="projectManagerQuery"><button class="btn btn-success" type="button"><span class="glyphicon glyphicon-search"><span>高级搜索<span class="caret"></span></button></ks:hasSecurityResource>', action: 'search'}
 	                    ],
 	                url:"${pageContext.request.contextPath}/Project/pageJson.koala",
 	                columns: [
-	                     	                         	                         { title: '项目名称', name: 'projectName', width: width},
-	                         	                         	                         	                         { title: '项目编码', name: 'projectCode', width: width},
-	                         	                         	                         	                         { title: '项目经理', name: 'projectManagerName', width: width},
-	                         	                         	                         	                         { title: '项目开始时间', name: 'projectstartDate', width: width},
-	                         	                         	                         	                         { title: '项目结束时间', name: 'projectendDate', width: width},
+	                     	                         	                         { title: '项目名称', name: 'projectName', width: 160},
+	                         	                         	                         	                         { title: '项目编码', name: 'projectCode', width: 100},
+	                         	                         	                         	                         { title: '项目经理', name: 'projectManagerName', width: 100},
+	                         	                         	                         	                         { title: '项目开始时间', name: 'projectstartDate', width: 160},
+	                         	                         	                         	                         { title: '项目结束时间', name: 'projectendDate', width: 160},
+	                         	                         	                         	                         { title: '备注', name: 'projectRemark', width: width},
 	                         	                         	                             { title: '操作', width: 120, render: function (rowdata, name, index)
 	                                 {
 	                                     var param = '"' + rowdata.id + '"';
-	                                     var h = "<a href='javascript:openDetailsPageOfProject(" + param + ")'>查看</a> ";
+	                                     var h = "<a href='javascript:openMission(" + param + ")'>编辑任务</a> ";
 	                                     return h;
 	                                 }
 	                             }
@@ -145,7 +148,7 @@ $(function (){
 	                            self.remove(indexs, $this);
 	                        };
 	                        $this.confirm({
-	                            content: '确定要删除所选记录吗?',
+	                            content: '若有任务和关联报文,删除项目也将删除该项目下所有任务和关联报文,确定要删除吗?',
 	                            callBack: remove
 	                        });
 	                   },
@@ -166,7 +169,8 @@ $(function (){
 	        	+'</div></div>');	    	       	       	     
 	        $.get('<%=path%>/Project-add.jsp').done(function(html){
 	            dialog.modal({
-	                keyboard:false
+	                keyboard:false,
+	                backdrop: 'static'
 	            }).on({
 	                'hidden.bs.modal': function(){
 	                    $(this).remove();
@@ -216,10 +220,10 @@ $(function (){
 		        	  var dates = date.split("-");
 		        	  var dateReturn = '';	        	  
 		        	  for(var i=0; i<dates.length; i++){
-		        	   dateReturn+=dates[i];
+		        	      dateReturn+=dates[i];
 		        	  }
 		        	  return dateReturn;
-		          }		          
+		          }
 		          if (!Validation.notNull(dialog, dialog.find('#projectManagerID'), userId.val(), '请选择项目经理')) {
 	    			    return false;
 	    		  }
@@ -235,7 +239,7 @@ $(function (){
 	                    }else{
 	                        dialog.find('.modal-content').message({
 	                            type: 'error',
-	                            content: result.actionError
+	                            content: result.errorMessage
 	                        });
 	                     }
 	              });
@@ -261,9 +265,11 @@ $(function (){
 	                                elm.val(json[index]);
 	                            }
 	                        }
+	                        dialog.find('#projectCodeID').val(json['projectCode']).attr('disabled', 'disabled');
 	                });
 	                dialog.modal({
-	                    keyboard:false
+	                    keyboard:false,
+		                backdrop: 'static'
 	                }).on({
 	                    'hidden.bs.modal': function(){
 	                        $(this).remove();
@@ -315,7 +321,7 @@ $(function (){
 		    			    return false;
 		    		  }
 	                  if(!Validator.Validate(dialog.find('form')[0],3))return;
-	                  $.post('${pageContext.request.contextPath}/Project/update.koala?id='+id, dialog.find('form').serialize()).done(function(result){
+	                  $.post('${pageContext.request.contextPath}/Project/update.koala?id='+id+'&projectCode='+dialog.find('#projectCodeID').val(), dialog.find('form').serialize()).done(function(result){
 	                        if(result.success){
 	                            dialog.modal('hide');
 	                            e.data.grid.data('koala.grid').refresh();
@@ -326,7 +332,7 @@ $(function (){
 	                        }else{
 	                            dialog.find('.modal-content').message({
 	                            type: 'error',
-	                            content: result.actionError
+	                            content: result.errorMessage
 	                            });
 	                        }
 	                    });
@@ -486,7 +492,7 @@ $(function (){
 	                               dialog.find('.selectUserGrid').grid({
 	                                   identity: 'id',
 	                                   columns: columns,
-	                                   url: contextPath + '/auth/user/pagingQuery.koala'
+	                                   url: contextPath + '/auth/employeeUser/pagingQuery.koala'
 	                               });
 
 	                           }
@@ -586,13 +592,24 @@ var openDetailsPageOfProject = function(id){
                         }
                });
                 dialog.modal({
-                    keyboard:false
+                    keyboard:false,
+	                backdrop: 'static'
                 }).on({
                     'hidden.bs.modal': function(){
                         $(this).remove();
                     }
                 });
         });
+}
+
+var mark;
+function openMission(id){
+    var thiz = $(this);
+    var mark = thiz.attr('mark');
+    mark = openTab("/pages/domain/Mission-list.jsp", "编辑任务 ",'OpenMissionList',id);
+    if(mark){
+        thiz.attr("mark",mark);
+    }
 }
 </script>
 </head>

@@ -11,7 +11,7 @@
 				<input name="taskName" style="display: inline; width: 94%;"
 					class="form-control" type="text" dataType="Require" id="taskNameID" />
 				<input name="selectedRecordType" class="form-control" type="hidden" id="selectedRecordTypeID" />
-				<input name="bizType" class="form-control" type="hidden" id="bizTypeID" />
+				<input name="oriMesgType" class="form-control" type="hidden" id="oriMesgTypeID" />
 				<span class="required">*</span>
 			</div>
 		</div>
@@ -23,6 +23,12 @@
 					id="sendChannelID" /> <span class="required">*</span>
 			</div>
 		</div>
+		<div class="form-group">
+                    <label class="col-lg-3 control-label">业务类型:</label>
+	                    <div class="col-lg-9">
+                           <input name="selectedBizType" style="display:inline; width:94%;" class="form-control"  type="text"  id="selectedBizTypeID" />
+			    </div>
+	</div>
 		<div class="form-group">
 			<label class="col-lg-3 control-label">是否加密:</label>
 			<div class="col-lg-9">

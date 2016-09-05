@@ -415,7 +415,8 @@ $(function (){
 	        	+'</div></div>');
 	        $.get('<%=path%>/Config-add.jsp').done(function(html){
 	            dialog.modal({
-	                keyboard:false
+	                keyboard:false,
+	                backdrop: 'static'
 	            }).on({
 	                'hidden.bs.modal': function(){
 	                    $(this).remove();
@@ -466,7 +467,8 @@ $(function (){
 	                        }
 	                });
 	                dialog.modal({
-	                    keyboard:false
+	                    keyboard:false,
+		                backdrop: 'static'
 	                }).on({
 	                    'hidden.bs.modal': function(){
 	                        $(this).remove();
@@ -568,7 +570,8 @@ var openDetailsPage = function(id){
 //                         }
                });
                 dialog.modal({
-                    keyboard:false
+                    keyboard:false,
+	                backdrop: 'static'
                 }).on({
                     'hidden.bs.modal': function(){
                         $(this).remove();

@@ -28,6 +28,8 @@ var mesgInput;
 var mesgId;
 var mesgName;
 var mesgCode;
+var mesgBizType;
+var bizType;
 
 function initFun(){
 	grid = $("#<%=gridId%>");
@@ -104,7 +106,8 @@ function initFun(){
 	                     	                         	                         						                return date;
 	                     	                         	                         						             }	
 	                         	                         	                         	                         },
-	                         	                         	                         	                         { title: '记录类型', name: 'recordType', width: 100},
+	                         	                         	                         	                      	{ title: '业务类型', name: 'bizType', width: 60},
+	                         	                         	                         	                         { title: '文件类型', name: 'recordType', width: 100},
 	                         	                         	                         	                         { title: '数据类型', name: 'dataType', width: 60,
 	                         	                         	                         	                 		 render: function(item, name, index){
                      	                         	                         						                 if(item[name] == '0'){
@@ -190,7 +193,8 @@ function initFun(){
 	        	+'</div></div>');
 	        $.get('<%=path%>/Packet-add.jsp').done(function(html){
 	            dialog.modal({
-	                keyboard:false
+	                keyboard:false,
+	                backdrop: 'static'
 	            }).on({
 	                'hidden.bs.modal': function(){
 	                    $(this).remove();
@@ -248,11 +252,10 @@ function initFun(){
     			+'data-dismiss="modal" aria-hidden="true">&times;</button>'
     			+'<h4 class="modal-title">上传外部文件</h4></div><div class="modal-body">'
     			+'<p>One fine body&hellip;</p></div></div>');
-    		$.get('<%=path%>/Packet-load.jsp').done({ 
-        		'createdBy' :  currentUserId
-    			},function(html){
-        			dialog.modal({
-           			keyboard:false
+    		$.get('<%=path%>/Packet-load.jsp').done({'createdBy' : currentUserId},function(html){
+        		dialog.modal({
+           			keyboard:false,
+	                backdrop: 'static'
         		}).on({
             		'hidden.bs.modal': function(){
                 		$(this).remove();
@@ -299,7 +302,8 @@ function initFun(){
 	                        //dialog.find('#packetNameID').val(json['packetName']).attr('disabled', 'disabled');
 	                });
 	                dialog.modal({
-	                    keyboard:false
+	                    keyboard:false,
+		                backdrop: 'static'
 	                }).on({
 	                    'hidden.bs.modal': function(){
 	                        $(this).remove();
@@ -371,6 +375,7 @@ function initFun(){
 	                   //minView: 2,
 	                   pickerPosition: 'bottom-left'
 	               }).datetimepicker('setDate', new Date());//加载日期选择器
+	               bizType = form.find('#bizTypeID');
 	               /* var selectItems = {};
 	               var contents = [{title:'请选择', value: ''}];
 	               contents.push({title:'正常' , value:'0'});
@@ -446,7 +451,8 @@ var openPacketView = function(id){
        	   dialog.find("#packetViewID").html("<div style='width:780px;overflow:auto;'><xmp>"+json+"</xmp></div>");
           });
            dialog.modal({
-               keyboard:false
+               keyboard:false,
+               backdrop: 'static'
            }).on({
                'hidden.bs.modal': function(){
                    $(this).remove();
@@ -486,6 +492,7 @@ var selectMesgTypes = function(){
 			selectMesg.find('[data-toggle="item"]').text(mesgName);
 			mesgTreeDialog.modal('hide');
 			selectMesg.trigger('keydown');
+			bizType.val(mesgBizType);
 		}).end().modal({
 			backdrop: false,
 			keyboard: false
@@ -537,6 +544,7 @@ var loadMesgTree = function(){
                 mesgId = data.id;
                 mesgName = data.mesgType;
                 mesgCode = data.code;
+                mesgBizType = data.bizType;
             }
         });
     });
@@ -583,10 +591,10 @@ var loadMesgTree = function(){
                 		<span class="input-group-addon"><span class="glyphicon glyphicon-th"></span></span>
             		</div>
        			</div>
-       			<label class="control-label" style="width:160px;float:left;">记录类型:&nbsp;</label>
-            	<div style="margin-left:15px;float:left;">
-            		<input name="recordType" class="form-control" type="text" style="width:160px;" id="recordID"  />
-        		</div>
+<!--        			<label class="control-label" style="width:160px;float:left;">记录类型:&nbsp;</label> -->
+<!--             	<div style="margin-left:15px;float:left;"> -->
+<!--             		<input name="recordType" class="form-control" type="text" style="width:160px;" id="recordID"  /> -->
+<!--         		</div> -->
        		</div>
        		
 <!--             <div class="form-group"> -->

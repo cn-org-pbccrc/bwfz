@@ -36,6 +36,7 @@ import org.packet.packetsimulation.facade.impl.assembler.MesgAssembler;
 import org.packet.packetsimulation.facade.impl.assembler.MesgTypeAssembler;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+import org.springframework.web.bind.annotation.RequestParam;
 import org.xml.sax.SAXException;
 
 @Named
@@ -191,10 +192,17 @@ public class MesgTypeFacadeImpl implements MesgTypeFacade {
 	}
 	
 	@Override
-	public InvokeResult getEditHtmlByCode(String code) {
+	public InvokeResult getEditHtmlByCode(String code, String sourceCode, String xml) {
 		MesgType mesgType = findMesgTypeByCode(code);
+		String newXml = mesgType.getXml();
+		String countTag = mesgType.getCountTag();
+		if(!xml.equals("")){
+			MesgType sourceMesgType = findMesgTypeByCode(sourceCode);
+			newXml = mesgType.getXml().replace("<MdfcSgmt></MdfcSgmt>", xml);
+			countTag = sourceMesgType.getCountTag();
+		}		
 		try {
-			XmlNode xmlNode = XmlUtil.getXmlNodeByXmlContent(mesgType.getXml(),mesgType.getCountTag());
+			XmlNode xmlNode = XmlUtil.getXmlNodeByXmlContent(newXml, countTag);
 			return InvokeResult.success(xmlNode.toEditHtmlTabString(mesgType.getCode()));
 		} catch (SAXException e) {
 			// TODO Auto-generated catch block

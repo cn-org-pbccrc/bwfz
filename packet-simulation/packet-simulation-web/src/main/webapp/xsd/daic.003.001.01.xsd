@@ -1,0 +1,22 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<xs:schema xmlns:xs="http://www.w3.org/2001/XMLSchema"  elementFormDefault="qualified">
+    <xs:element name="Document" type="Document"/>
+    <xs:complexType name="Document">
+        <xs:sequence>
+            <xs:element name="CrdtInfIdCagsInf" type="CrdtInfIdCagsInfTp"/><!-- 信贷信息标识变更记录 -->
+        </xs:sequence>
+    </xs:complexType>
+    <xs:complexType name="CrdtInfIdCagsInfTp">
+        <xs:sequence>
+            <xs:element name="CrdtInfIdCagsSgmt" type="CrdtInfIdCagsSgmtTp"/>
+        </xs:sequence>
+    </xs:complexType>
+    <xs:complexType name="CrdtInfIdCagsSgmtTp">
+        <xs:sequence>
+            <xs:element name="IdCagsType"/><!-- 标识变更类型 -->
+            <xs:element name="OdBnesId"/><!-- 原业务标识号 -->
+            <xs:element name="NwBnesId"/><!-- 新业务标识号 -->
+        </xs:sequence>
+    </xs:complexType>
+</xs:schema>
+

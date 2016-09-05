@@ -156,49 +156,45 @@ legend {
 				$("#content2").empty();				
 				var flag = $('input:radio:checked').attr('flag');
 				var code = $('input:radio:checked').val();
+				var sourceCode = $('input:radio:checked').attr('sourceCode');
 				var catagory = $('input:radio:checked').attr('catagory');
-				var map = eval("("+flag+")");				
-				var data = [{ name: 'code', value: code }];
+				var map = eval("("+flag+")");
+				var data = [{ name: 'code', value: code },
+				            { name: 'sourceCode', value: sourceCode },
+					        { name: 'xml', value: '' }
+				            ];
+				if(catagory == 'modify'){
+					var modSegMark = $('#content1').find('.active.in').attr('id');
+					var xml = '<MdfcSgmt-' + modSegMark + '>';
+					$('#'+modSegMark).find($("[name]")).each(function(){
+						if($(this).parent()[0].tagName != 'FIELDSET'){        							
+							var name = ($(this).attr('name'));
+		    				var value = ($(this).attr('value'));
+							xml += '<' + name + '>' + value + '</' + name + '>';
+						}
+						else{
+							var name = ($(this).attr('name')); 
+							xml += '<' + name + '>';
+							$(this).parent().find($("[subName]")).each(function(){
+								var subName = ($(this).attr('subName'));
+								var value = ($(this).attr('value'));	
+								xml += '<' + subName + '>' + value + '</' + subName + '>';
+							});
+							xml += '</' + name + '>';
+						}
+					});
+					xml += '</MdfcSgmt-' + modSegMark + '>';
+					data = [{ name: 'code', value: code },
+					        { name: 'sourceCode', value: sourceCode },
+					        { name: 'xml', value: xml }
+					        ];
+				}				
 				$.get('${pageContext.request.contextPath}/MesgType/getEditHtmlByCode.koala', data).done(function(data){
                     $("#content2").append(data.data);   
-                    $('[name = "InfRecTp"]').attr('value', code);
                     for (var key in map){
                     	var value = $('#content1').find('[name="' + key +'"]').attr('value');
         				$('[name="' + map[key] + '"]').attr('value', value);
     				}
-                    switch(catagory){           			
-            			case "deleteBySeg":
-            				var del_Sgmt_Id = $('#content1').find('.active.in').attr('id');
-            				$('[name = "Del_Sgmt_Id"]').attr('value', del_Sgmt_Id);
-            				var rptDate = $('#content1').find('[name="RptDate"]').attr('value');
-            				$('[name = "Del_Start_Date"]').attr('value', rptDate);
-            				$('[name = "Del_End_Date"]').attr('value', rptDate);
-            				break;
-            			case "modify":
-            				var modSegMark = $('#content1').find('.active.in').attr('id');
-            				$('[name = "ModSegMark"]').attr('value', modSegMark);
-            				var xml = '<' + modSegMark + '>';
-            				$('#'+modSegMark).find($("[name]")).each(function(){
-        						if($(this).parent()[0].tagName != 'FIELDSET'){        							
-        							var name = ($(this).attr('name'));
-            	    				var value = ($(this).attr('value'));
-            						xml += '<' + name + '>' + value + '</' + name + '>';
-        						}
-        						else{
-        							var name = ($(this).attr('name')); 
-        							xml += '<' + name + '>';
-        							$(this).parent().find($("[subName]")).each(function(){
-        								var subName = ($(this).attr('subName'));
-            							var value = ($(this).attr('value'));	
-            							xml += '<' + subName + '>' + value + '</' + subName + '>';
-        							});
-        							xml += '</' + name + '>';
-        						}
-            				});
-            				xml += '</' + modSegMark + '>';
-            				$('[name = "MdfcSgmt"]').attr('value', xml);
-            				break;
-            		}
                     var data = [{ name: 'code', value: code}];
                     $.get( '${pageContext.request.contextPath}/FeedBack/initSend.koala',data).done(function(json){
     	            	var json = json.data;
@@ -207,7 +203,14 @@ legend {
         				xml += '<?xml version="1.0" encoding="UTF-8"?><Document><'+info+'>';
         				$("#content2").find($(".true")).each(function(){   					
         					var id = $(this).attr('id');
-        					xml += '<' + id + '>';
+        					if(id.indexOf('MdfcSgmt') != -1){
+        						var result = id.split('-');
+        						for(var i = 0; i < result.length; i++){
+        							xml += '<' + result[i] + '>';
+        						}
+        					}else{
+        						xml += '<' + id + '>';        						
+        					}
         					$('#'+id).find($("[name]")).each(function(){
         						if($(this).parent().parent()[0].tagName != 'FIELDSET'){
         							if($(this).attr('save')=='true'){
@@ -229,7 +232,14 @@ legend {
         							xml += '</' + name + '>';
         						}
         					});
-        					xml += '</' + id + '>';
+        					if(id.indexOf('MdfcSgmt') != -1){
+        						var result = id.split('-');
+        						for(var i = result.length - 1; i >= 0; i--){
+        							xml += '</' + result[i] + '>';
+        						}
+        					}else{
+        						xml += '</' + id + '>';        						
+        					}
         				});
         				xml += '</'+info+'></Document>';
         				$('#tab3').find("#mesgContentID").val(xml);
