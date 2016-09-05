@@ -20,3 +20,4 @@ target/
 .settings/
 *.project
 *.db
+*.csv
