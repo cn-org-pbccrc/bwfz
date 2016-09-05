@@ -41,9 +41,9 @@ $(function (){
    						                 if(item[name] == '0'){
    						                     return '1:1';
    						                 }else if(item[name] == '1'){
-   						                     return '0：1';
+   						                     return '0:1';
    						                 }else if(item[name] == '2'){
-   						                     return '0：n';
+   						                     return '0:n';
    						                 }else if(item[name] == '3'){
    						                     return '1:n';
    						                 }
@@ -160,9 +160,9 @@ $(function (){
 	               var stateSelect = dialog.find('#stateID');
 		            fillStateSelect(stateSelect);
 		           	var contents = [{title:'1:1', value: '0',selected: true}];
-		            contents.push({title:'0：1' , value:'1'});
-		            contents.push({title:'0：n' , value:'2'});
-		            contents.push({title:'1：n' , value:'3'});
+		            contents.push({title:'0:1' , value:'1'});
+		            contents.push({title:'0:n' , value:'2'});
+		            contents.push({title:'1:n' , value:'3'});
 		            var appearTimesSelect = dialog.find('#appearTimesID');
 		            appearTimesSelect.select({
 		        		contents: contents

@@ -38,7 +38,8 @@ $(function (){
 	                         	                         	                             { title: '操作', width: 120, render: function (rowdata, name, index)
 	                                 {
 	                                     var param = '"' + rowdata.id + '"';
-	                                     var h = "<a href='javascript:openRecordSegment(" + param + ")'><span class='glyphicon glyphicon glyphicon-edit'></span>&nbsp记录格式定义</a>"
+	                                     var h ="<a href='javascript:openHeaderConfig(" + param + ")'><span class='glyphicon glyphicon glyphicon-edit'></span>&nbsp文件头定义</a>"
+	                                    +"&nbsp;&nbsp;<a href='javascript:openRecordSegment(" + param + ")'><span class='glyphicon glyphicon glyphicon-edit'></span>&nbsp记录格式定义</a>"
 	                                     +"&nbsp;&nbsp;<a href='javascript:openDetailsPage(" + param + ")'><span class='glyphicon glyphicon glyphicon-eye-open'></span>&nbsp查看</a>";
 	                                     return h;
 	                                 }
@@ -234,6 +235,75 @@ function openRecordSegment(id){
     }
 }
 
+var openHeaderConfig = function(id){
+    var self = this;
+    var dialog = $('<div class="modal fade"><div class="modal-dialog" style="width:1000px;"><div class="modal-content"><div class="modal-header"><button type="button" class="close" data-dismiss="modal" aria-hidden="true">&times;</button><h4 class="modal-title">文件头配置</h4></div><div class="modal-body"><p>One fine body&hellip;</p></div><div class="modal-footer"><button type="button" class="btn btn-default" data-dismiss="modal">取消</button><button type="button" class="btn btn-success" id="save">保存</button></div></div></div></div>');
+    $.get('<%=path%>/HeaderItemsConfig.jsp').done(function(html){
+           dialog.find('.modal-body').html(html);
+	        dialog.find('[data-role="addRow"]').on('click', function(e){
+            	addRow();
+            })
+           $.get( '${pageContext.request.contextPath}/RecordType/get/' + id + '.koala').done(function(json){
+                   json = json.data;
+                    var elm;
+                    for(var index in json){
+                    	if(index=='headerItems'){
+                    		var items = json[index];
+                    		for(var i=0;i<items.length;i++){
+                    			addRow(dialog.find("#itemTable"),items[i]);
+                    		}
+                    	}
+                        elm = dialog.find('#'+ index + 'ID');
+                        if(elm.hasClass('select')){
+                            elm.setValue(json[index]);
+                        }else{
+                            elm.val(json[index]);
+                        }
+                    }
+            });
+            dialog.modal({
+                keyboard:false
+            }).on({
+                'hidden.bs.modal': function(){
+                    $(this).remove();
+                }
+            });
+            dialog.find('#save').on('click',{grid: grid}, function(e){
+                if(!Validator.Validate(dialog.find('form')[0],3))return;
+	        	if(!validate(dialog)){
+	        		dialog.find('#save').removeAttr('disabled');
+        			return false;
+        		}
+	              var params = getAllData(dialog);
+                $.post('${pageContext.request.contextPath}/RecordType/updateHeader.koala?id='+id, params).done(function(result){
+                    if(result.success){
+                        dialog.modal('hide');
+                        e.data.grid.data('koala.grid').refresh();
+                        e.data.grid.message({
+                        type: 'success',
+                        content: '保存成功'
+                        });
+                    }else{
+                        dialog.find('.modal-content').message({
+                        type: 'error',
+                        content: result.actionError
+                        });
+                    }
+                });
+            });
+    });
+}
+
+//填充数据项状态
+var fillStateSelect = function(select){
+	  var contents = [{title:'必选', value: 'M',selected: true}];
+       contents.push({title:'条件选择' , value:'C'});
+       contents.push({title:'可选' , value:'O'});
+	select.select({
+		contents: contents
+	});
+};
+
 var openDetailsPage = function(id){
         var dialog = $('<div class="modal fade"><div class="modal-dialog"><div class="modal-content"><div class="modal-header"><button type="button" class="close" data-dismiss="modal" aria-hidden="true">&times;</button><h4 class="modal-title">查看</h4></div><div class="modal-body"><p>One fine body&hellip;</p></div><div class="modal-footer"><button type="button" class="btn btn-info" data-dismiss="modal">返回</button></div></div></div></div>');
         $.get('<%=path%>/RecordType-view.jsp').done(function(html){
@@ -260,6 +330,173 @@ var openDetailsPage = function(id){
                 });
         });
 }
+/*
+* 数据验证  成功返回true  失败返回false
+ */
+var validate = function(dialog){
+	var flag = true;
+	dialog.find('.recordItemConfig').find('input[required=true],input[rgExp]').each(function(){
+		var $this = $(this);
+		var value = $this.val();
+		if($this.attr('required') && !checkNotNull(value)){
+			showErrorMessage(dialog, $this, '请填入该选项内容');
+			flag = false;
+			return false;
+		}
+		var rgExp = $this.attr('rgExp');
+		if(rgExp && !value.match(eval(rgExp))){
+			showErrorMessage(dialog, $this, $this.data('content'));
+			flag = false;
+			return false;
+		}
+	});
+	dialog.find('.recordItemConfig').find('.select').each(function(){
+		var $this = $(this);
+		var value = $this.getValue();
+		if(!checkNotNull(value)){
+			showErrorMessage(dialog, $this, '请选择该选项内容');
+			flag = false;
+			return false;
+		}
+		
+	});
+	return flag;
+};
+
+
+/**
+ * 显示提示信息
+ */
+var showErrorMessage = function(container, $element, content){
+	$element.popover({
+		content: content,
+		trigger: 'manual',
+		container: container
+	}).popover('show').on({
+			'blur': function(){
+				$element.popover('destroy');
+				$element.parent().removeClass('has-error');
+			},
+			'keydown': function(){
+				$element.popover('destroy');
+				$element.parent().removeClass('has-error');
+			}
+		}).focus().parent().addClass('has-error');
+};
+
+/**
+ * 检查变量是否不为空  true:不空   false:空
+ */
+var checkNotNull = function(item){
+	//不能为空和空格
+	if(item==null || item=="" || item.replace(/(^\s*)|(\s*$)/g, "")=="" ){
+		return false;
+	}else{
+		return true;
+	}
+};
+
+var addRow = function(itemTable, variable, insertRow){
+	var row = $('<tr data-toggle="context" data-target="#context-menu"><td class="v-itemId"><input  data-role="itemId" required="true" style="display: inline; " class="form-control" type="text" /></td>'
+	+'<td class="v-itemName"><input  data-role="itemName" required="true" style="display: inline; " class="form-control" type="text" /></td>'
+	+'<td class="v-itemType"><div class="btn-group select" id="itemTypeSelect" data-role="itemType"></div></td>'
+	+'<td class="v-itemLength"><input data-role="itemLength" class="form-control" required="true" rgExp="/^[0-9]{1,}$/" data-content="只能输入数字" placeholder="数字"/></td>'
+	+'<td class="v-itemLocation"><input  data-role="itemLocation" readonly="true" required="true" style="display: inline; " class="form-control" type="text" /></td>'
+	+'<td class="v-itemDesc"><input  data-role="itemDesc" required="true" style="display: inline; " class="form-control" type="text" /></td>'
+	+'<td class="v-state"><div class="btn-group select" id="itemStateSelect" data-role="state"></div></td>'
+	+'<td class="delete-btn"><a data-role="delete"><span class="glyphicon glyphicon-remove">删除</span></a></td>');
+	
+	row.find("[data-role='itemLength']").on('change', function(){
+		calculateLocation(itemTable);
+	})
+	row.contextmenu({
+		onItem: function (context, e) {
+			addRow(null,null,row);
+	        }
+	});
+	
+	if(!itemTable){
+		itemTable=$('#itemTable')
+	}
+	var itemType = row.find('[data-role="itemType"]')
+	var itemState = row.find('[data-role="state"]')
+	fillVTypeSelect(itemType);
+	fillStateSelect(itemState);
+	if(variable){
+		row.find('input[data-role="itemId"]').val(variable.itemId);
+		row.find('input[data-role="itemName"]').val(variable.itemName);
+		row.find('input[data-role="itemLength"]').val(variable.itemLength);
+		row.find('input[data-role="itemLocation"]').val(variable.itemLocation);
+		row.find('input[data-role="itemDesc"]').val(variable.itemDesc);
+		row.find('.select[data-role="itemType"]').setValue(variable.itemType);
+		row.find('.select[data-role="state"]').setValue(variable.state);
+	}
+	row.find('[data-role="delete"]').on('click', function(){
+		removeRow($(this));
+	});
+	if(insertRow){
+		row.insertAfter(insertRow);
+	}else{
+		row.appendTo(itemTable);
+	}
+	
+}
+
+var calculateLocation = function(itemTable){
+	var LocationStart = 1;
+	itemTable.find('tr').each(function(index,tr){
+		var $tr = $(tr);
+		var itemLength = $tr.find('input[data-role="itemLength"]').val();
+		var locationEnd =  parseInt(LocationStart) +  parseInt(itemLength) - 1;
+		$tr.find('input[data-role="itemLocation"]').val(LocationStart+"-"+locationEnd);
+		LocationStart = locationEnd + 1;
+	});
+}
+
+var getAllData = function(dialog){
+	var data = {};
+	var segmentLength = 0;
+	var itemTable = dialog.find("#itemTable");
+	itemTable.find('tr').each(function(index,tr){
+		var $tr = $(tr);
+		data['headerItems['+index+'].itemId'] = $tr.find('input[data-role="itemId"]').val();
+		data['headerItems['+index+'].itemName'] = $tr.find('input[data-role="itemName"]').val();
+		data['headerItems['+index+'].itemType'] = $tr.find('.select[data-role="itemType"]').getValue();
+		data['headerItems['+index+'].itemLength'] = $tr.find('input[data-role="itemLength"]').val();
+		data['headerItems['+index+'].itemLocation'] = $tr.find('input[data-role="itemLocation"]').val();
+		segmentLength =segmentLength + parseInt($tr.find('input[data-role="itemLength"]').val());
+		data['headerItems['+index+'].itemDesc'] = $tr.find('input[data-role="itemDesc"]').val();
+		data['headerItems['+index+'].state'] = $tr.find('.select[data-role="state"]').getValue();
+	});
+	data['segLength'] = segmentLength;
+	return data;
+};
+
+//删除行
+var removeRow = function($this){
+	$this.closest('tr').remove();
+};
+
+//填充数据项类型
+var fillVTypeSelect = function(select){
+	select.select({
+		contents: [
+					{value: '0', title: 'N',selected: true},
+					{value: '1', title: 'AN'},
+					{value: '2', title: 'ANC'}
+				]
+	});
+};
+
+//填充数据项状态
+var fillStateSelect = function(select){
+	  var contents = [{title:'必选', value: 'M',selected: true}];
+       contents.push({title:'条件选择' , value:'C'});
+       contents.push({title:'可选' , value:'O'});
+	select.select({
+		contents: contents
+	});
+};
 </script>
 </head>
 <body>

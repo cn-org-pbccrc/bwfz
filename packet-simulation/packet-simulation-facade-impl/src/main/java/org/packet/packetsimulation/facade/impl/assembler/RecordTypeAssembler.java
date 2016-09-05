@@ -18,6 +18,7 @@ public class RecordTypeAssembler {
 		RecordTypeDTO result  = new RecordTypeDTO();
 		result.setId(RecordType.getId());
 		result.setVersion(RecordType.getVersion());
+		result.setHeaderItems(RecordItemAssembler.toDTOList(RecordType.getHeaderItems()));
 		result.setCode(RecordType.getCode());
 		result.setCreatedBy(RecordType.getCreatedBy());
 //		result.setRecordSegments(RecordSegmentAssembler.toDTOs(RecordType.getRecordSegments()));
@@ -45,6 +46,7 @@ public class RecordTypeAssembler {
 	 	RecordType result  = new RecordType();
 	 	result.setId(RecordTypeDTO.getId());
 		result.setVersion(RecordTypeDTO.getVersion());
+		result.setHeaderItems(RecordItemAssembler.toEntityList(RecordTypeDTO.getHeaderItems()));
 	 	result.setCode(RecordTypeDTO.getCode());
 		result.setCreatedBy(RecordTypeDTO.getCreatedBy());
 //		result.setRecordSegments(RecordSegmentAssembler.toEntities(RecordTypeDTO.getRecordSegments()));

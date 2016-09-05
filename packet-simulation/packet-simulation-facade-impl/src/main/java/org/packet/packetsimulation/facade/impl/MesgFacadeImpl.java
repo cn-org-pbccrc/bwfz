@@ -660,6 +660,8 @@ public class MesgFacadeImpl implements MesgFacade {
 			application.removeMesgs(mesgs);
 			packet.setMesgNum(packet.getMesgNum() - new Long(mesgs.size()));
 			packetApplication.updatePacket(packet);
+		}else{
+			application.removeMesgs(mesgs);
 		}
 		return InvokeResult.success();
 	}
