@@ -24,6 +24,8 @@ public class RecordTypeDTO implements Serializable {
 	private String code;
 
 	private String recordType;
+	
+	private String fileType;
 
 	/**
 	 * 数据项
@@ -92,6 +94,14 @@ public class RecordTypeDTO implements Serializable {
 
 	public void setVersion(int version) {
 		this.version = version;
+	}
+
+	public String getFileType() {
+		return fileType;
+	}
+
+	public void setFileType(String fileType) {
+		this.fileType = fileType;
 	}
 
 	@Override

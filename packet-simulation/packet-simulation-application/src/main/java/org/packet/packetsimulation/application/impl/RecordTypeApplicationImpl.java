@@ -20,7 +20,7 @@ public class RecordTypeApplicationImpl implements RecordTypeApplication {
 	}
 	
 	public void updateRecordType(RecordType recordType) {
-		recordType .save();
+		recordType.save();
 	}
 	
 	public void removeRecordType(RecordType recordType) {

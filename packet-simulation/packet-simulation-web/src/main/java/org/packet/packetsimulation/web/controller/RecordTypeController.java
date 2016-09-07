@@ -37,6 +37,8 @@ public class RecordTypeController {
 	@ResponseBody
 	@RequestMapping("/update")
 	public InvokeResult update(RecordTypeDTO recordTypeDTO) {
+		RecordTypeDTO  dto = (RecordTypeDTO) recordTypeFacade.getRecordType(recordTypeDTO.getId()).getData();
+		recordTypeDTO.setHeaderItems(dto.getHeaderItems());
 		return recordTypeFacade.updateRecordType(recordTypeDTO);
 	}
 	

@@ -32,9 +32,10 @@ $(function (){
 	                    ],
 	                url:"${pageContext.request.contextPath}/RecordType/pageJson.koala",
 	                columns: [
-	                     	                         	                         { title: '记录类型', name: 'recordType', width: width},
+	                     	                         	                         { title: '报文类型', name: 'recordType', width: width},
 	                         	                         	                         	                         { title: '类型代码', name: 'code', width: width},
 	                         	                         	                         	                         { title: '创建人', name: 'createdBy', width: width},
+	                         	                         	                         	                      { title: '文件类型', name: 'fileType', width: width},
 	                         	                         	                             { title: '操作', width: 120, render: function (rowdata, name, index)
 	                                 {
 	                                     var param = '"' + rowdata.id + '"';
@@ -397,13 +398,14 @@ var checkNotNull = function(item){
 };
 
 var addRow = function(itemTable, variable, insertRow){
-	var row = $('<tr data-toggle="context" data-target="#context-menu"><td class="v-itemId"><input  data-role="itemId" required="true" style="display: inline; " class="form-control" type="text" /></td>'
-	+'<td class="v-itemName"><input  data-role="itemName" required="true" style="display: inline; " class="form-control" type="text" /></td>'
+	var row = $('<tr data-toggle="context" data-target="#context-menu"><td class="v-itemId"><input  data-role="itemId" required="true" style="display: inline;" class="form-control" type="text" /></td>'
+	+'<td class="v-itemName"><input data-role="itemName" required="true" style="display: inline; " class="form-control" type="text" /></td>'
 	+'<td class="v-itemType"><div class="btn-group select" id="itemTypeSelect" data-role="itemType"></div></td>'
 	+'<td class="v-itemLength"><input data-role="itemLength" class="form-control" required="true" rgExp="/^[0-9]{1,}$/" data-content="只能输入数字" placeholder="数字"/></td>'
-	+'<td class="v-itemLocation"><input  data-role="itemLocation" readonly="true" required="true" style="display: inline; " class="form-control" type="text" /></td>'
-	+'<td class="v-itemDesc"><input  data-role="itemDesc" required="true" style="display: inline; " class="form-control" type="text" /></td>'
+	+'<td class="v-itemLocation"><input data-role="itemLocation" readonly="true" required="true" style="display: inline; " class="form-control" type="text" /></td>'
+	+'<td class="v-itemDesc"><input data-role="itemDesc" required="true" style="display: inline;" class="form-control" type="text" /></td>'
 	+'<td class="v-state"><div class="btn-group select" id="itemStateSelect" data-role="state"></div></td>'
+	+'<td class="v-itemValue"><input data-role="itemValue" style="display: inline;" class="form-control" type="text" /></td>'
 	+'<td class="delete-btn"><a data-role="delete"><span class="glyphicon glyphicon-remove">删除</span></a></td>');
 	
 	row.find("[data-role='itemLength']").on('change', function(){
@@ -430,6 +432,7 @@ var addRow = function(itemTable, variable, insertRow){
 		row.find('input[data-role="itemDesc"]').val(variable.itemDesc);
 		row.find('.select[data-role="itemType"]').setValue(variable.itemType);
 		row.find('.select[data-role="state"]').setValue(variable.state);
+		row.find('input[data-role="itemValue"]').val(variable.itemValue);
 	}
 	row.find('[data-role="delete"]').on('click', function(){
 		removeRow($(this));
@@ -467,6 +470,7 @@ var getAllData = function(dialog){
 		segmentLength =segmentLength + parseInt($tr.find('input[data-role="itemLength"]').val());
 		data['headerItems['+index+'].itemDesc'] = $tr.find('input[data-role="itemDesc"]').val();
 		data['headerItems['+index+'].state'] = $tr.find('.select[data-role="state"]').getValue();
+		data['headerItems['+index+'].itemValue'] = $tr.find('input[data-role="itemValue"]').val();
 	});
 	data['segLength'] = segmentLength;
 	return data;
@@ -508,7 +512,7 @@ var fillStateSelect = function(select){
   <tr>
     <td>
           <div class="form-group">
-          <label class="control-label" style="width:100px;float:left;">记录类型:&nbsp;</label>
+          <label class="control-label" style="width:100px;float:left;">报文类型:&nbsp;</label>
             <div style="margin-left:15px;float:left;">
             <input name="recordType" class="form-control" type="text" style="width:180px;" id="recordTypeID"  />
         </div>

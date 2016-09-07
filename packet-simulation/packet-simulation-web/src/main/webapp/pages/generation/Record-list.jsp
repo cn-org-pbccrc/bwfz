@@ -63,7 +63,6 @@ legend {
 var selectItems = {};
 var tabData = $('.tab-pane.active').data();
 // var packetId = $('.mesgDetail').parent().attr('data-value');
-var packId = "000";
 var mesgTypeOption = '';
 var grid;
 var form;
@@ -225,7 +224,7 @@ function initFun(){
  	                    	{ title:'创建人员', name:'createdBy'}	    	                    
  	                	];//<!-- definition columns end -->
  	                	//查询出当前表单所需要得数据。
- 	                	dialog.find('.selectPacketGrid').grid({
+ 	                	dialog.find('.selectRecordGrid').grid({
  	                    	identity: 'id',
  	                    	columns: columns,
  	                    	url: contextPath + '/RecordType/pageJson.koala'
@@ -241,7 +240,7 @@ function initFun(){
     	            		params[name] = $this.val();
     	            	}
     	            });
-    	            dialog.find('.selectPacketGrid').getGrid().search(params);
+    	            dialog.find('.selectRecordGrid').getGrid().search(params);
     	        });
     	        dialog.find('#sub').on('click',{grid: grid}, function(e){
     				var info = dialog.find($(".info")).attr('id');

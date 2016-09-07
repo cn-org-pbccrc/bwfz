@@ -40,7 +40,13 @@ public class RecordItemDTO implements Serializable{
 	 * 状态
 	 */
 	private String state;
+	
+	/**
+	 * 值
+	 */
+	private String itemValue;
 
+	
 	public String getItemId() {
 		return itemId;
 	}
@@ -96,6 +102,12 @@ public class RecordItemDTO implements Serializable{
 	public void setState(String state) {
 		this.state = state;
 	}
-	
 
+	public String getItemValue() {
+		return itemValue;
+	}
+
+	public void setItemValue(String itemValue) {
+		this.itemValue = itemValue;
+	}	
 }

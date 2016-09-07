@@ -58,6 +58,12 @@ public class RecordType extends KoalaAbstractEntity{
 	@Column(name = "TRANSFORM",length=5000) 
 	private String transform;
 	
+	/**
+	 * 文件类型
+	 */
+	@Column(name = "FILETYPE") 
+	private String fileType;
+	
 //	/**
 //	 * 段
 //	 */
@@ -128,6 +134,14 @@ public class RecordType extends KoalaAbstractEntity{
 //	public void setRecordSegments(List<RecordSegment> recordSegments) {
 //		this.recordSegments = recordSegments;
 //	}
+
+	public String getFileType() {
+		return fileType;
+	}
+
+	public void setFileType(String fileType) {
+		this.fileType = fileType;
+	}
 
 	@Override
 	public String[] businessKeys() {

@@ -56,6 +56,13 @@ public class RecordItem implements ValueObject{
 	 */
 	@Column(name = "STATE") 
 	private String state;
+	
+	/**
+	 * 值
+	 */
+	@Column(name = "ITEM_VALUE") 
+	private String itemValue;
+	
 
 	public String getItemId() {
 		return itemId;
@@ -112,5 +119,12 @@ public class RecordItem implements ValueObject{
 	public void setState(String state) {
 		this.state = state;
 	}
-	
+
+	public String getItemValue() {
+		return itemValue;
+	}
+
+	public void setItemValue(String itemValue) {
+		this.itemValue = itemValue;
+	}	
 }

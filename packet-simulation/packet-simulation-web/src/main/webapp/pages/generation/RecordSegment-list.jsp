@@ -294,6 +294,7 @@ var getAllData = function(dialog){
 		segmentLength =segmentLength + parseInt($tr.find('input[data-role="itemLength"]').val());
 		data['RecordItems['+index+'].itemDesc'] = $tr.find('input[data-role="itemDesc"]').val();
 		data['RecordItems['+index+'].state'] = $tr.find('.select[data-role="state"]').getValue();
+		data['RecordItems['+index+'].itemValue'] = $tr.find('input[data-role="itemValue"]').val();
 	});
 	data['segLength'] = segmentLength;
 	return data;
@@ -384,6 +385,7 @@ var addRow = function(itemTable, variable, insertRow){
 	+'<td class="v-itemLocation"><input  data-role="itemLocation" readonly="true" required="true" style="display: inline; " class="form-control" type="text" /></td>'
 	+'<td class="v-itemDesc"><input  data-role="itemDesc" required="true" style="display: inline; " class="form-control" type="text" /></td>'
 	+'<td class="v-state"><div class="btn-group select" id="itemStateSelect" data-role="state"></div></td>'
+	+'<td class="v-itemValue"><input data-role="itemValue" style="display: inline;" class="form-control" type="text" /></td>'
 	+'<td class="delete-btn"><a data-role="delete"><span class="glyphicon glyphicon-remove">删除</span></a></td>');
 	
 	row.find("[data-role='itemLength']").on('change', function(){
@@ -410,6 +412,7 @@ var addRow = function(itemTable, variable, insertRow){
 		row.find('input[data-role="itemDesc"]').val(variable.itemDesc);
 		row.find('.select[data-role="itemType"]').setValue(variable.itemType);
 		row.find('.select[data-role="state"]').setValue(variable.state);
+		row.find('input[data-role="itemValue"]').val(variable.itemValue);
 	}
 	row.find('[data-role="delete"]').on('click', function(){
 		removeRow($(this));

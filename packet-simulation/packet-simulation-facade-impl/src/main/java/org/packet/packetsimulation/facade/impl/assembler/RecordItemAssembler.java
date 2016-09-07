@@ -17,6 +17,7 @@ public class RecordItemAssembler {
 		ri.setItemName(dto.getItemName());
 		ri.setItemType(dto.getItemType());
 		ri.setState(dto.getState());
+		ri.setItemValue(dto.getItemValue());
 		return ri;
 	}
 	
@@ -29,6 +30,7 @@ public class RecordItemAssembler {
 		dto.setItemName(entity.getItemName());
 		dto.setItemType(entity.getItemType());
 		dto.setState(entity.getState());
+		dto.setItemValue(entity.getItemValue());
 		return dto;
 	}
 	

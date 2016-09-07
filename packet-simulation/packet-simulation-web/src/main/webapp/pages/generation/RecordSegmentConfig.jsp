@@ -5,28 +5,31 @@
 </head>
 <style>
 .recordItemConfig  .v-itemId {
-	width: 8%;
+	width: 7%;
 }
 .recordItemConfig  .v-itemName {
-	width: 18%;
+	width: 15%;
 }
 .recordItemConfig  .v-itemType {
-	width: 12%;
-}
-.recordItemConfig .v-itemLength {
 	width: 10%;
 }
+.recordItemConfig .v-itemLength {
+	width: 8%;
+}
 .recordItemConfig  .v-itemLocation {
-	width: 12%;
+	width: 10%;
 }
 .recordItemConfig  .v-itemDesc {
 	width: 15%;
 }
 .recordItemConfig .v-state {
-	width: 15%;
+	width: 13%;
+}
+.recordItemConfig .v-itemValue {
+	width: 14%;
 }
 .recordItemConfig .delete-btn {
-	width: 12%;
+	width: 8%;
 }
 </style>
 <body>
@@ -98,6 +101,7 @@
 											<th class="v-itemLocation">位置</th>
 											<th class="v-itemDesc">描述及代码表</th>
 											<th class="v-state">状态</th>
+											<th class="v-itemValue">值</th>
 											<th class="delete-btn">操作</th>
 										</tr>
 									</table>

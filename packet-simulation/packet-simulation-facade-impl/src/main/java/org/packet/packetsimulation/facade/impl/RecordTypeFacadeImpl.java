@@ -58,7 +58,7 @@ public class RecordTypeFacadeImpl implements RecordTypeFacade {
 	}
 	
 	public InvokeResult removeRecordTypes(Long[] ids) {
-		Set<RecordType> recordTypes= new HashSet<RecordType>();
+		Set<RecordType> recordTypes = new HashSet<RecordType>();
 		for (Long id : ids) {
 			recordTypes.add(application.getRecordType(id));
 			Set<RecordSegment> segments = new HashSet<RecordSegment>();
