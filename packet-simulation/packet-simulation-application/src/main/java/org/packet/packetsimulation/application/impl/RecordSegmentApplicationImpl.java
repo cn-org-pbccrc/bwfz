@@ -2,10 +2,14 @@ package org.packet.packetsimulation.application.impl;
 
 import java.util.List;
 import java.util.Set;
+
 import javax.inject.Named;
+
 import org.springframework.transaction.annotation.Transactional;
 import org.packet.packetsimulation.application.RecordSegmentApplication;
+import org.packet.packetsimulation.core.domain.MesgType;
 import org.packet.packetsimulationGeneration.core.domain.RecordSegment;
+import org.packet.packetsimulationGeneration.core.domain.RecordType;
 
 @Named
 @Transactional

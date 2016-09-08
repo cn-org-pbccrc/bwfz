@@ -11,8 +11,10 @@ import org.openkoala.gqc.facade.dto.GeneralQueryDTO;
 import org.openkoala.koala.commons.InvokeResult;
 import org.packet.packetsimulation.facade.RecordFacade;
 import org.packet.packetsimulation.facade.RecordSegmentFacade;
+import org.packet.packetsimulation.facade.dto.MesgTypeDTO;
 import org.packet.packetsimulation.facade.dto.RecordDTO;
 import org.packet.packetsimulation.facade.dto.RecordSegmentDTO;
+import org.packet.packetsimulation.facade.dto.RecordTypeDTO;
 import org.packet.packetsimulationGeneration.core.domain.RecordType;
 import org.springframework.beans.propertyeditors.CustomDateEditor;
 import org.springframework.stereotype.Controller;
@@ -35,8 +37,8 @@ public class RecordController {
 	
 	@ResponseBody
 	@RequestMapping("/add")
-	public InvokeResult add(RecordDTO recordDTO) {
-		return recordFacade.creatRecord(recordDTO);
+	public InvokeResult add(RecordDTO recordDTO, @RequestParam Long recordTypeId) {
+		return recordFacade.creatRecord(recordDTO, recordTypeId);
 	}
 	
 	@ResponseBody
@@ -46,9 +48,9 @@ public class RecordController {
 	}
 	
 	@ResponseBody
-	@RequestMapping("/pageJson")
-	public Page pageJson(RecordDTO recordDTO, @RequestParam int page, @RequestParam int pagesize) {
-		Page<RecordDTO> all = recordFacade.pageQueryRecord(recordDTO, page, pagesize);
+	@RequestMapping("/pageJson/{currentUserId}")
+	public Page pageJson(RecordDTO recordDTO, @RequestParam int page, @RequestParam int pagesize, @PathVariable String currentUserId) {
+		Page<RecordDTO> all = recordFacade.pageQueryRecord(recordDTO, page, pagesize, currentUserId);
 		return all;
 	}
 	
@@ -74,6 +76,12 @@ public class RecordController {
 	public List<RecordSegmentDTO> findRecordSegmentByRecordType(@PathVariable Long id) {
 		List<RecordSegmentDTO> dtos = recordSegmentFacade.findRecordSegmentByRecordType(id);
 		return dtos;
+	}
+	
+    @ResponseBody
+	@RequestMapping("/findRecordTypes")
+	public List<RecordType> findRecordTypes() {
+		return recordFacade.findRecordTypes();
 	}
 		
     @InitBinder    

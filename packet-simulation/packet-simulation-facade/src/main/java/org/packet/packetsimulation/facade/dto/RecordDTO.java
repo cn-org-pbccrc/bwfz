@@ -21,11 +21,9 @@ public class RecordDTO implements Serializable {
 
 	private String content;
 
-	private String remark;
+	private String recordName;
 
-	private Integer mesgFrom;
-
-	private String createBy;
+	private String createdBy;
 
 	public RecordType getRecordType() {
 		return recordType;
@@ -51,28 +49,20 @@ public class RecordDTO implements Serializable {
 		return this.content;
 	}
 
-	public void setRemark(String remark) {
-		this.remark = remark;
+	public String getRecordName() {
+		return recordName;
 	}
 
-	public String getRemark() {
-		return this.remark;
+	public void setRecordName(String recordName) {
+		this.recordName = recordName;
 	}
 
-	public void setMesgFrom(Integer mesgFrom) {
-		this.mesgFrom = mesgFrom;
+	public void setCreatedBy(String createdBy) {
+		this.createdBy = createdBy;
 	}
 
-	public Integer getMesgFrom() {
-		return this.mesgFrom;
-	}
-
-	public void setCreateBy(String createBy) {
-		this.createBy = createBy;
-	}
-
-	public String getCreateBy() {
-		return this.createBy;
+	public String getCreatedBy() {
+		return this.createdBy;
 	}
 
 	public Long getId() {

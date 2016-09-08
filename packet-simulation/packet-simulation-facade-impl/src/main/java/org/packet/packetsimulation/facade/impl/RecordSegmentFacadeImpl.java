@@ -18,7 +18,9 @@ import org.packet.packetsimulation.application.RecordTypeApplication;
 import org.packet.packetsimulation.facade.RecordSegmentFacade;
 import org.packet.packetsimulation.facade.dto.RecordSegmentDTO;
 import org.packet.packetsimulation.facade.dto.RecordTypeDTO;
+import org.packet.packetsimulation.facade.impl.assembler.MesgTypeAssembler;
 import org.packet.packetsimulation.facade.impl.assembler.RecordSegmentAssembler;
+import org.packet.packetsimulation.facade.impl.assembler.RecordTypeAssembler;
 import org.packet.packetsimulationGeneration.core.domain.RecordSegment;
 
 @Named
@@ -127,6 +129,4 @@ public class RecordSegmentFacadeImpl implements RecordSegmentFacade {
 	   	return  RecordSegmentAssembler.toDTOs(segmentList);
 		
 	}
-	
-	
 }

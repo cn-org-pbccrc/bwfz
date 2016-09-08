@@ -18,9 +18,8 @@ public class RecordAssembler {
 		result.setRecordType(record.getRecordType());
 		result.setRecordTypeStr(record.getRecordType().getRecordType());
 		result.setContent(record.getContent());
-		result.setRemark(record.getRemark());
-		result.setCreateBy(record.getCreateBy());
-		result.setMesgFrom(record.getMesgFrom());
+		result.setRecordName(record.getRecordName());
+		result.setCreatedBy(record.getCreatedBy());
 		return result;
 	}
 
@@ -44,9 +43,8 @@ public class RecordAssembler {
 		result.setVersion(recordDTO.getVersion());
 		result.setRecordType(recordDTO.getRecordType());
 		result.setContent(recordDTO.getContent());
-		result.setRemark(recordDTO.getRemark());
-		result.setCreateBy(recordDTO.getCreateBy());
-		result.setMesgFrom(recordDTO.getMesgFrom());
+		result.setRecordName(recordDTO.getRecordName());
+		result.setCreatedBy(recordDTO.getCreatedBy());
 		return result;
 	}
 

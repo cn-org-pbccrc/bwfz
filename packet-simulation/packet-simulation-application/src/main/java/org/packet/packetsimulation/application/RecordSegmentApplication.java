@@ -3,7 +3,9 @@ package org.packet.packetsimulation.application;
 
 import java.util.List;
 import java.util.Set;
+
 import  org.packet.packetsimulationGeneration.core.domain.RecordSegment;
+import org.packet.packetsimulationGeneration.core.domain.RecordType;
 
 public interface RecordSegmentApplication {
 

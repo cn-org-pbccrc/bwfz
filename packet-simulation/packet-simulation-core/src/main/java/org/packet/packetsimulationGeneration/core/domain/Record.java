@@ -24,10 +24,6 @@ public class Record extends KoalaAbstractEntity{
 	 */
 	private static final long serialVersionUID = -5947299243827448177L;
 
-//	@ManyToOne
-//	@JoinColumn(name = "RECORDFILE_ID")
-//	private RecordFile recordFile;
-//	
 	@OneToOne
     @JoinColumn(name = "RECORDTYPE_ID")
 	private RecordType recordType;
@@ -35,38 +31,27 @@ public class Record extends KoalaAbstractEntity{
 	@Column(name = "CONTENT",length=5000)
 	private String content;
 	
-	@Column(name = "REMARK")
-	private String remark;
-
+	@Column(name = "RECORD_NAME")
+	private String recordName;
 	
 	@Column(name = "CREATE_BY")
-	private String createBy;
+	private String createdBy;
 	
-	@Column(name = "MESG_FROM")
-	private Integer mesgFrom;
 
-//	public RecordFile getRecordFile() {
-//		return recordFile;
-//	}
-//
 	public RecordType getRecordType() {
 		return recordType;
 	}
 
-//	public void setRecordFile(RecordFile recordFile) {
-//		this.recordFile = recordFile;
-//	}
-//
 	public void setRecordType(RecordType recordType) {
 		this.recordType = recordType;
 	}
 
-	public String getCreateBy() {
-		return createBy;
+	public String getCreatedBy() {
+		return createdBy;
 	}
 
-	public void setCreateBy(String createBy) {
-		this.createBy = createBy;
+	public void setCreatedBy(String createBy) {
+		this.createdBy = createBy;
 	}
 
 
@@ -77,21 +62,13 @@ public class Record extends KoalaAbstractEntity{
 	public void setContent(String content) {
 		this.content = content;
 	}
-	
-	public String getRemark() {
-		return remark;
+
+	public String getRecordName() {
+		return recordName;
 	}
 
-	public void setRemark(String remark) {
-		this.remark = remark;
-	}
-	
-	public Integer getMesgFrom() {
-		return mesgFrom;
-	}
-
-	public void setMesgFrom(Integer mesgFrom) {
-		this.mesgFrom = mesgFrom;
+	public void setRecordName(String recordName) {
+		this.recordName = recordName;
 	}
 
 	@Override

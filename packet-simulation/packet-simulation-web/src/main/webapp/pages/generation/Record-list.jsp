@@ -71,8 +71,13 @@ var currentUserId;
 var batchContent;
 var mesgType;
 var packetId;
-var mesgId;
 var version;
+
+var selectMesg;
+var mesgInput;
+var recordTypeId;
+var recordName;
+var recordCode;
 $.get('${pageContext.request.contextPath}/auth/currentUser/getUserDetail.koala').done(function(json) {
 	json = json.data;
     currentUserId = json['userAccount']; 	
@@ -100,10 +105,10 @@ function initFun(){
     	            {content: '<button class="btn btn-info" type="button"><span class="glyphicon glyphicon-repeat"><span>批量规则</button>', action: 'ruleConfig'},
     	            {content: '<button class="btn btn-info" type="button"><span class="glyphicon glyphicon-repeat"><span>批量添加</button>', action: 'batch'}
     	        ],
-    	        url:"${pageContext.request.contextPath}/Record/pageJson.koala",
+    	        url:"${pageContext.request.contextPath}/Record/pageJson/" + currentUserId + ".koala",
     	        columns: [								 	
+    	            { title: '报文名称', name: 'recordName', width: 300},
     	        	{ title: '报文类型', name: 'recordTypeStr', width: 400},
-    	            { title: '用例名称', name: 'remark', width: 300},
     	            { title: '操作', width: 180, render: function (rowdata, name, index)
     	            	{
     	                	var param = '"' + rowdata.id + '"';
@@ -202,96 +207,45 @@ function initFun(){
     	},
     	add: function(grid){
     		var self = this;
-			var dialog = $('<div class="modal fade"><div class="modal-dialog" style="width:1040px;">'
-				+'<div class="modal-content"><div class="modal-header"><button type="button" class="close" '
-			    +'data-dismiss="modal" aria-hidden="true">&times;</button>'
-			    +'<h4 class="modal-title">新增</h4></div><div class="modal-body">'
-			    +'<p>One fine body&hellip;</p></div></div>'
-			    +'</div></div>');
+    		var dialog = $('<div class="modal fade"><div class="modal-dialog">'
+    	        	+'<div class="modal-content"><div class="modal-header"><button type="button" class="close" '
+    	        	+'data-dismiss="modal" aria-hidden="true">&times;</button>'
+    	        	+'<h4 class="modal-title">新增</h4></div><div class="modal-body">'
+    	        	+'<p>One fine body&hellip;</p></div><div class="modal-footer">'
+    	        	+'<button type="button" class="btn btn-default" data-dismiss="modal">取消</button>'
+    	        	+'<button type="button" class="btn btn-success" id="save">保存</button></div></div>'
+    	        	+'</div></div>');
     	    $.get('<%=path%>/Record-add.jsp').done(function(html){
     	        dialog.modal({
-    	            keyboard:false
+    	            keyboard:false,
+    	            backdrop: 'static'
     	        }).on({
     	            'hidden.bs.modal': function(){
     	                $(this).remove();
-    	            },
-    	            'shown.bs.modal': function(){
- 	                	var columns = [
- 	                    	{ title:'报文类型', name:'recordType' , width: 250},
- 	                    	{ title:'类型代码', name:'code', width: 120},
- 	                    	//{ title:'模板名称', name:'filePath', width: 150},
- 	                    	//{ title:'显示顺序', name:'sort', width: 120},
- 	                    	{ title:'创建人员', name:'createdBy'}	    	                    
- 	                	];//<!-- definition columns end -->
- 	                	//查询出当前表单所需要得数据。
- 	                	dialog.find('.selectRecordGrid').grid({
- 	                    	identity: 'id',
- 	                    	columns: columns,
- 	                    	url: contextPath + '/RecordType/pageJson.koala'
- 	                	});
- 	            	}
+    	            }
     	        }).find('.modal-body').html(html);
-    	        dialog.find('#search').on('click', function(){
-    	            var params = {};
-    	            dialog.find('input').each(function(){
-    	            	var $this = $(this);
-    	            	var name = $this.attr('name');
-    	            	if(name){
-    	            		params[name] = $this.val();
-    	            	}
-    	            });
-    	            dialog.find('.selectRecordGrid').getGrid().search(params);
-    	        });
-    	        dialog.find('#sub').on('click',{grid: grid}, function(e){
-    				var info = dialog.find($(".info")).attr('id');
-    				var xml = '<?xml version="1.0" encoding="UTF-8"?><Document><'+info+'>';
-    				dialog.find($(".true")).each(function(){
-        				var id = $(this).attr('id');
-        				xml += '<' + id + '>';
-        				$('#'+id).find($("[name]")).each(function(){
-    						if($(this).parent().parent()[0].tagName != 'FIELDSET'){
-    							if($(this).attr('save')=='true'){
-    								var name = ($(this).attr('name'));
-        	    					var value = ($(this).val());
-        							xml += '<' + name + '>' + value + '</' + name + '>';
-    							}
-    						}
-    						else{
-    							var name = ($(this).attr('name')); 
-    							xml += '<' + name + '>';
-    							$(this).parent().parent().find($("[subName]")).each(function(){
-    								if($(this).attr('save')=='true'){
-    									var subName = ($(this).attr('subName'));
-        								var value = ($(this).val());	
-        								xml += '<' + subName + '>' + value + '</' + subName + '>';
-    								} 
-    							});
-    							xml += '</' + name + '>';
-    						}
-        				});
-        				xml += '</' + id + '>';
-      				});
-    				xml += '</'+info+'></Document>';
-    				var items = $('#main').find('.selectPacketGrid').data('koala.grid').selectedRows();
-     				var data = [{ name: 'content', value: xml },
-      					{ name: 'mesgType', value: items[0].id},
-     				    { name: 'packetId', value: packetId},
-      					{ name: 'remark', value: dialog.find("#remarkID").val()},
-      					{ name: 'mesgFrom', value: 0}
-     				];		
-        	        $.post('${pageContext.request.contextPath}/Mesg/add.koala', data).done(function(result){
-         	        	if(result.success ){
-         	            	dialog.modal('hide');
-         	                grid.data('koala.grid').refresh();
-         	                grid.message({
-         	                	type: 'success',
-         	                	content: '保存成功'
-                    		});
-         	            }else{
-    						alert(result.errorMessage);
-       	                    dialog.find('.modal-dialog').append('<div class="errMsg" style="float:left;position:absolute;max-width:500px;min-height:200px;bottom:20px;left:20px;background-color:#4cae4c;color:white;">'+result.errorMessage+ '</div>');
-      				    }
-          	        });    	        
+    	        selectMesg = dialog.find('#select-mesg');
+	            mesgInput = selectMesg.find('input');
+				selectMesg.find('[data-toggle="dropdown"]').on('click', function(){
+					selectMesgTypes();
+				});
+    	        dialog.find('#save').on('click',{grid: grid}, function(e){
+    	            if(!Validator.Validate(dialog.find('form')[0],3))return;
+    	            $.post('${pageContext.request.contextPath}/Record/add.koala?createdBy='+currentUserId, dialog.find('form').serialize()).done(function(result){
+    	            	if(result.success ){
+    	                	dialog.modal('hide');
+    	                    e.data.grid.data('koala.grid').refresh();
+    	                    e.data.grid.message({
+    	                    	type: 'success',
+    	                        content: '保存成功'
+    	                    });
+    	                }else{
+    	                    dialog.find('.modal-content').message({
+    	                        type: 'error',
+    	                        content: result.errorMessage
+    	                    });
+    	                }
+    	            });  	        
         	    });
     	    });
  	    },
@@ -554,67 +508,71 @@ var openDetailsPageOfMesg = function(id){
     });
 }
 
-var sortNum=1;
-function addMesg(){
-	var html='<tr><td width="50"><div class="checkerbox" data-role="indexCheckbox" data-value="'+ sortNum +'" indexvalue="0" ></div></td>';
-    html=html+'<td width="70">'+ sortNum +'</td>';
-    html=html+'<td width="280"><select id="'+ sortNum +'" style="width:90%;">'+ mesgTypeOption +'</select></td>';
-    html=html+'<td width="auto"><button class="btn btn-success" type="button" onclick="modifyMesg('+ sortNum +');"><span class="glyphicon glyphicon-edit"><span>修改</span></span></button></td>';
-    html=html+'</tr>';
-    $("#content").append(html);
-    sortNum++;
-}
-
-function cloneHtml(obj,countTagId){
-    var brother = $($(obj).parent().next().children("FIELDSET:first").get(0));
-    if(brother.get(0).tagName=="FIELDSET"){
-    	var countNum = $("#"+countTagId).val();
-        $("#"+countTagId).val(parseInt(countNum) + 1);
-        var html = $($(obj).parent().next().children("FIELDSET:first").get(0)).clone();
-        $(obj).parent().next().append(html);
-        html.find($('[data-toggle="tooltip"]')).tooltip();
-    }
-}
-    
-function removeHtml(obj,countTagId){
-    var brother = $($("#"+countTagId+"_div").children("FIELDSET").get(1));
-    if(brother.get(0)!=null && brother.get(0).tagName=="FIELDSET"){
-    	var countNum = $("#"+countTagId).val();
-        $("#"+countTagId).val(parseInt(countNum) - 1);
-        $(obj).parent().parent().remove();
-        return;
-    }else{
-    	alert("不能删除，资料记录必须大于一条！");
-    }
-}
-// function removeTab(obj,tabId){
-//     $(obj).parent().parent().remove();
-//     var nextElement = $('#'+tabId).next();
-//     $('#'+tabId).remove();
-//     nextElement.attr("class","tab-pane fade active in");
-// }
-function removeTab(obj,tabId){
-	if($(obj).children("span").attr("class")=="glyphicon glyphicon-check"){
-		var len = $(obj).parent().attr("href").length;
-		var tab = $(obj).parent().attr("href").substring(1,len);
-		$("#"+tab).attr("class","tab-pane fade in active false");
-	    $(obj).children("span").attr("class","glyphicon glyphicon-unchecked");
-	}else{
-		var len = $(obj).parent().attr("href").length;
-		var tab = $(obj).parent().attr("href").substring(1,len);
-		$("#"+tab).attr("class","tab-pane fade in active true");
-	    $(obj).children("span").attr("class","glyphicon glyphicon-check");
-	}
-}
-function removeField(obj){
-	if($(obj).children("span").attr("class")=="glyphicon glyphicon-check"){
-		$(obj).prev().children("input").attr("save","false");
-	    $(obj).children("span").attr("class","glyphicon glyphicon-unchecked");
-	}else{
-		$(obj).prev().children("input").attr("save","true");
-	    $(obj).children("span").attr("class","glyphicon glyphicon-check");
-	}
-}
+var selectMesgTypes = function(){
+	$.get( contextPath + '/pages/organisation/select-mesg-template.jsp').done(function(data){
+		var mesgTreeDialog = $(data);
+		mesgTreeDialog.find('.modal-body').css({height:'325px'});
+		mesgTree = mesgTreeDialog.find('.tree');
+        loadMesgTree();
+		mesgTreeDialog.find('#confirm').on('click',function(){
+			mesgInput.val(recordTypeId);
+			selectMesg.find('[data-toggle="item"]').text(recordName);
+			mesgTreeDialog.modal('hide');
+			selectMesg.trigger('keydown');
+		}).end().modal({
+			backdrop: false,
+			keyboard: false
+		}).on({
+			'hidden.bs.modal': function(){
+				$(this).remove();
+			}
+		});
+	});
+};
+var loadMesgTree = function(){
+	mesgTree.parent().loader({
+		opacity: 0
+	});
+    $.get(contextPath  + '/Record/findRecordTypes.koala').done(function(data){
+        mesgTree.parent().loader('hide');
+        var zNodes = new Array();
+		var cNodes = new Array();
+		if (!data) {
+			return;
+		}
+		$.each(data, function() {
+			var cNode = {};
+			this.title = this.recordType;
+			cNode.menu = this;
+			cNodes.push(cNode);
+		});
+		var zNode = {};
+		var menu = {};
+		zNode.type = 'parent';
+		menu.title = '企业';
+		menu.open = true;
+		zNode.children = cNodes;
+		zNode.menu = menu;
+		zNodes.push(zNode);
+		var dataSourceTree = {
+			data : zNodes,
+			delay : 400
+		};
+        mesgTree.tree({
+            dataSource: dataSourceTree,
+            loadingHTML: '<div class="static-loader">Loading...</div>',
+            multiSelect: false,
+            useChkBox : false,
+            cacheItems: true
+        }).on({
+            'selectChildren': function(event, data){
+            	recordTypeId = data.id;
+                recordName = data.recordType;
+                recordCode = data.code;
+            }
+        });
+    });
+};
 </script>
 </body>
 </html>
