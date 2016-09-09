@@ -107,12 +107,12 @@ function initFun(){
     	        ],
     	        url:"${pageContext.request.contextPath}/Record/pageJson/" + currentUserId + ".koala",
     	        columns: [								 	
-    	            { title: '报文名称', name: 'recordName', width: 300},
+    	            { title: '记录名称', name: 'recordName', width: 300},
     	        	{ title: '报文类型', name: 'recordTypeStr', width: 400},
     	            { title: '操作', width: 180, render: function (rowdata, name, index)
     	            	{
-    	                	var param = '"' + rowdata.id + '"';
-    	                    var h = "<a href='javascript:openDetailsPageOfMesg(" + param + ")'>查看</a> ";
+    	                	var param = '"' + rowdata.recordType.id + '"';
+    	                    var h = "<a href='javascript:recordEdit(" + param + ")'>编辑段信息</a> ";
     	                    return h;
     	                }
     	            }
@@ -573,6 +573,321 @@ var loadMesgTree = function(){
         });
     });
 };
+var recordEdit = function(id){
+	var dialog = $('<div class="modal fade"><div class="modal-dialog" style="width:1040px;">'
+			+'<div class="modal-content"><div class="modal-header"><button type="button" class="close" '
+		    +'data-dismiss="modal" aria-hidden="true">&times;</button>'
+		    +'<h4 class="modal-title">编辑段信息</h4></div><div class="modal-body">'
+		    +'<p>One fine body&hellip;</p></div></div>'
+		    +'</div></div>');
+	$.get('<%=path%>/Segment-edit.jsp').done(function(html){
+	    dialog.modal({
+	        keyboard:false
+	    }).on({
+	        'hidden.bs.modal': function(){
+	            $(this).remove();
+	        }
+	    }).find('.modal-body').html(html);
+	    $.get('${pageContext.request.contextPath}/RecordSegment/findRecordSegmentByRecordType/' + id + '.koala').done(function(data) {					
+			for(var i=0; i<data.length; i++){
+				var segment = data[i];
+				var segmentId = segment.id;
+				var segMark = segment.segMark;
+				var recordItems = segment.recordItems;
+				var mycolumns = new Array();
+				for(var j=0; j<recordItems.length; j++){
+					var recordItem = recordItems[j];
+					mycolumns.push({
+						'title' : recordItem.itemName,
+						'name' : recordItem.itemId,
+						'width' : '200px'
+					});
+				}
+				//alert('first')
+				var subGrid = "grid" + i;
+				dialog.find('#mainGrid').append("<div id=" + subGrid + " segmentId=" + segmentId + "></div>")
+				//alert(columns.length)
+				dialog.find('#' + subGrid).grid({
+					identity: 'id',
+					buttons: [
+					    {content: '<button class="btn btn-primary" type="button"><span class="glyphicon glyphicon-plus"><span>添加</button>', action: 'add'},
+					    {content: '<button class="btn btn-success" type="button"><span class="glyphicon glyphicon-edit"><span>修改</button>', action: 'modify'},
+					    {content: '<button class="btn btn-danger" type="button"><span class="glyphicon glyphicon-remove"><span>删除</button>', action: 'delete'},
+					],
+					columns : mycolumns,
+					url: contextPath + '/Segment/pageJson.koala?id=' + id + '&segMark=' +  segMark
+				}).on({
+			    	'add': function(){
+			    		add(id, $(this));
+			    	},
+			    	'modify': function(event, data){
+	   	            	var indexs = data.data;
+	   	                var $this = $(this);
+	   	                if(indexs.length == 0){
+	   	                	$this.message({
+	   	                    	type: 'warning',
+	   	                        content: '请选择一条记录进行修改'
+	   	                    })
+	   	                    return;
+	   	                }
+	   	                if(indexs.length > 1){
+	   	                	$this.message({
+	   	                    	type: 'warning',
+	   	                        content: '只能选择一条记录进行修改'
+	   	                    })
+	   	                    return;
+	   	                }
+	   	                self.modify(indexs[0], $this);
+	   	            },
+	    	        'delete': function(event, data){
+	    	        	var indexs = data.data;
+	    	            var $this = $(this);
+	    	            if(indexs.length == 0){
+	    	            	$this.message({
+	    	                	type: 'warning',
+	    	                    content: '请选择要删除的记录'
+	    	                });
+	    	                return;
+	    	            }
+	    	            var remove = function(){
+	    	            	self.remove(indexs, $this);
+	    	            };
+	    	            $this.confirm({
+	    	            	content: '确定要删除所选记录吗?',
+	    	                callBack: remove
+	    	            });
+	    	        }        
+				});
+				//dialog.find('.grid-body').attr('style', 'width: 998px;');
+				//dialog.find('.grid-table-head').attr('style', 'min-width: 998px;');
+			}		
+		});
+	});
+	
+}
+
+//填充数据项状态
+var fillStateSelect = function(select){
+	  var contents = [{title:'必选', value: 'M',selected: true}];
+       contents.push({title:'条件选择' , value:'C'});
+       contents.push({title:'可选' , value:'O'});
+	select.select({
+		contents: contents
+	});
+};
+var addRow = function(itemTable, variable, insertRow){
+	var row = $('<tr data-toggle="context" data-target="#context-menu"><td class="v-itemId"><input  data-role="itemId" readonly="true" required="true" style="display: inline; " class="form-control" type="text" /></td>'
+	+'<td class="v-itemName"><input  data-role="itemName" readonly="true" required="true" style="display: inline; " class="form-control" type="text" /></td>'
+	+'<td class="v-itemType"><div class="btn-group select" id="itemTypeSelect" data-role="itemType"></div></td>'
+	+'<td class="v-itemLength"><input data-role="itemLength" readonly="true" class="form-control" required="true" rgExp="/^[0-9]{1,}$/" data-content="只能输入数字" placeholder="数字"/></td>'
+	+'<td class="v-itemLocation"><input data-role="itemLocation" readonly="true" required="true" style="display: inline; " class="form-control" type="text" /></td>'
+	+'<td class="v-itemDesc"><input data-role="itemDesc" readonly="true" required="true" style="display: inline; " class="form-control" type="text" /></td>'
+	+'<td class="v-state"><div class="btn-group select" id="itemStateSelect" data-role="state" ></div></td>'
+	+'<td class="v-itemValue"><input data-role="itemValue" style="display: inline;" class="form-control" type="text" /></td>');
+
+	row.find("[data-role='itemLength']").on('change', function(){
+		calculateLocation(itemTable);
+	})
+//		row.contextmenu({
+//			onItem: function (context, e) {
+//				addRow(null,null,row);
+//		    }
+//		});
+	
+	if(!itemTable){
+		itemTable=$('#itemTable')
+	}
+	var itemType = row.find('[data-role="itemType"]')
+	var itemState = row.find('[data-role="state"]')
+	fillVTypeSelect(itemType);
+	fillStateSelect(itemState);
+	row.find('[data-toggle="item"]').attr('disabled', true);
+	row.find('[data-toggle="button"]').attr('disabled', true);
+	if(variable){
+		row.find('input[data-role="itemId"]').val(variable.itemId);
+		row.find('input[data-role="itemName"]').val(variable.itemName);
+		row.find('input[data-role="itemLength"]').val(variable.itemLength);
+		row.find('input[data-role="itemLocation"]').val(variable.itemLocation);
+		row.find('input[data-role="itemDesc"]').val(variable.itemDesc);
+		row.find('.select[data-role="itemType"]').setValue(variable.itemType);
+		row.find('.select[data-role="state"]').setValue(variable.state);
+		row.find('input[data-role="itemValue"]').val(variable.itemValue);
+	}
+	row.find('[data-role="delete"]').on('click', function(){
+		removeRow($(this));
+	});
+	if(insertRow){
+		row.insertAfter(insertRow);
+	}else{
+		row.appendTo(itemTable);
+	}
+	
+}
+
+//删除行
+var removeRow = function($this){
+	$this.closest('tr').remove();
+};
+
+//填充数据项类型
+var fillVTypeSelect = function(select){
+	select.select({
+		contents: [
+					{value: '0', title: 'N',selected: true},
+					{value: '1', title: 'AN'},
+					{value: '2', title: 'ANC'}
+				]
+	});
+};
+
+//填充数据项状态
+var fillStateSelect = function(select){
+	  var contents = [{title:'必选', value: 'M',selected: true}];
+       contents.push({title:'条件选择' , value:'C'});
+       contents.push({title:'可选' , value:'O'});
+	select.select({
+		contents: contents
+	});
+};
+
+var getAllData = function(dialog){
+	var itemId;
+	var itemValue;
+	var itemType;
+	var itemLength;
+	
+	var data = '{';
+	
+// 	data['segName'] = dialog.find("#segNameID").val();
+// 	data['segMark'] = dialog.find("#segMarkID").val();
+// 	data['segDesc'] = dialog.find("#segDescID").val();
+// 	data['state'] = dialog.find("#stateID").getValue();
+// 	data['appearTimes'] = dialog.find("#appearTimesID").getValue();
+// 	data['recordTypeDTO.id'] = typeId;
+// 	var segmentLength = 0;
+	
+	var itemTable = dialog.find("#itemTable");
+	itemTable.find('tr').each(function(index,tr){
+		var $tr = $(tr);
+		itemId = $tr.find('input[data-role="itemId"]').val();
+		itemValue = $tr.find('input[data-role="itemValue"]').val();
+		itemType = $tr.find('.select[data-role="itemType"]').getValue();
+		itemLength = $tr.find('input[data-role="itemLength"]').val();
+		
+		var len = itemValue.length;
+		if(len < itemLength){
+			if(itemType == 0){
+			    while(len < itemLength) {  
+			    	itemValue = "0" + itemValue;  
+			        len++;  
+			    }  
+			}else{
+				while(len < itemLength) {  
+			    	itemValue = itemValue + " ";  
+			        len++;  
+			    }
+			}
+		}else{
+			
+		}
+		data += '"' + itemId + '" : "' + itemValue + '",';
+	});
+	
+	data = data.substring(0,data.length - 1) + '}';
+	return data;
+};
+
+var add = function(id, grid){
+	var self = this;
+	var segmentId = grid.attr("segmentId")
+    var dialog = $('<div class="modal fade"><div class="modal-dialog" style="width:1000px;"><div class="modal-content"><div class="modal-header"><button type="button" class="close" data-dismiss="modal" aria-hidden="true">&times;</button><h4 class="modal-title">新增段</h4></div><div class="modal-body"><p>One fine body&hellip;</p></div><div class="modal-footer"><button type="button" class="btn btn-default" data-dismiss="modal">取消</button><button type="button" class="btn btn-success" id="save">保存</button></div></div></div></div>');
+    $.get('<%=path%>/RecordSegmentEditConfig.jsp').done(function(html){
+        dialog.modal({
+            keyboard:false,
+            backdrop:false
+        }).on({
+            'hidden.bs.modal': function(){
+                $(this).remove();
+            }
+        }).find('.modal-body').html(html);
+        var stateSelect = dialog.find('#stateID');
+        fillStateSelect(stateSelect);
+       	var contents = [{title:'1:1', value: '0',selected: true}];
+        contents.push({title:'0：1' , value:'1'});
+        contents.push({title:'0：n' , value:'2'});
+        contents.push({title:'1：n' , value:'3'});
+        var appearTimesSelect = dialog.find('#appearTimesID');
+        appearTimesSelect.select({
+    		contents: contents
+   		});
+        initPage(dialog.find('form'));
+        dialog.find('[data-toggle="item"]').attr('disabled', true);
+        dialog.find('[data-toggle="button"]').attr('disabled', true);
+        $.get( '${pageContext.request.contextPath}/RecordSegment/get/' + segmentId + '.koala').done(function(json){
+        	json = json.data;
+            var elm;
+            for(var index in json){
+            	if(index=='recordItems'){
+             		var items = json[index];
+             		for(var i=0;i<items.length;i++){
+             			addRow(dialog.find("#itemTable"),items[i]);
+             		}
+             	}
+                elm = dialog.find('#'+ index + 'ID');
+                if(elm.hasClass('select')){
+                	elm.setValue(json[index]);
+                }else{
+                    elm.val(json[index]);
+                }
+            }
+        });
+    });
+    dialog.find('#save').on('click',{grid: grid}, function(e){
+    	if(!Validator.Validate(dialog.find('form')[0],3))return;
+//     	if(!validate(dialog)){
+//     		dialog.find('#save').removeAttr('disabled');
+// 			return false;
+// 		}
+        var content = getAllData(dialog);
+        var data = [{ name: 'recordId', value: id },
+  					{ name: 'segMark', value: dialog.find('#segMarkID').val()},
+ 				    { name: 'content', value: content}
+ 		];
+        $.post('${pageContext.request.contextPath}/Segment/add.koala', data).done(function(result){
+        	if(result.success ){
+            	dialog.modal('hide');
+                e.data.grid.data('koala.grid').refresh();
+                e.data.grid.message({
+                	type: 'success',
+                    content: '保存成功'
+                });
+            }else{
+                dialog.find('.modal-content').message({
+                    type: 'error',
+                    content: result.actionError
+                });
+            }
+        });
+    });
+}
+var initPage = function(form){
+    form.find('.form_datetime').datetimepicker({
+         language: 'zh-CN',
+         format: "yyyy-mm-dd",
+         autoclose: true,
+         todayBtn: true,
+         minView: 2,
+         pickerPosition: 'bottom-left'
+     }).datetimepicker('setDate', new Date());//加载日期选择器
+     form.find('.select').each(function(){
+          var select = $(this);
+          var idAttr = select.attr('id');
+          form.find('#'+ idAttr + '_').val($(this).getValue());
+          select.on('change', function(){
+              form.find('#'+ idAttr + '_').val($(this).getValue());
+          });
+     });
+}
 </script>
 </body>
 </html>
