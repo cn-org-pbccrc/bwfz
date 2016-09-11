@@ -10,15 +10,15 @@ import org.packet.packetsimulationGeneration.core.domain.RecordType;
 
 public interface SegmentApplication {
 
-	public RecordSegment getRecordSegment(Long id);
+	public Segment getSegment(Long id);
 	
 	public void creatSegment(Segment segment);
 	
-	public void updateRecordSegment(RecordSegment recordSegment);
+	public void updateSegment(Segment segment);
 	
 	public void removeRecordSegment(RecordSegment recordSegment);
 	
-	public void removeRecordSegments(Set<RecordSegment> recordSegments);
+	public void removeSegments(Set<Segment> segments);
 	
 	public List<RecordSegment> findAllRecordSegment();
 	

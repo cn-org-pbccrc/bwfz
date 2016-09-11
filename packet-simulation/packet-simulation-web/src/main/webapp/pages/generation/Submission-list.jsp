@@ -36,12 +36,13 @@ $(function (){
 	                    ],
 	                url:"${pageContext.request.contextPath}/Submission/pageJson.koala",
 	                columns: [
-	                     	                         	                         { title: '报文名称', name: 'Name', width: width},
+	                     	                         	                         { title: '报文名称', name: 'name', width: width},
 	                         	                         	                         	                         { title: '记录数', name: 'recordNum', width: width},
 	                         	                         	                             { title: '操作', width: 120, render: function (rowdata, name, index)
 	                                 {
 	                                     var param = '"' + rowdata.id + '"';
-	                                     var h = "<a href='javascript:openDetailsPage(" + param + ")'>查看</a> ";
+	                                     var h = "<a href='javascript:openDetailsPage(" + param + ")'><span class='glyphicon glyphicon glyphicon-eye-open'></span>&nbsp查看报文头</a> "
+	                                     +"&nbsp;&nbsp;<a href='javascript:recordEdit(" + param + ")'><span class='glyphicon glyphicon glyphicon-edit'></span>&nbsp编辑记录</a> ";
 	                                     return h;
 	                                 }
 	                             }
@@ -53,6 +54,7 @@ $(function (){
 	                   'modify': function(event, data){
 	                        var indexs = data.data;
 	                        var $this = $(this);
+	                        console.log(data)
 	                        if(indexs.length == 0){
 	                            $this.message({
 	                                type: 'warning',
@@ -93,10 +95,10 @@ $(function (){
 	    	var dialog = $('<div class="modal fade"><div class="modal-dialog" style="width:1040px;">'
 	    			+'<div class="modal-content"><div class="modal-header"><button type="button" class="close" '
 	    		    +'data-dismiss="modal" aria-hidden="true">&times;</button>'
-	    		    +'<h4 class="modal-title">编辑段信息</h4></div><div class="modal-body">'
+	    		    +'<h4 class="modal-title">编辑报文</h4></div><div class="modal-body">'
 	    		    +'<p>One fine body&hellip;</p></div></div>'
 	    		    +'</div></div>');
-	    	$.get('<%=path%>/Segment-edit.jsp').done(function(html){
+	    	$.get('<%=path%>/Submission-add.jsp').done(function(html){
 	    	    dialog.modal({
 	    	        keyboard:false
 	    	    }).on({
@@ -104,102 +106,39 @@ $(function (){
 	    	            $(this).remove();
 	    	        },
 	    	    	'shown.bs.modal': function(){
-	    	    	    $.get('${pageContext.request.contextPath}/RecordType/findRecordTypeByRecordType/' + id + '.koala').done(function(data) {					
-	    	    			for(var i=0; i<data.length; i++){
-	    	    				var segment = data[i];
-	    	    				var segmentId = segment.id;
-	    	    				var segMark = segment.segMark;
-	    	    				var recordItems = segment.recordItems;
-	    	    				var mycolumns = new Array();
-	    	    				for(var j=0; j<recordItems.length; j++){
-	    	    					var recordItem = recordItems[j];
-	    	    					mycolumns.push({
-	    	    						'title' : recordItem.itemName,
-	    	    						'name' : recordItem.itemId,
-	    	    						'width' : '200px'
-	    	    					});
-	    	    				}
-	    	    				//alert('first')
-	    	    				var subGrid = "grid" + i;
-	    	    				dialog.find('#mainGrid').append("<div id=" + subGrid + " segmentId=" + segmentId + "></div>")
-	    	    				//alert(columns.length)
-	    	    				dialog.find('#' + subGrid).grid({
-	    	    					identity: 'id',
-	    	    					buttons: [
-	    	    					    {content: '<button class="btn btn-primary" type="button"><span class="glyphicon glyphicon-plus"><span>添加</button>', action: 'add'},
-	    	    					    {content: '<button class="btn btn-success" type="button"><span class="glyphicon glyphicon-edit"><span>修改</button>', action: 'modify'},
-	    	    					    {content: '<button class="btn btn-danger" type="button"><span class="glyphicon glyphicon-remove"><span>删除</button>', action: 'delete'},
-	    	    					],
-	    	    					columns : mycolumns,
-	    	    					url: contextPath + '/Segment/pageJson.koala?id=' + id + '&segMark=' +  segMark
-	    	    				}).on({
-	    	    			    	'add': function(){
-	    	    			    		add(id, $(this));
-	    	    			    	},
-	    	    			    	'modify': function(event, data){
-	    	    	   	            	var indexs = data.data;
-	    	    	   	                var $this = $(this);
-	    	    	   	                if(indexs.length == 0){
-	    	    	   	                	$this.message({
-	    	    	   	                    	type: 'warning',
-	    	    	   	                        content: '请选择一条记录进行修改'
-	    	    	   	                    })
-	    	    	   	                    return;
-	    	    	   	                }
-	    	    	   	                if(indexs.length > 1){
-	    	    	   	                	$this.message({
-	    	    	   	                    	type: 'warning',
-	    	    	   	                        content: '只能选择一条记录进行修改'
-	    	    	   	                    })
-	    	    	   	                    return;
-	    	    	   	                }
-	    	    	   	                self.modify(indexs[0], $this);
-	    	    	   	            },
-	    	    	    	        'delete': function(event, data){
-	    	    	    	        	var indexs = data.data;
-	    	    	    	            var $this = $(this);
-	    	    	    	            if(indexs.length == 0){
-	    	    	    	            	$this.message({
-	    	    	    	                	type: 'warning',
-	    	    	    	                    content: '请选择要删除的记录'
-	    	    	    	                });
-	    	    	    	                return;
-	    	    	    	            }
-	    	    	    	            var remove = function(){
-	    	    	    	            	self.remove(indexs, $this);
-	    	    	    	            };
-	    	    	    	            $this.confirm({
-	    	    	    	            	content: '确定要删除所选记录吗?',
-	    	    	    	                callBack: remove
-	    	    	    	            });
-	    	    	    	        }        
-	    	    				});
-	    	    			}		
-	    	    		});
+	    	    		var columns = [
+	    	 	        	{ title:'报文类型', name:'recordType' , width: 250},
+	    	 	            { title:'类型代码', name:'code', width: 120},
+	    	 	            { title:'创建人员', name:'createdBy'}	    	                    
+	    	 	    	];//<!-- definition columns end -->
+	    	 	    	//查询出当前表单所需要得数据。
+	    	 	    	dialog.find('.selectRecordGrid').grid({
+	    	 	    		identity: 'id',
+	    	 	        	columns: columns,
+	    	 	        	url: contextPath + '/RecordType/pageJson.koala'
+	    	 	    	});
 	         		}
 	    	    }).find('.modal-body').html(html);
-	    	    selectMesg = dialog.find('#select-mesg');
-	            mesgInput = selectMesg.find('input');
-				selectMesg.find('[data-toggle="dropdown"]').on('click', function(){
-					selectMesgTypes();
-				});
-				dialog.find('#save').on('click',{grid: grid}, function(e){
-		              if(!Validator.Validate(dialog.find('form')[0],3))return;
-		              $.post('${pageContext.request.contextPath}/Submission/add.koala', dialog.find('form').serialize()).done(function(result){
-		                   if(result.success ){
-		                        dialog.modal('hide');
-		                        e.data.grid.data('koala.grid').refresh();
-		                        e.data.grid.message({
-		                            type: 'success',
-		                            content: '保存成功'
-		                         });
-		                    }else{
-		                        dialog.find('.modal-content').message({
-		                            type: 'error',
-		                            content: result.actionError
-		                        });
-		                     }
-		              });
+				dialog.find('#sub').on('click',{grid: grid}, function(e){
+					var content = getAllData(dialog);
+			        var data = [{ name: 'name', value: dialog.find('#nameID').val()},
+			 				    { name: 'content', value: content}
+			 		];
+		            $.post('${pageContext.request.contextPath}/Submission/add.koala', data).done(function(result){
+		            	if(result.success ){
+		                	dialog.modal('hide');
+		                    grid.data('koala.grid').refresh();
+		                    grid.message({
+		                        type: 'success',
+		                        content: '保存成功'
+		                    });
+		                }else{
+		                    dialog.find('.modal-content').message({
+		                        type: 'error',
+		                        content: result.errorMessage
+		                    });
+		                }
+		            });
 		        });
 	    	});
 	        
@@ -328,6 +267,54 @@ var openDetailsPage = function(id){
                     }
                 });
         });
+}
+
+var getAllData = function(dialog){
+	var itemId;
+	var itemValue;
+	var itemType;
+	var itemLength;
+	
+	var data = '{';
+	var itemTable = dialog.find("#itemTable");
+	itemTable.find('tr').each(function(index,tr){
+		var $tr = $(tr);
+		itemId = $tr.find('input[data-role="itemId"]').val();
+		itemValue = $tr.find('input[data-role="itemValue"]').val();
+		itemType = $tr.find('.select[data-role="itemType"]').getValue();
+		itemLength = $tr.find('input[data-role="itemLength"]').val();
+		
+		var len = itemValue.length;
+		if(len < itemLength){
+			if(itemType == 0){
+			    while(len < itemLength) {  
+			    	itemValue = "0" + itemValue;  
+			        len++;  
+			    }  
+			}else{
+				while(len < itemLength) {  
+			    	itemValue = itemValue + " ";  
+			        len++;  
+			    }
+			}
+		}else{
+			
+		}
+		data += '"' + itemId + '" : "' + itemValue + '",';
+	});
+	
+	data = data.substring(0, data.length - 1) + '}';
+	return data;
+};
+
+var mark;
+function recordEdit(id){
+    var thiz = $(this);
+    var  mark = thiz.attr('mark');
+    mark = openTab("/pages/generation/Record-list.jsp", "编辑记录",'OpenRecordList',id);
+    if(mark){
+        thiz.attr("mark",mark);
+    }
 }
 </script>
 </head>

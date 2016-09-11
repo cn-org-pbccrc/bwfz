@@ -20,6 +20,7 @@ public class RecordAssembler {
 		result.setContent(record.getContent());
 		result.setRecordName(record.getRecordName());
 		result.setCreatedBy(record.getCreatedBy());
+		result.setSubmissionId(record.getSubmission().getId());
 		return result;
 	}
 

@@ -24,6 +24,8 @@ public class RecordDTO implements Serializable {
 	private String recordName;
 
 	private String createdBy;
+	
+	private Long submissionId;
 
 	public RecordType getRecordType() {
 		return recordType;
@@ -79,6 +81,14 @@ public class RecordDTO implements Serializable {
 
 	public void setVersion(int version) {
 		this.version = version;
+	}
+
+	public Long getSubmissionId() {
+		return submissionId;
+	}
+
+	public void setSubmissionId(Long submissionId) {
+		this.submissionId = submissionId;
 	}
 
 	@Override

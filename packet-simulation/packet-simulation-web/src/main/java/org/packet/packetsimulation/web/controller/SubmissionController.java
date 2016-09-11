@@ -16,6 +16,7 @@ import org.dayatang.utils.Page;
 import org.packet.packetsimulation.facade.dto.*;
 import org.packet.packetsimulation.facade.SubmissionFacade;
 import org.openkoala.koala.commons.InvokeResult;
+import org.openkoala.security.shiro.CurrentUser;
 
 @Controller
 @RequestMapping("/Submission")
@@ -27,6 +28,9 @@ public class SubmissionController {
 	@ResponseBody
 	@RequestMapping("/add")
 	public InvokeResult add(SubmissionDTO submissionDTO) {
+		String createdBy = CurrentUser.getUserAccount();
+		submissionDTO.setCreatedBy(createdBy);
+		submissionDTO.setRecordNum(0L);
 		return submissionFacade.creatSubmission(submissionDTO);
 	}
 	
@@ -39,7 +43,8 @@ public class SubmissionController {
 	@ResponseBody
 	@RequestMapping("/pageJson")
 	public Page pageJson(SubmissionDTO submissionDTO, @RequestParam int page, @RequestParam int pagesize) {
-		Page<SubmissionDTO> all = submissionFacade.pageQuerySubmission(submissionDTO, page, pagesize);
+		String createdBy = CurrentUser.getUserAccount();
+		Page<SubmissionDTO> all = submissionFacade.pageQuerySubmission(submissionDTO, page, pagesize, createdBy);
 		return all;
 	}
 	

@@ -21,6 +21,6 @@ public interface RecordTypeFacade {
 	
 	public Page<RecordTypeDTO> pageQueryRecordType(RecordTypeDTO recordType, int currentPage, int pageSize);
 	
-
+	public RecordTypeDTO findRecordTypeByRecordType(Long id);
 }
 

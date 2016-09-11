@@ -12,10 +12,10 @@ public class SubmissionDTO implements Serializable {
 		private String createdBy;
 		
 				
-		private String recordNum;
+		private Long recordNum;
 		
 				
-		private String Name;
+		private String name;
 		
 		private String content;
 		
@@ -30,25 +30,23 @@ public class SubmissionDTO implements Serializable {
 		
 			
 	
-	public void setRecordNum(String recordNum) { 
+	public void setRecordNum(Long recordNum) { 
 		this.recordNum = recordNum;
 	}
 
-	public String getRecordNum() {
+	public Long getRecordNum() {
 		return this.recordNum;
 	}
 		
-			
-	
-	public void setName(String Name) { 
-		this.Name = Name;
+		
+	public String getName() {
+		return name;
 	}
 
-	public String getName() {
-		return this.Name;
+	public void setName(String name) {
+		this.name = name;
 	}
-		
-		
+
 	public Long getId() {
 		return id;
 	}

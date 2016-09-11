@@ -32,13 +32,13 @@ public class Submission extends KoalaAbstractEntity{
 	private String content;
 	
 	@Column(name = "NAME")
-	private String Name;
+	private String name;
 	
 	@Column(name = "CREATE_BY")
 	private String createdBy;
 	
 	@Column(name = "RECORD_NUM")
-	private String recordNum;
+	private Long recordNum;
 
 	public String getContent() {
 		return content;
@@ -49,11 +49,11 @@ public class Submission extends KoalaAbstractEntity{
 	}
 
 	public String getName() {
-		return Name;
+		return name;
 	}
 
 	public void setName(String name) {
-		Name = name;
+		this.name = name;
 	}
 
 	public String getCreatedBy() {
@@ -64,11 +64,11 @@ public class Submission extends KoalaAbstractEntity{
 		this.createdBy = createdBy;
 	}
 
-	public String getRecordNum() {
+	public Long getRecordNum() {
 		return recordNum;
 	}
 
-	public void setRecordNum(String recordNum) {
+	public void setRecordNum(Long recordNum) {
 		this.recordNum = recordNum;
 	}
 

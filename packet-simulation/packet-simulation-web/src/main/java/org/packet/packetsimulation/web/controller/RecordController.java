@@ -9,6 +9,7 @@ import javax.inject.Inject;
 import org.dayatang.utils.Page;
 import org.openkoala.gqc.facade.dto.GeneralQueryDTO;
 import org.openkoala.koala.commons.InvokeResult;
+import org.openkoala.security.shiro.CurrentUser;
 import org.packet.packetsimulation.facade.RecordFacade;
 import org.packet.packetsimulation.facade.RecordSegmentFacade;
 import org.packet.packetsimulation.facade.dto.MesgTypeDTO;
@@ -38,19 +39,21 @@ public class RecordController {
 	@ResponseBody
 	@RequestMapping("/add")
 	public InvokeResult add(RecordDTO recordDTO, @RequestParam Long recordTypeId) {
+		String createdBy = CurrentUser.getUserAccount();
+		recordDTO.setCreatedBy(createdBy);
 		return recordFacade.creatRecord(recordDTO, recordTypeId);
 	}
 	
 	@ResponseBody
 	@RequestMapping("/update")
-	public InvokeResult update(RecordDTO recordDTO) {
-		return recordFacade.updateRecord(recordDTO);
+	public InvokeResult update(RecordDTO recordDTO, @RequestParam Long recordTypeId) {
+		return recordFacade.updateRecord(recordDTO, recordTypeId);
 	}
 	
 	@ResponseBody
-	@RequestMapping("/pageJson/{currentUserId}")
-	public Page pageJson(RecordDTO recordDTO, @RequestParam int page, @RequestParam int pagesize, @PathVariable String currentUserId) {
-		Page<RecordDTO> all = recordFacade.pageQueryRecord(recordDTO, page, pagesize, currentUserId);
+	@RequestMapping("/pageJson/{submissionId}")
+	public Page pageJson(RecordDTO recordDTO, @RequestParam int page, @RequestParam int pagesize, @PathVariable Long submissionId) {
+		Page<RecordDTO> all = recordFacade.pageQueryRecord(recordDTO, page, pagesize, submissionId);
 		return all;
 	}
 	

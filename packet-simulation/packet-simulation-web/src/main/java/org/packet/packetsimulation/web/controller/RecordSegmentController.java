@@ -61,11 +61,17 @@ public class RecordSegmentController {
 	}
 
 	@ResponseBody
-	@RequestMapping("/get/{id}")
-	public InvokeResult get(@PathVariable Long id) {
-		return recordSegmentFacade.getRecordSegment(id);
+	@RequestMapping("/get/{recordSegmentId}")
+	public InvokeResult get(@PathVariable Long recordSegmentId) {
+		return recordSegmentFacade.getRecordSegment(recordSegmentId);
 	}
 
+	@ResponseBody
+	@RequestMapping("/getUpdate/{recordSegmentId}")
+	public InvokeResult getUpdate(@PathVariable Long recordSegmentId, @RequestParam Long segmentId) {
+		return recordSegmentFacade.getUpdateRecordSegment(recordSegmentId, segmentId);
+	}
+	
 	@ResponseBody
 	@RequestMapping("/findRecordSegmentByRecordType/{id}")
 	public List<RecordSegmentDTO> findRecordTypeByRecordSegment(

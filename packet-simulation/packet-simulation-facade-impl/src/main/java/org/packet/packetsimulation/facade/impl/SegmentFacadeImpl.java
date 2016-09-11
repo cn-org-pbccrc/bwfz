@@ -58,8 +58,8 @@ public class SegmentFacadeImpl implements SegmentFacade {
      return queryChannel;
     }
 	
-	public InvokeResult getRecordSegment(Long id) {
-		return InvokeResult.success(RecordSegmentAssembler.toDTO(application.getRecordSegment(id)));
+	public InvokeResult getSegment(Long id) {
+		return InvokeResult.success(SegmentAssembler.toDTO(application.getSegment(id)));
 	}
 	
 	public InvokeResult creatSegment(SegmentDTO segmentDTO) {
@@ -70,25 +70,20 @@ public class SegmentFacadeImpl implements SegmentFacade {
 		return InvokeResult.success();
 	}
 	
-	public InvokeResult updateRecordSegment(RecordSegmentDTO recordSegmentDTO) {
-		RecordSegment recordSegment = RecordSegmentAssembler.toEntity(recordSegmentDTO);
-		recordSegment.setRecordType(recordTypeApplication
-				.getRecordType(recordSegmentDTO.getRecordTypeDTO().getId()));
-		application.updateRecordSegment(recordSegment);
-		return InvokeResult.success();
-	}
-	
-	public InvokeResult removeRecordSegment(Long id) {
-		application.removeRecordSegment(application.getRecordSegment(id));
+	public InvokeResult updateSegment(SegmentDTO segmentDTO) {
+		Segment segment = SegmentAssembler.toEntity(segmentDTO);
+		Record record = recordApplication.getRecord(segmentDTO.getRecordId());
+		segment.setRecord(record);
+		application.updateSegment(segment);
 		return InvokeResult.success();
 	}
 	
 	public InvokeResult removeRecordSegments(Long[] ids) {
-		Set<RecordSegment> recordSegments= new HashSet<RecordSegment>();
+		Set<Segment> segments= new HashSet<Segment>();
 		for (Long id : ids) {
-			recordSegments.add(application.getRecordSegment(id));
+			segments.add(application.getSegment(id));
 		}
-		application.removeRecordSegments(recordSegments);
+		application.removeSegments(segments);
 		return InvokeResult.success();
 	}
 	
@@ -116,9 +111,34 @@ public class SegmentFacadeImpl implements SegmentFacade {
 //	   	return InvokeResult.success(list);
 //	}
 	
+//	public Page<JSONObject> pageQuerySegment(SegmentDTO segmentDTO, int page, int pagesize) {
+//		List<Object> conditionVals = new ArrayList<Object>();
+//	   	StringBuilder jpql = new StringBuilder("select _segment.content from Segment _segment   where 1=1 ");
+//	   	if(segmentDTO.getRecordId()!= null && !"".equals(segmentDTO.getRecordId())){
+//	   		jpql.append(" and _segment.record.id = ?");
+//	   		conditionVals.add(segmentDTO.getRecordId());
+//	   	}
+//	   	if(segmentDTO.getSegMark()!= null && !"".equals(segmentDTO.getSegMark())){
+//	   		jpql.append(" and _segment.segMark = ?");
+//	   		conditionVals.add(segmentDTO.getSegMark());
+//	   	}
+//	   	List<String> contents = getQueryChannelService().createJpqlQuery(jpql.toString()).setParameters(conditionVals).list();
+//	   	List<JSONObject> list = new ArrayList<JSONObject>();
+//	   	
+//	   	for(int i = page * pagesize; i < page * pagesize + pagesize; i++){
+//	   		if(i < contents.size()){
+//	   			JSONObject obj = JSON.parseObject(contents.get(i));
+//		   		list.add(obj);
+//	   		}else{
+//	   			break;
+//	   		}	   		
+//	   	}
+//	   	return new Page<JSONObject>(page * pagesize, contents.size(), pagesize, list);
+//	}
+	
 	public Page<JSONObject> pageQuerySegment(SegmentDTO segmentDTO, int page, int pagesize) {
 		List<Object> conditionVals = new ArrayList<Object>();
-	   	StringBuilder jpql = new StringBuilder("select _segment.content from Segment _segment   where 1=1 ");
+	   	StringBuilder jpql = new StringBuilder("select _segment from Segment _segment   where 1=1 ");
 	   	if(segmentDTO.getRecordId()!= null && !"".equals(segmentDTO.getRecordId())){
 	   		jpql.append(" and _segment.record.id = ?");
 	   		conditionVals.add(segmentDTO.getRecordId());
@@ -127,17 +147,14 @@ public class SegmentFacadeImpl implements SegmentFacade {
 	   		jpql.append(" and _segment.segMark = ?");
 	   		conditionVals.add(segmentDTO.getSegMark());
 	   	}
-//	   	Page<String> pages = getQueryChannelService()
-//	 		   .createJpqlQuery(jpql.toString())
-//	 		   .setParameters(conditionVals)
-//	 		   .setPage(page, pagesize)
-//	 		   .pagedList();
-	   	List<String> contents = getQueryChannelService().createJpqlQuery(jpql.toString()).setParameters(conditionVals).list();
+	   	List<Segment> contents = getQueryChannelService().createJpqlQuery(jpql.toString()).setParameters(conditionVals).list();
 	   	List<JSONObject> list = new ArrayList<JSONObject>();
 	   	
 	   	for(int i = page * pagesize; i < page * pagesize + pagesize; i++){
 	   		if(i < contents.size()){
-	   			JSONObject obj = JSON.parseObject(contents.get(i));
+	   			String content = contents.get(i).getContent();
+	   			content = content.substring(0, content.length() - 1) + ",\"id\" : \"" + contents.get(i).getId() + "\"}";
+	   			JSONObject obj = JSON.parseObject(content);
 		   		list.add(obj);
 	   		}else{
 	   			break;

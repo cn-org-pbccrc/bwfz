@@ -7,7 +7,9 @@ import org.packet.packetsimulation.facade.dto.*;
 
 public interface RecordSegmentFacade {
 
-	public InvokeResult getRecordSegment(Long id);
+	public InvokeResult getRecordSegment(Long recordSegmentId);
+	
+	public InvokeResult getUpdateRecordSegment(Long recordSegmentId, Long segmentId);
 	
 	public InvokeResult creatRecordSegment(RecordSegmentDTO recordSegment);
 	

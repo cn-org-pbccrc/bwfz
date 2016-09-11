@@ -13,7 +13,7 @@ public interface RecordFacade {
 	
 	public InvokeResult creatRecord(RecordDTO record, Long recordTypeId);
 	
-	public InvokeResult updateRecord(RecordDTO record);
+	public InvokeResult updateRecord(RecordDTO record, Long recordTypeId);
 	
 	public InvokeResult removeRecord(Long id);
 	
@@ -21,7 +21,7 @@ public interface RecordFacade {
 	
 	public List<RecordDTO> findAllRecord();
 	
-	public Page<RecordDTO> pageQueryRecord(RecordDTO record, int currentPage, int pageSize, String currentUserId);
+	public Page<RecordDTO> pageQueryRecord(RecordDTO record, int currentPage, int pageSize, Long submissionId);
 	
 	public List<RecordType> findRecordTypes();
 }

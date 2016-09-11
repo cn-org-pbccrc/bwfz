@@ -15,13 +15,18 @@ import org.dayatang.utils.Page;
 import org.openkoala.koala.commons.InvokeResult;
 import org.packet.packetsimulation.application.RecordSegmentApplication;
 import org.packet.packetsimulation.application.RecordTypeApplication;
+import org.packet.packetsimulation.core.domain.Segment;
 import org.packet.packetsimulation.facade.RecordSegmentFacade;
 import org.packet.packetsimulation.facade.dto.RecordSegmentDTO;
 import org.packet.packetsimulation.facade.dto.RecordTypeDTO;
 import org.packet.packetsimulation.facade.impl.assembler.MesgTypeAssembler;
 import org.packet.packetsimulation.facade.impl.assembler.RecordSegmentAssembler;
 import org.packet.packetsimulation.facade.impl.assembler.RecordTypeAssembler;
+import org.packet.packetsimulationGeneration.core.domain.RecordItem;
 import org.packet.packetsimulationGeneration.core.domain.RecordSegment;
+
+import com.alibaba.fastjson.JSON;
+import com.alibaba.fastjson.JSONObject;
 
 @Named
 public class RecordSegmentFacadeImpl implements RecordSegmentFacade {
@@ -40,8 +45,21 @@ public class RecordSegmentFacadeImpl implements RecordSegmentFacade {
      return queryChannel;
     }
 	
-	public InvokeResult getRecordSegment(Long id) {
-		return InvokeResult.success(RecordSegmentAssembler.toDTO(application.getRecordSegment(id)));
+	public InvokeResult getRecordSegment(Long recordSegmentId) {
+		return InvokeResult.success(RecordSegmentAssembler.toDTO(application.getRecordSegment(recordSegmentId)));
+	}
+	
+	public InvokeResult getUpdateRecordSegment(Long recordSegmentId, Long segmentId){
+		Segment segment = findSegmentById(segmentId);
+		String content = segment.getContent();
+		JSONObject obj = JSON.parseObject(content);		
+		RecordSegment recordSegment = application.getRecordSegment(recordSegmentId);
+		List<RecordItem> recordItems = recordSegment.getRecordItems();
+		for(int i = 0; i < recordItems.size(); i++){
+			RecordItem recordItem = recordItems.get(i);
+			recordItem.setItemValue(obj.getString(recordItem.getItemId()));
+		}
+		return InvokeResult.success(RecordSegmentAssembler.toDTO(recordSegment));
 	}
 	
 	public InvokeResult creatRecordSegment(RecordSegmentDTO recordSegmentDTO) {
@@ -117,16 +135,24 @@ public class RecordSegmentFacadeImpl implements RecordSegmentFacade {
 
 	@Override
 	public List<RecordSegmentDTO> findRecordSegmentByRecordType(Long id) {
-
 		List<Object> conditionVals = new ArrayList<Object>();
-	   	StringBuilder jpql = new StringBuilder("select _segment from RecordSegment _segment  where 1=1 ");
-	   	
+	   	StringBuilder jpql = new StringBuilder("select _segment from RecordSegment _segment  where 1=1 ");	   	
 	   	if (id != null ) {
 	   		jpql.append(" and _segment.recordType.id = ? ");
 	   		conditionVals.add(id);
 	   	}
 	   	List<RecordSegment> segmentList = getQueryChannelService().createJpqlQuery(jpql.toString()).setParameters(conditionVals).list();
-	   	return  RecordSegmentAssembler.toDTOs(segmentList);
-		
+	   	return  RecordSegmentAssembler.toDTOs(segmentList);		
+	}
+	
+	public Segment findSegmentById(Long id) {
+		List<Object> conditionVals = new ArrayList<Object>();
+	   	StringBuilder jpql = new StringBuilder("select _segment from Segment _segment  where 1=1 ");	   	
+	   	if (id != null ) {
+	   		jpql.append(" and _segment.id = ? ");
+	   		conditionVals.add(id);
+	   	}
+	   	Segment segment = (Segment) getQueryChannelService().createJpqlQuery(jpql.toString()).setParameters(conditionVals).singleResult();
+	   	return segment;		
 	}
 }

@@ -11,6 +11,7 @@ import javax.persistence.OneToOne;
 import javax.persistence.Table;
 
 import org.openkoala.koala.commons.domain.KoalaAbstractEntity;
+import org.packet.packetsimulation.core.domain.Packet;
 
 /**
  * @author charles
@@ -37,7 +38,10 @@ public class Record extends KoalaAbstractEntity{
 	@Column(name = "CREATE_BY")
 	private String createdBy;
 	
-
+	@ManyToOne
+	@JoinColumn(name = "SUBMISSION")
+	private Submission submission;
+	
 	public RecordType getRecordType() {
 		return recordType;
 	}
@@ -69,6 +73,14 @@ public class Record extends KoalaAbstractEntity{
 
 	public void setRecordName(String recordName) {
 		this.recordName = recordName;
+	}
+
+	public Submission getSubmission() {
+		return submission;
+	}
+
+	public void setSubmission(Submission submission) {
+		this.submission = submission;
 	}
 
 	@Override

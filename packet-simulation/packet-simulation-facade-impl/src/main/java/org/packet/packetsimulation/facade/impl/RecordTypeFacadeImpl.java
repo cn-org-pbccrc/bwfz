@@ -14,6 +14,7 @@ import org.dayatang.utils.Page;
 import org.dayatang.querychannel.QueryChannelService;
 import org.openkoala.koala.commons.InvokeResult;
 import org.packet.packetsimulation.facade.dto.*;
+import org.packet.packetsimulation.facade.impl.assembler.RecordSegmentAssembler;
 import org.packet.packetsimulation.facade.impl.assembler.RecordTypeAssembler;
 import org.packet.packetsimulation.facade.RecordTypeFacade;
 import org.packet.packetsimulation.application.RecordSegmentApplication;
@@ -69,11 +70,22 @@ public class RecordTypeFacadeImpl implements RecordTypeFacade {
 		return InvokeResult.success();
 	}
 	
+	@Override
+	public RecordTypeDTO findRecordTypeByRecordType(Long id) {
+		List<Object> conditionVals = new ArrayList<Object>();
+	   	StringBuilder jpql = new StringBuilder("select _recordType from RecordType _recordType  where 1=1 ");   	
+	   	if (id != null ) {
+	   		jpql.append(" and _recordType.id = ? ");
+	   		conditionVals.add(id);
+	   	}
+	   	RecordType recordType = (RecordType) getQueryChannelService().createJpqlQuery(jpql.toString()).setParameters(conditionVals).singleResult();
+	   	return RecordTypeAssembler.toDTO(recordType);		
+	}
+	
 	@SuppressWarnings("unchecked")
 	private List<RecordSegment> findRecordSegmentsByRecordTypeId(Long recordTypeId){
 		List<Object> conditionVals = new ArrayList<Object>();
-	   	StringBuilder jpql = new StringBuilder("select _segment from RecordSegment _segment  where 1=1 ");
-	   	
+	   	StringBuilder jpql = new StringBuilder("select _segment from RecordSegment _segment  where 1=1 ");	   	
 	   	if (recordTypeId != null ) {
 	   		jpql.append(" and _segment.recordType.id = ? ");
 	   		conditionVals.add(recordTypeId);

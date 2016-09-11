@@ -19,7 +19,7 @@ public interface SubmissionFacade {
 	
 	public List<SubmissionDTO> findAllSubmission();
 	
-	public Page<SubmissionDTO> pageQuerySubmission(SubmissionDTO submission, int currentPage, int pageSize);
+	public Page<SubmissionDTO> pageQuerySubmission(SubmissionDTO submission, int currentPage, int pageSize, String createdBy);
 	
 
 }

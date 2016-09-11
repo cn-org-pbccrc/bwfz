@@ -17,16 +17,16 @@ import org.packet.packetsimulationGeneration.core.domain.RecordType;
 @Transactional
 public class SegmentApplicationImpl implements SegmentApplication {
 
-	public RecordSegment getRecordSegment(Long id) {
-		return RecordSegment.get(RecordSegment.class, id);
+	public Segment getSegment(Long id) {
+		return Segment.get(Segment.class, id);
 	}
 	
 	public void creatSegment(Segment segment) {
 		segment.save();
 	}
 	
-	public void updateRecordSegment(RecordSegment recordSegment) {
-		recordSegment .save();
+	public void updateSegment(Segment segment) {
+		segment .save();
 	}
 	
 	public void removeRecordSegment(RecordSegment recordSegment) {
@@ -35,9 +35,9 @@ public class SegmentApplicationImpl implements SegmentApplication {
 		}
 	}
 	
-	public void removeRecordSegments(Set<RecordSegment> recordSegments) {
-		for (RecordSegment recordSegment : recordSegments) {
-			recordSegment.remove();
+	public void removeSegments(Set<Segment> segments) {
+		for (Segment segment : segments) {
+			segment.remove();
 		}
 	}
 	

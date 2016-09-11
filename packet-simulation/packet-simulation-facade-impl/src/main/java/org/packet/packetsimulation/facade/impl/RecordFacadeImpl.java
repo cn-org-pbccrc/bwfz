@@ -18,7 +18,12 @@ import org.packet.packetsimulation.facade.impl.assembler.RecordAssembler;
 import org.packet.packetsimulation.facade.RecordFacade;
 import org.packet.packetsimulation.application.RecordApplication;
 import org.packet.packetsimulation.application.RecordTypeApplication;
+import org.packet.packetsimulation.application.SegmentApplication;
+import org.packet.packetsimulation.application.SubmissionApplication;
+import org.packet.packetsimulation.core.domain.Mesg;
 import org.packet.packetsimulation.core.domain.MesgType;
+import org.packet.packetsimulation.core.domain.Packet;
+import org.packet.packetsimulation.core.domain.Segment;
 import org.packet.packetsimulationGeneration.core.domain.*;
 
 @Named
@@ -29,6 +34,12 @@ public class RecordFacadeImpl implements RecordFacade {
 	
 	@Inject
 	private RecordTypeApplication recordTypeApplication;
+	
+	@Inject
+	private SubmissionApplication submissionApplication;
+	
+	@Inject
+	private SegmentApplication segmentApplication;
 
 	private QueryChannelService queryChannel;
 
@@ -46,12 +57,22 @@ public class RecordFacadeImpl implements RecordFacade {
 	public InvokeResult creatRecord(RecordDTO recordDTO, Long recordTypeId) {
 		Record record = RecordAssembler.toEntity(recordDTO);
 		record.setRecordType(recordTypeApplication.getRecordType(recordTypeId));
+		record.setSubmission(submissionApplication.getSubmission(recordDTO.getSubmissionId()));
+		if(recordDTO.getSubmissionId()!=null){
+			Submission submission = submissionApplication.getSubmission(recordDTO.getSubmissionId());
+			submission.setRecordNum(submission.getRecordNum() + 1);
+			submissionApplication.updateSubmission(submission);
+			record.setSubmission(submission);
+		}
 		application.creatRecord(record);
 		return InvokeResult.success();
 	}
 	
-	public InvokeResult updateRecord(RecordDTO recordDTO) {
-		application.updateRecord(RecordAssembler.toEntity(recordDTO));
+	public InvokeResult updateRecord(RecordDTO recordDTO, Long recordTypeId) {
+		Record record = RecordAssembler.toEntity(recordDTO);
+		record.setRecordType(recordTypeApplication.getRecordType(recordTypeId));
+		record.setSubmission(submissionApplication.getSubmission(recordDTO.getSubmissionId()));
+		application.updateRecord(record);
 		return InvokeResult.success();
 	}
 	
@@ -64,6 +85,10 @@ public class RecordFacadeImpl implements RecordFacade {
 		Set<Record> records= new HashSet<Record>();
 		for (Long id : ids) {
 			records.add(application.getRecord(id));
+			List<Segment> segmentList = findSegmentsByRecordId(id);
+			Set<Segment> segments = new HashSet<Segment>();
+			segments.addAll(segmentList);
+			segmentApplication.removeSegments(segments);
 		}
 		application.removeRecords(records);
 		return InvokeResult.success();
@@ -79,12 +104,12 @@ public class RecordFacadeImpl implements RecordFacade {
 	   	return recordTypes;
 	}
 	
-	public Page<RecordDTO> pageQueryRecord(RecordDTO queryVo, int currentPage, int pageSize, String currentUserId) {
+	public Page<RecordDTO> pageQueryRecord(RecordDTO queryVo, int currentPage, int pageSize, Long submissionId) {
 		List<Object> conditionVals = new ArrayList<Object>();
 	   	StringBuilder jpql = new StringBuilder("select _record from Record _record   where 1=1 ");
-	   	if (currentUserId != null) {
-	   		jpql.append(" and _record.createdBy = ?");
-	   		conditionVals.add(currentUserId);
+	   	if (submissionId != null) {
+	   		jpql.append(" and _record.submission.id = ?");
+	   		conditionVals.add(submissionId);
 	   	}
 	   	if (queryVo.getContent() != null && !"".equals(queryVo.getContent())) {
 	   		jpql.append(" and _record.content like ?");
@@ -103,5 +128,16 @@ public class RecordFacadeImpl implements RecordFacade {
         return new Page<RecordDTO>(pages.getStart(), pages.getResultCount(),pageSize, RecordAssembler.toDTOs(pages.getData()));
 	}
 	
-	
+	@SuppressWarnings("unchecked")
+	private List<Segment> findSegmentsByRecordId(Long recordId){
+		List<Object> conditionVals = new ArrayList<Object>();
+	   	StringBuilder jpql = new StringBuilder("select _segment from Segment _segment  where 1=1 ");
+	   	
+	   	if (recordId != null ) {
+	   		jpql.append(" and _segment.record.id = ? ");
+	   		conditionVals.add(recordId);
+	   	}
+	   	List<Segment> segmentList = getQueryChannelService().createJpqlQuery(jpql.toString()).setParameters(conditionVals).list();
+	   	return segmentList;
+	}
 }

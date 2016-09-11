@@ -6,6 +6,7 @@ import org.springframework.web.bind.WebDataBinder;
 
 import java.text.SimpleDateFormat;
 import java.util.Date;
+import java.util.List;
 
 import org.springframework.beans.propertyeditors.CustomDateEditor;
 import org.springframework.stereotype.Controller;
@@ -72,6 +73,12 @@ public class RecordTypeController {
 	@RequestMapping("/get/{id}")
 	public InvokeResult get(@PathVariable Long id) {
 		return recordTypeFacade.getRecordType(id);
+	}
+	
+	@ResponseBody
+	@RequestMapping("/findHeaderItemByRecordType/{id}")
+	public RecordTypeDTO findRecordTypeByRecordType(@PathVariable Long id) {
+		return recordTypeFacade.findRecordTypeByRecordType(id);
 	}
 	
 		

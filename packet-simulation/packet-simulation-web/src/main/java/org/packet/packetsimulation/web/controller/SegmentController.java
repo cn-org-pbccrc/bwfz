@@ -44,8 +44,8 @@ public class SegmentController {
 
 	@ResponseBody
 	@RequestMapping("/update")
-	public InvokeResult update(RecordSegmentDTO recordSegmentDTO) {
-		return recordSegmentFacade.updateRecordSegment(recordSegmentDTO);
+	public InvokeResult update(SegmentDTO segmentDTO) {
+		return segmentFacade.updateSegment(segmentDTO);
 	}
 
 	@ResponseBody

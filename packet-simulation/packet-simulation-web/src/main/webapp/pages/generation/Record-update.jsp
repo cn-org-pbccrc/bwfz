@@ -5,31 +5,16 @@
 </head>
 <body>
 <form class="form-horizontal">
-	<input type="hidden" id="idID" name="id" /> 
 	<input type="hidden" id="versionID" name="version" /> 
+	<input type="hidden" id="createdByID" name="createdBy" /> 
+	<input type="hidden" id="contentID" name="content" /> 
+	<input type="hidden" id="submissionIdID" name="submissionId" /> 
+	<input type="hidden" id="recordTypeIdID" name="recordTypeId" >
 	
 	           <div class="form-group">
-                    <label class="col-lg-3 control-label">content:</label>
+                    <label class="col-lg-3 control-label">记录名称:</label>
 	                    <div class="col-lg-9">
-                           <input name="content" style="display:inline; width:94%;" class="form-control"  type="text"  id="contentID" />
-			    </div>
-	</div>
-		           <div class="form-group">
-                    <label class="col-lg-3 control-label">用例名称:</label>
-	                    <div class="col-lg-9">
-                           <input name="remark" style="display:inline; width:94%;" class="form-control"  type="text"  id="remarkID" />
-			    </div>
-	</div>
-		           <div class="form-group">
-                    <label class="col-lg-3 control-label">创建人:</label>
-	                    <div class="col-lg-9">
-                           <input name="createBy" style="display:inline; width:94%;" class="form-control"  type="text"  id="createByID" />
-			    </div>
-	</div>
-		           <div class="form-group">
-                    <label class="col-lg-3 control-label">mesgFrom:</label>
-	                    <div class="col-lg-9">
-                           <input name="mesgFrom" style="display:inline; width:94%;" class="form-control"  type="text"  id="mesgFromID" />
+                           <input name="recordName" style="display:inline; width:94%;" class="form-control"  type="text"  id="recordNameID" />
 			    </div>
 	</div>
 	</form>

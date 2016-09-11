@@ -10,7 +10,9 @@ import com.alibaba.fastjson.JSONObject;
 
 public interface SegmentFacade {
 	
-	public InvokeResult creatSegment(SegmentDTO segment);
+	public InvokeResult creatSegment(SegmentDTO segmentDTO);
+	
+	public InvokeResult updateSegment(SegmentDTO segmentDTO);
 	
 	public Page<JSONObject> pageQuerySegment(SegmentDTO segmentDTO, int page, int pagesize);
 		

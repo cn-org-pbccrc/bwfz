@@ -65,9 +65,13 @@ public class SubmissionFacadeImpl implements SubmissionFacade {
 		return SubmissionAssembler.toDTOs(application.findAllSubmission());
 	}
 	
-	public Page<SubmissionDTO> pageQuerySubmission(SubmissionDTO queryVo, int currentPage, int pageSize) {
+	public Page<SubmissionDTO> pageQuerySubmission(SubmissionDTO queryVo, int currentPage, int pageSize, String createdBy) {
 		List<Object> conditionVals = new ArrayList<Object>();
 	   	StringBuilder jpql = new StringBuilder("select _submission from Submission _submission   where 1=1 ");
+	   	if (queryVo.getCreatedBy() != null && !"".equals(queryVo.getCreatedBy())) {
+	   		jpql.append(" and _submission.createdBy = ?");
+	   		conditionVals.add(createdBy);
+	   	}
 	   	if (queryVo.getContent() != null && !"".equals(queryVo.getContent())) {
 	   		jpql.append(" and _submission.content like ?");
 	   		conditionVals.add(MessageFormat.format("%{0}%", queryVo.getContent()));
@@ -75,11 +79,7 @@ public class SubmissionFacadeImpl implements SubmissionFacade {
 	   	if (queryVo.getName() != null && !"".equals(queryVo.getName())) {
 	   		jpql.append(" and _submission.Name like ?");
 	   		conditionVals.add(MessageFormat.format("%{0}%", queryVo.getName()));
-	   	}		
-	   	if (queryVo.getCreatedBy() != null && !"".equals(queryVo.getCreatedBy())) {
-	   		jpql.append(" and _submission.createdBy like ?");
-	   		conditionVals.add(MessageFormat.format("%{0}%", queryVo.getCreatedBy()));
-	   	}		
+	   	}				
 	   	if (queryVo.getRecordNum() != null && !"".equals(queryVo.getRecordNum())) {
 	   		jpql.append(" and _submission.recordNum like ?");
 	   		conditionVals.add(MessageFormat.format("%{0}%", queryVo.getRecordNum()));
