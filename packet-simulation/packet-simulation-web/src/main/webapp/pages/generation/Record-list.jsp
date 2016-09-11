@@ -586,82 +586,167 @@ var recordEdit = function(id){
 	    }).on({
 	        'hidden.bs.modal': function(){
 	            $(this).remove();
-	        }
+	        },
+	    	'shown.bs.modal': function(){
+	    	    $.get('${pageContext.request.contextPath}/RecordSegment/findRecordSegmentByRecordType/' + id + '.koala').done(function(data) {					
+	    			for(var i=0; i<data.length; i++){
+	    				var segment = data[i];
+	    				var segmentId = segment.id;
+	    				var segMark = segment.segMark;
+	    				var recordItems = segment.recordItems;
+	    				var mycolumns = new Array();
+	    				for(var j=0; j<recordItems.length; j++){
+	    					var recordItem = recordItems[j];
+	    					mycolumns.push({
+	    						'title' : recordItem.itemName,
+	    						'name' : recordItem.itemId,
+	    						'width' : '200px'
+	    					});
+	    				}
+	    				//alert('first')
+	    				var subGrid = "grid" + i;
+	    				dialog.find('#mainGrid').append("<div id=" + subGrid + " segmentId=" + segmentId + "></div>")
+	    				//alert(columns.length)
+	    				dialog.find('#' + subGrid).grid({
+	    					identity: 'id',
+	    					buttons: [
+	    					    {content: '<button class="btn btn-primary" type="button"><span class="glyphicon glyphicon-plus"><span>添加</button>', action: 'add'},
+	    					    {content: '<button class="btn btn-success" type="button"><span class="glyphicon glyphicon-edit"><span>修改</button>', action: 'modify'},
+	    					    {content: '<button class="btn btn-danger" type="button"><span class="glyphicon glyphicon-remove"><span>删除</button>', action: 'delete'},
+	    					],
+	    					columns : mycolumns,
+	    					url: contextPath + '/Segment/pageJson.koala?id=' + id + '&segMark=' +  segMark
+	    				}).on({
+	    			    	'add': function(){
+	    			    		add(id, $(this));
+	    			    	},
+	    			    	'modify': function(event, data){
+	    	   	            	var indexs = data.data;
+	    	   	                var $this = $(this);
+	    	   	                if(indexs.length == 0){
+	    	   	                	$this.message({
+	    	   	                    	type: 'warning',
+	    	   	                        content: '请选择一条记录进行修改'
+	    	   	                    })
+	    	   	                    return;
+	    	   	                }
+	    	   	                if(indexs.length > 1){
+	    	   	                	$this.message({
+	    	   	                    	type: 'warning',
+	    	   	                        content: '只能选择一条记录进行修改'
+	    	   	                    })
+	    	   	                    return;
+	    	   	                }
+	    	   	                self.modify(indexs[0], $this);
+	    	   	            },
+	    	    	        'delete': function(event, data){
+	    	    	        	var indexs = data.data;
+	    	    	            var $this = $(this);
+	    	    	            if(indexs.length == 0){
+	    	    	            	$this.message({
+	    	    	                	type: 'warning',
+	    	    	                    content: '请选择要删除的记录'
+	    	    	                });
+	    	    	                return;
+	    	    	            }
+	    	    	            var remove = function(){
+	    	    	            	self.remove(indexs, $this);
+	    	    	            };
+	    	    	            $this.confirm({
+	    	    	            	content: '确定要删除所选记录吗?',
+	    	    	                callBack: remove
+	    	    	            });
+	    	    	        }        
+	    				});
+	    				//dialog.find('.grid-body').attr('style', 'width: 998px;');
+	    				//dialog.find('.grid-table-head').attr('style', 'min-width: 998px;');
+	    			}		
+	    		});
+     		}
 	    }).find('.modal-body').html(html);
-	    $.get('${pageContext.request.contextPath}/RecordSegment/findRecordSegmentByRecordType/' + id + '.koala').done(function(data) {					
-			for(var i=0; i<data.length; i++){
-				var segment = data[i];
-				var segmentId = segment.id;
-				var segMark = segment.segMark;
-				var recordItems = segment.recordItems;
-				var mycolumns = new Array();
-				for(var j=0; j<recordItems.length; j++){
-					var recordItem = recordItems[j];
-					mycolumns.push({
-						'title' : recordItem.itemName,
-						'name' : recordItem.itemId,
-						'width' : '200px'
-					});
-				}
-				//alert('first')
-				var subGrid = "grid" + i;
-				dialog.find('#mainGrid').append("<div id=" + subGrid + " segmentId=" + segmentId + "></div>")
-				//alert(columns.length)
-				dialog.find('#' + subGrid).grid({
-					identity: 'id',
-					buttons: [
-					    {content: '<button class="btn btn-primary" type="button"><span class="glyphicon glyphicon-plus"><span>添加</button>', action: 'add'},
-					    {content: '<button class="btn btn-success" type="button"><span class="glyphicon glyphicon-edit"><span>修改</button>', action: 'modify'},
-					    {content: '<button class="btn btn-danger" type="button"><span class="glyphicon glyphicon-remove"><span>删除</button>', action: 'delete'},
-					],
-					columns : mycolumns,
-					url: contextPath + '/Segment/pageJson.koala?id=' + id + '&segMark=' +  segMark
-				}).on({
-			    	'add': function(){
-			    		add(id, $(this));
-			    	},
-			    	'modify': function(event, data){
-	   	            	var indexs = data.data;
-	   	                var $this = $(this);
-	   	                if(indexs.length == 0){
-	   	                	$this.message({
-	   	                    	type: 'warning',
-	   	                        content: '请选择一条记录进行修改'
-	   	                    })
-	   	                    return;
-	   	                }
-	   	                if(indexs.length > 1){
-	   	                	$this.message({
-	   	                    	type: 'warning',
-	   	                        content: '只能选择一条记录进行修改'
-	   	                    })
-	   	                    return;
-	   	                }
-	   	                self.modify(indexs[0], $this);
-	   	            },
-	    	        'delete': function(event, data){
-	    	        	var indexs = data.data;
-	    	            var $this = $(this);
-	    	            if(indexs.length == 0){
-	    	            	$this.message({
-	    	                	type: 'warning',
-	    	                    content: '请选择要删除的记录'
-	    	                });
-	    	                return;
-	    	            }
-	    	            var remove = function(){
-	    	            	self.remove(indexs, $this);
-	    	            };
-	    	            $this.confirm({
-	    	            	content: '确定要删除所选记录吗?',
-	    	                callBack: remove
-	    	            });
-	    	        }        
-				});
-				//dialog.find('.grid-body').attr('style', 'width: 998px;');
-				//dialog.find('.grid-table-head').attr('style', 'min-width: 998px;');
-			}		
-		});
+// 	    $.ajax({
+// 	    	type : "post",
+// 	    	url : '${pageContext.request.contextPath}/RecordSegment/findRecordSegmentByRecordType/' + id + '.koala',
+// 	    	async : false,//取消异步
+// 	    	success : function(data){
+	    		
+
+// 	    	}
+// 	    });
+// 	    $.get('${pageContext.request.contextPath}/RecordSegment/findRecordSegmentByRecordType/' + id + '.koala').done(function(data) {					
+// 			for(var i=0; i<data.length; i++){
+// 				var segment = data[i];
+// 				var segmentId = segment.id;
+// 				var segMark = segment.segMark;
+// 				var recordItems = segment.recordItems;
+// 				var mycolumns = new Array();
+// 				for(var j=0; j<recordItems.length; j++){
+// 					var recordItem = recordItems[j];
+// 					mycolumns.push({
+// 						'title' : recordItem.itemName,
+// 						'name' : recordItem.itemId,
+// 						'width' : '200px'
+// 					});
+// 				}
+// 				//alert('first')
+// 				var subGrid = "grid" + i;
+// 				dialog.find('#mainGrid').append("<div id=" + subGrid + " segmentId=" + segmentId + "></div>")
+// 				//alert(columns.length)
+// 				dialog.find('#' + subGrid).grid({
+// 					identity: 'id',
+// 					buttons: [
+// 					    {content: '<button class="btn btn-primary" type="button"><span class="glyphicon glyphicon-plus"><span>添加</button>', action: 'add'},
+// 					    {content: '<button class="btn btn-success" type="button"><span class="glyphicon glyphicon-edit"><span>修改</button>', action: 'modify'},
+// 					    {content: '<button class="btn btn-danger" type="button"><span class="glyphicon glyphicon-remove"><span>删除</button>', action: 'delete'},
+// 					],
+// 					columns : mycolumns,
+// 					url: contextPath + '/Segment/pageJson.koala?id=' + id + '&segMark=' +  segMark
+// 				}).on({
+// 			    	'add': function(){
+// 			    		add(id, $(this));
+// 			    	},
+// 			    	'modify': function(event, data){
+// 	   	            	var indexs = data.data;
+// 	   	                var $this = $(this);
+// 	   	                if(indexs.length == 0){
+// 	   	                	$this.message({
+// 	   	                    	type: 'warning',
+// 	   	                        content: '请选择一条记录进行修改'
+// 	   	                    })
+// 	   	                    return;
+// 	   	                }
+// 	   	                if(indexs.length > 1){
+// 	   	                	$this.message({
+// 	   	                    	type: 'warning',
+// 	   	                        content: '只能选择一条记录进行修改'
+// 	   	                    })
+// 	   	                    return;
+// 	   	                }
+// 	   	                self.modify(indexs[0], $this);
+// 	   	            },
+// 	    	        'delete': function(event, data){
+// 	    	        	var indexs = data.data;
+// 	    	            var $this = $(this);
+// 	    	            if(indexs.length == 0){
+// 	    	            	$this.message({
+// 	    	                	type: 'warning',
+// 	    	                    content: '请选择要删除的记录'
+// 	    	                });
+// 	    	                return;
+// 	    	            }
+// 	    	            var remove = function(){
+// 	    	            	self.remove(indexs, $this);
+// 	    	            };
+// 	    	            $this.confirm({
+// 	    	            	content: '确定要删除所选记录吗?',
+// 	    	                callBack: remove
+// 	    	            });
+// 	    	        }        
+// 				});
+// 				//dialog.find('.grid-body').attr('style', 'width: 998px;');
+// 				//dialog.find('.grid-table-head').attr('style', 'min-width: 998px;');
+// 			}		
+// 		});
 	});
 	
 }

@@ -24,6 +24,8 @@ import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.ResponseBody;
 
+import com.alibaba.fastjson.JSONObject;
+
 @Controller
 @RequestMapping("/Segment")
 public class SegmentController {
@@ -48,8 +50,8 @@ public class SegmentController {
 
 	@ResponseBody
 	@RequestMapping("/pageJson")
-	public InvokeResult pageJson(SegmentDTO segmentDTO) {
-		return segmentFacade.pageQuerySegment(segmentDTO);
+	public Page<JSONObject> pageJson(SegmentDTO segmentDTO, @RequestParam int page, @RequestParam int pagesize) {
+		return segmentFacade.pageQuerySegment(segmentDTO, page, pagesize);
 	}
 
 	@ResponseBody
