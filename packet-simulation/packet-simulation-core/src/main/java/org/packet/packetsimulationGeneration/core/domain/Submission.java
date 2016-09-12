@@ -39,6 +39,10 @@ public class Submission extends KoalaAbstractEntity{
 	
 	@Column(name = "RECORD_NUM")
 	private Long recordNum;
+	
+	@OneToOne
+    @JoinColumn(name = "RECORDTYPE_ID")
+	private RecordType recordType;
 
 	public String getContent() {
 		return content;
@@ -70,6 +74,14 @@ public class Submission extends KoalaAbstractEntity{
 
 	public void setRecordNum(Long recordNum) {
 		this.recordNum = recordNum;
+	}
+
+	public RecordType getRecordType() {
+		return recordType;
+	}
+
+	public void setRecordType(RecordType recordType) {
+		this.recordType = recordType;
 	}
 
 	@Override

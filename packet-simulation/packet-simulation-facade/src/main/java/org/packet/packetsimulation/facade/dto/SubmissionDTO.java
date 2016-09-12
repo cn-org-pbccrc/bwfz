@@ -2,6 +2,8 @@ package org.packet.packetsimulation.facade.dto;
 
 import java.io.Serializable;
 
+import org.packet.packetsimulationGeneration.core.domain.RecordType;
+
 public class SubmissionDTO implements Serializable {
 
 	private Long id;
@@ -18,6 +20,10 @@ public class SubmissionDTO implements Serializable {
 		private String name;
 		
 		private String content;
+		
+		private RecordType recordType;
+		
+		private String recordTypeStr;
 		
 			
 	public void setCreatedBy(String createdBy) { 
@@ -69,6 +75,22 @@ public class SubmissionDTO implements Serializable {
 
 	public void setContent(String content) {
 		this.content = content;
+	}
+
+	public RecordType getRecordType() {
+		return recordType;
+	}
+
+	public void setRecordType(RecordType recordType) {
+		this.recordType = recordType;
+	}
+
+	public String getRecordTypeStr() {
+		return recordTypeStr;
+	}
+
+	public void setRecordTypeStr(String recordTypeStr) {
+		this.recordTypeStr = recordTypeStr;
 	}
 
 	@Override

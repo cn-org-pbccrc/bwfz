@@ -19,6 +19,8 @@ public class SubmissionAssembler {
      	    	result.setName (submission.getName());
      	    	result.setCreatedBy (submission.getCreatedBy());
      	    	result.setRecordNum (submission.getRecordNum());
+     	    	result.setRecordType(submission.getRecordType());
+     	    	result.setRecordTypeStr(submission.getRecordType().getRecordType());
      	    return result;
 	 }
 	

@@ -1,7 +1,15 @@
 package org.packet.packetsimulation.web.controller;
 
 import javax.inject.Inject;
+import javax.servlet.http.HttpServletRequest;
+import javax.servlet.http.HttpServletResponse;
+
 import org.springframework.web.bind.WebDataBinder;
+
+import java.io.ByteArrayInputStream;
+import java.io.IOException;
+import java.io.InputStream;
+import java.io.OutputStream;
 import java.text.SimpleDateFormat;
 import java.util.Date;
 
@@ -13,6 +21,8 @@ import org.springframework.web.bind.annotation.ResponseBody;
 import org.springframework.web.bind.annotation.InitBinder;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.dayatang.utils.Page;
+import org.packet.packetsimulation.core.domain.PACKETCONSTANT;
+import org.packet.packetsimulation.core.domain.Packet;
 import org.packet.packetsimulation.facade.dto.*;
 import org.packet.packetsimulation.facade.SubmissionFacade;
 import org.openkoala.koala.commons.InvokeResult;
@@ -27,17 +37,17 @@ public class SubmissionController {
 	
 	@ResponseBody
 	@RequestMapping("/add")
-	public InvokeResult add(SubmissionDTO submissionDTO) {
+	public InvokeResult add(SubmissionDTO submissionDTO, @RequestParam Long recordTypeId) {
 		String createdBy = CurrentUser.getUserAccount();
 		submissionDTO.setCreatedBy(createdBy);
 		submissionDTO.setRecordNum(0L);
-		return submissionFacade.creatSubmission(submissionDTO);
+		return submissionFacade.creatSubmission(submissionDTO, recordTypeId);
 	}
 	
 	@ResponseBody
 	@RequestMapping("/update")
-	public InvokeResult update(SubmissionDTO submissionDTO) {
-		return submissionFacade.updateSubmission(submissionDTO);
+	public InvokeResult update(SubmissionDTO submissionDTO, @RequestParam Long recordTypeId) {
+		return submissionFacade.updateSubmission(submissionDTO, recordTypeId);
 	}
 	
 	@ResponseBody
@@ -65,6 +75,43 @@ public class SubmissionController {
 		return submissionFacade.getSubmission(id);
 	}
 	
+	@ResponseBody
+	@RequestMapping("/exportSubmissions")
+	public void downloadCSV(@RequestParam String ids, HttpServletRequest request, HttpServletResponse response) {	
+		String[] value = ids.split(",");
+        Long[] idArrs = new Long[value.length];
+        for (int i = 0; i < value.length; i ++) {
+        	        					idArrs[i] = Long.parseLong(value[i]);
+						        }
+		String exportSubmissions = submissionFacade.exportSubmissions(idArrs);
+		response.setContentType("application/csv;charset=UTF-8");
+		response.setHeader("Content-Disposition", "attachment; filename=" + new Date().getTime() + ".csv");
+		response.setCharacterEncoding("UTF-8");
+		
+		InputStream in = null;;
+		OutputStream out;
+		try {
+			in = new ByteArrayInputStream(exportSubmissions.getBytes("UTF-8"));
+			out = response.getOutputStream();
+			int len = 0;
+			byte[] buffer = new byte[1024];
+			while ((len = in.read(buffer)) > 0) {
+//				out.write(new byte[] { (byte) 0xEF, (byte) 0xBB, (byte) 0xBF });
+				out.write(buffer, 0, len);
+			}
+		} catch (IOException e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+		}finally {
+			if (in != null) {
+				try {
+					in.close();
+				} catch (Exception e) {
+					throw new RuntimeException(e);
+				}
+			}
+		}
+	}
 		
     @InitBinder    
     public void initBinder(WebDataBinder binder) {  

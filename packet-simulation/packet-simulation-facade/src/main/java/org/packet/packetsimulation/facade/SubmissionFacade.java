@@ -9,9 +9,9 @@ public interface SubmissionFacade {
 
 	public InvokeResult getSubmission(Long id);
 	
-	public InvokeResult creatSubmission(SubmissionDTO submission);
+	public InvokeResult creatSubmission(SubmissionDTO submission, Long recordTypeId);
 	
-	public InvokeResult updateSubmission(SubmissionDTO submission);
+	public InvokeResult updateSubmission(SubmissionDTO submission, Long recordTypeId);
 	
 	public InvokeResult removeSubmission(Long id);
 	
@@ -21,6 +21,6 @@ public interface SubmissionFacade {
 	
 	public Page<SubmissionDTO> pageQuerySubmission(SubmissionDTO submission, int currentPage, int pageSize, String createdBy);
 	
-
+	public String exportSubmissions(Long[] ids);
 }
 

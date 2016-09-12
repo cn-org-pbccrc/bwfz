@@ -32,11 +32,13 @@ $(function (){
 	                buttons: [
 	                        {content: '<button class="btn btn-primary" type="button"><span class="glyphicon glyphicon-plus"><span>添加</button>', action: 'add'},
 	                        {content: '<button class="btn btn-success" type="button"><span class="glyphicon glyphicon-edit"><span>修改</button>', action: 'modify'},
-	                        {content: '<button class="btn btn-danger" type="button"><span class="glyphicon glyphicon-remove"><span>删除</button>', action: 'delete'}
+	                        {content: '<button class="btn btn-danger" type="button"><span class="glyphicon glyphicon-remove"><span>删除</button>', action: 'delete'},
+	                        {content: '<button class="btn btn-info" type="button"><span class="glyphicon glyphicon-export"><span>导出报文</button>', action: 'export'}
 	                    ],
 	                url:"${pageContext.request.contextPath}/Submission/pageJson.koala",
 	                columns: [
 	                     	                         	                         { title: '报文名称', name: 'name', width: width},
+	                     	                         	                       		{ title: '报文类型', name: 'recordTypeStr', width: width},
 	                         	                         	                         	                         { title: '记录数', name: 'recordNum', width: width},
 	                         	                         	                             { title: '操作', width: 120, render: function (rowdata, name, index)
 	                                 {
@@ -54,7 +56,6 @@ $(function (){
 	                   'modify': function(event, data){
 	                        var indexs = data.data;
 	                        var $this = $(this);
-	                        console.log(data)
 	                        if(indexs.length == 0){
 	                            $this.message({
 	                                type: 'warning',
@@ -88,7 +89,19 @@ $(function (){
 	                            content: '确定要删除所选记录吗?',
 	                            callBack: remove
 	                        });
-	                   }
+	                   },
+	                   'export': function(event, data){
+	                        var indexs = data.data;
+	                        var $this = $(this);
+	                        if(indexs.length == 0){
+	                            $this.message({
+	                                type: 'warning',
+	                                content: '请至少选择一条记录进行导出'
+	                            })
+	                            return;
+	                        }
+	                       self.exportSubmission(indexs, $this);
+	                    }
 	         });
 	    },
 	    add: function(grid){
@@ -121,8 +134,10 @@ $(function (){
 	    	    }).find('.modal-body').html(html);
 				dialog.find('#sub').on('click',{grid: grid}, function(e){
 					var content = getAllData(dialog);
+					var items = dialog.find('.selectRecordGrid').data('koala.grid').selectedRows();
 			        var data = [{ name: 'name', value: dialog.find('#nameID').val()},
-			 				    { name: 'content', value: content}
+			 				    { name: 'content', value: content},
+			 				    { name: 'recordTypeId', value: items[0].id}
 			 		];
 		            $.post('${pageContext.request.contextPath}/Submission/add.koala', data).done(function(result){
 		            	if(result.success ){
@@ -145,22 +160,30 @@ $(function (){
 	    },
 	    modify: function(id, grid){
 	        var self = this;
-	        var dialog = $('<div class="modal fade"><div class="modal-dialog"><div class="modal-content"><div class="modal-header"><button type="button" class="close" data-dismiss="modal" aria-hidden="true">&times;</button><h4 class="modal-title">修改</h4></div><div class="modal-body"><p>One fine body&hellip;</p></div><div class="modal-footer"><button type="button" class="btn btn-default" data-dismiss="modal">取消</button><button type="button" class="btn btn-success" id="save">保存</button></div></div></div></div>');
+	        var dialog = $('<div class="modal fade"><div class="modal-dialog" style="width:1040px;"><div class="modal-content"><div class="modal-header"><button type="button" class="close" data-dismiss="modal" aria-hidden="true">&times;</button><h4 class="modal-title">修改</h4></div><div class="modal-body"><p>One fine body&hellip;</p></div><div class="modal-footer"><button type="button" class="btn btn-default" data-dismiss="modal">取消</button><button type="button" class="btn btn-success" id="save">保存</button></div></div></div></div>');
 	        $.get('<%=path%>/Submission-update.jsp').done(function(html){
 	               dialog.find('.modal-body').html(html);
 	               self.initPage(dialog.find('form'));
 	               $.get( '${pageContext.request.contextPath}/Submission/get/' + id + '.koala').done(function(json){
-	                       json = json.data;
-	                        var elm;
-	                        for(var index in json){
-	                            elm = dialog.find('#'+ index + 'ID');
-	                            if(elm.hasClass('select')){
-	                                elm.setValue(json[index]);
-	                            }else{
-	                                elm.val(json[index]);
-	                            }
-	                        }
-	                });
+                       json = json.data;
+                        var elm;
+                        for(var index in json){
+                            elm = dialog.find('#'+ index + 'ID');
+                            if(index == 'recordType'){
+                            	var recordType = json['recordType'];
+                                dialog.find('#recordTypeIdID').val(recordType.id);
+                                var headerItems = recordType.headerItems;
+        						for(var i=0;i<headerItems.length;i++){
+        	             			addRow(dialog.find("#itemTable"),headerItems[i]);
+        	             		}
+    	                    }else if(elm.hasClass('select')){
+                                elm.setValue(json[index]);
+                            }else{
+                                elm.val(json[index]);
+                            }
+                        }
+                        	
+                	});               
 	                dialog.modal({
 	                    keyboard:false
 	                }).on({
@@ -169,8 +192,15 @@ $(function (){
 	                    }
 	                });
 	                dialog.find('#save').on('click',{grid: grid}, function(e){
-	                    if(!Validator.Validate(dialog.find('form')[0],3))return;
-	                    $.post('${pageContext.request.contextPath}/Submission/update.koala?id='+id, dialog.find('form').serialize()).done(function(result){
+	                	var content = getAllData(dialog);
+	                    var data = [{ name: 'name', value: dialog.find('#nameID').val()},
+				 				    { name: 'content', value: content},
+				 				    { name: 'recordTypeId', value: dialog.find('#recordTypeIdID').val()},
+				 				    { name: 'version', value: dialog.find('#versionID').val()},
+				 				    { name: 'createdBy', value: dialog.find('#createdByID').val()},
+				 				    { name: 'recordNum', value: dialog.find('#recordNumID').val()},
+				 		];
+	                    $.post('${pageContext.request.contextPath}/Submission/update.koala?id='+id, data).done(function(result){
 	                        if(result.success){
 	                            dialog.modal('hide');
 	                            e.data.grid.data('koala.grid').refresh();
@@ -180,8 +210,8 @@ $(function (){
 	                            });
 	                        }else{
 	                            dialog.find('.modal-content').message({
-	                            type: 'error',
-	                            content: result.actionError
+	                            	type: 'error',
+	                            	content: result.errorMessage
 	                            });
 	                        }
 	                    });
@@ -220,10 +250,15 @@ $(function (){
 	                        }else{
 	                            grid.message({
 	                                type: 'error',
-	                                content: result.result
+	                                content: result.errorMessage
 	                            });
 	                        }
 	    	});
+	    },
+	    exportSubmission: function(ids, grid){
+	    	var ids = ids.join(',');
+	    	var date = new Date();
+	    	window.open('${pageContext.request.contextPath}/Submission/exportSubmissions.koala?ids=' + ids + '&id=' + date.getTime() + '.txt');	    
 	    }
 	}
 	PageLoader.initSearchPanel();
@@ -243,22 +278,28 @@ $(function (){
 });
 
 var openDetailsPage = function(id){
-        var dialog = $('<div class="modal fade"><div class="modal-dialog"><div class="modal-content"><div class="modal-header"><button type="button" class="close" data-dismiss="modal" aria-hidden="true">&times;</button><h4 class="modal-title">查看</h4></div><div class="modal-body"><p>One fine body&hellip;</p></div><div class="modal-footer"><button type="button" class="btn btn-info" data-dismiss="modal">返回</button></div></div></div></div>');
+        var dialog = $('<div class="modal fade"><div class="modal-dialog" style="width:1040px;"><div class="modal-content"><div class="modal-header"><button type="button" class="close" data-dismiss="modal" aria-hidden="true">&times;</button><h4 class="modal-title">查看</h4></div><div class="modal-body"><p>One fine body&hellip;</p></div><div class="modal-footer"><button type="button" class="btn btn-info" data-dismiss="modal">返回</button></div></div></div></div>');
         $.get('<%=path%>/Submission-view.jsp').done(function(html){
                dialog.find('.modal-body').html(html);
                $.get( '${pageContext.request.contextPath}/Submission/get/' + id + '.koala').done(function(json){
-                       json = json.data;
-                        var elm;
-                        for(var index in json){
-                        if(json[index]+"" == "false"){
-                        		dialog.find('#'+ index + 'ID').html("<span style='color:#d2322d' class='glyphicon glyphicon-remove'></span>");
-                        	}else if(json[index]+"" == "true"){
-                        		dialog.find('#'+ index + 'ID').html("<span style='color:#47a447' class='glyphicon glyphicon-ok'></span>");
-                        	}else{
-                          		 dialog.find('#'+ index + 'ID').html(json[index]+"");
-                        	}
+                   json = json.data;
+                    var elm;
+                    for(var index in json){
+                        elm = dialog.find('#'+ index + 'ID');
+                        if(index == 'recordType'){
+                        	var recordType = json['recordType'];
+                            dialog.find('#recordTypeIdID').val(recordType.id);
+                            var headerItems = recordType.headerItems;
+    						for(var i=0;i<headerItems.length;i++){
+    	             			addRow(dialog.find("#itemTable"),headerItems[i]);
+    	             		}
+	                    }else if(elm.hasClass('select')){
+                            elm.setValue(json[index]);
+                        }else{
+                            elm.val(json[index]);
                         }
-               });
+                    }                  	
+            	});
                 dialog.modal({
                     keyboard:false
                 }).on({
@@ -316,6 +357,65 @@ function recordEdit(id){
         thiz.attr("mark",mark);
     }
 }
+
+var addRow = function(itemTable, variable, isValueReadonly){
+	var row = $('<tr data-toggle="context" data-target="#context-menu"><td class="v-itemId"><input  data-role="itemId" readonly="true" required="true" style="display: inline; " class="form-control" type="text" /></td>'
+	+'<td class="v-itemName"><input  data-role="itemName" readonly="true" required="true" style="display: inline; " class="form-control" type="text" /></td>'
+	+'<td class="v-itemType"><div class="btn-group select" id="itemTypeSelect" data-role="itemType"></div></td>'
+	+'<td class="v-itemLength"><input data-role="itemLength" readonly="true" class="form-control" required="true" rgExp="/^[0-9]{1,}$/" data-content="只能输入数字" placeholder="数字"/></td>'
+	+'<td class="v-itemLocation"><input data-role="itemLocation" readonly="true" required="true" style="display: inline; " class="form-control" type="text" /></td>'
+	+'<td class="v-itemDesc"><input data-role="itemDesc" readonly="true" required="true" style="display: inline; " class="form-control" type="text" /></td>'
+	+'<td class="v-state"><div class="btn-group select" id="itemStateSelect" data-role="state" ></div></td>'
+	+'<td class="v-itemValue"><input data-role="itemValue" style="display: inline;" class="form-control" type="text" /></td>');
+
+	row.find("[data-role='itemLength']").on('change', function(){
+		calculateLocation(itemTable);
+	})
+	if(!itemTable){
+		itemTable=$('#itemTable')
+	}
+	var itemType = row.find('[data-role="itemType"]')
+	var itemState = row.find('[data-role="state"]')
+	fillVTypeSelect(itemType);
+	fillStateSelect(itemState);
+	row.find('[data-toggle="item"]').attr('disabled', true);
+	row.find('[data-toggle="button"]').attr('disabled', true);
+	if(isValueReadonly){
+		row.find('[data-role="itemValue"]').attr('readonly', true);
+	}
+	if(variable){
+		row.find('input[data-role="itemId"]').val(variable.itemId);
+		row.find('input[data-role="itemName"]').val(variable.itemName);
+		row.find('input[data-role="itemLength"]').val(variable.itemLength);
+		row.find('input[data-role="itemLocation"]').val(variable.itemLocation);
+		row.find('input[data-role="itemDesc"]').val(variable.itemDesc);
+		row.find('.select[data-role="itemType"]').setValue(variable.itemType);
+		row.find('.select[data-role="state"]').setValue(variable.state);
+		row.find('input[data-role="itemValue"]').val(variable.itemValue);
+	}
+	row.appendTo(itemTable);	
+}
+
+//填充数据项类型
+var fillVTypeSelect = function(select){
+	select.select({
+		contents: [
+					{value: '0', title: 'N',selected: true},
+					{value: '1', title: 'AN'},
+					{value: '2', title: 'ANC'}
+				]
+	});
+};
+
+//填充数据项状态
+var fillStateSelect = function(select){
+	  var contents = [{title:'必选', value: 'M',selected: true}];
+       contents.push({title:'条件选择' , value:'C'});
+       contents.push({title:'可选' , value:'O'});
+	select.select({
+		contents: contents
+	});
+};
 </script>
 </head>
 <body>

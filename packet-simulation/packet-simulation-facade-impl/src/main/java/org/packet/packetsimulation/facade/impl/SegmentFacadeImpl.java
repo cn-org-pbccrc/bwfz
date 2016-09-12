@@ -78,7 +78,7 @@ public class SegmentFacadeImpl implements SegmentFacade {
 		return InvokeResult.success();
 	}
 	
-	public InvokeResult removeRecordSegments(Long[] ids) {
+	public InvokeResult removeSegments(Long[] ids) {
 		Set<Segment> segments= new HashSet<Segment>();
 		for (Long id : ids) {
 			segments.add(application.getSegment(id));

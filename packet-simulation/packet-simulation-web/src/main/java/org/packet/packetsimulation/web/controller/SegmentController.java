@@ -62,7 +62,7 @@ public class SegmentController {
 		for (int i = 0; i < value.length; i++) {
 			idArrs[i] = Long.parseLong(value[i]);
 		}
-		return recordSegmentFacade.removeRecordSegments(idArrs);
+		return segmentFacade.removeSegments(idArrs);
 	}
 
 	@ResponseBody
