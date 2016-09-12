@@ -2,7 +2,9 @@ package org.packet.packetsimulation.facade.impl;
 
 import java.util.HashSet;
 import java.util.Iterator;
+import java.util.LinkedHashMap;
 import java.util.List;
+import java.util.Map;
 import java.util.ArrayList;
 import java.util.Set;
 import java.text.MessageFormat;
@@ -28,6 +30,7 @@ import org.springframework.web.bind.annotation.RequestParam;
 import com.alibaba.fastjson.JSON;
 import com.alibaba.fastjson.JSONArray;
 import com.alibaba.fastjson.JSONObject;
+import com.alibaba.fastjson.TypeReference;
 
 @Named
 public class SubmissionFacadeImpl implements SubmissionFacade {
@@ -103,31 +106,30 @@ public class SubmissionFacadeImpl implements SubmissionFacade {
 		for (Long id : ids){
 			Submission submission = application.getSubmission(id);
 			String head = "";
-			String record = "";
-			JSONObject objHead = JSON.parseObject(submission.getContent());		
-			RecordType recordType = submission.getRecordType();
-			List<RecordItem> recordItems1 = recordType.getHeaderItems();
-			for(int i = 0; i < recordItems1.size(); i++){
-				RecordItem recordItem = recordItems1.get(i);
-				head += objHead.getString(recordItem.getItemId());
-			}
+			String body = "";			
+			LinkedHashMap<String, String> jsonHeadMap = JSON.parseObject(submission.getContent(), new TypeReference<LinkedHashMap<String, String>>() { });
+	        for (Map.Entry<String, String> entry : jsonHeadMap.entrySet()) {
+	        	head += entry.getValue();
+	        }
+	        //System.out.println("head: " + head.length());
 			List<Long> recordIds = findRecordIdsBySubmissionId(id);
 			for(int j = 0; j < recordIds.size(); j++){
 				List<Segment> segments = findSegmentsByRecordId(recordIds.get(j));
-				String body = "";
-				for(int k = 0; k < segments.size(); k++){
-					JSONObject objBody = JSON.parseObject(segments.get(k).getContent());
-					RecordSegment recordSegment = findRecordSegmentBySegMark(segments.get(k).getSegMark());
-					List<RecordItem> recordItems2 = recordSegment.getRecordItems();
-					for(int i = 0; i < recordItems2.size(); i++){
-						RecordItem recordItem = recordItems2.get(i);
-						body += objBody.getString(recordItem.getItemId());
+				if(segments != null){
+					String record = "";							
+					for(int k = 0; k < segments.size(); k++){
+						LinkedHashMap<String, String> jsonRecordMap = JSON.parseObject(segments.get(k).getContent(), new TypeReference<LinkedHashMap<String, String>>() { });
+				        for (Map.Entry<String, String> entry : jsonRecordMap.entrySet()) {
+				        	record += entry.getValue();
+				        }
 					}
+					body += record + "\n";
+					//System.out.println("record: " + record.length());
 				}
-				record += body + "\n";
 			}
-			String tail = "Z" + submission.getRecordNum();
-			exportSubmissions += head + "\r\n" + record + "\r\n" + tail + "\r\n" + "\r\n";
+			String tail = "Z" + String.format("%10d", submission.getRecordNum());
+			//System.out.println("tail: " + tail.length());
+			exportSubmissions += head + "\n" + body + tail + "\n" + "\n";
 		}
 		return exportSubmissions;
 	}
@@ -187,18 +189,5 @@ public class SubmissionFacadeImpl implements SubmissionFacade {
 	   	}
 	   	List<Segment> segmentList = getQueryChannelService().createJpqlQuery(jpql.toString()).setParameters(conditionVals).list();
 	   	return segmentList;
-	}
-	
-	@SuppressWarnings("unchecked")
-	private RecordSegment findRecordSegmentBySegMark(String segMark){
-		List<Object> conditionVals = new ArrayList<Object>();
-	   	StringBuilder jpql = new StringBuilder("select _recordSegment from RecordSegment _recordSegment  where 1=1 ");
-	   	
-	   	if (segMark != null ) {
-	   		jpql.append(" and _recordSegment.segMark = ? ");
-	   		conditionVals.add(segMark);
-	   	}
-	   	RecordSegment recordSegment = (RecordSegment) getQueryChannelService().createJpqlQuery(jpql.toString()).setParameters(conditionVals).singleResult();
-	   	return recordSegment;
 	}
 }

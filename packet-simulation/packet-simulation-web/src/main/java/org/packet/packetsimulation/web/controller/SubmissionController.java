@@ -84,8 +84,8 @@ public class SubmissionController {
         	        					idArrs[i] = Long.parseLong(value[i]);
 						        }
 		String exportSubmissions = submissionFacade.exportSubmissions(idArrs);
-		response.setContentType("application/csv;charset=UTF-8");
-		response.setHeader("Content-Disposition", "attachment; filename=" + new Date().getTime() + ".csv");
+		response.setContentType("application/txt;charset=UTF-8");
+		response.setHeader("Content-Disposition", "attachment; filename=" + new Date().getTime() + ".txt");
 		response.setCharacterEncoding("UTF-8");
 		
 		InputStream in = null;;
