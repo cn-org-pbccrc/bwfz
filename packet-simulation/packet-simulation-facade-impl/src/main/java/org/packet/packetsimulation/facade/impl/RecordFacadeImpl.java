@@ -90,7 +90,10 @@ public class RecordFacadeImpl implements RecordFacade {
 			segments.addAll(segmentList);
 			segmentApplication.removeSegments(segments);
 		}
+		Submission submission = submissionApplication.getSubmission(application.getRecord(ids[0]).getSubmission().getId());
+		submission.setRecordNum(submission.getRecordNum() - new Long(records.size()));
 		application.removeRecords(records);
+		submissionApplication.updateSubmission(submission);
 		return InvokeResult.success();
 	}
 	

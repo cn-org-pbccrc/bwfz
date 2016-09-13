@@ -588,7 +588,7 @@ var recordEdit = function(id, recordId){
 	    					url: contextPath + '/Segment/pageJson.koala?recordId=' + recordId + '&segMark=' +  segMark
 	    				}).on({
 	    			    	'add': function(){
-	    			    		add(recordId, $(this));
+	    			    		addSegment(recordId, $(this));
 	    			    	},
 	    			    	'modify': function(event, data){
 	    	   	            	var indexs = data.data;
@@ -607,7 +607,7 @@ var recordEdit = function(id, recordId){
 	    	   	                    })
 	    	   	                    return;
 	    	   	                }
-	    	   	                modify(recordId, indexs[0], $this);
+	    	   	                modifySegment(recordId, indexs[0], $this);
 	    	   	            },
 	    	    	        'delete': function(event, data){
 	    	    	        	var indexs = data.data;
@@ -620,7 +620,7 @@ var recordEdit = function(id, recordId){
 	    	    	                return;
 	    	    	            }
 	    	    	            var remove = function(){
-	    	    	            	move(indexs, $this);
+	    	    	            	removeSegment(indexs, $this);
 	    	    	            };
 	    	    	            $this.confirm({
 	    	    	            	backdrop: false,
@@ -769,10 +769,8 @@ var getAllData = function(dialog){
 	return data;
 };
 
-var add = function(recordId, grid){
+var addSegment = function(recordId, grid){
 	var self = this;
-	alert(grid)
-	console.log(grid)
 	var recordSegmentId = grid.attr("recordSegmentId");
     var dialog = $('<div class="modal fade"><div class="modal-dialog" style="width:1000px;"><div class="modal-content"><div class="modal-header"><button type="button" class="close" data-dismiss="modal" aria-hidden="true">&times;</button><h4 class="modal-title">新增段</h4></div><div class="modal-body"><p>One fine body&hellip;</p></div><div class="modal-footer"><button type="button" class="btn btn-default" data-dismiss="modal">取消</button><button type="button" class="btn btn-success" id="save">保存</button></div></div></div></div>');
     $.get('<%=path%>/RecordSegmentEditConfig.jsp').done(function(html){
@@ -838,14 +836,14 @@ var add = function(recordId, grid){
             }else{
                 dialog.find('.modal-content').message({
                     type: 'error',
-                    content: result.actionError
+                    content: result.errorMessage
                 });
             }
         });
     });
 }
 
-var modify = function(recordId, segmentId, grid){
+var modifySegment = function(recordId, segmentId, grid){
 	var self = this;
 	var recordSegmentId = grid.attr("recordSegmentId");
     var dialog = $('<div class="modal fade"><div class="modal-dialog" style="width:1000px;"><div class="modal-content"><div class="modal-header"><button type="button" class="close" data-dismiss="modal" aria-hidden="true">&times;</button><h4 class="modal-title">新增段</h4></div><div class="modal-body"><p>One fine body&hellip;</p></div><div class="modal-footer"><button type="button" class="btn btn-default" data-dismiss="modal">取消</button><button type="button" class="btn btn-success" id="save">保存</button></div></div></div></div>');
@@ -916,7 +914,7 @@ var modify = function(recordId, segmentId, grid){
     });
 }
 
-var move = function(ids, grid){
+var removeSegment = function(ids, grid){
 	var data = [{ name: 'ids', value: ids.join(',') }];
 	$.post('${pageContext.request.contextPath}/Segment/delete.koala', data).done(function(result){
     	if(result.success){
