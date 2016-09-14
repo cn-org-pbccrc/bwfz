@@ -129,9 +129,9 @@ public class SubmissionFacadeImpl implements SubmissionFacade {
 			}
 			String tail = "Z" + String.format("%10d", submission.getRecordNum());
 			//System.out.println("tail: " + tail.length());
-			exportSubmissions += head + "\n" + body + tail + "\n" + "\n";
+			exportSubmissions += head + "\n" + body + tail + "\n" + "\n" + "\n";
 		}
-		return exportSubmissions;
+		return exportSubmissions.trim();
 	}
 	
 	public List<SubmissionDTO> findAllSubmission() {
@@ -141,7 +141,7 @@ public class SubmissionFacadeImpl implements SubmissionFacade {
 	public Page<SubmissionDTO> pageQuerySubmission(SubmissionDTO queryVo, int currentPage, int pageSize, String createdBy) {
 		List<Object> conditionVals = new ArrayList<Object>();
 	   	StringBuilder jpql = new StringBuilder("select _submission from Submission _submission   where 1=1 ");
-	   	if (queryVo.getCreatedBy() != null && !"".equals(queryVo.getCreatedBy())) {
+	   	if (createdBy != null) {
 	   		jpql.append(" and _submission.createdBy = ?");
 	   		conditionVals.add(createdBy);
 	   	}
@@ -187,6 +187,7 @@ public class SubmissionFacadeImpl implements SubmissionFacade {
 	   		jpql.append(" and _segment.record.id = ? ");
 	   		conditionVals.add(recordId);
 	   	}
+	   	jpql.append("order by _segment.segMark asc");
 	   	List<Segment> segmentList = getQueryChannelService().createJpqlQuery(jpql.toString()).setParameters(conditionVals).list();
 	   	return segmentList;
 	}

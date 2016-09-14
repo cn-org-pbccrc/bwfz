@@ -560,10 +560,11 @@ var recordEdit = function(id, recordId){
 	    	'shown.bs.modal': function(){
 	    	    $.get('${pageContext.request.contextPath}/RecordSegment/findRecordSegmentByRecordType/' + id + '.koala').done(function(data) {					
 	    			for(var i=0; i<data.length; i++){
-	    				var segment = data[i];
-	    				var recordSegmentId = segment.id;
-	    				var segMark = segment.segMark;
-	    				var recordItems = segment.recordItems;
+	    				var recordSegment = data[i];
+	    				var recordSegmentId = recordSegment.id;
+	    				var recordSegmentName = recordSegment.segName;
+	    				var segMark = recordSegment.segMark;
+	    				var recordItems = recordSegment.recordItems;
 	    				var mycolumns = new Array();
 	    				for(var j=0; j<recordItems.length; j++){
 	    					var recordItem = recordItems[j];
@@ -575,8 +576,9 @@ var recordEdit = function(id, recordId){
 	    				}
 	    				//alert('first')
 	    				var subGrid = "grid" + i;
-	    				dialog.find('#mainGrid').append("<div id=" + subGrid + " recordSegmentId=" + recordSegmentId + "></div>")
-	    				//alert(columns.length)
+	    				//dialog.find('#mainGrid').append("<div id=" + subGrid + " recordSegmentId=" + recordSegmentId + "></div>")
+	    				dialog.find('#mainGrid').append('<div class="panel panel-default"><div class="panel-heading"><h3 class="panel-title">' + recordSegmentName + '</h3></div><div class="panel-body"><div id="' + subGrid + '" recordSegmentId="' + recordSegmentId + '"></div></div></div>');
+	    				//dialog.find('#mainGrid').append('<div class="panel panel-default"><div class="panel-heading"><h3 class="panel-title">' + recordSegmentName + '</h3></div><div id="' + subGrid + '" recordSegmentId="' + recordSegmentId + '"></div></div>');
 	    				dialog.find('#' + subGrid).grid({
 	    					identity: 'id',
 	    					buttons: [

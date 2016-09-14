@@ -190,14 +190,14 @@ function initFun(){
   	                    })
   	                    return;
   	                }  
-  	                $.get( '${pageContext.request.contextPath}/BatchConfig/isExist/' + indexs[0] + '.koala').done(function(data){
-    	            	  var ruleConfigId = data.data;
-    	            	  if(ruleConfigId){
-    	            		  batchConfig().modify(ruleConfigId.id,grid);
-    	            	  }else{
-    	            		  batchConfig().add(grid);
-    	            	  }
-      	              });
+  	                $.get('${pageContext.request.contextPath}/BatchConfig/isExist/' + indexs[0] + '.koala').done(function(data){
+    	            	var ruleConfigId = data.data;
+    	            	if(ruleConfigId){
+    	            		batchConfig().modify(ruleConfigId.id,grid);
+    	            	}else{
+    	            		batchConfig().add(grid);
+    	            	}
+      	            });
   	            }
     	    });
     	},
@@ -305,8 +305,10 @@ function initFun(){
          	                	content: '保存成功'
                     		});
          	            }else{
-    						alert(result.errorMessage);
-       	                    dialog.find('.modal-dialog').append('<div class="errMsg" style="float:left;position:absolute;max-width:500px;min-height:200px;bottom:20px;left:20px;background-color:#4cae4c;color:white;">'+result.errorMessage+ '</div>');
+         	            	dialog.find('.modal-content').message({
+    	                        type: 'error',
+    	                        content: result.errorMessage
+    	                    });
       				    }
           	        });  				      				        
         	    });
@@ -403,8 +405,10 @@ function initFun(){
 	     	                	content: '保存成功'
 	                		});
 	     	            }else{
-							alert(result.errorMessage);
-	   	                    dialog.find('.modal-dialog').append('<div class="errMsg" style="float:left;position:absolute;max-width:500px;min-height:200px;bottom:20px;left:20px;background-color:#4cae4c;color:white;">'+result.errorMessage+ '</div>');
+    	                    dialog.find('.modal-content').message({
+    	                        type: 'error',
+    	                        content: result.errorMessage
+    	                    });
 	  				    }
 	      	        });
 	            });
@@ -442,7 +446,7 @@ function initFun(){
     	        }else{
     	            grid.message({
     	                type: 'error',
-    	                content: result.result
+    	                content: result.errorMessage
     	            });
     	        }
     	    });
