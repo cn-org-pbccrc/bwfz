@@ -36,7 +36,6 @@ import org.openkoala.gqc.infra.util.ReadAppointedLine;
 import org.openkoala.koala.commons.InvokeResult;
 import org.openkoala.security.org.core.domain.EmployeeUser;
 import org.packet.packetsimulation.facade.dto.*;
-import org.packet.packetsimulation.facade.impl.MesgFacadeImpl.BaseTask;
 import org.packet.packetsimulation.facade.impl.assembler.PacketAssembler;
 import org.packet.packetsimulation.facade.impl.assembler.TaskPacketAssembler;
 import org.packet.packetsimulation.facade.impl.assembler.ThreeStandardAssembler;

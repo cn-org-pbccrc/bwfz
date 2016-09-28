@@ -20,6 +20,7 @@
 	    		removeClass("focus_tip right_tip error_tip ajax_checking_tip").
 	    		addClass(type+"_tip").
 	    		html(msg?msg:"").
+	    		attr('style', 'display:block').
 	    		css({
 	        		"position" 	: "absolute",
 	        		"top"		: input.position().top+Math.ceil((input.outerHeight()-28)/2),
@@ -76,7 +77,7 @@
 				input = form.find('[name="'+ inputSetting.name +'"]');
 				
 				if(input.length != 0){
-					tip = $("<span class='input_tip'></span>");
+					tip = $("<span class='input_tip' style='display:none'></span>");
 					input.data("tip", tip).data("setting", inputSetting);
 					input.after(tip);
 					
@@ -100,7 +101,6 @@
 							result = Verifier.prototype.checkReg(rule, input) && result;
 						} else if($.type(rule.rule) == "function"){
 							var formData = {};
-							
 							$.each(form.serializeArray(),function(i, item){
 								formData[item.name] = item.value;
 							});

@@ -4,33 +4,9 @@
 <meta http-equiv="Content-Type" content="text/html; charset=UTF-8">
 </head>
 <style>
-.recordItemConfig  .v-itemId {
-	width: 7%;
-}
-.recordItemConfig  .v-itemName {
-	width: 17%;
-}
-.recordItemConfig  .v-itemType {
-	width: 10%;
-}
-.recordItemConfig .v-itemLength {
-	width: 8%;
-}
-.recordItemConfig  .v-itemLocation {
-	width: 10%;
-}
-.recordItemConfig  .v-itemDesc {
-	width: 19%;
-}
-.recordItemConfig .v-state {
-	width: 13%;
-}
-.recordItemConfig .v-itemValue {
-	width: 16%;
-}
 </style>
 <body>
-	<form class="form-horizontal">
+	<form class="form-horizontal" id="itemForm">
 	<input type="hidden" id="idID" name="id" /> 
 	<input type="hidden" id="versionID" name="version" /> 
 		<div class="form-group row">
@@ -88,7 +64,7 @@
 					<tr>
 						<td>
 							<div class="grid-body">
-								<div class="grid-table-head"  style="width:950px">
+								<div class="grid-table-head"  style="width:990px">
 									<table class="table table-bordered" >
 										<tr>
 											<th class="v-itemId">标识符</th>
@@ -99,20 +75,23 @@
 											<th class="v-itemDesc">描述及代码表</th>
 											<th class="v-state">状态</th>
 											<th class="v-itemValue">值</th>
+											<th class="v-itemPrompt">提示</th>
 										</tr>
 									</table>
 								</div>
-								<div class="grid-table-body" style="overflow-x: hidden;width:950px">
+								<div class="grid-table-body" style="overflow-x: hidden;width:990px">
 									<table
-										class="table table-bordered table-hover table-striped staticQueryRightTable" style="width:950px"
+										class="table table-bordered table-hover table-striped staticQueryRightTable" style="width:990px"
 										id="itemTable">
 									</table>
 								</div>
+<!-- 								<button type="button" class="btn btn-success save" id="save">保存</button> -->
 							</div>
 						</td>
 					</tr>
 				</table>
 		</div>
+		<div class="modal-footer"><button type="button" class="btn btn-default" data-dismiss="modal">取消</button><button type="button" class="btn btn-success save" id="save">保存</button></div>
 <!-- 		<div id="context-menu"> -->
 <!-- 			<ul class="dropdown-menu" role="menu"> -->
 <!-- 				<li><a tabindex="-1" href="#">插入数据项</a></li> -->

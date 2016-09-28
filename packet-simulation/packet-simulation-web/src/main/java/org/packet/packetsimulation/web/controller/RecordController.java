@@ -5,6 +5,7 @@ import java.util.Date;
 import java.util.List;
 
 import javax.inject.Inject;
+import javax.servlet.http.HttpServletRequest;
 
 import org.dayatang.utils.Page;
 import org.openkoala.gqc.facade.dto.GeneralQueryDTO;
@@ -12,6 +13,7 @@ import org.openkoala.koala.commons.InvokeResult;
 import org.openkoala.security.shiro.CurrentUser;
 import org.packet.packetsimulation.facade.RecordFacade;
 import org.packet.packetsimulation.facade.RecordSegmentFacade;
+import org.packet.packetsimulation.facade.dto.MesgDTO;
 import org.packet.packetsimulation.facade.dto.MesgTypeDTO;
 import org.packet.packetsimulation.facade.dto.RecordDTO;
 import org.packet.packetsimulation.facade.dto.RecordSegmentDTO;
@@ -75,6 +77,34 @@ public class RecordController {
 	}
 	
 	@ResponseBody
+	@RequestMapping("/batch")
+	public InvokeResult batch(RecordDTO recordDTO, HttpServletRequest request, @RequestParam String ids, @RequestParam Integer start, @RequestParam Integer end) {
+		String userAccount = CurrentUser.getUserAccount();
+		Long countOfThreeStandard = recordFacade.queryCountOfThreeStandard(userAccount);
+		if(start != null && !"".equals(start) && end != null && !"".equals(end)){
+			int startOfThreeStandard = Integer.valueOf(start);
+			int endOfThreeStandard = Integer.valueOf(end);
+			if (startOfThreeStandard >= 1
+					&& startOfThreeStandard <= endOfThreeStandard
+					&& endOfThreeStandard <= countOfThreeStandard) {
+				return recordFacade.batchRecord(recordDTO, startOfThreeStandard, endOfThreeStandard, userAccount);
+			} else if (startOfThreeStandard < 1
+					|| startOfThreeStandard > endOfThreeStandard
+					|| endOfThreeStandard > countOfThreeStandard) {
+				return InvokeResult.failure("起始值不能小于1,结束值不能大于三标总个数,且起始值不能大于结束值");
+			}
+		}else if((start == null || "".equals(start)) && (end == null || "".equals(end))){
+			String[] values = ids.split(",");
+			return recordFacade.batchRecord(recordDTO, values, userAccount);
+		}else if((start == null || "".equals(start)) && (end != null || !"".equals(end))){			
+			return InvokeResult.failure("不能起始为空,结束不为空");
+		}else if((start != null || !"".equals(start)) && (end == null || "".equals(end))){
+			return InvokeResult.failure("不能起始不为空,结束为空");
+		}
+		return InvokeResult.failure("批量失败");
+	}
+	
+	@ResponseBody
 	@RequestMapping("/findRecordSegmentByRecordType/{id}")
 	public List<RecordSegmentDTO> findRecordSegmentByRecordType(@PathVariable Long id) {
 		List<RecordSegmentDTO> dtos = recordSegmentFacade.findRecordSegmentByRecordType(id);
@@ -85,6 +115,12 @@ public class RecordController {
 	@RequestMapping("/findRecordTypes")
 	public List<RecordType> findRecordTypes() {
 		return recordFacade.findRecordTypes();
+	}
+    
+	@ResponseBody
+	@RequestMapping("/initBatch/{id}")
+	public InvokeResult initBatch(@PathVariable Long id) {
+		return recordFacade.getRecordForBatch(id);
 	}
 		
     @InitBinder    

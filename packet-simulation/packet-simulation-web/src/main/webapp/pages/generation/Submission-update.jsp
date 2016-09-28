@@ -4,7 +4,7 @@
     <meta http-equiv="Content-Type" content="text/html; charset=UTF-8">
 </head>
 <body>
-<form class="form-horizontal">
+<form class="form-horizontal" id="itemForm">
 	<input type="hidden" id="versionID" name="version" /> 
 	<input type="hidden" id="createdByID" name="createdBy" /> 
 	<input type="hidden" id="recordNumID" name="recordNum" /> 
@@ -43,6 +43,7 @@
 												<th class="v-itemDesc">描述及代码表</th>
 												<th class="v-state">状态</th>
 												<th class="v-itemValue">值</th>
+												<th class="delete-btn">提示</th>
 											</tr>
 										</table>
 									</div>
@@ -55,6 +56,7 @@
 						</tr>
 					</table>
 				</div>
+				<div class="modal-footer"><button type="button" class="btn btn-default" data-dismiss="modal">取消</button><button type="button" class="btn btn-success save" id="save">保存</button></div>
 	</form>
 <script type="text/javascript">
     var selectItems = {};

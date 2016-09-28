@@ -1,10 +1,8 @@
 package org.packet.packetsimulation.facade.impl;
 
-import java.text.MessageFormat;
 import java.util.ArrayList;
 import java.util.HashSet;
 import java.util.List;
-import java.util.Map;
 import java.util.Set;
 
 import javax.inject.Inject;
@@ -15,24 +13,14 @@ import org.dayatang.querychannel.QueryChannelService;
 import org.dayatang.utils.Page;
 import org.openkoala.koala.commons.InvokeResult;
 import org.packet.packetsimulation.application.RecordApplication;
-import org.packet.packetsimulation.application.RecordSegmentApplication;
-import org.packet.packetsimulation.application.RecordTypeApplication;
 import org.packet.packetsimulation.application.SegmentApplication;
-import org.packet.packetsimulation.core.domain.MesgType;
 import org.packet.packetsimulation.core.domain.Segment;
-import org.packet.packetsimulation.facade.RecordSegmentFacade;
 import org.packet.packetsimulation.facade.SegmentFacade;
-import org.packet.packetsimulation.facade.dto.MesgTypeDTO;
 import org.packet.packetsimulation.facade.dto.RecordSegmentDTO;
-import org.packet.packetsimulation.facade.dto.RecordTypeDTO;
 import org.packet.packetsimulation.facade.dto.SegmentDTO;
-import org.packet.packetsimulation.facade.impl.assembler.MesgTypeAssembler;
 import org.packet.packetsimulation.facade.impl.assembler.RecordSegmentAssembler;
-import org.packet.packetsimulation.facade.impl.assembler.RecordTypeAssembler;
 import org.packet.packetsimulation.facade.impl.assembler.SegmentAssembler;
 import org.packet.packetsimulationGeneration.core.domain.Record;
-import org.packet.packetsimulationGeneration.core.domain.RecordSegment;
-import org.springframework.web.bind.annotation.RequestParam;
 
 import com.alibaba.fastjson.JSON;
 import com.alibaba.fastjson.JSONObject;
@@ -42,9 +30,6 @@ public class SegmentFacadeImpl implements SegmentFacade {
 
 	@Inject
 	private SegmentApplication  application;
-	
-	@Inject
-	private RecordTypeApplication  recordTypeApplication;
 	
 	@Inject
 	private RecordApplication  recordApplication;
@@ -153,8 +138,9 @@ public class SegmentFacadeImpl implements SegmentFacade {
 	   	for(int i = page * pagesize; i < page * pagesize + pagesize; i++){
 	   		if(i < contents.size()){
 	   			String content = contents.get(i).getContent();
-	   			content = content.substring(0, content.length() - 1) + ",\"id\" : \"" + contents.get(i).getId() + "\"}";
+	   			//content = content.substring(0, content.length() - 1) + ",\"id\" : \"" + contents.get(i).getId() + "\"}";
 	   			JSONObject obj = JSON.parseObject(content);
+	   			obj.put("id", contents.get(i).getId());
 		   		list.add(obj);
 	   		}else{
 	   			break;

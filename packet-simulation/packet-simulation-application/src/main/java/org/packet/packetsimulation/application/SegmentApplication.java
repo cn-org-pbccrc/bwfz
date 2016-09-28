@@ -14,6 +14,8 @@ public interface SegmentApplication {
 	
 	public void creatSegment(Segment segment);
 	
+	public void creatSegments(List<Segment> segments);
+	
 	public void updateSegment(Segment segment);
 	
 	public void removeRecordSegment(RecordSegment recordSegment);

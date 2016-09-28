@@ -43,7 +43,7 @@ $(function (){
 	                                 {
 	                                     var param = '"' + rowdata.id + '"';
 	                                     var h = "<a href='javascript:openDetailsPage(" + param + ")'><span class='glyphicon glyphicon glyphicon-eye-open'></span>&nbsp查看报文头</a> "
-	                                     +"&nbsp;&nbsp;<a href='javascript:recordEdit(" + param + ")'><span class='glyphicon glyphicon glyphicon-edit'></span>&nbsp编辑记录</a> ";
+	                                     +"&nbsp;&nbsp;<a href='javascript:editRecord(" + param + ")'><span class='glyphicon glyphicon glyphicon-edit'></span>&nbsp编辑记录</a> ";
 	                                     return h;
 	                                 }
 	                             }
@@ -110,7 +110,7 @@ $(function (){
 	    		    +'<h4 class="modal-title">编辑报文</h4></div><div class="modal-body">'
 	    		    +'<p>One fine body&hellip;</p></div></div>'
 	    		    +'</div></div>');
-	    	$.get('<%=path%>/Submission-add.jsp').done(function(html){
+	    	$.get('<%=path%>/Submission-add.jsp').done({'grid' : grid}, function(html){
 	    	    dialog.modal({
 	    	        keyboard:false
 	    	    }).on({
@@ -131,90 +131,96 @@ $(function (){
 	    	 	    	});
 	         		}
 	    	    }).find('.modal-body').html(html);
-				dialog.find('#sub').on('click',{grid: grid}, function(e){
-					var content = getAllData(dialog);
-					var items = dialog.find('.selectRecordGrid').data('koala.grid').selectedRows();
-			        var data = [{ name: 'name', value: dialog.find('#nameID').val()},
-			 				    { name: 'content', value: content},
-			 				    { name: 'recordTypeId', value: items[0].id}
-			 		];
-		            $.post('${pageContext.request.contextPath}/Submission/add.koala', data).done(function(result){
-		            	if(result.success ){
-		                	dialog.modal('hide');
-		                    grid.data('koala.grid').refresh();
-		                    grid.message({
-		                        type: 'success',
-		                        content: '保存成功'
-		                    });
-		                }else{
-		                    dialog.find('.modal-content').message({
-		                        type: 'error',
-		                        content: result.errorMessage
-		                    });
-		                }
-		            });
-		        });
-	    	});
-	        
+			});	
 	    },
 	    modify: function(id, grid){
 	        var self = this;
-	        var dialog = $('<div class="modal fade"><div class="modal-dialog" style="width:1040px;"><div class="modal-content"><div class="modal-header"><button type="button" class="close" data-dismiss="modal" aria-hidden="true">&times;</button><h4 class="modal-title">修改</h4></div><div class="modal-body"><p>One fine body&hellip;</p></div><div class="modal-footer"><button type="button" class="btn btn-default" data-dismiss="modal">取消</button><button type="button" class="btn btn-success" id="save">保存</button></div></div></div></div>');
+	        var dialog = $('<div class="modal fade"><div class="modal-dialog" style="width:1040px;"><div class="modal-content"><div class="modal-header"><button type="button" class="close" data-dismiss="modal" aria-hidden="true">&times;</button><h4 class="modal-title">修改</h4></div><div class="modal-body"><p>One fine body&hellip;</p></div></div></div></div>');
 	        $.get('<%=path%>/Submission-update.jsp').done(function(html){
-	               dialog.find('.modal-body').html(html);
-	               self.initPage(dialog.find('form'));
-	               $.get( '${pageContext.request.contextPath}/Submission/get/' + id + '.koala').done(function(json){
-                       json = json.data;
-                        var elm;
-                        for(var index in json){
-                            elm = dialog.find('#'+ index + 'ID');
-                            if(index == 'recordType'){
-                            	var recordType = json['recordType'];
-                                dialog.find('#recordTypeIdID').val(recordType.id);
-                                var headerItems = recordType.headerItems;
-        						for(var i=0;i<headerItems.length;i++){
-        	             			addRow(dialog.find("#itemTable"),headerItems[i]);
-        	             		}
-    	                    }else if(elm.hasClass('select')){
-                                elm.setValue(json[index]);
-                            }else{
-                                elm.val(json[index]);
-                            }
+	        	dialog.find('.modal-body').html(html);
+	            self.initPage(dialog.find('form'));
+	            $.get('${pageContext.request.contextPath}/Submission/get/' + id + '.koala').done(function(json){
+                	json = json.data;
+                    var elm;
+                    var inputs = [];
+			        var rules = {
+						"notnull" : {
+							"rule" : function(value, formData){
+								return value ? true : false;
+							},
+							"tip" : "不能为空"
+						}
+					};
+                    for(var index in json){
+                        elm = dialog.find('#'+ index + 'ID');
+                        if(index == 'recordType'){
+                        	var recordType = json['recordType'];
+                            dialog.find('#recordTypeIdID').val(recordType.id);
+                            var headerItems = recordType.headerItems;
+        					for(var i=0;i<headerItems.length;i++){
+        						var data = {};
+        	             		var value = {};
+        	             		addRow(dialog.find("#itemTable"),headerItems[i]);
+        	             		value["rule"] = new RegExp("^.{1," + headerItems[i].itemLength + "}$");
+        	             		value["tip"] = "长度大于" + headerItems[i].itemLength;
+        	             		rules[headerItems[i].itemId] = value;
+        	             		data["name"] = headerItems[i].itemId;
+        	             		data["rules"] = ["notnull", headerItems[i].itemId];
+        	                	data["focusMsg"] = "必填";
+        	                	data["rightMsg"] = "正确";
+        	             		inputs.push(data);
+        					}
+        	            }else if(elm.hasClass('select')){
+                            elm.setValue(json[index]);
+                        }else{
+                            elm.val(json[index]);
                         }
-                        	
-                	});               
-	                dialog.modal({
-	                    keyboard:false
-	                }).on({
-	                    'hidden.bs.modal': function(){
-	                        $(this).remove();
-	                    }
-	                });
-	                dialog.find('#save').on('click',{grid: grid}, function(e){
-	                	var content = getAllData(dialog);
-	                    var data = [{ name: 'name', value: dialog.find('#nameID').val()},
-				 				    { name: 'content', value: content},
-				 				    { name: 'recordTypeId', value: dialog.find('#recordTypeIdID').val()},
-				 				    { name: 'version', value: dialog.find('#versionID').val()},
-				 				    { name: 'createdBy', value: dialog.find('#createdByID').val()},
-				 				    { name: 'recordNum', value: dialog.find('#recordNumID').val()},
-				 		];
-	                    $.post('${pageContext.request.contextPath}/Submission/update.koala?id='+id, data).done(function(result){
-	                        if(result.success){
-	                            dialog.modal('hide');
-	                            e.data.grid.data('koala.grid').refresh();
-	                            e.data.grid.message({
-	                            type: 'success',
-	                            content: '保存成功'
-	                            });
-	                        }else{
-	                            dialog.find('.modal-content').message({
-	                            	type: 'error',
-	                            	content: result.errorMessage
-	                            });
-	                        }
-	                    });
-	                });
+                    }
+    				dialog.find('#itemForm').validateForm({
+    				    inputs : inputs,
+    				    button : ".save",
+    				    rules : rules,
+    				    beforeSubmit : function(e,result,form){
+    				        if(!result){ //如果表单验证不通过,则阻止表单提交
+    				        	e.preventDefault();
+    				        }	
+    				    },
+    				    onButtonClick:function(result, button, form){
+    				    	if(result){
+			            		var content = getAllData(dialog);
+			                    var data = [{ name: 'name', value: dialog.find('#nameID').val()},
+						 				    { name: 'content', value: content},
+						 				    { name: 'recordTypeId', value: dialog.find('#recordTypeIdID').val()},
+						 				    { name: 'version', value: dialog.find('#versionID').val()},
+						 				    { name: 'createdBy', value: dialog.find('#createdByID').val()},
+						 				    { name: 'recordNum', value: dialog.find('#recordNumID').val()},
+						 		];
+			                    $.post('${pageContext.request.contextPath}/Submission/update.koala?id='+id, data).done(function(result){
+			                        if(result.success){
+			                            dialog.modal('hide');
+			                            grid.data('koala.grid').refresh();
+			                            grid.message({
+			                            	type: 'success',
+			                            	content: '保存成功'
+			                            });
+			                        }else{
+			                            dialog.find('.modal-content').message({
+			                            	type: 'error',
+			                            	content: result.errorMessage
+			                            });
+			                        }
+			                    });
+			            	}	
+    				    }
+    				});
+                });               
+	            dialog.modal({
+	                keyboard:false
+	            }).on({
+	                'hidden.bs.modal': function(){
+	                    $(this).remove();
+	                }
+	            });
 	        });
 	    },
 	    initPage: function(form){
@@ -292,6 +298,8 @@ var openDetailsPage = function(id){
     						for(var i=0;i<headerItems.length;i++){
     	             			addRow(dialog.find("#itemTable"),headerItems[i]);
     	             		}
+    						dialog.find("#itemTable").find(".delete-btn").remove();
+	             			dialog.find("#itemTable").find('[data-role="itemValue"]').attr('disabled', true);
 	                    }else if(elm.hasClass('select')){
                             elm.setValue(json[index]);
                         }else{
@@ -312,60 +320,37 @@ var openDetailsPage = function(id){
 var getAllData = function(dialog){
 	var itemId;
 	var itemValue;
-	var itemType;
-	var itemLength;
-	
-	var data = '{';
+	var data = {};
 	var itemTable = dialog.find("#itemTable");
 	itemTable.find('tr').each(function(index,tr){
 		var $tr = $(tr);
 		itemId = $tr.find('input[data-role="itemId"]').val();
 		itemValue = $tr.find('input[data-role="itemValue"]').val();
-		itemType = $tr.find('.select[data-role="itemType"]').getValue();
-		itemLength = $tr.find('input[data-role="itemLength"]').val();
-		
-		var len = itemValue.length;
-		if(len < itemLength){
-			if(itemType == 0){
-			    while(len < itemLength) {  
-			    	itemValue = "0" + itemValue;  
-			        len++;  
-			    }  
-			}else{
-				while(len < itemLength) {  
-			    	itemValue = itemValue + " ";  
-			        len++;  
-			    }
-			}
-		}else{
-			
-		}
-		data += '"' + itemId + '" : "' + itemValue + '",';
+		data[itemId] = itemValue;
 	});
-	
-	data = data.substring(0, data.length - 1) + '}';
-	return data;
+	return JSON.stringify(data);
 };
 
 var mark;
-function recordEdit(id){
+function editRecord(id){
     var thiz = $(this);
     var  mark = thiz.attr('mark');
-    mark = openTab("/pages/generation/Record-list.jsp", "编辑记录",'OpenRecordList',id);
+    mark = openTab("/pages/generation/Record-list.jsp", "编辑记录", 'editRecordList', id);
     if(mark){
-        thiz.attr("mark",mark);
+        thiz.attr("mark", mark);
     }
 }
 
-var addRow = function(itemTable, variable, isValueReadonly){
-	var row = $('<tr data-toggle="context" data-target="#context-menu"><td class="v-itemId"><input  data-role="itemId" readonly="true" required="true" style="display: inline; " class="form-control" type="text" /></td>'
-	+'<td class="v-itemName"><input  data-role="itemName" readonly="true" required="true" style="display: inline; " class="form-control" type="text" /></td>'
-	+'<td class="v-itemType"><div class="btn-group select" id="itemTypeSelect" data-role="itemType"></div></td>'
-	+'<td class="v-itemLength"><input data-role="itemLength" readonly="true" class="form-control" required="true" rgExp="/^[0-9]{1,}$/" data-content="只能输入数字" placeholder="数字"/></td>'
-	+'<td class="v-itemLocation"><input data-role="itemLocation" readonly="true" required="true" style="display: inline; " class="form-control" type="text" /></td>'
-	+'<td class="v-itemDesc"><input data-role="itemDesc" readonly="true" required="true" style="display: inline; " class="form-control" type="text" /></td>'
-	+'<td class="v-state"><div class="btn-group select" id="itemStateSelect" data-role="state" ></div></td>'
-	+'<td class="v-itemValue"><input data-role="itemValue" style="display: inline;" class="form-control" type="text" /></td>');
+var addRow = function(itemTable, variable, insertRow){
+	var row = $('<tr data-toggle="context" data-target="#context-menu"><td class="v-itemId"><input data-role="itemId" required="true" readonly="true" style="display: inline; " class="form-control" type="text" /></td>'
+		+'<td class="v-itemName"><input data-role="itemName" required="true" readonly="true" style="display: inline; " class="form-control" type="text" /></td>'
+		+'<td class="v-itemType"><div class="btn-group select" id="itemTypeSelect" data-role="itemType"></div></td>'
+		+'<td class="v-itemLength"><input data-role="itemLength" class="form-control" required="true" readonly="true" rgExp="/^[0-9]{1,}$/" data-content="只能输入数字" placeholder="数字"/></td>'
+		+'<td class="v-itemLocation"><input data-role="itemLocation" readonly="true" required="true" style="display: inline; " class="form-control" type="text" /></td>'
+		+'<td class="v-itemDesc"><input data-role="itemDesc" required="true" readonly="true" style="display: inline; " class="form-control" type="text" /></td>'
+		+'<td class="v-state"><div class="btn-group select" id="itemStateSelect" data-role="state"></div></td>'
+		+'<td class="v-itemValue"><input data-role="itemValue" style="display: inline;" class="form-control" type="text" /></td>'
+		+'<td class="delete-btn"></td>');
 
 	row.find("[data-role='itemLength']").on('change', function(){
 		calculateLocation(itemTable);
@@ -379,9 +364,6 @@ var addRow = function(itemTable, variable, isValueReadonly){
 	fillStateSelect(itemState);
 	row.find('[data-toggle="item"]').attr('disabled', true);
 	row.find('[data-toggle="button"]').attr('disabled', true);
-	if(isValueReadonly){
-		row.find('[data-role="itemValue"]').attr('readonly', true);
-	}
 	if(variable){
 		row.find('input[data-role="itemId"]').val(variable.itemId);
 		row.find('input[data-role="itemName"]').val(variable.itemName);
@@ -391,8 +373,16 @@ var addRow = function(itemTable, variable, isValueReadonly){
 		row.find('.select[data-role="itemType"]').setValue(variable.itemType);
 		row.find('.select[data-role="state"]').setValue(variable.state);
 		row.find('input[data-role="itemValue"]').val(variable.itemValue);
+		row.find('input[data-role="itemValue"]').attr('name', variable.itemId)
 	}
-	row.appendTo(itemTable);	
+	row.find('[data-role="delete"]').on('click', function(){
+		removeRow($(this));
+	});
+	if(insertRow){
+		row.insertAfter(insertRow);
+	}else{
+		row.appendTo(itemTable);
+	}
 }
 
 //填充数据项类型
@@ -408,9 +398,9 @@ var fillVTypeSelect = function(select){
 
 //填充数据项状态
 var fillStateSelect = function(select){
-	  var contents = [{title:'必选', value: 'M',selected: true}];
-       contents.push({title:'条件选择' , value:'C'});
-       contents.push({title:'可选' , value:'O'});
+	var contents = [{title:'必选', value: 'M',selected: true}];
+    contents.push({title:'条件选择' , value:'C'});
+    contents.push({title:'可选' , value:'O'});
 	select.select({
 		contents: contents
 	});

@@ -81,8 +81,8 @@ public class SubmissionController {
 		String[] value = ids.split(",");
         Long[] idArrs = new Long[value.length];
         for (int i = 0; i < value.length; i ++) {
-        	        					idArrs[i] = Long.parseLong(value[i]);
-						        }
+        	idArrs[i] = Long.parseLong(value[i]);
+		}
 		String exportSubmissions = submissionFacade.exportSubmissions(idArrs);
 		response.setContentType("application/txt;charset=UTF-8");
 		response.setHeader("Content-Disposition", "attachment; filename=" + new Date().getTime() + ".txt");

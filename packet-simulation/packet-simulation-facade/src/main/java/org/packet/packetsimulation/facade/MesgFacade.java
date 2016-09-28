@@ -14,8 +14,6 @@ public interface MesgFacade {
 	
 	public InvokeResult creatMesg(MesgDTO mesg);
 	
-	public InvokeResult verifyMesgType(Long id);
-	
 	/**
 	 * 批量
 	 * @param mesg 记录

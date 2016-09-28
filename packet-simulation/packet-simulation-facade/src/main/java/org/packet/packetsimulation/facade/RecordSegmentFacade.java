@@ -1,6 +1,7 @@
 package org.packet.packetsimulation.facade;
 
 import java.util.List;
+
 import org.dayatang.utils.Page;
 import org.openkoala.koala.commons.InvokeResult;
 import org.packet.packetsimulation.facade.dto.*;
@@ -23,6 +24,6 @@ public interface RecordSegmentFacade {
 	
 	public Page<RecordSegmentDTO> pageQueryRecordSegment(RecordSegmentDTO recordSegment, int currentPage, int pageSize);
 	
-	public List<RecordSegmentDTO> findRecordSegmentByRecordType(Long id);	
+	public List<RecordSegmentDTO> findRecordSegmentByRecordType(Long id);
 }
 

@@ -20,6 +20,7 @@ import org.packet.packetsimulation.facade.RecordTypeFacade;
 import org.packet.packetsimulation.application.RecordSegmentApplication;
 import org.packet.packetsimulation.application.RecordTypeApplication;
 import org.packet.packetsimulation.core.domain.Mesg;
+import org.packet.packetsimulation.core.domain.MesgType;
 import org.packet.packetsimulationGeneration.core.domain.*;
 
 @Named
@@ -68,6 +69,12 @@ public class RecordTypeFacadeImpl implements RecordTypeFacade {
 		}
 		application.removeRecordTypes(recordTypes);
 		return InvokeResult.success();
+	}
+	
+	public List<RecordType> findRecordTypes(){
+		StringBuilder jpql = new StringBuilder("select _recordType from RecordType _recordType   where 1=1 ");
+	   	List<RecordType> recordTypes = getQueryChannelService().createJpqlQuery(jpql.toString()).list();
+	   	return recordTypes;
 	}
 	
 	@Override

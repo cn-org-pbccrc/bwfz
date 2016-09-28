@@ -54,12 +54,6 @@ public class MesgController {
 		return mesgFacade.creatMesg(mesgDTO);
 	}
 	
-	@ResponseBody
-	@RequestMapping("/verifyMesgType")
-	public InvokeResult verifyMesgType(@RequestParam String id) {		
-		return mesgFacade.verifyMesgType(Long.parseLong(id));
-	}
-	
 	/**
 	 * 记录批量
 	 * @param mesgDTO
@@ -93,10 +87,8 @@ public class MesgController {
 			return InvokeResult.failure("不能起始为空,结束不为空");
 		}else if((start != null || !"".equals(start)) && (end == null || "".equals(end))){
 			return InvokeResult.failure("不能起始不为空,结束为空");
-		}else{
-			return InvokeResult.failure("批量失败");
 		}
-		return null;
+		return InvokeResult.failure("批量失败");
 	}
 	
 	@ResponseBody

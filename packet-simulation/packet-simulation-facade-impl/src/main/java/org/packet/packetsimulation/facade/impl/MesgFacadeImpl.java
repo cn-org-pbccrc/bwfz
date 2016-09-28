@@ -104,7 +104,6 @@ public class MesgFacadeImpl implements MesgFacade {
 		try {
 			XmlNode xmlNode = XmlUtil.getXmlNodeByXmlContent(dto.getContent(),mesgType.getCountTag());
 			dto.setContent(xmlNode.toHtmlTabString(mesgType.getCode()));
-			//System.out.println("巨头现身吧:"+xmlNode.toHtmlTabString(mesgType.getFilePath()));
 		} catch (SAXException e) {
 			e.printStackTrace();
 		} catch (IOException e) {
@@ -129,15 +128,6 @@ public class MesgFacadeImpl implements MesgFacade {
 		return InvokeResult.success();
 	}
 	
-	public InvokeResult verifyMesgType(Long id){
-		Mesg mesg = application.getMesg(id);
-		if(mesg.getMesgType().getMesgType().indexOf("正常报送记录")>0){
-			return InvokeResult.success();
-		}else{
-			return InvokeResult.failure("只有正常报送记录才能进行批量");
-		}
-	}
-	
 	@Transactional(readOnly = false, rollbackFor = DataAccessException.class)
 	public InvokeResult creatBatch(MesgDTO mesgDTO,String realPath,int batchNumber) {
 		for(int i = 0; i<batchNumber; i++){
@@ -159,13 +149,12 @@ public class MesgFacadeImpl implements MesgFacade {
 		List<Mesg> mesgs = new ArrayList<Mesg>();
 		Mesg mesgById = application.getMesg(mesgDTO.getId());
 		String content = mesgById.getContent();
-		BatchConfig bc = getBatchConfig(mesgById.getMesgType().getId(),
-				mesgById.getCreateBy());
+		BatchConfig bc = getBatchConfig(mesgById.getMesgType().getId(), mesgById.getCreateBy());
 		List<BatchRule> rules = bc.getBatchRules();
+		Packet packet = mesgById.getPacket();
 		for (int i = 0; i < values.length; i++) {
 			Mesg mesg = new Mesg();
-			ThreeStandard threeStandard = threeStandardApplication
-					.getThreeStandard(Long.parseLong(values[i]));
+			ThreeStandard threeStandard = threeStandardApplication.getThreeStandard(Long.parseLong(values[i]));
 			try {
 				content = fillBatchRule(content, rules, i, threeStandard);
 			} catch (DocumentException e) {
@@ -173,12 +162,14 @@ public class MesgFacadeImpl implements MesgFacade {
 				throw new RuntimeException("xml格式转换失败！", e);
 			}
 			mesg.setMesgType(mesgById.getMesgType());
-			mesg.setPacket(mesgById.getPacket());
+			mesg.setPacket(packet);
 			mesg.setContent(content);
 			mesg.setCreateBy(userAccount);
 			mesg.setMesgFrom(0);
 			mesgs.add(mesg);
 		}
+		packet.setMesgNum(packet.getMesgNum() + values.length);
+		packetApplication.updatePacket(packet);
 		application.creatMesgs(mesgs);
 		return InvokeResult.success();
 	}
@@ -187,103 +178,32 @@ public class MesgFacadeImpl implements MesgFacade {
 	 * 根据行号起始进行批量
 	 */
 	public InvokeResult batchMesg(MesgDTO mesgDTO, int startOfThreeStandard, int endOfThreeStandard, String userAccount){
-		Long start = new Date().getTime();
-		SimpleDateFormat sdf = new SimpleDateFormat("yyyy-MM-dd hh:mm:ss"); 
-		String s = sdf.format(start);		
-		List<ThreeStandard> list= queryThreeStandardByInput(startOfThreeStandard, endOfThreeStandard, userAccount);		
-		List<Mesg> mesgs= new ArrayList<Mesg>();		
-		Mesg mesg = application.getMesg(mesgDTO.getId());		
-		if(mesg.getMesgType().getMesgType().equals("基本信息正常报送记录")){
-//			for(int i = 0; i < list.size(); i++){
-//				Mesg mesg = new Mesg();
-//				ThreeStandard threeStandard = threeStandardApplication.getThreeStandard(list.get(i).getId());
-//				Document document=null;
-//				try {
-//					document = DocumentHelper.parseText(content);
-//					Element root = document.getRootElement();
-//					Element bsSgmt = root.element("BaseInf").element("BsSgmt");
-//					Element name =bsSgmt.element("Name");
-//					name.setText(threeStandard.getName());
-//					Element iDType = bsSgmt.element("IDType");
-//					iDType.setText(threeStandard.getCredentialType());
-//					Element iDNum = bsSgmt.element("IDNum");
-//					iDNum.setText(threeStandard.getCredentialNumber());
-//					Element cstCode = bsSgmt.element("CstCode");
-//					cstCode.setText(String.valueOf(threeStandard.getCustomerCode()));
-//					MesgType mesgType = mesgTypeApplication.getMesgType(mesgDTO.getMesgType());
-//					mesg.setMesgType(mesgType);
-//					Packet packet = packetApplication.getPacket(mesgDTO.getPacketId());
-//					mesg.setPacket(packet);
-//					mesg.setContent(document.asXML().toString());
-//					mesgs.add(mesg);
-//				} catch (DocumentException e1) {
-//					// TODO Auto-generated catch block
-//					e1.printStackTrace();
-//				}			
-//			}
-			ForkJoinPool pool = new ForkJoinPool(5);
-			BaseTask task = new BaseTask(list, mesg, userAccount);
-	        Future<List> result =  pool.submit(task);
-	        try {
-	            mesgs = result.get();
-	        } catch (InterruptedException e) {
-	            e.printStackTrace();
-	        } catch (ExecutionException e) {
-	            e.printStackTrace();
-	        }
-		}else if(mesg.getMesgType().getMesgType().equals("账户信息正常报送记录")){
-			ForkJoinPool pool = new ForkJoinPool(5);
-			AcctTask task = new AcctTask(list, mesg);
-	        Future<List> result =  pool.submit(task);
-	        try {
-	            mesgs = result.get();
-	        } catch (InterruptedException e) {
-	            e.printStackTrace();
-	        } catch (ExecutionException e) {
-	            e.printStackTrace();
-	        }
-		}else if(mesg.getMesgType().getMesgType().equals("合同信息正常报送记录")){
-			ForkJoinPool pool = new ForkJoinPool(5);
-			ConTask task = new ConTask(list, mesg);
-	        Future<List> result =  pool.submit(task);
-	        try {
-	            mesgs = result.get();
-	        } catch (InterruptedException e) {
-	            e.printStackTrace();
-	        } catch (ExecutionException e) {
-	            e.printStackTrace();
-	        }
-		}else if(mesg.getMesgType().getMesgType().equals("抵质押合同信息正常报送记录")){
-			ForkJoinPool pool = new ForkJoinPool(5);
-			CccTask task = new CccTask(list, mesg);
-	        Future<List> result =  pool.submit(task);
-	        try {
-	            mesgs = result.get();
-	        } catch (InterruptedException e) {
-	            e.printStackTrace();
-	        } catch (ExecutionException e) {
-	            e.printStackTrace();
-	        }
-		}else{
-			ForkJoinPool pool = new ForkJoinPool(5);
-			OthTask task = new OthTask(list, mesg);
-	        Future<List> result =  pool.submit(task);
-	        try {
-	            mesgs = result.get();
-	        } catch (InterruptedException e) {
-	            e.printStackTrace();
-	        } catch (ExecutionException e) {
-	            e.printStackTrace();
-	        }
+		List<Mesg> mesgs = new ArrayList<Mesg>();
+		Mesg mesgById = application.getMesg(mesgDTO.getId());
+		String content = mesgById.getContent();
+		BatchConfig bc = getBatchConfig(mesgById.getMesgType().getId(), mesgById.getCreateBy());
+		List<BatchRule> rules = bc.getBatchRules();
+		List<ThreeStandard> list = queryThreeStandardByInput(startOfThreeStandard, endOfThreeStandard, userAccount);		
+		Packet packet = mesgById.getPacket();
+		for (int i = 0; i < list.size(); i++) {
+			Mesg mesg = new Mesg();
+			ThreeStandard threeStandard = list.get(i);
+			try {
+				content = fillBatchRule(content, rules, i, threeStandard);
+			} catch (DocumentException e) {
+				e.printStackTrace();
+				throw new RuntimeException("xml格式转换失败！", e);
+			}
+			mesg.setMesgType(mesgById.getMesgType());
+			mesg.setPacket(packet);
+			mesg.setContent(content);
+			mesg.setCreateBy(userAccount);
+			mesg.setMesgFrom(0);
+			mesgs.add(mesg);
 		}
-		Long insertstart=System.currentTimeMillis();
+		packet.setMesgNum(packet.getMesgNum() + endOfThreeStandard - startOfThreeStandard + 1);
+		packetApplication.updatePacket(packet);
 		application.creatMesgs(mesgs);
-		Long insertend=System.currentTimeMillis();
-		Long end = new Date().getTime();
-		String e = sdf.format(end);
-		System.out.println("插入耗时:"+(insertend-insertstart));
-		System.out.println("开始时间:"+s);
-		System.out.println("结束时间:"+e);
 		return InvokeResult.success();
 	}
 	
@@ -373,269 +293,6 @@ public class MesgFacadeImpl implements MesgFacade {
         System.out.println(document.asXML().replace("\n", ""));
 		return document.asXML().replace("\n", "");
 	}
-	
-	class BaseTask extends RecursiveTask<List>{
-        private int size = 2000;       
-        private List<ThreeStandard> data;
-        private Mesg tmpMesg;
-        private String content;
-        private String currentUserId;
-        public BaseTask(List<ThreeStandard> data, Mesg tmpMesg, String currentUserId){
-            this.data = data;
-            this.tmpMesg = tmpMesg;
-            this.currentUserId = currentUserId;
-            this.content = tmpMesg.getContent();
-        }
-        @Override
-        protected List<Mesg> compute() {
-        	List<Mesg> mesgs = new ArrayList<Mesg>();
-            if(data.size() <= size){
-                System.out.println("******************************** size:" + data.size());
-                for (ThreeStandard threeStandard : data) {
-    				Mesg mesg = new Mesg();
-    				String name = content.substring(content.indexOf("<Name>")+6,content.indexOf("</Name>"));
-    				String credentialType = content.substring(content.indexOf("<IDType>")+8,content.indexOf("</IDType>"));
-    				String credentialNumber = content.substring(content.indexOf("<IDNum>")+7,content.indexOf("</IDNum>"));
-    				String customerCode = content.substring(content.indexOf("<CstCode>")+9,content.indexOf("</CstCode>"));
-    				content = content.replaceFirst("<Name>"+name+"</Name>","<Name>"+threeStandard.getName()+"</Name>");
-    				content = content.replaceFirst("<IDType>"+credentialType+"</IDType>","<IDType>"+threeStandard.getCredentialType()+"</IDType>");
-    				content = content.replaceFirst("<IDNum>"+credentialNumber+"</IDNum>","<IDNum>"+threeStandard.getCredentialNumber()+"</IDNum>");
-    				content = content.replaceFirst("<CstCode>"+customerCode+"</CstCode>","<CstCode>"+threeStandard.getCustomerCode()+"</CstCode>");   				
-    				mesg.setMesgType(tmpMesg.getMesgType());
-    				mesg.setPacket(tmpMesg.getPacket());
-    				mesg.setContent(content);
-    				mesg.setMesgFrom(0);
-    				mesg.setCreateBy(currentUserId);
-    				mesgs.add(mesg);
-    			}
-            }else{
-                //细分成小任务
-                List<BaseTask> tasks = new ArrayList<MesgFacadeImpl.BaseTask>();
-                for (int index = 0; index * size < data.size(); index++) {
-                	BaseTask task;
-                    if((index + 1) * size > data.size()){
-                        task = new BaseTask(data.subList(index * size, data.size()), tmpMesg, currentUserId);
-                    }else{
-                        task = new BaseTask(data.subList(index * size, (index + 1) * size), tmpMesg, currentUserId);
-                    }
-                    task.fork();
-                    tasks.add(task);
-                }
-                for (BaseTask task : tasks) {
-                	mesgs.addAll(task.join());
-                }
-            }            
-            return mesgs;
-        }      
-    }
-	
-	class AcctTask extends RecursiveTask<List>{
-        private int size = 2000;       
-        private List<ThreeStandard> data;
-        private Mesg tmpMesg;
-        private String content;
-        public AcctTask(List<ThreeStandard> data, Mesg tmpMesg){
-            this.data = data;
-            this.tmpMesg = tmpMesg;
-            this.content = tmpMesg.getContent();
-        }
-        @Override
-        protected List<Mesg> compute() {
-        	List<Mesg> mesgs = new ArrayList<Mesg>();
-            if(data.size() <= size){
-                System.out.println("******************************** size:" + data.size());
-                for (ThreeStandard threeStandard : data) {
-    				Mesg mesg = new Mesg();
-    				String name = content.substring(content.indexOf("<Name>")+6,content.indexOf("</Name>"));
-    				String credentialType = content.substring(content.indexOf("<IDType>")+8,content.indexOf("</IDType>"));
-    				String credentialNumber = content.substring(content.indexOf("<IDNum>")+7,content.indexOf("</IDNum>"));
-    				String acctCode = content.substring(content.indexOf("<AcctCode>")+10,content.indexOf("</AcctCode>"));
-    				String conCode = content.substring(content.indexOf("<Mcc>")+5,content.indexOf("</Mcc>"));
-    				String ccc = content.substring(content.indexOf("<Ccc>")+5,content.indexOf("</Ccc>"));		
-    				content = content.replace("<Name>"+name+"</Name>","<Name>"+threeStandard.getName()+"</Name>");
-    				content = content.replace("<IDType>"+credentialType+"</IDType>","<IDType>"+threeStandard.getCredentialType()+"</IDType>");
-    				content = content.replace("<IDNum>"+credentialNumber+"</IDNum>","<IDNum>"+threeStandard.getCredentialNumber()+"</IDNum>");
-    				content = content.replace("<AcctCode>"+acctCode+"</AcctCode>","<AcctCode>"+threeStandard.getAcctCode()+"</AcctCode>");
-    				content = content.replace("<Mcc>"+conCode+"</Mcc>","<Mcc>"+threeStandard.getConCode()+"</Mcc>");
-    				content = content.replace("<Ccc>"+ccc+"</Ccc>","<Ccc>"+threeStandard.getCcc()+"</Ccc>");
-    				mesg.setMesgType(tmpMesg.getMesgType());
-    				mesg.setPacket(tmpMesg.getPacket());
-    				mesg.setContent(content);
-    				mesgs.add(mesg);
-    			}
-            }else{
-                //细分成小任务
-                List<AcctTask> tasks = new ArrayList<MesgFacadeImpl.AcctTask>();
-                for (int index = 0; index * size < data.size(); index++) {
-                	AcctTask task;
-                    if((index + 1) * size > data.size()){
-                        task = new AcctTask(data.subList(index * size, data.size()), tmpMesg);
-                    }else{
-                        task = new AcctTask(data.subList(index * size, (index + 1) * size), tmpMesg);
-                    }
-                    task.fork();
-                    tasks.add(task);
-                }
-                for (AcctTask task : tasks) {
-                	mesgs.addAll(task.join());
-                }
-            }            
-            return mesgs;
-        }      
-    }
-	
-	class ConTask extends RecursiveTask<List>{
-        private int size = 2000;       
-        private List<ThreeStandard> data;
-        private Mesg tmpMesg;
-        private String content;
-        public ConTask(List<ThreeStandard> data, Mesg tmpMesg){
-            this.data = data;
-            this.tmpMesg = tmpMesg;
-            this.content = tmpMesg.getContent();
-        }
-        @Override
-        protected List<Mesg> compute() {
-        	List<Mesg> mesgs = new ArrayList<Mesg>();
-            if(data.size() <= size){
-                System.out.println("******************************** size:" + data.size());
-                for (ThreeStandard threeStandard : data) {
-    				Mesg mesg = new Mesg();
-    				String name = content.substring(content.indexOf("<Name>")+6,content.indexOf("</Name>"));
-    				String credentialType = content.substring(content.indexOf("<IDType>")+8,content.indexOf("</IDType>"));
-    				String credentialNumber = content.substring(content.indexOf("<IDNum>")+7,content.indexOf("</IDNum>"));
-    				String conCode = content.substring(content.indexOf("<ConCode>")+9,content.indexOf("</ConCode>"));		
-    				content = content.replace("<Name>"+name+"</Name>","<Name>"+threeStandard.getName()+"</Name>");
-    				content = content.replace("<IDType>"+credentialType+"</IDType>","<IDType>"+threeStandard.getCredentialType()+"</IDType>");
-    				content = content.replace("<IDNum>"+credentialNumber+"</IDNum>","<IDNum>"+threeStandard.getCredentialNumber()+"</IDNum>");
-    				content = content.replace("<ConCode>"+conCode+"</ConCode>","<ConCode>"+threeStandard.getConCode()+"</ConCode>");
-    				mesg.setMesgType(tmpMesg.getMesgType());
-    				mesg.setPacket(tmpMesg.getPacket());
-    				mesg.setContent(content);
-    				mesgs.add(mesg);
-    			}
-            }else{
-                //细分成小任务
-                List<ConTask> tasks = new ArrayList<MesgFacadeImpl.ConTask>();
-                for (int index = 0; index * size < data.size(); index++) {
-                	ConTask task;
-                    if((index + 1) * size > data.size()){
-                        task = new ConTask(data.subList(index * size, data.size()), tmpMesg);
-                    }else{
-                        task = new ConTask(data.subList(index * size, (index + 1) * size), tmpMesg);
-                    }
-                    task.fork();
-                    tasks.add(task);
-                }
-                for (ConTask task : tasks) {
-                	mesgs.addAll(task.join());
-                }
-            }            
-            return mesgs;
-        }      
-    }
-	
-	class CccTask extends RecursiveTask<List>{
-        private int size = 2000;       
-        private List<ThreeStandard> data;
-        private Mesg tmpMesg;
-        private String content;
-        public CccTask(List<ThreeStandard> data, Mesg tmpMesg){
-            this.data = data;
-            this.tmpMesg = tmpMesg;
-            this.content = tmpMesg.getContent();
-        }
-        @Override
-        protected List<Mesg> compute() {
-        	List<Mesg> mesgs = new ArrayList<Mesg>();
-            if(data.size() <= size){
-                System.out.println("******************************** size:" + data.size());
-                for (ThreeStandard threeStandard : data) {
-    				Mesg mesg = new Mesg();
-    				String name = content.substring(content.indexOf("<GuarName>")+10,content.indexOf("</GuarName>"));
-    				String credentialType = content.substring(content.indexOf("<GuarCertType>")+14,content.indexOf("</GuarCertType>"));
-    				String credentialNumber = content.substring(content.indexOf("<GuarCertNum>")+13,content.indexOf("</GuarCertNum>"));
-    				String ccc = content.substring(content.indexOf("<Ccc>")+5,content.indexOf("</Ccc>"));
-    				content = content.replace("<GuarName>"+name+"</GuarName>","<GuarName>"+threeStandard.getName()+"</GuarName>");
-    				content = content.replace("<GuarCertType>"+credentialType+"</GuarCertType>","<GuarCertType>"+threeStandard.getCredentialType()+"</GuarCertType>");
-    				content = content.replace("<GuarCertNum>"+credentialNumber+"</GuarCertNum>","<GuarCertNum>"+threeStandard.getCredentialNumber()+"</GuarCertNum>");
-    				content = content.replace("<Ccc>"+ccc+"</Ccc>","<Ccc>"+threeStandard.getCcc()+"</Ccc>");
-    				mesg.setMesgType(tmpMesg.getMesgType());
-    				mesg.setPacket(tmpMesg.getPacket());
-    				mesg.setContent(content);
-    				mesgs.add(mesg);
-    			}
-            }else{
-                //细分成小任务
-                List<CccTask> tasks = new ArrayList<MesgFacadeImpl.CccTask>();
-                for (int index = 0; index * size < data.size(); index++) {
-                	CccTask task;
-                    if((index + 1) * size > data.size()){
-                        task = new CccTask(data.subList(index * size, data.size()), tmpMesg);
-                    }else{
-                        task = new CccTask(data.subList(index * size, (index + 1) * size), tmpMesg);
-                    }
-                    task.fork();
-                    tasks.add(task);
-                }
-                for (CccTask task : tasks) {
-                	mesgs.addAll(task.join());
-                }
-            }            
-            return mesgs;
-        }      
-    }
-	
-	class OthTask extends RecursiveTask<List>{
-        private int size = 2000;       
-        private List<ThreeStandard> data;
-        private Mesg tmpMesg;
-        private String content;
-        public OthTask(List<ThreeStandard> data, Mesg tmpMesg){
-            this.data = data;
-            this.tmpMesg = tmpMesg;
-            this.content = tmpMesg.getContent();
-        }
-        @Override
-        protected List<Mesg> compute() {
-        	List<Mesg> mesgs = new ArrayList<Mesg>();
-            if(data.size() <= size){
-                System.out.println("******************************** size:" + data.size());
-                for (ThreeStandard threeStandard : data) {
-    				Mesg mesg = new Mesg();
-    				String name = content.substring(content.indexOf("<Name>")+6,content.indexOf("</Name>"));
-    				String credentialType = content.substring(content.indexOf("<IDType>")+8,content.indexOf("</IDType>"));
-    				String credentialNumber = content.substring(content.indexOf("<IDNum>")+7,content.indexOf("</IDNum>"));				
-    				content = content.replace("<Name>"+name+"</Name>","<Name>"+threeStandard.getName()+"</Name>");
-    				content = content.replace("<IDType>"+credentialType+"</IDType>","<IDType>"+threeStandard.getCredentialType()+"</IDType>");
-    				content = content.replace("<IDNum>"+credentialNumber+"</IDNum>","<IDNum>"+threeStandard.getCredentialNumber()+"</IDNum>");	
-    				mesg.setMesgType(tmpMesg.getMesgType());
-    				mesg.setPacket(tmpMesg.getPacket());
-    				mesg.setContent(content);
-    				mesgs.add(mesg);
-    			}
-            }else{
-                //细分成小任务
-                List<OthTask> tasks = new ArrayList<MesgFacadeImpl.OthTask>();
-                for (int index = 0; index * size < data.size(); index++) {
-                	OthTask task;
-                    if((index + 1) * size > data.size()){
-                        task = new OthTask(data.subList(index * size, data.size()), tmpMesg);
-                    }else{
-                        task = new OthTask(data.subList(index * size, (index + 1) * size), tmpMesg);
-                    }
-                    task.fork();
-                    tasks.add(task);
-                }
-                for (OthTask task : tasks) {
-                	mesgs.addAll(task.join());
-                }
-            }            
-            return mesgs;
-        }      
-    }
-	
-	
 	
 	public InvokeResult updateMesg(MesgDTO mesgDTO) {		
 		Mesg mesg = MesgAssembler.toEntity(mesgDTO);		
@@ -755,6 +412,7 @@ public class MesgFacadeImpl implements MesgFacade {
 	   	List<MesgDTO> dtolist = MesgAssembler.toDTOs(list);
 	   	return dtolist;
 	}
+	
 	public Long queryCountOfThreeStandard(String currentUserId){
 		List<Object> conditionVals = new ArrayList<Object>();
 		StringBuilder jpql = new StringBuilder("select count(_threeStandard) from ThreeStandard _threeStandard where 1=1");

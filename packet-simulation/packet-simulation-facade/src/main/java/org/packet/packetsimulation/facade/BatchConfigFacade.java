@@ -30,6 +30,5 @@ public interface BatchConfigFacade {
 	
 	public List<BatchConfigDTO> queryBatchConfig(BatchConfigDTO batchConfig);
 	
-
 }
 

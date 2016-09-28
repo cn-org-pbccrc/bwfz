@@ -7,7 +7,8 @@
 <meta http-equiv="Content-Type" content="text/html; charset=UTF-8">
 <%@ taglib uri="http://java.sun.com/jsp/jstl/core" prefix="c" %>
 <script type="text/javascript" src="<c:url value='/js/generation/recordEdit.js' />"></script>
-<body>
+<body>	
+<form class="form-horizontal" id="itemForm">
 <div id="main">
 	<div id="rootwizard">
 		<div class="navbar" style="margin-bottom:5px;">
@@ -76,6 +77,7 @@
 												<th class="v-itemDesc">描述及代码表</th>
 												<th class="v-state">状态</th>
 												<th class="v-itemValue">值</th>
+												<th class="delete-btn">提示</th>
 											</tr>
 										</table>
 									</div>
@@ -93,11 +95,12 @@
 			<ul class="pager wizard">
 				<li class="previous"><a href="javascript:;">上一步</a></li>
 		  		<li class="next" id="next"><a href="javascript:;">下一步</a></li>
-				<li class="finish" id="sub"><a href="javascript:;">完成</a></li>
+				<li class="finish save" id="sub"><a href="javascript:;">完成</a></li>
 			</ul>
 		</div>
 	</div>
 </div>
+</form>
 <script type="text/javascript">
 	$(document).ready(function() {
 		$('#rootwizard').bootstrapWizard({
@@ -133,29 +136,80 @@
 		        	$.get('${pageContext.request.contextPath}/RecordType/findHeaderItemByRecordType/' + items[0].id + '.koala').done(function(data) {					
 						var recordType = data;
 						var headerItems = recordType.headerItems;
+						var inputs = [];
+			            var rules = {
+							"notnull" : {
+								"rule" : function(value, formData){
+									return value ? true : false;
+								},
+								"tip" : "不能为空"
+							}
+						};
 						for(var i=0;i<headerItems.length;i++){
+	             			var data = {};
+	             			var value = {};
 	             			addRow($('#main').find("#itemTable"),headerItems[i]);
+	             			value["rule"] = new RegExp("^.{1," + headerItems[i].itemLength + "}$");
+	             			value["tip"] = "长度大于" + headerItems[i].itemLength;
+	             			rules[headerItems[i].itemId] = value;
+	             			data["name"] = headerItems[i].itemId;
+	             			data["rules"] = ["notnull", headerItems[i].itemId];
+	                 		data["focusMsg"] = "必填";
+	                 		data["rightMsg"] = "正确";
+	             			inputs.push(data);
 	             		}
-							
+						$('#itemForm').validateForm({
+					    	inputs : inputs,
+					        button : ".save",
+					        rules : rules,
+					        beforeSubmit : function(e,result,form){
+					        	if(!result){ //如果表单验证不通过,则阻止表单提交
+					        		e.preventDefault();
+					        	}	
+					        },
+					        onButtonClick:function(result, button, form){
+				            	if(result){
+				            		var content = getAllData($('#main'));
+				        	        var data = [{ name: 'name', value: $('#main').find('#nameID').val()},
+				        	 				    { name: 'content', value: content},
+				        	 				    { name: 'recordTypeId', value: items[0].id}
+				        	 		];
+				                    $.post('${pageContext.request.contextPath}/Submission/add.koala', data).done(function(result){
+				                    	if(result.success){
+				                    		$('#itemForm').parent().parent().parent().parent().modal('hide');
+				                            grid.data('koala.grid').refresh();
+				                            grid.message({
+				                                type: 'success',
+				                                content: '保存成功'
+				                            });
+				                        }else{
+				                        	$('#itemForm').parent().parent().parent().parent().find('.modal-content').message({
+				                                type: 'error',
+				                                content: result.errorMessage
+				                            });
+				                        }
+				                    });
+				            	}
+					        }
+						});
 					});
 		        }
-				
 			},
 			'onTabClick' : function() {
 				return false;
 			}
 		});
 	});
-	
 	var addRow = function(itemTable, variable, insertRow){
-		var row = $('<tr data-toggle="context" data-target="#context-menu"><td class="v-itemId"><input  data-role="itemId" readonly="true" required="true" style="display: inline; " class="form-control" type="text" /></td>'
-		+'<td class="v-itemName"><input  data-role="itemName" readonly="true" required="true" style="display: inline; " class="form-control" type="text" /></td>'
-		+'<td class="v-itemType"><div class="btn-group select" id="itemTypeSelect" data-role="itemType"></div></td>'
-		+'<td class="v-itemLength"><input data-role="itemLength" readonly="true" class="form-control" required="true" rgExp="/^[0-9]{1,}$/" data-content="只能输入数字" placeholder="数字"/></td>'
-		+'<td class="v-itemLocation"><input data-role="itemLocation" readonly="true" required="true" style="display: inline; " class="form-control" type="text" /></td>'
-		+'<td class="v-itemDesc"><input data-role="itemDesc" readonly="true" required="true" style="display: inline; " class="form-control" type="text" /></td>'
-		+'<td class="v-state"><div class="btn-group select" id="itemStateSelect" data-role="state" ></div></td>'
-		+'<td class="v-itemValue"><input data-role="itemValue" style="display: inline;" class="form-control" type="text" /></td>');
+		var row = $('<tr data-toggle="context" data-target="#context-menu"><td class="v-itemId"><input data-role="itemId" required="true" readonly="true" style="display: inline; " class="form-control" type="text" /></td>'
+			+'<td class="v-itemName"><input data-role="itemName" required="true" readonly="true" style="display: inline; " class="form-control" type="text" /></td>'
+			+'<td class="v-itemType"><div class="btn-group select" id="itemTypeSelect" data-role="itemType"></div></td>'
+			+'<td class="v-itemLength"><input data-role="itemLength" class="form-control" required="true" readonly="true" rgExp="/^[0-9]{1,}$/" data-content="只能输入数字" placeholder="数字"/></td>'
+			+'<td class="v-itemLocation"><input data-role="itemLocation" readonly="true" required="true" style="display: inline; " class="form-control" type="text" /></td>'
+			+'<td class="v-itemDesc"><input data-role="itemDesc" required="true" readonly="true" style="display: inline; " class="form-control" type="text" /></td>'
+			+'<td class="v-state"><div class="btn-group select" id="itemStateSelect" data-role="state"></div></td>'
+			+'<td class="v-itemValue"><input data-role="itemValue" style="display: inline;" class="form-control" type="text" /></td>'
+			+'<td class="delete-btn"></td>');
 
 		row.find("[data-role='itemLength']").on('change', function(){
 			calculateLocation(itemTable);
@@ -178,6 +232,7 @@
 			row.find('.select[data-role="itemType"]').setValue(variable.itemType);
 			row.find('.select[data-role="state"]').setValue(variable.state);
 			row.find('input[data-role="itemValue"]').val(variable.itemValue);
+			row.find('input[data-role="itemValue"]').attr('name', variable.itemId)
 		}
 		row.find('[data-role="delete"]').on('click', function(){
 			removeRow($(this));
@@ -186,14 +241,8 @@
 			row.insertAfter(insertRow);
 		}else{
 			row.appendTo(itemTable);
-		}
-		
+		}	
 	}
-	
-	//删除行
-	var removeRow = function($this){
-		$this.closest('tr').remove();
-	};
 	
 	//填充数据项类型
 	var fillVTypeSelect = function(select){
@@ -214,6 +263,20 @@
 		select.select({
 			contents: contents
 		});
+	};
+	
+	var getAllData = function(dialog){
+		var itemId;
+		var itemValue;
+		var data = {};
+		var itemTable = dialog.find("#itemTable");
+		itemTable.find('tr').each(function(index,tr){
+			var $tr = $(tr);
+			itemId = $tr.find('input[data-role="itemId"]').val();
+			itemValue = $tr.find('input[data-role="itemValue"]').val();
+			data[itemId] = itemValue;
+		});
+		return JSON.stringify(data);
 	};
 </script>
 </body>

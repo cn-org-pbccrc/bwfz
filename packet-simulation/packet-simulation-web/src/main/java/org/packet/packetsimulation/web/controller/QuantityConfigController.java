@@ -1,9 +1,11 @@
 package org.packet.packetsimulation.web.controller;
 
 import javax.inject.Inject;
+import javax.xml.parsers.ParserConfigurationException;
 
 import org.springframework.web.bind.WebDataBinder;
 
+import java.io.IOException;
 import java.text.SimpleDateFormat;
 import java.util.Date;
 import java.util.List;
@@ -15,48 +17,42 @@ import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.ResponseBody;
 import org.springframework.web.bind.annotation.PathVariable;
+import org.xml.sax.SAXException;
 import org.dayatang.utils.Page;
-import org.packet.packetsimulation.core.domain.MesgType;
 import org.packet.packetsimulation.facade.dto.*;
-import org.packet.packetsimulation.facade.RecordTypeFacade;
-import org.packet.packetsimulationGeneration.core.domain.RecordType;
+import org.packet.packetsimulation.facade.QuantityConfigFacade;
+import org.packet.packetsimulation.facade.RecordFacade;
 import org.openkoala.koala.commons.InvokeResult;
 import org.openkoala.security.shiro.CurrentUser;
 
 @Controller
-@RequestMapping("/RecordType")
-public class RecordTypeController {
+@RequestMapping("/QuantityConfig")
+public class QuantityConfigController {
 		
 	@Inject
-	private RecordTypeFacade recordTypeFacade;
+	private QuantityConfigFacade quantityConfigFacade;
+	
+	@Inject
+	private RecordFacade recordFacade;
 	
 	@ResponseBody
 	@RequestMapping("/add")
-	public InvokeResult add(RecordTypeDTO recordTypeDTO) {
-		recordTypeDTO.setCreatedBy(CurrentUser.getUserAccount());
-		return recordTypeFacade.creatRecordType(recordTypeDTO);
+	public InvokeResult add(QuantityConfigDTO quantityConfigDTO) {
+		quantityConfigDTO.setCreatedBy(CurrentUser.getUserAccount());
+		quantityConfigDTO.setCreateDate(new Date());
+		return quantityConfigFacade.creatQuantityConfig(quantityConfigDTO);
 	}
 	
 	@ResponseBody
 	@RequestMapping("/update")
-	public InvokeResult update(RecordTypeDTO recordTypeDTO) {
-		RecordTypeDTO  dto = (RecordTypeDTO) recordTypeFacade.getRecordType(recordTypeDTO.getId()).getData();
-		recordTypeDTO.setHeaderItems(dto.getHeaderItems());
-		return recordTypeFacade.updateRecordType(recordTypeDTO);
-	}
-	
-	@ResponseBody
-	@RequestMapping("/updateHeader")
-	public InvokeResult updateHeader(RecordTypeDTO recordTypeDTO) {
-		RecordTypeDTO  dto = (RecordTypeDTO) recordTypeFacade.getRecordType(recordTypeDTO.getId()).getData();
-		dto.setHeaderItems(recordTypeDTO.getHeaderItems());
-		return recordTypeFacade.updateRecordType(dto);
+	public InvokeResult update(QuantityConfigDTO quantityConfigDTO) {
+		return quantityConfigFacade.updateQuantityConfig(quantityConfigDTO);
 	}
 	
 	@ResponseBody
 	@RequestMapping("/pageJson")
-	public Page pageJson(RecordTypeDTO recordTypeDTO, @RequestParam int page, @RequestParam int pagesize) {
-		Page<RecordTypeDTO> all = recordTypeFacade.pageQueryRecordType(recordTypeDTO, page, pagesize);
+	public Page pageJson(QuantityConfigDTO quantityConfigDTO, @RequestParam int page, @RequestParam int pagesize) {
+		Page<QuantityConfigDTO> all = quantityConfigFacade.pageQueryQuantityConfig(quantityConfigDTO, page, pagesize);
 		return all;
 	}
 	
@@ -68,27 +64,37 @@ public class RecordTypeController {
         for (int i = 0; i < value.length; i ++) {
         	        					idArrs[i] = Long.parseLong(value[i]);
 						        }
-        return recordTypeFacade.removeRecordTypes(idArrs);
+        return quantityConfigFacade.removeQuantityConfigs(idArrs);
 	}
 	
 	@ResponseBody
 	@RequestMapping("/get/{id}")
 	public InvokeResult get(@PathVariable Long id) {
-		return recordTypeFacade.getRecordType(id);
-	}
-	
-    @ResponseBody
-	@RequestMapping("/findRecordTypes")
-	public List<RecordType> findRecordTypes() {
-		return recordTypeFacade.findRecordTypes();
+		return quantityConfigFacade.getQuantityConfig(id);
 	}
 	
 	@ResponseBody
-	@RequestMapping("/findHeaderItemByRecordType/{id}")
-	public RecordTypeDTO findRecordTypeByRecordType(@PathVariable Long id) {
-		return recordTypeFacade.findRecordTypeByRecordType(id);
+	@RequestMapping("/isExist/{id}")
+	public InvokeResult isExist(@PathVariable Long id) {
+		RecordDTO record = (RecordDTO) recordFacade.getRecord(id).getData();
+		QuantityConfigDTO dto = new QuantityConfigDTO();
+		dto.setCreatedBy(CurrentUser.getUserAccount());
+		RecordTypeDTO recordTypeDTO = new RecordTypeDTO();
+		recordTypeDTO.setId(record.getRecordType().getId());
+		dto.setRecordTypeDTO(recordTypeDTO);
+		List<QuantityConfigDTO> all = quantityConfigFacade.queryQuantityConfig(dto);
+		if(all.size()>0){
+			return InvokeResult.success(all.get(0));
+		}else{
+			return InvokeResult.success(null);
+		}
 	}
 	
+	@ResponseBody
+	@RequestMapping("/getRecordSegments/{id}")
+	public InvokeResult getRecordSegments(@PathVariable Long id){
+		return quantityConfigFacade.getRecordSegments(id);
+	}
 		
     @InitBinder    
     public void initBinder(WebDataBinder binder) {  

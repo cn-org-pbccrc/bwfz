@@ -25,6 +25,12 @@ public class SegmentApplicationImpl implements SegmentApplication {
 		segment.save();
 	}
 	
+	public void creatSegments(List<Segment> segments){
+		for (Segment segment : segments) {
+			segment.save();
+		}
+	}
+	
 	public void updateSegment(Segment segment) {
 		segment .save();
 	}

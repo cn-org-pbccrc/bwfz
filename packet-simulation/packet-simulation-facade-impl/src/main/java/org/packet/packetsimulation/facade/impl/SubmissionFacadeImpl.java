@@ -56,7 +56,7 @@ public class SubmissionFacadeImpl implements SubmissionFacade {
 	public InvokeResult getSubmission(Long id) {
 		Submission submission = application.getSubmission(id);
 		String content = submission.getContent();
-		JSONObject obj = JSON.parseObject(content);		
+		JSONObject obj = JSON.parseObject(content);
 		RecordType recordType = submission.getRecordType();
 		List<RecordItem> recordItems = recordType.getHeaderItems();
 		for(int i = 0; i < recordItems.size(); i++){
@@ -92,7 +92,7 @@ public class SubmissionFacadeImpl implements SubmissionFacade {
 		for (Long id : ids) {
 			submissions.add(application.getSubmission(id));
 			List<Long> recordIds = findRecordIdsBySubmissionId(id);
-			if(recordIds != null){
+			if(recordIds.size() != 0){
 				recordFacade.removeRecords(recordIds.toArray(new Long[recordIds.size()]));
 			}
 		}
@@ -104,24 +104,32 @@ public class SubmissionFacadeImpl implements SubmissionFacade {
 	public String exportSubmissions(Long[] ids){
 		String exportSubmissions = "";
 		for (Long id : ids){
-			Submission submission = application.getSubmission(id);
 			String head = "";
 			String body = "";			
-			LinkedHashMap<String, String> jsonHeadMap = JSON.parseObject(submission.getContent(), new TypeReference<LinkedHashMap<String, String>>() { });
-	        for (Map.Entry<String, String> entry : jsonHeadMap.entrySet()) {
-	        	head += entry.getValue();
-	        }
+			Submission submission = application.getSubmission(id);
+			RecordType recordType = submission.getRecordType();
+			List<RecordItem> headerItems = recordType.getHeaderItems();
+			JSONObject jsonHead = JSON.parseObject(submission.getContent());
+			for(RecordItem recordItem : headerItems){
+				head += adjustLength(recordItem.getItemLength(), Integer.parseInt(recordItem.getItemType()), jsonHead.getString(recordItem.getItemId()));
+			}
 	        //System.out.println("head: " + head.length());
 			List<Long> recordIds = findRecordIdsBySubmissionId(id);
-			for(int j = 0; j < recordIds.size(); j++){
-				List<Segment> segments = findSegmentsByRecordId(recordIds.get(j));
+			for(int i = 0; i < recordIds.size(); i++){
+				List<Segment> segments = findSegmentsByRecordId(recordIds.get(i));
 				if(segments != null){
-					String record = "";							
-					for(int k = 0; k < segments.size(); k++){
-						LinkedHashMap<String, String> jsonRecordMap = JSON.parseObject(segments.get(k).getContent(), new TypeReference<LinkedHashMap<String, String>>() { });
-				        for (Map.Entry<String, String> entry : jsonRecordMap.entrySet()) {
-				        	record += entry.getValue();
-				        }
+					String record = "";
+					for(int j = 0; j < segments.size(); j++){
+						RecordSegment recordSegment = findRecordSegmentByRecordType(segments.get(j).getRecord().getRecordType().getId(), segments.get(j).getSegMark());
+						List<RecordItem> recordItems = recordSegment.getRecordItems();
+						JSONObject jsonRecord = JSON.parseObject(segments.get(j).getContent());
+						for(RecordItem recordItem : recordItems){
+							record += adjustLength(recordItem.getItemLength(), Integer.parseInt(recordItem.getItemType()), jsonRecord.getString(recordItem.getItemId()));
+						}
+//						LinkedHashMap<String, String> jsonRecordMap = JSON.parseObject(segments.get(k).getContent(), new TypeReference<LinkedHashMap<String, String>>() {});
+//				        for (Map.Entry<String, String> entry : jsonRecordMap.entrySet()) {
+//				        	record += entry.getValue();
+//				        }
 					}
 					body += record + "\n";
 					//System.out.println("record: " + record.length());
@@ -132,6 +140,20 @@ public class SubmissionFacadeImpl implements SubmissionFacade {
 			exportSubmissions += head + "\n" + body + tail + "\n" + "\n" + "\n";
 		}
 		return exportSubmissions.trim();
+	}
+	
+	private String adjustLength(int itemLength, int itemType, String itemValue){
+		if(itemType == 0){
+			//itemValue = String.format("%0" + itemLength + "d", Integer.parseInt(itemValue));
+			while (itemValue.length() < itemLength) {  
+				StringBuffer sb = new StringBuffer();  
+				sb.append("0").append(itemValue);//左补0  				
+				itemValue = sb.toString();
+			}
+		}else{
+			itemValue = String.format("%-" + itemLength + "s", itemValue);
+		}
+		return itemValue;
 	}
 	
 	public List<SubmissionDTO> findAllSubmission() {
@@ -190,5 +212,21 @@ public class SubmissionFacadeImpl implements SubmissionFacade {
 	   	jpql.append("order by _segment.segMark asc");
 	   	List<Segment> segmentList = getQueryChannelService().createJpqlQuery(jpql.toString()).setParameters(conditionVals).list();
 	   	return segmentList;
+	}
+	
+	private RecordSegment findRecordSegmentByRecordType(Long recordTypeId, String segMark){
+		List<Object> conditionVals = new ArrayList<Object>();
+	   	StringBuilder jpql = new StringBuilder("select _recordSegment from RecordSegment _recordSegment  where 1=1 ");
+	   	
+	   	if (recordTypeId != null ) {
+	   		jpql.append(" and _recordSegment.recordType.id = ? ");
+	   		conditionVals.add(recordTypeId);
+	   	}
+	   	if (segMark != null ) {
+	   		jpql.append(" and _recordSegment.segMark = ? ");
+	   		conditionVals.add(segMark);
+	   	}
+	   	RecordSegment recordSegment = (RecordSegment) getQueryChannelService().createJpqlQuery(jpql.toString()).setParameters(conditionVals).singleResult();
+	   	return recordSegment;
 	}
 }

@@ -1,9 +1,12 @@
 package org.packet.packetsimulation.facade;
 
 import java.util.List;
+
 import org.dayatang.utils.Page;
 import org.openkoala.koala.commons.InvokeResult;
+import org.packet.packetsimulation.core.domain.MesgType;
 import org.packet.packetsimulation.facade.dto.*;
+import org.packet.packetsimulationGeneration.core.domain.RecordType;
 
 public interface RecordTypeFacade {
 
@@ -20,6 +23,8 @@ public interface RecordTypeFacade {
 	public List<RecordTypeDTO> findAllRecordType();
 	
 	public Page<RecordTypeDTO> pageQueryRecordType(RecordTypeDTO recordType, int currentPage, int pageSize);
+	
+	public List<RecordType> findRecordTypes();
 	
 	public RecordTypeDTO findRecordTypeByRecordType(Long id);
 }

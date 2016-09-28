@@ -1,6 +1,6 @@
 <%@ page language="java" contentType="text/html; charset=UTF-8" pageEncoding="UTF-8"%>
 <%@ taglib uri="http://java.sun.com/jsp/jstl/core" prefix="c" %>
-<script type="text/javascript" src="/js/batchConfig/batchConfig.js"></script>
+<script type="text/javascript" src="/js/batchConfig/quantityConfig.js"></script>
 <div class="recordDetail" id="recordDetail">
 <html lang="zh-CN">
 <head>
@@ -115,7 +115,7 @@ function initFun(){
     	                	var param = '"' + rowdata.recordType.id + '"';
     	                	var recordId = '"' + rowdata.id + '"';
     	                    //var h = "<a href='javascript:recordEdit(" + param + ")'>编辑段信息</a> ";
-    	                    var h = "<a href='javascript:recordEdit(" + param + "," + recordId + ")'>编辑段信息</a> ";
+    	                    var h = "<a href='javascript:segmentEdit(" + param + "," + recordId + ")'>编辑段信息</a> ";
     	                    return h;
     	                }
     	            }
@@ -182,6 +182,7 @@ function initFun(){
   	            },
     	        'ruleConfig': function(event, data){
   	            	var indexs = data.data;
+  	            	var items = data.item;
   	                var $this = $(this);
   	                	if(indexs.length == 0){
   	                    	$this.message({
@@ -197,14 +198,14 @@ function initFun(){
   	                    })
   	                    return;
   	                }  
-  	                $.get( '${pageContext.request.contextPath}/BatchConfig/isExist/' + indexs[0] + '.koala').done(function(data){
-    	            	  var ruleConfigId = data.data;
-    	            	  if(ruleConfigId){
-    	            		  batchConfig().modify(ruleConfigId.id,grid);
-    	            	  }else{
-    	            		  batchConfig().add(grid);
-    	            	  }
-      	              });
+  	                $.get( '${pageContext.request.contextPath}/QuantityConfig/isExist/' + indexs[0] + '.koala').done(function(data){
+  	                	var ruleConfigId = data.data;
+    	            	if(ruleConfigId){
+    	            		quantityConfig().modify(ruleConfigId.id,grid);
+    	            	}else{
+    	            		quantityConfig().add(items[0].recordType.id, grid);
+    	            	}
+      	            });
   	            }
     	    });
     	},
@@ -340,113 +341,101 @@ function initFun(){
     	    });
     	},
     	batch: function(id, grid){
-    		$.get( '${pageContext.request.contextPath}/Mesg/initBatch/' + id + '.koala').done(function(json){
+    		$.get( '${pageContext.request.contextPath}/Record/initBatch/' + id + '.koala').done(function(json){
 	    		json = json.data;
-	     		mesgType = json["mesgType"];
-	     		if(mesgType==1||mesgType==2||mesgType==3||mesgType==4||mesgType==5||mesgType==6){
-	     			packetId = json["packetId"];
-    	    	    var width = 180;
-    	    	    $.get(contextPath + '/pages/auth/three-standard-select.jsp').done(function(data) {	    		
-    	    	 	    var dialog = $(data);
-    	    	 	    //显示对话框数据
-    	    	 	    dialog.modal({
-    	    	 	    	keyboard: false,
-    	    	 	    	backdrop: false // 指定当前页为静态页面，如果不写后台页面就是黑色。
-    	    	 	    }).on({
-    	    	 	    	'hidden.bs.modal': function(){
-    	    	 	    	    $(this).remove();
-    	    	 	    	},
-    	    	 	    	'shown.bs.modal': function(){
-    	    	 	    	    var columns = [
-    	    	 	    	        { title:'姓名', name:'name' , width: 2*width/3},
-    	    	 	    	        { title:'证件类型', name:'credentialType', width: width/2,
-    	    	 	    	            render: function(item, name, index){
-    		                 				if(item[name] == '0'){
-    		                     				return '身份证';
-    		                 				}else if(item[name] == '1'){
-    		                     				return '军官证';
-    		                 				}else if(item[name] == '2'){
-    		                	 				return '护照';
-    		                 				}
-    		             				}		
-    	    	 	    	        },
-    	    	 	    	        { title:'证件号', name:'credentialNumber', width: width},
-    	    	 	    	        { title:'机构代码', name:'organizationCode', width: width},
-    	    	 	    	        { title:'客户资料标识号', name:'customerCode', width: 2*width/3},
-    	    	 	    	        { title: '账户标识号', name: 'acctCode', width: 3*width/4},
-                     	            { title: '合同标识号', name: 'conCode', width: 2*width/3},
-                     	            { title: '抵质押合同标识号', name: 'ccc', width: width},
-    	    	 	    	        { title:'创建日期', name:'createdDate', width: 2*width/3},
-    	    	 	    	        { title:'创建者', name:'createdBy', width: width/2}
-    	    	 	    	    ];//<!-- definition columns end -->
-    	    	 	    	    //查询出当前表单所需要得数据。
-    	    	 	    	    dialog.find('.selectThreeStandardGrid').grid({
-    	    	 	    	        identity: 'id',
-    	    	 	    	        columns: columns,
-    	    	 	    	        url: contextPath + '/ThreeStandard/pageJson/' + currentUserId + '.koala'
-    	    	 	    	    });
-							}
-    	    	 	    });//<!-- 显示对话框数据结束-->
-						dialog.find('#selectThreeStandardGridSave').on('click',{grid: grid}, function(e){   	    	 	    		
-							var reg = new RegExp(/^[0-9]*$/);
-							if (!reg.test(dialog.find('#startID').val()) || !reg.test(dialog.find('#endID').val())) {
-    	    	 	    		dialog.find('.modal-content').message({
-	    		 	                type: 'error',
-	    		 	                content: "批量起始或结束行号应为数字"
+	    		submissionId = json["submissionId"];
+	    	    var width = 180;
+	    	    $.get(contextPath + '/pages/auth/three-standard-select.jsp').done(function(data) {	    		
+	    	 	    var dialog = $(data);
+	    	 	    //显示对话框数据
+	    	 	    dialog.modal({
+	    	 	    	keyboard: false,
+	    	 	    	backdrop: false // 指定当前页为静态页面，如果不写后台页面就是黑色。
+	    	 	    }).on({
+	    	 	    	'hidden.bs.modal': function(){
+	    	 	    	    $(this).remove();
+	    	 	    	},
+	    	 	    	'shown.bs.modal': function(){
+	    	 	    	    var columns = [
+	    	 	    	        { title:'姓名', name:'name' , width: 2*width/3},
+	    	 	    	        { title:'证件类型', name:'credentialType', width: width/2,
+	    	 	    	            render: function(item, name, index){
+		                 				if(item[name] == '0'){
+		                     				return '身份证';
+		                 				}else if(item[name] == '1'){
+		                     				return '军官证';
+		                 				}else if(item[name] == '2'){
+		                	 				return '护照';
+		                 				}
+		             				}		
+	    	 	    	        },
+	    	 	    	        { title:'证件号', name:'credentialNumber', width: width},
+	    	 	    	        { title:'机构代码', name:'organizationCode', width: width},
+	    	 	    	        { title:'客户资料标识号', name:'customerCode', width: 2*width/3},
+	    	 	    	        { title: '账户标识号', name: 'acctCode', width: 3*width/4},
+                 	            { title: '合同标识号', name: 'conCode', width: 2*width/3},
+                 	            { title: '抵质押合同标识号', name: 'ccc', width: width},
+	    	 	    	        { title:'创建日期', name:'createdDate', width: 2*width/3},
+	    	 	    	        { title:'创建者', name:'createdBy', width: width/2}
+	    	 	    	    ];//<!-- definition columns end -->
+	    	 	    	    //查询出当前表单所需要得数据。
+	    	 	    	    dialog.find('.selectThreeStandardGrid').grid({
+	    	 	    	        identity: 'id',
+	    	 	    	        columns: columns,
+	    	 	    	        url: contextPath + '/ThreeStandard/pageJson/' + currentUserId + '.koala'
+	    	 	    	    });
+						}
+	    	 	    });//<!-- 显示对话框数据结束-->
+					dialog.find('#selectThreeStandardGridSave').on('click',{grid: grid}, function(e){   	    	 	    		
+						var reg = new RegExp(/^[0-9]*$/);
+						if (!reg.test(dialog.find('#startID').val()) || !reg.test(dialog.find('#endID').val())) {
+	    	 	    		dialog.find('.modal-content').message({
+    		 	                type: 'error',
+    		 	                content: "批量起始或结束行号应为数字"
+    		 	            });
+	    	 	    		return false;
+	    	 			}
+	    		    	var items = dialog.find('.selectThreeStandardGrid').data('koala.grid').selectedRowsIndex();   
+	    		    	if(items.length == 0 && (dialog.find('#startID').val()==null||dialog.find('#startID').val()=="") && (dialog.find('#endID').val()==null||dialog.find('#endID').val()=="")){
+							dialog.find('.selectThreeStandardGrid').message({
+	    		    	    	type: 'warning',
+	    		    	        content: '请选择需要关联的三标信息！'
+	    		    	    });
+	    		    	}
+	    		    	var data = [{ name: 'id', value: id},
+	    		    		{ name: 'ids', value: items.join(',')},
+	    		    	    { name: 'start', value: dialog.find('#startID').val()},
+	    		    	    { name: 'end', value: dialog.find('#endID').val()},
+	   	     	 			{ name: 'submissionId', value: submissionId}		        
+	    		     	];
+	    		    	document.getElementById("selectThreeStandardGridSave").disabled = true;
+	    		    	dialog.find('.modal-progress').html("<html><body><img src='${pageContext.request.contextPath}/images/loading.gif'  alt='上海鲜花港 - 郁金香' /></body></html>");
+	    		    	$.post('${pageContext.request.contextPath}/Record/batch.koala', data).done(function(result){
+	    		 	        if(result.success ){
+	    		 	        	dialog.modal('hide');
+	    		 	            e.data.grid.data('koala.grid').refresh();
+	    		 	            e.data.grid.message({
+	    		 	            	type: 'success',
+	    		 	                content: '批量成功'
 	    		 	            });
-    	    	 	    		return false;
-    	    	 			}
-    	    		    	var items = dialog.find('.selectThreeStandardGrid').data('koala.grid').selectedRowsIndex();   
-    	    		    	if(items.length == 0 && (dialog.find('#startID').val()==null||dialog.find('#startID').val()=="") && (dialog.find('#endID').val()==null||dialog.find('#endID').val()=="")){
-								dialog.find('.selectThreeStandardGrid').message({
-    	    		    	    	type: 'warning',
-    	    		    	        content: '请选择需要关联的三标信息！'
-    	    		    	    });
-    	    		    	}
-    	    		    	var data = [{ name: 'id', value: id},
-    	    		    		{ name: 'ids', value: items.join(',')},
-    	    		    	    { name: 'start', value: dialog.find('#startID').val()},
-    	    		    	    { name: 'end', value: dialog.find('#endID').val()},
-    	    		    	    { name: 'mesgType', value: mesgType},
-    	   	     	 			{ name: 'packetId', value:packetId},		        
-    	    		     	];
-    	    		    	document.getElementById("selectThreeStandardGridSave").disabled = true;
-    	    		    	dialog.find('.modal-progress').html("<html><body><img src='${pageContext.request.contextPath}/images/loading.gif'  alt='上海鲜花港 - 郁金香' /></body></html>");
-    	    		    	$.post('${pageContext.request.contextPath}/Mesg/batch.koala', data).done(function(result){
-    	    		 	        if(result.success ){
-    	    		 	        	dialog.modal('hide');
-    	    		 	            e.data.grid.data('koala.grid').refresh();
-    	    		 	            e.data.grid.message({
-    	    		 	            	type: 'success',
-    	    		 	                content: '批量成功'
-    	    		 	            });
-    	    		 	        }else{
-    	    		 	        	dialog.find('.modal-progress').empty();
-    	    		 	        	document.getElementById("selectThreeStandardGridSave").disabled = false;
-    	    		 	            dialog.find('.modal-content').message({
-    	    		 	                type: 'error',
-    	    		 	                content: result.errorMessage
-    	    		 	            });
-    	    		 	        }
-    	    		 	    });                        
-    	    		    });
-						//兼容IE8 IE9
-    	    		    if(window.ActiveXObject){
-    	    		    	if(parseInt(navigator.userAgent.toLowerCase().match(/msie ([\d.]+)/)[1]) < 10){
-    	    		    		dialog.trigger('shown.bs.modal');
-    	    		    	}
-    	    		    }    	  
-    	     	    });            	    	                
-    	    	}else{
-					grid.message({
-	                	type: 'error',
-	                    content: "只有正常报送记录才能进行批量"
-	                });
-	            }
+	    		 	        }else{
+	    		 	        	dialog.find('.modal-progress').empty();
+	    		 	        	document.getElementById("selectThreeStandardGridSave").disabled = false;
+	    		 	            dialog.find('.modal-content').message({
+	    		 	                type: 'error',
+	    		 	                content: result.errorMessage
+	    		 	            });
+	    		 	        }
+	    		 	    });                        
+	    		    });
+					//兼容IE8 IE9
+	    		    if(window.ActiveXObject){
+	    		    	if(parseInt(navigator.userAgent.toLowerCase().match(/msie ([\d.]+)/)[1]) < 10){
+	    		    		dialog.trigger('shown.bs.modal');
+	    		    	}
+	    		    }    	  
+	     	    });
     	    });
-    	},	
-    	batchConfig: function(id, grid){
-    		batchConfig().add($(this));
     	}
     }
     PageLoader.initGridPanel();
@@ -543,7 +532,7 @@ var loadMesgTree = function(){
         });
     });
 };
-var recordEdit = function(id, recordId){
+var segmentEdit = function(id, recordId){
 	var dialog = $('<div class="modal fade"><div class="modal-dialog" style="width:1040px;">'
 			+'<div class="modal-content"><div class="modal-header"><button type="button" class="close" '
 		    +'data-dismiss="modal" aria-hidden="true">&times;</button>'
@@ -650,25 +639,21 @@ var fillStateSelect = function(select){
 		contents: contents
 	});
 };
-var addRow = function(itemTable, variable, insertRow){
-	var row = $('<tr data-toggle="context" data-target="#context-menu"><td class="v-itemId"><input  data-role="itemId" readonly="true" required="true" style="display: inline; " class="form-control" type="text" /></td>'
-	+'<td class="v-itemName"><input  data-role="itemName" readonly="true" required="true" style="display: inline; " class="form-control" type="text" /></td>'
-	+'<td class="v-itemType"><div class="btn-group select" id="itemTypeSelect" data-role="itemType"></div></td>'
-	+'<td class="v-itemLength"><input data-role="itemLength" readonly="true" class="form-control" required="true" rgExp="/^[0-9]{1,}$/" data-content="只能输入数字" placeholder="数字"/></td>'
-	+'<td class="v-itemLocation"><input data-role="itemLocation" readonly="true" required="true" style="display: inline; " class="form-control" type="text" /></td>'
-	+'<td class="v-itemDesc"><input data-role="itemDesc" readonly="true" required="true" style="display: inline; " class="form-control" type="text" /></td>'
-	+'<td class="v-state"><div class="btn-group select" id="itemStateSelect" data-role="state" ></div></td>'
-	+'<td class="v-itemValue"><input data-role="itemValue" style="display: inline;" class="form-control" type="text" /></td>');
+
+var insertRow = function(itemTable, variable, insertRow){
+	var row = $('<tr data-toggle="context" data-target="#context-menu"><td class="v-itemId"><input data-role="itemId" required="true" readonly="true" style="display: inline; " class="form-control" type="text" /></td>'
+			+'<td class="v-itemName"><input data-role="itemName" required="true" readonly="true" style="display: inline; " class="form-control" type="text" /></td>'
+			+'<td class="v-itemType"><div class="btn-group select" id="itemTypeSelect" data-role="itemType"></div></td>'
+			+'<td class="v-itemLength"><input data-role="itemLength" class="form-control" required="true" readonly="true" rgExp="/^[0-9]{1,}$/" data-content="只能输入数字" placeholder="数字"/></td>'
+			+'<td class="v-itemLocation"><input data-role="itemLocation" readonly="true" required="true" style="display: inline; " class="form-control" type="text" /></td>'
+			+'<td class="v-itemDesc"><input data-role="itemDesc" required="true" readonly="true" style="display: inline; " class="form-control" type="text" /></td>'
+			+'<td class="v-state"><div class="btn-group select" id="itemStateSelect" data-role="state"></div></td>'
+			+'<td class="v-itemValue"><input data-role="itemValue" style="display: inline;" class="form-control" type="text" /></td>'
+			+'<td class="v-itemPrompt"></td>');
 
 	row.find("[data-role='itemLength']").on('change', function(){
 		calculateLocation(itemTable);
 	})
-//		row.contextmenu({
-//			onItem: function (context, e) {
-//				addRow(null,null,row);
-//		    }
-//		});
-	
 	if(!itemTable){
 		itemTable=$('#itemTable')
 	}
@@ -687,16 +672,13 @@ var addRow = function(itemTable, variable, insertRow){
 		row.find('.select[data-role="itemType"]').setValue(variable.itemType);
 		row.find('.select[data-role="state"]').setValue(variable.state);
 		row.find('input[data-role="itemValue"]').val(variable.itemValue);
+		row.find('input[data-role="itemValue"]').attr('name', variable.itemId)
 	}
-	row.find('[data-role="delete"]').on('click', function(){
-		removeRow($(this));
-	});
 	if(insertRow){
 		row.insertAfter(insertRow);
 	}else{
 		row.appendTo(itemTable);
 	}
-	
 }
 
 //删除行
@@ -728,53 +710,21 @@ var fillStateSelect = function(select){
 var getAllData = function(dialog){
 	var itemId;
 	var itemValue;
-	var itemType;
-	var itemLength;
-	
-	var data = '{';
-	
-// 	data['segName'] = dialog.find("#segNameID").val();
-// 	data['segMark'] = dialog.find("#segMarkID").val();
-// 	data['segDesc'] = dialog.find("#segDescID").val();
-// 	data['state'] = dialog.find("#stateID").getValue();
-// 	data['appearTimes'] = dialog.find("#appearTimesID").getValue();
-// 	data['recordTypeDTO.id'] = typeId;
-// 	var segmentLength = 0;
-	
+	var data = {};
 	var itemTable = dialog.find("#itemTable");
 	itemTable.find('tr').each(function(index,tr){
 		var $tr = $(tr);
 		itemId = $tr.find('input[data-role="itemId"]').val();
 		itemValue = $tr.find('input[data-role="itemValue"]').val();
-		itemType = $tr.find('.select[data-role="itemType"]').getValue();
-		itemLength = $tr.find('input[data-role="itemLength"]').val();
-		
-		var len = itemValue.length;
-		if(len < itemLength){
-			if(itemType == 0){
-			    while(len < itemLength) {  
-			    	itemValue = "0" + itemValue;  
-			        len++;  
-			    }  
-			}else{
-				while(len < itemLength) {  
-			    	itemValue = itemValue + " ";  
-			        len++;  
-			    }
-			}
-		}else{
-			
-		}
-		data += '"' + itemId + '" : "' + itemValue + '",';
+		data[itemId] = itemValue;
 	});
-	data = data.substring(0,data.length - 1) + '}';
-	return data;
+	return JSON.stringify(data);
 };
 
 var addSegment = function(recordId, grid){
 	var self = this;
 	var recordSegmentId = grid.attr("recordSegmentId");
-    var dialog = $('<div class="modal fade"><div class="modal-dialog" style="width:1000px;"><div class="modal-content"><div class="modal-header"><button type="button" class="close" data-dismiss="modal" aria-hidden="true">&times;</button><h4 class="modal-title">新增段</h4></div><div class="modal-body"><p>One fine body&hellip;</p></div><div class="modal-footer"><button type="button" class="btn btn-default" data-dismiss="modal">取消</button><button type="button" class="btn btn-success" id="save">保存</button></div></div></div></div>');
+    var dialog = $('<div class="modal fade"><div class="modal-dialog" style="width:1040px;"><div class="modal-content"><div class="modal-header"><button type="button" class="close" data-dismiss="modal" aria-hidden="true">&times;</button><h4 class="modal-title">新增段</h4></div><div class="modal-body"><p>One fine body&hellip;</p></div></div></div></div>');
     $.get('<%=path%>/RecordSegmentEditConfig.jsp').done(function(html){
         dialog.modal({
             keyboard:false,
@@ -800,13 +750,32 @@ var addSegment = function(recordId, grid){
         $.get( '${pageContext.request.contextPath}/RecordSegment/get/' + recordSegmentId + '.koala').done(function(json){
         	json = json.data;
             var elm;
+            var inputs = [];
+            var rules = {
+				"notnull" : {
+					"rule" : function(value, formData){
+						return value ? true : false;
+					},
+					"tip" : "不能为空"
+				}
+			};
             for(var index in json){
             	if(index=='recordItems'){
              		var items = json[index];
              		for(var i=0;i<items.length;i++){
-             			addRow(dialog.find("#itemTable"),items[i]);
+             			var data = {};
+             			var value = {};
+             			insertRow(dialog.find("#itemTable"),items[i]);
+             			value["rule"] = new RegExp("^.{1," + items[i].itemLength + "}$");
+             			value["tip"] = "长度大于" + items[i].itemLength;
+             			rules[items[i].itemId] = value;
+             			data["name"] = items[i].itemId;
+             			data["rules"] = ["notnull", items[i].itemId];
+                 		data["focusMsg"] = "必填";
+                 		data["rightMsg"] = "正确";
+             			inputs.push(data);
              		}
-             	}
+             	}       		
                 elm = dialog.find('#'+ index + 'ID');
                 if(elm.hasClass('select')){
                 	elm.setValue(json[index]);
@@ -814,33 +783,37 @@ var addSegment = function(recordId, grid){
                     elm.val(json[index]);
                 }
             }
-        });
-    });
-    dialog.find('#save').on('click',{grid: grid}, function(e){
-    	if(!Validator.Validate(dialog.find('form')[0],3))return;
-//     	if(!validate(dialog)){
-//     		dialog.find('#save').removeAttr('disabled');
-// 			return false;
-// 		}
-        var content = getAllData(dialog);
-        var data = [{ name: 'recordId', value: recordId },
-  					{ name: 'segMark', value: dialog.find('#segMarkID').val()},
- 				    { name: 'content', value: content}
- 		];
-        $.post('${pageContext.request.contextPath}/Segment/add.koala', data).done(function(result){
-        	if(result.success ){
-            	dialog.modal('hide');
-                e.data.grid.data('koala.grid').refresh();
-                e.data.grid.message({
-                	type: 'success',
-                    content: '保存成功'
-                });
-            }else{
-                dialog.find('.modal-content').message({
-                    type: 'error',
-                    content: result.errorMessage
-                });
-            }
+
+			dialog.find("#itemForm").validateForm({
+		    	inputs : inputs,
+		        button : ".save",
+		        rules : rules,
+		        onButtonClick:function(result, button, form){
+	            	if(result){
+	            		if(!Validator.Validate(dialog.find('form')[0],3))return;
+	                    var content = getAllData(dialog);
+	                    var data = [{ name: 'recordId', value: recordId },
+	              					{ name: 'segMark', value: dialog.find('#segMarkID').val()},
+	             				    { name: 'content', value: content}
+	             		];
+	                    $.post('${pageContext.request.contextPath}/Segment/add.koala', data).done(function(result){
+	                    	if(result.success ){
+	                        	dialog.modal('hide');
+	                            grid.data('koala.grid').refresh();
+	                            grid.message({
+	                            	type: 'success',
+	                                content: '保存成功'
+	                            });
+	                        }else{
+	                            dialog.find('.modal-content').message({
+	                                type: 'error',
+	                                content: result.errorMessage
+	                            });
+	                        }
+	                    });
+	            	}
+		        }
+		    });
         });
     });
 }
@@ -848,7 +821,7 @@ var addSegment = function(recordId, grid){
 var modifySegment = function(recordId, segmentId, grid){
 	var self = this;
 	var recordSegmentId = grid.attr("recordSegmentId");
-    var dialog = $('<div class="modal fade"><div class="modal-dialog" style="width:1000px;"><div class="modal-content"><div class="modal-header"><button type="button" class="close" data-dismiss="modal" aria-hidden="true">&times;</button><h4 class="modal-title">新增段</h4></div><div class="modal-body"><p>One fine body&hellip;</p></div><div class="modal-footer"><button type="button" class="btn btn-default" data-dismiss="modal">取消</button><button type="button" class="btn btn-success" id="save">保存</button></div></div></div></div>');
+    var dialog = $('<div class="modal fade"><div class="modal-dialog" style="width:1040px;"><div class="modal-content"><div class="modal-header"><button type="button" class="close" data-dismiss="modal" aria-hidden="true">&times;</button><h4 class="modal-title">新增段</h4></div><div class="modal-body"><p>One fine body&hellip;</p></div><div class="modal-footer"><button type="button" class="btn btn-default" data-dismiss="modal">取消</button><button type="button" class="btn btn-success" id="save">保存</button></div></div></div></div>');
     $.get('<%=path%>/RecordSegmentEditConfig.jsp').done(function(html){
         dialog.modal({
             keyboard:false,
@@ -874,11 +847,30 @@ var modifySegment = function(recordId, segmentId, grid){
         $.get( '${pageContext.request.contextPath}/RecordSegment/getUpdate/' + recordSegmentId + '.koala?segmentId=' + segmentId).done(function(json){
         	json = json.data;
             var elm;
+            var inputs = [];
+            var rules = {
+				"notnull" : {
+					"rule" : function(value, formData){
+						return value ? true : false;
+					},
+					"tip" : "不能为空"
+				}
+			};
             for(var index in json){
             	if(index=='recordItems'){
              		var items = json[index];
              		for(var i=0;i<items.length;i++){
+             			var data = {};
+             			var value = {};
              			addRow(dialog.find("#itemTable"),items[i]);
+             			value["rule"] = new RegExp("^.{1," + items[i].itemLength + "}$");
+             			value["tip"] = "长度大于" + items[i].itemLength;
+             			rules[items[i].itemId] = value;
+             			data["name"] = items[i].itemId;
+             			data["rules"] = ["notnull", items[i].itemId];
+                 		data["focusMsg"] = "必填";
+                 		data["rightMsg"] = "正确";
+             			inputs.push(data);
              		}
              	}
                 elm = dialog.find('#'+ index + 'ID');
@@ -888,30 +880,37 @@ var modifySegment = function(recordId, segmentId, grid){
                     elm.val(json[index]);
                 }
             }
-        });
-    });
-    dialog.find('#save').on('click',{grid: grid}, function(e){
-    	if(!Validator.Validate(dialog.find('form')[0],3))return;
-        var content = getAllData(dialog);
-        var data = [{ name: 'recordId', value: recordId },
-  					{ name: 'segMark', value: dialog.find('#segMarkID').val()},
- 				    { name: 'content', value: content},
- 				    { name: 'id', value: segmentId}
- 		];
-        $.post('${pageContext.request.contextPath}/Segment/update.koala', data).done(function(result){
-        	if(result.success ){
-            	dialog.modal('hide');
-                e.data.grid.data('koala.grid').refresh();
-                e.data.grid.message({
-                	type: 'success',
-                    content: '保存成功'
-                });
-            }else{
-                dialog.find('.modal-content').message({
-                    type: 'error',
-                    content: result.actionError
-                });
-            }
+			dialog.find("#itemForm").validateForm({
+		    	inputs : inputs,
+		        button : ".save",
+		        rules : rules,
+		        onButtonClick:function(result, button, form){
+	            	if(result){
+	            		if(!Validator.Validate(dialog.find('form')[0],3))return;
+	                    var content = getAllData(dialog);
+	                    var data = [{ name: 'recordId', value: recordId },
+	              					{ name: 'segMark', value: dialog.find('#segMarkID').val()},
+	             				    { name: 'content', value: content},
+	             				    { name: 'id', value: segmentId}
+	             		];
+	                    $.post('${pageContext.request.contextPath}/Segment/update.koala', data).done(function(result){
+	                    	if(result.success ){
+	                        	dialog.modal('hide');
+	                            grid.data('koala.grid').refresh();
+	                            grid.message({
+	                            	type: 'success',
+	                                content: '保存成功'
+	                            });
+	                        }else{
+	                            dialog.find('.modal-content').message({
+	                                type: 'error',
+	                                content: result.errorMessage
+	                            });
+	                        }
+	                    });
+	            	}
+		        }
+		    });
         });
     });
 }

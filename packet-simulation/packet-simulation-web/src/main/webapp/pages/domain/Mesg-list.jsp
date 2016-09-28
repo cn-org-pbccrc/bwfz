@@ -175,6 +175,7 @@ function initFun(){
   	            },
     	        'ruleConfig': function(event, data){
   	            	var indexs = data.data;
+  	            	var items = data.item;
   	                var $this = $(this);
   	                	if(indexs.length == 0){
   	                    	$this.message({
@@ -195,7 +196,7 @@ function initFun(){
     	            	if(ruleConfigId){
     	            		batchConfig().modify(ruleConfigId.id,grid);
     	            	}else{
-    	            		batchConfig().add(grid);
+    	            		batchConfig().add(items[0].mesgType, grid);
     	            	}
       	            });
   	            }
@@ -517,8 +518,7 @@ function initFun(){
 	    		    		{ name: 'ids', value: items.join(',')},
 	    		    	    { name: 'start', value: dialog.find('#startID').val()},
 	    		    	    { name: 'end', value: dialog.find('#endID').val()},
-	    		    	    { name: 'mesgType', value: mesgType},
-	   	     	 			{ name: 'packetId', value:packetId},		        
+	   	     	 			{ name: 'packetId', value:packetId}	        
 	    		     	];
 	    		    	document.getElementById("selectThreeStandardGridSave").disabled = true;
 	    		    	dialog.find('.modal-progress').html("<html><body><img src='${pageContext.request.contextPath}/images/loading.gif'  alt='上海鲜花港 - 郁金香' /></body></html>");
@@ -548,9 +548,6 @@ function initFun(){
 	    		    }    	  
 	     	    });
     	    });
-    	},	
-    	batchConfig: function(id, grid){
-    		batchConfig().add($(this));
     	}
     }
     PageLoader.initGridPanel();

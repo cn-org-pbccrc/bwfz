@@ -24,5 +24,13 @@ public interface RecordFacade {
 	public Page<RecordDTO> pageQueryRecord(RecordDTO record, int currentPage, int pageSize, Long submissionId);
 	
 	public List<RecordType> findRecordTypes();
+	
+	public InvokeResult getRecordForBatch(Long id);
+	
+	public Long queryCountOfThreeStandard(String currentUserId);
+	
+	public InvokeResult batchRecord(RecordDTO record, String[] ids ,String userAccount);
+	
+	public InvokeResult batchRecord(RecordDTO record, int start, int end, String userAccount);
 }
 
