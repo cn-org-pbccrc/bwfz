@@ -25,6 +25,8 @@ public class SubmissionDTO implements Serializable {
 		
 		private String recordTypeStr;
 		
+		private String padding;
+		
 			
 	public void setCreatedBy(String createdBy) { 
 		this.createdBy = createdBy;
@@ -91,6 +93,14 @@ public class SubmissionDTO implements Serializable {
 
 	public void setRecordTypeStr(String recordTypeStr) {
 		this.recordTypeStr = recordTypeStr;
+	}
+
+	public String getPadding() {
+		return padding;
+	}
+
+	public void setPadding(String padding) {
+		this.padding = padding;
 	}
 
 	@Override

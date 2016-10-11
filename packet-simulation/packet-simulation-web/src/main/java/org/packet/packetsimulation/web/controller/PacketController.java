@@ -115,7 +115,7 @@ public class PacketController {
 	@SuppressWarnings("rawtypes")
 	@ResponseBody
 	@RequestMapping("/pageJson/{currentUserId}")
-	public Page pageJson(PacketDTO packetDTO, @RequestParam int page, @RequestParam int pagesize,@PathVariable String currentUserId){
+	public Page pageJson(PacketDTO packetDTO, @RequestParam int page, @RequestParam int pagesize, @PathVariable String currentUserId){
 		Long missionId = CurrentUser.getMissionId();
 		Page<PacketDTO> all = packetFacade.pageQueryPacket(packetDTO, page, pagesize, currentUserId, missionId);
 		return all;

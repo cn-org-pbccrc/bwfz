@@ -112,9 +112,9 @@ $(function (){
 	                        {content: '<ks:hasSecurityResource identifier="missionManagerUpdate"><button class="btn btn-success" type="button"><span class="glyphicon glyphicon-edit"><span>修改</button></ks:hasSecurityResource>', action: 'modify'},
 	                        {content: '<ks:hasSecurityResource identifier="missionManagerTerminate"><button class="btn btn-danger" type="button"><span class="glyphicon glyphicon-remove"><span>删除</button></ks:hasSecurityResource>', action: 'delete'},
 	                        {content: '<ks:hasSecurityResource identifier="missionManagerRenew"><button class="btn btn-info" type="button"><span class="glyphicon glyphicon-edit"><span>更新</button></ks:hasSecurityResource>', action: 'renew'},
-	                        {content: '<ks:hasSecurityResource identifier="missionManagerQuery"><button class="btn btn-success" type="button"><span class="glyphicon glyphicon-search"><span>高级搜索<span class="caret"></span></button></ks:hasSecurityResource>', action: 'search'},
 	                        {content: '<ks:hasSecurityResource identifier="missionManagerForbidden"><button class="btn btn-danger" type="button"><span class="glyphicon glyphicon-wrench"></span>&nbsp;禁用</button></ks:hasSecurityResource>', action : 'forbidden'},
-	                        {content: '<ks:hasSecurityResource identifier="missionManagerAvailable"><button class="btn btn-success" type="button"><span class="glyphicon glyphicon-wrench"></span>&nbsp;激活</button></ks:hasSecurityResource>', action : 'available'}
+	                        {content: '<ks:hasSecurityResource identifier="missionManagerAvailable"><button class="btn btn-success" type="button"><span class="glyphicon glyphicon-wrench"></span>&nbsp;激活</button></ks:hasSecurityResource>', action : 'available'},
+	                        {content: '<ks:hasSecurityResource identifier="missionManagerQuery"><button class="btn btn-success" type="button"><span class="glyphicon glyphicon-search"><span>高级搜索<span class="caret"></span></button></ks:hasSecurityResource>', action: 'search'}
 	                    ],
 	                url:"${pageContext.request.contextPath}/Mission2/pageJson/" + projectId + ".koala",
 	                columns: [
@@ -616,45 +616,6 @@ var openDetailsPage = function(id){
             <div style="margin-left:15px;float:left;">
             <input name="name" class="form-control" type="text" style="width:180px;" id="nameID"  />
         </div>
-<!--                       <label class="control-label" style="width:100px;float:left;">任务负责人:&nbsp;</label> -->
-<!--     	  <div style="margin-left:15px;float:left;"> -->
-<!-- 	      <div class="btn-group select" id="director_SELECT"></div> -->
-<!-- 	        <input type="hidden" id="directorID_" name="director" /> -->
-<!-- 	      </div> -->
-	  </div>
-            </div>
-                  <div class="form-group">
-          <label class="control-label" style="width:100px;float:left;">任务开始时间:&nbsp;</label>
-           <div style="margin-left:15px;float:left;">
-            <div class="input-group date form_datetime" style="width:160px;float:left;" >
-                <input type="text" class="form-control" style="width:160px;" name="startDate" id="startDateID_start" >
-                <span class="input-group-addon"><span class="glyphicon glyphicon-th"></span></span>
-            </div>
-            <div style="float:left; width:10px; margin-left:auto; margin-right:auto;">&nbsp;-&nbsp;</div>
-            <div class="input-group date form_datetime" style="width:160px;float:left;" >
-                <input type="text" class="form-control" style="width:160px;" name="startDateEnd" id="startDateID_end" >
-                <span class="input-group-addon"><span class="glyphicon glyphicon-th"></span></span>
-            </div>
-       </div>
-<!--                       <label class="control-label" style="width:100px;float:left;">任务状态:&nbsp;</label> -->
-<!--     	  <div style="margin-left:15px;float:left;"> -->
-<!-- 	      <div class="btn-group select" id="status_SELECT"></div> -->
-<!-- 	        <input type="hidden" id="statusID_" name="status" /> -->
-<!-- 	      </div> -->
-	  </div>
-            </div>
-                  <div class="form-group">
-          <label class="control-label" style="width:100px;float:left;">任务结束时间:&nbsp;</label>
-           <div style="margin-left:15px;float:left;">
-            <div class="input-group date form_datetime" style="width:160px;float:left;" >
-                <input type="text" class="form-control" style="width:160px;" name="endDate" id="endDateID_start" >
-                <span class="input-group-addon"><span class="glyphicon glyphicon-th"></span></span>
-            </div>
-            <div style="float:left; width:10px; margin-left:auto; margin-right:auto;">&nbsp;-&nbsp;</div>
-            <div class="input-group date form_datetime" style="width:160px;float:left;" >
-                <input type="text" class="form-control" style="width:160px;" name="endDateEnd" id="endDateID_end" >
-                <span class="input-group-addon"><span class="glyphicon glyphicon-th"></span></span>
-            </div>
        </div>
                 </td>
        <td style="vertical-align: bottom;"><button id="search" type="button" style="position:relative; margin-left:35px; top: -15px" class="btn btn-primary"><span class="glyphicon glyphicon-search"></span>&nbsp;查询</button></td>

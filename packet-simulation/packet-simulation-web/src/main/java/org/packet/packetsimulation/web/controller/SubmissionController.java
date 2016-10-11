@@ -59,6 +59,14 @@ public class SubmissionController {
 	}
 	
 	@ResponseBody
+	@RequestMapping("/pageJsonByType/{lotId}")
+	public Page pageJsonByType(SubmissionDTO submissionDTO, @RequestParam int page, @RequestParam int pagesize, @PathVariable Long lotId) {
+		String createdBy = CurrentUser.getUserAccount();
+		Page<SubmissionDTO> all = submissionFacade.pageJsonByType(submissionDTO, page, pagesize, createdBy, lotId);
+		return all;
+	}
+	
+	@ResponseBody
 	@RequestMapping("/delete")
 	public InvokeResult remove(@RequestParam String ids) {
 		String[] value = ids.split(",");

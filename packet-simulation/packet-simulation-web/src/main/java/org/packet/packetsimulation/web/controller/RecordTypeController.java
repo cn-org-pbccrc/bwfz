@@ -54,9 +54,22 @@ public class RecordTypeController {
 	}
 	
 	@ResponseBody
+	@RequestMapping("/copy")
+	public InvokeResult copy(RecordTypeDTO recordTypeDTO, @RequestParam Long selectedId) {
+		return recordTypeFacade.copyHeaderItems(recordTypeDTO, selectedId);
+	}
+	
+	@ResponseBody
 	@RequestMapping("/pageJson")
 	public Page pageJson(RecordTypeDTO recordTypeDTO, @RequestParam int page, @RequestParam int pagesize) {
 		Page<RecordTypeDTO> all = recordTypeFacade.pageQueryRecordType(recordTypeDTO, page, pagesize);
+		return all;
+	}
+	
+	@ResponseBody
+	@RequestMapping("/pageJsonByType")
+	public Page pageJsonByType(RecordTypeDTO recordTypeDTO, @RequestParam int page, @RequestParam int pagesize) {
+		Page<RecordTypeDTO> all = recordTypeFacade.pageJsonByType(recordTypeDTO, page, pagesize);
 		return all;
 	}
 	

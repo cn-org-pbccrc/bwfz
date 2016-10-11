@@ -28,14 +28,26 @@ $(function (){
 	                buttons: [
 	                        {content: '<button class="btn btn-primary" type="button"><span class="glyphicon glyphicon-plus"><span>添加</button>', action: 'add'},
 	                        {content: '<button class="btn btn-success" type="button"><span class="glyphicon glyphicon-edit"><span>修改</button>', action: 'modify'},
-	                        {content: '<button class="btn btn-danger" type="button"><span class="glyphicon glyphicon-remove"><span>删除</button>', action: 'delete'}
+	                        {content: '<button class="btn btn-danger" type="button"><span class="glyphicon glyphicon-remove"><span>删除</button>', action: 'delete'},
+	                        {content: '<button class="btn btn-info" type="button"><span class="glyphicon glyphicon-move"><span>拷贝文件头</button>', action: 'copy'}
 	                    ],
 	                url:"${pageContext.request.contextPath}/RecordType/pageJson.koala",
 	                columns: [
-	                     	                         	                         { title: '报文类型', name: 'recordType', width: width},
-	                         	                         	                         	                         { title: '类型代码', name: 'code', width: width},
-	                         	                         	                         	                         { title: '创建人', name: 'createdBy', width: width},
-	                         	                         	                         	                      { title: '文件类型', name: 'fileType', width: width},
+	                     	                         	                         { title: '报文类型', name: 'recordType', width: 160},
+	                         	                         	                         	                         { title: '类型代码', name: 'code', width: 130},
+	                         	                         	                         	                         { title: '创建人', name: 'createdBy', width: 130},
+	                         	                         	                         	                      { title: '文件类型', name: 'fileType', width: 130},
+	                         	                         	                         	                   { title: '类别', name: 'type', width: 150,
+	                         	                         	                         	                    	render: function(item, name, index){
+	                                            	                         						                 if(item[name] == '0'){
+	                                            	                         						                     return '一代个人';
+	                                            	                         						                 }else if(item[name] == '1'){
+	                                            	                         						                	 return '一代企业';
+	                                            	                         						                 }else if(item[name] == '2'){
+	                                            	                         						                	 return '非银';
+	                                            	                         						                 }
+	                                            	                         						             } 	  
+	                         	                         	                         	                   },
 	                         	                         	                             { title: '操作', width: 120, render: function (rowdata, name, index)
 	                                 {
 	                                     var param = '"' + rowdata.id + '"';
@@ -86,7 +98,26 @@ $(function (){
 	                            content: '确定要删除所选记录吗?',
 	                            callBack: remove
 	                        });
-	                   }
+	                   },
+	                   'copy': function(event, data){
+	                        var indexs = data.data;
+	                        var $this = $(this);
+	                        if(indexs.length == 0){
+	                            $this.message({
+	                                type: 'warning',
+	                                content: '请选择一条记录进行拷贝'
+	                            })
+	                            return;
+	                        }
+	                        if(indexs.length > 1){
+	                            $this.message({
+	                                type: 'warning',
+	                                content: '只能选择一条记录进行拷贝'
+	                            })
+	                            return;
+	                        }
+	                        self.copy(indexs[0], $this);
+	                    }
 	         });
 	    },
 	    add: function(grid){
@@ -173,6 +204,81 @@ $(function (){
 	                });
 	        });
 	    },
+	    copy: function(id, grid){
+	    	$.get('<%=path%>/RecordType-copy.jsp').done(function(data){
+	        	var dialog = $(data);
+	            dialog.modal({
+	                keyboard:false,
+	                backdrop: false
+	            }).on({
+	                'hidden.bs.modal': function(){
+	                    $(this).remove();
+	                },
+	    	        'shown.bs.modal': function(){
+	    	            var columns = [
+	    	                { title: '报文类型', name: 'recordType' , width: 160},
+	    	                { title: '类型代码', name: 'code', width: 130},
+	    	                { title: '创建人', name: 'createdBy', width: 130},
+     	                    { title: '文件类型', name: 'fileType', width: 130},
+     	                    { title: '类别', name: 'type', width: 150,
+     	                    	render: function(item, name, index){
+					            	if(item[name] == '0'){
+					                	return '一代个人';
+					                }else if(item[name] == '1'){
+					                	return '一代企业';
+					                }else if(item[name] == '2'){
+					                	return '非银';
+					                }
+					            } 	  
+     	                    },
+	    	            ];//<!-- definition columns end -->
+	    	            //查询出当前表单所需要得数据。
+	    	            dialog.find('.selectRecordTypeGrid').grid({
+	    	                identity: 'id',
+	    	                columns: columns,
+	    	                querys: [{title: '报文类型', value: 'recordType'},
+	    	 	        	         {title: '类型代码', value: 'code'}
+	    	 	        			],
+	    	                url: contextPath + '/RecordType/pageJsonByType.koala?id=' + id
+	    	            });
+	    	        }
+	            });
+	            dialog.find('#selectRecordTypeGridSave').on('click',{grid: grid}, function(e){
+		        	var items = dialog.find('.selectRecordTypeGrid').data('koala.grid').selectedRows();
+	    	    	if(items.length == 0){
+	    	    		dialog.find('.selectRecordTypeGrid').message({
+	    	        		type: 'warning',
+	    	            	content: '请选择记录'
+	    	        	});
+	    	    	}
+	    	    	if(items.length > 1){
+	    	    		dialog.find('.selectRecordTypeGrid').message({
+	    	        		type: 'warning',
+	    	            	content: '只能选择一条记录'
+	    	        	});
+	    	    	} 
+		    	    var data = [
+						{ name: 'id', value: id},
+	     				{ name: 'selectedId', value: items[0].id}
+	     			];
+		        	$.post('${pageContext.request.contextPath}/RecordType/copy.koala', data).done(function(result){
+		            	if(result.success ){
+		                	dialog.modal('hide');
+		                    e.data.grid.data('koala.grid').refresh();
+		                    e.data.grid.message({
+		                    	type: 'success',
+		                        content: '保存成功'
+		                    });
+		                }else{
+		                	dialog.find('.modal-content').message({
+		                    	type: 'error',
+		                        content: result.errorMessage
+		                    });
+		                }
+		            });
+		        });
+	        });
+	    },
 	    initPage: function(form){
 	              form.find('.form_datetime').datetimepicker({
 	                   language: 'zh-CN',
@@ -182,6 +288,12 @@ $(function (){
 	                   minView: 2,
 	                   pickerPosition: 'bottom-left'
 	               }).datetimepicker('setDate', new Date());//加载日期选择器
+	               var selectItems = {};
+	               var contents = [{title:'请选择', value: ''}];
+	               contents.push({title:'一代个人' , value:'0'});
+	               contents.push({title:'一代企业' , value:'1'});
+	               contents.push({title:'非银' , value:'2'});
+	               selectItems['typeID'] = contents;
 	               form.find('.select').each(function(){
 	                    var select = $(this);
 	                    var idAttr = select.attr('id');

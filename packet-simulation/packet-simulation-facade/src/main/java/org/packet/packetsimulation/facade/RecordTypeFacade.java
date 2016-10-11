@@ -20,9 +20,13 @@ public interface RecordTypeFacade {
 	
 	public InvokeResult removeRecordTypes(Long[] ids);
 	
+	public InvokeResult copyHeaderItems(RecordTypeDTO recordType, Long selectedId);
+	
 	public List<RecordTypeDTO> findAllRecordType();
 	
 	public Page<RecordTypeDTO> pageQueryRecordType(RecordTypeDTO recordType, int currentPage, int pageSize);
+	
+	public Page<RecordTypeDTO> pageJsonByType(RecordTypeDTO recordType, int currentPage, int pageSize);
 	
 	public List<RecordType> findRecordTypes();
 	

@@ -54,6 +54,14 @@ public class RecordTypeFacadeImpl implements RecordTypeFacade {
 		return InvokeResult.success();
 	}
 	
+	public InvokeResult copyHeaderItems(RecordTypeDTO recordTypeDTO, Long selectedId){
+		RecordType selectedRecordType = application.getRecordType(selectedId);
+		RecordType recordType = application.getRecordType(recordTypeDTO.getId());
+		recordType.setHeaderItems(selectedRecordType.getHeaderItems());
+		application.updateRecordType(recordType);
+		return InvokeResult.success();
+	}
+	
 	public InvokeResult removeRecordType(Long id) {
 		application.removeRecordType(application.getRecordType(id));
 		return InvokeResult.success();
@@ -127,7 +135,11 @@ public class RecordTypeFacadeImpl implements RecordTypeFacade {
 	   	if (queryVo.getTransform() != null && !"".equals(queryVo.getTransform())) {
 	   		jpql.append(" and _recordType.transform like ?");
 	   		conditionVals.add(MessageFormat.format("%{0}%", queryVo.getTransform()));
-	   	}		
+	   	}
+	   	if (queryVo.getFileType() != null && !"".equals(queryVo.getFileType())) {
+	   		jpql.append(" and _recordType.fileType like ?");
+	   		conditionVals.add(MessageFormat.format("%{0}%", queryVo.getFileType()));
+	   	}
         Page<RecordType> pages = getQueryChannelService()
 		   .createJpqlQuery(jpql.toString())
 		   .setParameters(conditionVals)
@@ -137,5 +149,30 @@ public class RecordTypeFacadeImpl implements RecordTypeFacade {
         return new Page<RecordTypeDTO>(pages.getStart(), pages.getResultCount(),pageSize, RecordTypeAssembler.toDTOs(pages.getData()));
 	}
 	
-	
+	public Page<RecordTypeDTO> pageJsonByType(RecordTypeDTO queryVo, int currentPage, int pageSize){
+		List<Object> conditionVals = new ArrayList<Object>();
+	   	StringBuilder jpql = new StringBuilder("select _recordType from RecordType _recordType   where 1=1 ");
+	   	Integer type = application.getRecordType(queryVo.getId()).getType();
+	   	jpql.append(" and _recordType.id != ?");
+   		conditionVals.add(queryVo.getId());
+	   	if (type != null) {
+	   		jpql.append(" and _recordType.type = ?");
+	   		conditionVals.add(type);
+	   	}
+	   	if (queryVo.getRecordType() != null && !"".equals(queryVo.getRecordType())) {
+	   		jpql.append(" and _recordType.recordType like ?");
+	   		conditionVals.add(MessageFormat.format("%{0}%", queryVo.getRecordType()));
+	   	}		
+	   	if (queryVo.getCode() != null && !"".equals(queryVo.getCode())) {
+	   		jpql.append(" and _recordType.code like ?");
+	   		conditionVals.add(MessageFormat.format("%{0}%", queryVo.getCode()));
+	   	}		
+        Page<RecordType> pages = getQueryChannelService()
+		   .createJpqlQuery(jpql.toString())
+		   .setParameters(conditionVals)
+		   .setPage(currentPage, pageSize)
+		   .pagedList();
+		   
+        return new Page<RecordTypeDTO>(pages.getStart(), pages.getResultCount(),pageSize, RecordTypeAssembler.toDTOs(pages.getData()));
+	}
 }

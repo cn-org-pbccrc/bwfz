@@ -191,13 +191,13 @@ public class PacketFacadeImpl implements PacketFacade {
 	   		jpql.append(" and _packet.packetName like ?");
 	   		conditionVals.add(MessageFormat.format("%{0}%", queryVo.getPacketName()));
 	   	}
-	 	if (queryVo.getFileVersion() != null && !"".equals(queryVo.getFileVersion())) {
-	   		jpql.append(" and _packet.fileVersion like ?");
-	   		conditionVals.add(MessageFormat.format("%{0}%", queryVo.getFileVersion()));
-	   	}
 	 	if (queryVo.getDataType() != null && !"".equals(queryVo.getDataType())) {
 	   		jpql.append(" and _packet.dataType like ?");
 	   		conditionVals.add(MessageFormat.format("%{0}%", queryVo.getDataType()));	   			 
+	   	}
+	 	if (queryVo.getBizType() != null && !"".equals(queryVo.getBizType())) {
+	   		jpql.append(" and _packet.bizType like ?");
+	   		conditionVals.add(MessageFormat.format("%{0}%", queryVo.getBizType()));	   			 
 	   	}
 	 	if (queryVo.getRecordType() != null && !"".equals(queryVo.getRecordType())) {
 	   		jpql.append(" and _packet.recordType like ?");
@@ -206,10 +206,6 @@ public class PacketFacadeImpl implements PacketFacade {
 		if (queryVo.getMesgNum() != null && !"".equals(queryVo.getMesgNum())) {
 	   		jpql.append(" and _packet.mesgNum like ?");
 	   		conditionVals.add(MessageFormat.format("%{0}%", queryVo.getMesgNum()));	   			 
-	   	}
-		if (queryVo.getReserve() != null && !"".equals(queryVo.getReserve())) {
-	   		jpql.append(" and _packet.reserve like ?");
-	   		conditionVals.add(MessageFormat.format("%{0}%", queryVo.getReserve()));	   			 
 	   	}
 	   	if (currentUserId != null) {
 	   		jpql.append(" and _packet.createdBy = ?");

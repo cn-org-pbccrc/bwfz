@@ -25,6 +25,8 @@
 							<span class="required">*</span>
 						</div>
 					</div>
+					<div id="mark" class="col-lg-6 form-group">
+					</div>
 				</div>
 				<div class="panel panel-default table-responsive">
 					<div class="panel-heading">数据项</div>

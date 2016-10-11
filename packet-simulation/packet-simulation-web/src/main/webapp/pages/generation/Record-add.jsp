@@ -16,21 +16,21 @@
 			    </div>
 	</div>
 	        
-<div class="form-group">
-                            <label class="col-lg-3 control-label">报文类型:</label>
-                            <div class="col-lg-9">
-                                <div class="btn-group select" id="select-mesg">
-                                    <button data-toggle="item" class="btn btn-default" type="button">
-                                        选择类型
-                                    </button>
-                                    <button data-toggle="dropdown" class="btn btn-default dropdown-toggle" type="button">
-                                        <span class="caret"></span>
-                                    </button>
-                                    <input type="hidden" data-toggle="value" name="recordTypeId" id="recordTypeIdID">
-                                </div>
-                            </div>
-                        </div>                              		        
-	</form>
+<!-- <div class="form-group"> -->
+<!--                             <label class="col-lg-3 control-label">报文类型:</label> -->
+<!--                             <div class="col-lg-9"> -->
+<!--                                 <div class="btn-group select" id="select-mesg"> -->
+<!--                                     <button data-toggle="item" class="btn btn-default" type="button"> -->
+<!--                                         选择类型 -->
+<!--                                     </button> -->
+<!--                                     <button data-toggle="dropdown" class="btn btn-default dropdown-toggle" type="button"> -->
+<!--                                         <span class="caret"></span> -->
+<!--                                     </button> -->
+<!--                                     <input type="hidden" data-toggle="value" name="recordTypeId" id="recordTypeIdID"> -->
+<!--                                 </div> -->
+<!--                             </div> -->
+<!--                         </div>                              		         -->
+</form>
 <script type="text/javascript">
 </script>
 </body>

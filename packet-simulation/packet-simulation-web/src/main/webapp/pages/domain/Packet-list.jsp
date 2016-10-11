@@ -562,7 +562,7 @@ var loadMesgTree = function(){
 	<tr>
     	<td>
         	<div class="form-group">         
-            	<label class="control-label" style="width:160px;float:left;">报文名称:&nbsp;</label>
+            	<label class="control-label" style="width:160px;float:left;">文件名称:&nbsp;</label>
             	<div style="margin-left:15px;float:left;">
             		<input name="packetName" class="form-control" type="text" style="width:160px;" id="packetNameID"  />
         		</div>
@@ -572,13 +572,13 @@ var loadMesgTree = function(){
 <!--             		<input name="fileVersion" class="form-control" type="text" style="width:160px;" id="fileVersionID"  /> -->
 <!--         		</div> -->
                       
-            	<label class="control-label" style="width:160px;float:left;">数据提供机构代码:&nbsp;</label>
-            	<div style="margin-left:15px;float:left;">
-            		<input name="origSender" class="form-control" type="text" style="width:160px;" id="origSenderID"  />
-        		</div>
-            </div>
+<!--             	<label class="control-label" style="width:160px;float:left;">数据提供机构代码:&nbsp;</label> -->
+<!--             	<div style="margin-left:15px;float:left;"> -->
+<!--             		<input name="origSender" class="form-control" type="text" style="width:160px;" id="origSenderID"  /> -->
+<!--         		</div> -->
+<!--             </div> -->
                   
-            <div class="form-group">
+<!--             <div class="form-group"> -->
             	<label class="control-label" style="width:160px;float:left;">文件生成时间:&nbsp;</label>
            		<div style="margin-left:15px;float:left;">
             		<div class="input-group date form_datetime" style="width:160px;float:left;" >

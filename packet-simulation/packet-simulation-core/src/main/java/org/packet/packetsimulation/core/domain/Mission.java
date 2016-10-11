@@ -52,15 +52,15 @@ public class Mission extends KoalaAbstractEntity{
 	@JoinColumn(name = "PROJECT_ID")
 	private Project project;
 	
-	@Column(name = "TASKCREATOR")
+	@Column(name = "TASK_CREATOR")
 	private String taskCreator;
 	
 	@Temporal(value = TemporalType.DATE)
-	@Column(name = "TASKCREATEDTIME")
+	@Column(name = "TASK_CREATEDTIME")
 	private Date taskCreatedTime;
 	
-	@ManyToOne(cascade=CascadeType.REFRESH)
-	@JoinColumn(name="DIRECTOR_NAME	")
+	@ManyToOne(cascade = CascadeType.REFRESH)
+	@JoinColumn(name = "DIRECTOR_NAME")
 	private EmployeeUser employeeUser;
 	
 	@Column(name = "DISABLED")

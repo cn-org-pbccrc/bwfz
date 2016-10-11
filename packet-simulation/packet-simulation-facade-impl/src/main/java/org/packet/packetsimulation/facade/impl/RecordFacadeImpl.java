@@ -82,10 +82,10 @@ public class RecordFacadeImpl implements RecordFacade {
 		return InvokeResult.success(RecordAssembler.toDTO(application.getRecord(id)));
 	}
 	
-	public InvokeResult creatRecord(RecordDTO recordDTO, Long recordTypeId) {
+	public InvokeResult creatRecord(RecordDTO recordDTO) {
 		Record record = RecordAssembler.toEntity(recordDTO);
-		record.setRecordType(recordTypeApplication.getRecordType(recordTypeId));
 		record.setSubmission(submissionApplication.getSubmission(recordDTO.getSubmissionId()));
+		record.setRecordType(record.getSubmission().getRecordType());
 		if(recordDTO.getSubmissionId() != null){
 			Submission submission = submissionApplication.getSubmission(recordDTO.getSubmissionId());
 			submission.setRecordNum(submission.getRecordNum() + 1);
@@ -238,10 +238,7 @@ public class RecordFacadeImpl implements RecordFacade {
 			case 0://自增
 				Long start = obj.getLong("startValue");//起始
 				int size = obj.getIntValue("stepSize");//步长
-				String total = Long.toString(start + size*rowNum);
-				if(total.length() < itemLength){
-					total = adjustLength(itemLength, itemType, total);					
-				}
+				Long total = start + size*rowNum;
 				objContent.put(itemId, total);
 				break;
 			case 1://数据集
@@ -278,9 +275,6 @@ public class RecordFacadeImpl implements RecordFacade {
 						break;
 					}
 				}
-				if(templete.length() < itemLength){
-					templete = adjustLength(itemLength, itemType, templete);					
-				}
 				objContent.put(itemId, templete);
 				break;
 			case 3://三标信息字段
@@ -294,9 +288,6 @@ public class RecordFacadeImpl implements RecordFacade {
 					+ col.substring(1));
 					//执行get方法获取字段值
 					String colValue = meth.invoke(threeStandard).toString();
-					if(colValue.length() < itemLength){
-						colValue = adjustLength(itemLength, itemType, colValue);					
-					}
 					objContent.put(itemId, colValue);
 				} catch (NoSuchMethodException e) {
 					e.printStackTrace();

@@ -32,7 +32,7 @@ public class SegmentApplicationImpl implements SegmentApplication {
 	}
 	
 	public void updateSegment(Segment segment) {
-		segment .save();
+		segment.save();
 	}
 	
 	public void removeRecordSegment(RecordSegment recordSegment) {

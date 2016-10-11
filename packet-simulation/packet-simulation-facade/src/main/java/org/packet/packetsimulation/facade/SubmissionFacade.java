@@ -21,6 +21,8 @@ public interface SubmissionFacade {
 	
 	public Page<SubmissionDTO> pageQuerySubmission(SubmissionDTO submission, int currentPage, int pageSize, String createdBy);
 	
+	public Page<SubmissionDTO> pageJsonByType(SubmissionDTO submission, int currentPage, int pageSize, String createdBy, Long lotId);
+	
 	public String exportSubmissions(Long[] ids);
 }
 

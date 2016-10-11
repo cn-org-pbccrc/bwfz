@@ -40,6 +40,9 @@ public class Submission extends KoalaAbstractEntity{
 	@Column(name = "RECORD_NUM")
 	private Long recordNum;
 	
+	@Column(name = "PADDING")
+	private String padding;
+	
 	@OneToOne
     @JoinColumn(name = "RECORDTYPE_ID")
 	private RecordType recordType;
@@ -82,6 +85,14 @@ public class Submission extends KoalaAbstractEntity{
 
 	public void setRecordType(RecordType recordType) {
 		this.recordType = recordType;
+	}
+
+	public String getPadding() {
+		return padding;
+	}
+
+	public void setPadding(String padding) {
+		this.padding = padding;
 	}
 
 	@Override

@@ -64,6 +64,12 @@ public class RecordType extends KoalaAbstractEntity{
 	@Column(name = "FILETYPE") 
 	private String fileType;
 	
+	/**
+	 * 报文种类
+	 */
+	@Column(name = "TYPE") 
+	private Integer type;
+	
 //	/**
 //	 * 段
 //	 */
@@ -141,6 +147,14 @@ public class RecordType extends KoalaAbstractEntity{
 
 	public void setFileType(String fileType) {
 		this.fileType = fileType;
+	}
+
+	public Integer getType() {
+		return type;
+	}
+
+	public void setType(Integer type) {
+		this.type = type;
 	}
 
 	@Override

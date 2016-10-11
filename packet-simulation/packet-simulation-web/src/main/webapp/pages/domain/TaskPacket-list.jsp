@@ -368,6 +368,11 @@ function initFun(){
 	    	            dialog.find('.selectPacketGrid').grid({
 	    	                identity: 'id',
 	    	                columns: columns,
+	    	                querys: [{title: '报文名称', value: 'packetName'},
+	    	                         {title: '数据提供机构代码', value: 'origSender'},
+	    	                         {title: '业务类型', value: 'bizType'},
+	    	                         {title: '记录类型', value: 'recordType'}
+	    	                         ],
 	    	                url: contextPath + '/Packet/pageJson/' + currentUserId + '.koala'
 	    	                //url: contextPath + '/Packet/pageJson.koala'
 	    	            });
@@ -432,7 +437,7 @@ function initFun(){
 						selectedPacketNames[i] = items[i].packetName;
 					}
 	    	    	var data2 = [{ name: 'selectedPacketNames', value: selectedPacketNames.join(',')},
-	    	    		{ name: 'taskId', value: taskId}
+	    	    				 { name: 'taskId', value: taskId}
 	    	    	];
 	    	    	var isComs = new Array;
 	    	    	var isEncs = new Array;
@@ -633,7 +638,7 @@ function initFun(){
                     grid.message({
                         type: 'success',
                         content: '保存成功'
-                     });
+                    });
         		});
 	        });
 	    },
@@ -820,28 +825,6 @@ var openDetailsPage = function(id){
   <tr>
     <td>
           <div class="form-group">
-          <label class="control-label" style="width:160px;float:left;">内外部报文:&nbsp;</label>
-            <div style="margin-left:15px;float:left;">
-            <input name="packetFrom" class="form-control" type="text" style="width:160px;" id="packetFromID"  />
-        </div>
-          <label class="control-label" style="width:160px;float:left;">报文名称:&nbsp;</label>
-            <div style="margin-left:15px;float:left;">
-            <input name="selectedPacketName" class="form-control" type="text" style="width:160px;" id="selectedPacketNameID"  />
-        </div>
-        <label class="control-label" style="width:160px;float:left;">文件格式版本号:&nbsp;</label>
-            <div style="margin-left:15px;float:left;">
-            <input name="selectedFileVersion" class="form-control" type="text" style="width:160px;" id="selectedFileVersionID"  />
-        </div>
-        </div>
-    </td>
-  </tr>
-  <tr>
-    <td>
-        <div class="form-group">
-                      <label class="control-label" style="width:160px;float:left;">数据提供机构代码:&nbsp;</label>
-            <div style="margin-left:15px;float:left;">
-            <input name="selectedOrigSender" class="form-control" type="text" style="width:160px;" id="selectedOrigSenderID"  />
-        </div>
                   <label class="control-label" style="width:160px;float:left;">文件生成时间:&nbsp;</label>
            <div style="margin-left:15px;float:left;">
             <div class="input-group date form_datetime" style="width:160px;float:left;" >
@@ -854,115 +837,18 @@ var openDetailsPage = function(id){
                 <span class="input-group-addon"><span class="glyphicon glyphicon-th"></span></span>
             </div>
        </div>
-       </div>
-     </td>
-   </tr>
-   <tr>
-   <td>
-       <div class="form-group">
+       
        <label class="control-label" style="width:160px;float:left;">记录类型:&nbsp;</label>
             <div style="margin-left:15px;float:left;">
             <input name="selectedRecordType" class="form-control" type="text" style="width:160px;" id="selectedRecordID"  />
         </div>
-<!--                 <label class="control-label" style="width:160px;float:left;">数据类型:&nbsp;</label> -->
-<!--     	  <div style="margin-left:15px;float:left;"> -->
-<!-- 	      <div class="btn-group select" id="selectedDataType_SELECT"></div> -->
-<!-- 	        <input type="hidden" id="selectedDataTypeID_" name="selectedDataType" /> -->
-<!-- 	      </div> -->
-
-	      		<label class="control-label" style="width:100px;float:left;">加压:&nbsp;</label>
-    	  <div style="margin-left:15px;float:left;">
-	      <div class="btn-group select" id="compression_SELECT"></div>
-	        <input type="hidden" id="compressionID_" name="compression" />
-	      </div>
-
-	      <label class="control-label" style="width:100px;float:left;">加密:&nbsp;</label>
-    	  <div style="margin-left:15px;float:left;">
-	      <div class="btn-group select" id="encryption_SELECT"></div>
-	        <input type="hidden" id="encryptionID_" name="encryption" />
-	      </div>
-</div>
-</td>
+       </div>
+     </td>
        <td style="vertical-align: bottom;"><button id="search" type="button" style="position:relative; margin-left:35px; top: -15px" class="btn btn-primary"><span class="glyphicon glyphicon-search"></span>&nbsp;查询</button></td>
 </tr>
-<!--        <div class="form-group"> -->
-<!--                       <label class="control-label" style="width:160px;float:left;">加压:&nbsp;</label> -->
-<!--             <div style="margin-left:15px;float:left;"> -->
-<!--             <input name="compression" class="form-control" type="text" style="width:160px;" id="compressionID"  /> -->
-<!--         </div> -->
-
-<!--           <label class="control-label" style="width:160px;float:left;">加密:&nbsp;</label> -->
-<!--             <div style="margin-left:15px;float:left;"> -->
-<!--             <input name="encryption" class="form-control" type="text" style="width:160px;" id="encryptionID"  /> -->
-<!--         </div> -->
-<!--         </div> -->
 </table>
 </div>	
 </form>
-
-<%-- <form name=<%=formId2%> style="display:none;" id=<%=formId2%> target="_self" class="form-horizontal">
-<input type="hidden" name="page" value="0">
-<input type="hidden" name="pagesize" value="10">
-<button class="btn btn-success" type="button" style="margin-top:10px" onclick="$('#searchQueryDiv').slideToggle('slow')"><span class="glyphicon glyphicon-flash"></span>高级搜索<span class="caret"></span></button>
-<div id="searchQueryDiv" style="margin-top:5px" hidden="true">
-<table border="0" cellspacing="0" cellpadding="0">
-  <tr>
-    <td>
-          <div class="form-group">
-          
-           <label class="control-label" style="width:160px;float:left;">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;报文名称:</label>
-            <div style="margin-left:1px;float:left;">
-            <input name="packetName" class="form-control" type="text" style="width:160px;" id="packetNameID"  />
-        </div>
-          
-          <label class="control-label" style="width:160px;float:left;">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;文件格式版本号:</label>
-            <div style="margin-left:1px;float:left;">
-            <input name="fileVersion" class="form-control" type="text" style="width:160px;" id="fileVersionID"  />
-        </div>
-                      <label class="control-label" style="width:160px;float:left;">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;数据提供机构代码:</label>
-            <div style="margin-left:1px;float:left;">
-            <input name="origSender" class="form-control" type="text" style="width:160px;" id="origSenderID"  />
-        </div>
-            </div>
-  </td>
-  </tr>
-  <tr>
-  <td>
-                 <label class="control-label" style="width:160px;float:left;">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;记录类型:</label>
-            <div style="margin-left:1px;float:left;">
-            <input name="recordType" class="form-control" type="text" style="width:160px;" id="recordID"  />
-        </div>
-<label class="control-label" style="width:160px;float:left;">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;数据类型:</label>
-    	  <div style="margin-left:1px;float:left;">
-	      <div class="btn-group select" id="dataType_SELECT"></div>
-	        <input type="hidden" id="dataTypeID_" name="dataType" />
-	      </div>
-  </td>
-  </tr>
-  <tr>
-  <td>      
-                        <div class="form-group">
-          <label class="control-label" style="width:160px;float:left;">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;文件生成时间:</label>
-           <div style="margin-left:1px;float:left;">
-            <div class="input-group date form_datetime" style="width:160px;float:left;" >
-                <input type="text" class="form-control" style="width:160px;" name="origSendDate" id="origSendDateID_start" >
-                <span class="input-group-addon"><span class="glyphicon glyphicon-th"></span></span>
-            </div>
-            <div style="float:left; width:10px; margin-left:auto; margin-right:auto;">&nbsp;-&nbsp;</div>
-            <div class="input-group date form_datetime" style="width:160px;float:left;" >
-                <input type="text" class="form-control" style="width:160px;" name="origSendDateEnd" id="origSendDateID_end" >
-                <span class="input-group-addon"><span class="glyphicon glyphicon-th"></span></span>
-            </div>
-       </div>
-        
-        
-            </div>
-            </td>
-       <td style="vertical-align: bottom;"><button id="search2" type="button" style="position:relative; margin-left:15px; top: -15px" class="btn btn-primary"><span class="glyphicon glyphicon-search"></span>&nbsp;查询</button></td>
-  </tr>
-</table>
-</div>	
-</form> --%>
 
 <!-- grid -->
 <div id=<%=gridId%>></div>

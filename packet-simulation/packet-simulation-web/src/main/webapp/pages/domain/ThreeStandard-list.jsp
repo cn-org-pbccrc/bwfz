@@ -458,29 +458,7 @@ var openDetailsPageOfThreeStandard = function(id){
             	<div style="margin-left:15px;float:left;">
                 	<input name="name" class="form-control" type="text" style="width:180px;" id="nameID"  />
         		</div>
-        		<label class="control-label" style="width:120px;float:left;">证件类型:&nbsp;</label>
-    	  		<div style="margin-left:15px;float:left;">
-	      		<div class="btn-group select" id="credentialType_SELECT"></div>
-	        		<input type="hidden" id="credentialTypeID_" name="credentialType" />
-	      		</div>
-	      		<label class="control-label" style="width:120px;float:left;">证件号:&nbsp;</label>
-            	<div style="margin-left:15px;float:left;">
-            		<input name="credentialNumber" class="form-control" type="text" style="width:180px;" id="credentialNumberID"  />
-        		</div>
-	  		</div>
-	  		<div class="form-group">                           
-          		<label class="control-label" style="width:120px;float:left;">创建日期:&nbsp;</label>
-           		<div style="margin-left:15px;float:left;">
-            		<div class="input-group date form_datetime" style="width:140px;float:left;" >
-                		<input type="text" class="form-control" style="width:140px;" name="createdDate" id="createdDateID_start" >
-                		<span class="input-group-addon"><span class="glyphicon glyphicon-th"></span></span>
-            		</div>
-            		<div style="float:left; width:10px; margin-left:auto; margin-right:auto;">&nbsp;-&nbsp;</div>
-            		<div class="input-group date form_datetime" style="width:140px;float:left;" >
-                		<input type="text" class="form-control" style="width:140px;" name="createdDateEnd" id="createdDateID_end" >
-                		<span class="input-group-addon"><span class="glyphicon glyphicon-th"></span></span>
-            		</div>
-       			</div>
+        		
        			<label class="control-label" style="width:120px;float:left;">机构代码:&nbsp;</label>
             	<div style="margin-left:15px;float:left;">
             		<input name="organizationCode" class="form-control" type="text" style="width:180px;" id="organizationCodeID"  />

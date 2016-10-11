@@ -56,7 +56,6 @@
 					rightMsg:"正确"
 				}
 			];
-			
 			form.validateForm({
 	            inputs		: inputs,
 	            button		: ".save",

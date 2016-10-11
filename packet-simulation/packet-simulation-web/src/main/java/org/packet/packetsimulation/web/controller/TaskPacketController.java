@@ -62,7 +62,7 @@ public class TaskPacketController {
 		File file = new File(ctxPath);    	
 		if (!file.exists()) {    	
 			file.mkdirs();    	
-		}	
+		}
 		return taskPacketFacade.creatTaskPackets(taskPacketDTO,ctxPath,flags,coms,encs);
 	}
 	
@@ -74,7 +74,7 @@ public class TaskPacketController {
 	
 	@ResponseBody
 	@RequestMapping("/pageJson/{taskId}")
-	public Page pageJson(TaskPacketDTO taskPacketDTO, @RequestParam int page, @RequestParam int pagesize, @PathVariable Long taskId ) {
+	public Page pageJson(TaskPacketDTO taskPacketDTO, @RequestParam int page, @RequestParam int pagesize, @PathVariable Long taskId) {
 		Page<TaskPacketDTO> all = taskPacketFacade.pageQueryTaskPacket(taskPacketDTO, page, pagesize, taskId);
 		return all;
 	}
@@ -97,7 +97,7 @@ public class TaskPacketController {
         for (int i = 0; i < value.length; i ++) {
         	idArrs[i] = Long.parseLong(value[i]);
 		}
-        return taskPacketFacade.removeTaskPackets(idArrs,savePath);
+        return taskPacketFacade.removeTaskPackets(idArrs, savePath);
 	}
 	
 	@ResponseBody

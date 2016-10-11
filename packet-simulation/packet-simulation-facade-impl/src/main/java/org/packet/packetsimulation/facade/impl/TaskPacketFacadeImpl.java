@@ -49,9 +49,6 @@ public class TaskPacketFacadeImpl implements TaskPacketFacade {
 	
 	@Inject
 	private PacketApplication  packetApplication;
-	
-	@Inject
-	private MissionApplication  missionApplication;
 
 	private QueryChannelService queryChannel;
 
@@ -75,7 +72,7 @@ public class TaskPacketFacadeImpl implements TaskPacketFacade {
 	}
 	
 	public InvokeResult creatTaskPackets(TaskPacketDTO taskPacketDTO, String ctxPath, String[] flags, String[] coms, String[] encs) throws ParseException {
-		Set<TaskPacket> taskPackets= new HashSet<TaskPacket>();
+		Set<TaskPacket> taskPackets = new HashSet<TaskPacket>();
 		Integer maxSerialNumber = findMaxSerialNumber(taskPacketDTO.getTaskId());
 		for (int i = 0; i < flags.length; i++) {
 			DateFormat dateFormat1 = new SimpleDateFormat("yyyyMMdd");			
@@ -108,7 +105,7 @@ public class TaskPacketFacadeImpl implements TaskPacketFacade {
 	   		String counter;
 	   		String result;
 		   	List<Mesg> mesgList = findMesgsByPacketId(Long.parseLong(flags[i]));
-		   	if(null!=mesgList && mesgList.size()>0){
+		   	if(null != mesgList && mesgList.size() > 0){
 		   		counter = fillStringToHead(10,""+mesgList.size(),"0");
 		   		result = "A" + packet.getFileVersion() + packet.getOrigSender() + dateFormat2.format(packet.getOrigSendDate()) + packet.getRecordType() + packet.getDataType() + counter + "                              " + "\r\n";
 		   		for(Mesg mesg : mesgList){  			
@@ -118,10 +115,10 @@ public class TaskPacketFacadeImpl implements TaskPacketFacade {
 		   		counter = fillStringToHead(10,"0","0");
 		   		result = "A" + packet.getFileVersion() + packet.getOrigSender() + dateFormat2.format(packet.getOrigSendDate()) + packet.getRecordType() + packet.getDataType() + counter + "                              " + "\r\n";
 		   	}
-		    File f = new File(ctxPath+frontPosition+sn+".csv");//新建一个文件对象
+		    File f = new File(ctxPath + frontPosition + sn + ".csv");//新建一个文件对象
 	        FileWriter fw;
 	        try {
-	        	fw=new FileWriter(f);//新建一个FileWriter	    
+	        	fw = new FileWriter(f);//新建一个FileWriter	    
 	        	fw.write(result);//将字符串写入到指定的路径下的文件中
 	        	fw.close();
 	        } catch (IOException e) {
@@ -178,7 +175,6 @@ public class TaskPacketFacadeImpl implements TaskPacketFacade {
 	public String showPacketContent(Long id, String ctxPath){
 		TaskPacket taskPacket = application.getTaskPacket(id);
 		String path;
-		String str = null;
 		if(taskPacket.getPacketFrom()==0){
 			path = ctxPath + taskPacket.getTask().getId() + File.separator + "insideFiles" + File.separator + taskPacket.getSelectedPacketName() + ".csv";
 		}else if(taskPacket.getPacketFrom()==1){

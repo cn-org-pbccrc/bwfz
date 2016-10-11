@@ -20,26 +20,7 @@
 	  		</div>
 		</div>
 		<div class="tab-content">
-			<div class="tab-pane" id="tab1">
-				<div id="searchQueryDiv" style="margin-bottom:10px;">
-					<table border="0" cellspacing="0" cellpadding="0"> 							
-  						<tr>
-  							<td>
-  								<div class="form-group">
-  									<label class="control-label" style="width:130px;float:left;text-align:right;margin-top:6px;">报文类型:</label>
-            						<div style="margin-left:5px;margin-right: 25px;float:left;">
-            							<input name="mesgType" class="form-control" type="text" style="width:160px;" id="mesgTypeID"  />
-        							</div>
-  									<label class="control-label" style="width:130px;float:left;text-align:right;margin-top:6px;">类型代码:</label>
-            						<div style="margin-left:5px;margin-right: 25px;float:left;">
-            							<input name="code" class="form-control" type="text" style="width:160px;" id="codeID"  />
-        							</div>                        			
-        						</div>
-            				</td>
-       						<td style="vertical-align: bottom;"><button id="search" type="button" style="position:relative; margin-left:15px;" class="btn btn-primary"><span class="glyphicon glyphicon-search"></span>&nbsp;查询</button></td>
-  						</tr>
-					</table>
-				</div>
+			<div class="tab-pane" id="tab1">				
             	<div class="selectRecordGrid"></div>
 	    	</div>
 	    	<div class="tab-pane" id="tab2">
@@ -58,6 +39,13 @@
 							<input name="name" class="form-control" type="text" dataType="Require" id="nameID" />
 							<span class="required">*</span>
 						</div>
+					</div>
+					<div id="mark" class="col-lg-6 form-group">
+<!-- 						<label class="col-lg-3 control-label">非银填充位:</label> -->
+<!-- 						<div class="col-lg-9"> -->
+<!-- 							<input name=padding class="form-control" type="text" dataType="Require" id="paddingID" /> -->
+<!-- 							<span class="required">*</span> -->
+<!-- 						</div> -->
 					</div>
 				</div>
 				<div class="panel panel-default table-responsive">
@@ -113,6 +101,10 @@
 					width : $percent + '%'
 				});
 			},
+			'onPrevious' : function(tab, navigation, index){
+				$('#main').find('[data-toggle="item"]').attr('disabled', false);
+				$('#main').find('[data-toggle="button"]').attr('disabled', false);
+			},
 			'onNext' : function(tab, navigation, index) {
 				var items = $('#main').find('.selectRecordGrid').data('koala.grid').selectedRows();
 				if (items.length == 0) {
@@ -129,7 +121,11 @@
 					});
 					return false;
 				}
-				
+				$('#mark').empty();
+				if(items[0].type == 2){
+					$('#mark').append('<label class="col-lg-3 control-label">非银填充位:</label><div class="col-lg-9"><input name=padding class="form-control" type="text" dataType="Require" id="paddingID" /><span class="required">*</span></div>');
+				}
+				$('#main').find("#itemTable").empty();
 		        $('#main').find('[data-toggle="item"]').attr('disabled', true);
 		        $('#main').find('[data-toggle="button"]').attr('disabled', true);
 		        if($('#itemTable').find("tr").length <= 0){
@@ -172,7 +168,8 @@
 				            		var content = getAllData($('#main'));
 				        	        var data = [{ name: 'name', value: $('#main').find('#nameID').val()},
 				        	 				    { name: 'content', value: content},
-				        	 				    { name: 'recordTypeId', value: items[0].id}
+				        	 				    { name: 'recordTypeId', value: items[0].id},
+				        	 				    { name: 'padding', value: $('#main').find('#paddingID').val()}
 				        	 		];
 				                    $.post('${pageContext.request.contextPath}/Submission/add.koala', data).done(function(result){
 				                    	if(result.success){

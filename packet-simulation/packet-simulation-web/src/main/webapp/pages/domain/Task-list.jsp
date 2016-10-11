@@ -67,12 +67,12 @@ function initFun(){
 	                    ],
 	                url:"${pageContext.request.contextPath}/Task/pageJson/" + currentUserId + ".koala",
 	                columns: [
-	                     	                         	                         { title: '任务名称', name: 'taskName', width: 2*width/3},
+	                     	                         	                         { title: '批次名称', name: 'taskName', width: 2*width/3},
 	                         	                         	                         	                         { title: '发送渠道', name: 'sendChannel', width: 2*width/3},
 	                         	                         	                         	                         { title: '定时发送', name: 'setTime', width: 2*width/3},
 	                         	                         	                         	                         { title: '建立人', name: 'taskCreator', width: 2*width/3},
 	                         	                         	                         	                         { title: '创建时间', name: 'taskCreatedTime', width: 2*width/3},
-	                         	                         	                         	                         { title: '任务状态', name: 'taskStatus', width: 2*width/3},
+	                         	                         	                         	                         { title: '状态', name: 'taskStatus', width: 2*width/3},
 	                         	                         	                         	                         { title: '报文数量', name: 'packetNum', width: 2*width/3},
 	                         	                         	                             { title: '操作', width: 160, render: function (rowdata, name, index)
 	                                 {
@@ -324,20 +324,11 @@ var openDetailsPage = function(id){
   <tr>
     <td>
           <div class="form-group">
-          <label class="control-label" style="width:100px;float:left;">任务名称:&nbsp;</label>
+          <label class="control-label" style="width:100px;float:left;">批次名称:&nbsp;</label>
             <div style="margin-left:15px;float:left;">
             <input name="taskName" class="form-control" type="text" style="width:180px;" id="taskNameID"  />
         </div>
-                      <label class="control-label" style="width:100px;float:left;">发送渠道:&nbsp;</label>
-            <div style="margin-left:15px;float:left;">
-            <input name="sendChannel" class="form-control" type="text" style="width:180px;" id="sendChannelID"  />
-        </div>
-                              <label class="control-label" style="width:100px;float:left;">定时发送:&nbsp;</label>
-            <div style="margin-left:15px;float:left;">
-            <input name="setTime" class="form-control" type="text" style="width:180px;" id="setTimeID"  />
-        </div>
-            </div>
-                  <div class="form-group">
+
           <label class="control-label" style="width:100px;float:left;">创建时间:&nbsp;</label>
            <div style="margin-left:15px;float:left;">
             <div class="input-group date form_datetime" style="width:140px;float:left;" >
@@ -350,17 +341,7 @@ var openDetailsPage = function(id){
                 <span class="input-group-addon"><span class="glyphicon glyphicon-th"></span></span>
             </div>
        </div>
-                      <label class="control-label" style="width:100px;float:left;">任务状态:&nbsp;</label>
-            <div style="margin-left:15px;float:left;">
-            <input name="taskStatus" class="form-control" type="text" style="width:180px;" id="taskStatusID"  />
-        </div>
             </div>
-<!--                   <div class="form-group"> -->
-<!--           <label class="control-label" style="width:100px;float:left;">报文数量:&nbsp;</label> -->
-<!--             <div style="margin-left:15px;float:left;"> -->
-<!--             <input name="packetNum" class="form-control" type="text" style="width:180px;" id="packetNumID"  /> -->
-<!--         </div> -->
-<!--             </div> -->
             </td>
        <td style="vertical-align: bottom;"><button id="search" type="button" style="position:relative; margin-left:35px; top: -15px" class="btn btn-primary"><span class="glyphicon glyphicon-search"></span>&nbsp;查询</button></td>
   </tr>

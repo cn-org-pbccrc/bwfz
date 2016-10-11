@@ -11,7 +11,7 @@ public interface RecordFacade {
 
 	public InvokeResult getRecord(Long id);
 	
-	public InvokeResult creatRecord(RecordDTO record, Long recordTypeId);
+	public InvokeResult creatRecord(RecordDTO record);
 	
 	public InvokeResult updateRecord(RecordDTO record, Long recordTypeId);
 	

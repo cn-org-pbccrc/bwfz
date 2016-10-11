@@ -8,6 +8,7 @@
 	<input type="hidden" id="idID" name="id" /> 
 	<input type="hidden" id="versionID" name="version" /> 
 	<input type="hidden" id="createdByID" name="createdBy" /> 
+	<input type="hidden" id="typeID" name="type" />
 	
 	           <div class="form-group">
                     <label class="col-lg-3 control-label">报文类型:</label>
@@ -18,21 +19,21 @@
 		           <div class="form-group">
                     <label class="col-lg-3 control-label">类型代码:</label>
 	                    <div class="col-lg-9">
-                           <input name="code" style="display:inline; width:94%;" class="form-control"  type="text" dataType="Require" id="codeID" />
-		<span class="required">*</span>	    </div>
+                           <input name="code" style="display:inline; width:94%;" class="form-control"  type="text" id="codeID" />
+		</div>
 	</div>
 		           <div class="form-group">
                     <label class="col-lg-3 control-label">记录模板:</label>
 	                    <div class="col-lg-9">
-                           <input name="recordTemp" style="display:inline; width:94%;" class="form-control"  type="text" dataType="Require" id="recordTempID" />
-		<span class="required">*</span>	    </div>
+                           <input name="recordTemp" style="display:inline; width:94%;" class="form-control"  type="text" id="recordTempID" />
+		</div>
 	</div>
-		           <div class="form-group">
-                    <label class="col-lg-3 control-label">转换关系:</label>
-	                    <div class="col-lg-9">
-                           <input name="transform" style="display:inline; width:94%;" class="form-control"  type="text"  id="transformID" />
-			    </div>
-	</div>
+<!-- 		           <div class="form-group"> -->
+<!--                     <label class="col-lg-3 control-label">转换关系:</label> -->
+<!-- 	                    <div class="col-lg-9"> -->
+<!--                            <input name="transform" style="display:inline; width:94%;" class="form-control"  type="text"  id="transformID" /> -->
+<!-- 			    </div> -->
+<!-- 	</div> -->
 	<div class="form-group">
                     <label class="col-lg-3 control-label">文件类型:</label>
 	                    <div class="col-lg-9">

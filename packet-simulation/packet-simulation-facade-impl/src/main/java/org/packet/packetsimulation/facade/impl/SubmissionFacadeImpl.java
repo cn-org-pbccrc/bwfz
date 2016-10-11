@@ -20,8 +20,10 @@ import org.packet.packetsimulation.facade.dto.*;
 import org.packet.packetsimulation.facade.impl.assembler.SubmissionAssembler;
 import org.packet.packetsimulation.facade.RecordFacade;
 import org.packet.packetsimulation.facade.SubmissionFacade;
+import org.packet.packetsimulation.application.LotApplication;
 import org.packet.packetsimulation.application.RecordTypeApplication;
 import org.packet.packetsimulation.application.SubmissionApplication;
+import org.packet.packetsimulation.core.domain.Lot;
 import org.packet.packetsimulation.core.domain.Mesg;
 import org.packet.packetsimulation.core.domain.Segment;
 import org.packet.packetsimulationGeneration.core.domain.*;
@@ -37,6 +39,9 @@ public class SubmissionFacadeImpl implements SubmissionFacade {
 
 	@Inject
 	private SubmissionApplication  application;
+	
+	@Inject
+	private LotApplication  lotApplication;
 	
 	@Inject
 	private RecordTypeApplication recordTypeApplication;
@@ -100,6 +105,40 @@ public class SubmissionFacadeImpl implements SubmissionFacade {
 		return InvokeResult.success();
 	}
 	
+	public String exportSubmission(Long id, Integer type){
+		String exportSubmission = "";
+		String head = "";
+		String body = "";			
+		Submission submission = application.getSubmission(id);
+		RecordType recordType = submission.getRecordType();
+		List<RecordItem> headerItems = recordType.getHeaderItems();
+		JSONObject jsonHead = JSON.parseObject(submission.getContent());
+		for(RecordItem recordItem : headerItems){
+			head += adjustLength(recordItem.getItemLength(), Integer.parseInt(recordItem.getItemType()), jsonHead.getString(recordItem.getItemId()));
+		}
+		List<Long> recordIds = findRecordIdsBySubmissionId(id);
+		for(int i = 0; i < recordIds.size(); i++){
+			List<Segment> segments = findSegmentsByRecordId(recordIds.get(i));
+			if(segments != null){
+				String record = "";
+				for(int j = 0; j < segments.size(); j++){
+					RecordSegment recordSegment = findRecordSegmentByRecordType(segments.get(j).getRecord().getRecordType().getId(), segments.get(j).getSegMark());
+					List<RecordItem> recordItems = recordSegment.getRecordItems();
+					JSONObject jsonRecord = JSON.parseObject(segments.get(j).getContent());
+					for(RecordItem recordItem : recordItems){
+						record += adjustLength(recordItem.getItemLength(), Integer.parseInt(recordItem.getItemType()), jsonRecord.getString(recordItem.getItemId()));
+					}
+				}
+				body += record + "\n";
+			}
+		}
+		exportSubmission += head + "\n" + body;
+		if(type == 1){
+			String tail = "Z" + String.format("%010d", submission.getRecordNum());
+			exportSubmission += tail;
+		}
+		return exportSubmission.trim();
+	}
 	
 	public String exportSubmissions(Long[] ids){
 		String exportSubmissions = "";
@@ -172,7 +211,7 @@ public class SubmissionFacadeImpl implements SubmissionFacade {
 	   		conditionVals.add(MessageFormat.format("%{0}%", queryVo.getContent()));
 	   	}		
 	   	if (queryVo.getName() != null && !"".equals(queryVo.getName())) {
-	   		jpql.append(" and _submission.Name like ?");
+	   		jpql.append(" and _submission.name like ?");
 	   		conditionVals.add(MessageFormat.format("%{0}%", queryVo.getName()));
 	   	}				
 	   	if (queryVo.getRecordNum() != null && !"".equals(queryVo.getRecordNum())) {
@@ -183,9 +222,33 @@ public class SubmissionFacadeImpl implements SubmissionFacade {
 		   .createJpqlQuery(jpql.toString())
 		   .setParameters(conditionVals)
 		   .setPage(currentPage, pageSize)
-		   .pagedList();
-		   
+		   .pagedList();		   
         return new Page<SubmissionDTO>(pages.getStart(), pages.getResultCount(),pageSize, SubmissionAssembler.toDTOs(pages.getData()));
+	}
+	
+	public Page<SubmissionDTO> pageJsonByType(SubmissionDTO queryVo, int currentPage, int pageSize, String createdBy, Long lotId){
+		Lot lot = lotApplication.getLot(lotId);
+		Integer type = lot.getType();
+		List<Object> conditionVals = new ArrayList<Object>();
+	   	StringBuilder jpql = new StringBuilder("select _submission from Submission _submission   where 1=1 ");
+	   	if (createdBy != null) {
+	   		jpql.append(" and _submission.createdBy = ?");
+	   		conditionVals.add(createdBy);
+	   	}
+	   	if (type != null) {
+	   		jpql.append(" and _submission.recordType.type = ?");
+	   		conditionVals.add(type);
+	   	}
+	   	if (queryVo.getName() != null && !"".equals(queryVo.getName())) {
+	   		jpql.append(" and _submission.name like ?");
+	   		conditionVals.add(MessageFormat.format("%{0}%", queryVo.getName()));
+	   	}
+	    Page<Submission> pages = getQueryChannelService()
+	    	.createJpqlQuery(jpql.toString())
+	 		.setParameters(conditionVals)
+	 		.setPage(currentPage, pageSize)
+	 		.pagedList();		   
+	    return new Page<SubmissionDTO>(pages.getStart(), pages.getResultCount(),pageSize, SubmissionAssembler.toDTOs(pages.getData()));
 	}
 	
 	@SuppressWarnings("unchecked")

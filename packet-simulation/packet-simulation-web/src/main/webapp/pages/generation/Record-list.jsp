@@ -228,16 +228,16 @@ function initFun(){
     	                $(this).remove();
     	            }
     	        }).find('.modal-body').html(html);
-    	        selectMesg = dialog.find('#select-mesg');
-	            mesgInput = selectMesg.find('input');
-				selectMesg.find('[data-toggle="dropdown"]').on('click', function(){
-					selectMesgTypes();
-				});
+//     	        selectMesg = dialog.find('#select-mesg');
+// 	            mesgInput = selectMesg.find('input');
+// 				selectMesg.find('[data-toggle="dropdown"]').on('click', function(){
+// 					selectMesgTypes();
+// 				});
     	        dialog.find('#save').on('click',{grid: grid}, function(e){
     	            if(!Validator.Validate(dialog.find('form')[0],3))return;
-  		          	if (!Validation.notNull(dialog, dialog.find('#select-mesg'), mesgInput.val(), '请选择报文类型')) {
-	    			    return false;
-	    		  	}
+//   		        if (!Validation.notNull(dialog, dialog.find('#select-mesg'), mesgInput.val(), '请选择报文类型')) {
+// 	    			    return false;
+// 	    		  	}
     	            $.post('${pageContext.request.contextPath}/Record/add.koala?submissionId='+submissionId, dialog.find('form').serialize()).done(function(result){
     	            	if(result.success ){
     	                	dialog.modal('hide');
@@ -533,15 +533,16 @@ var loadMesgTree = function(){
     });
 };
 var segmentEdit = function(id, recordId){
-	var dialog = $('<div class="modal fade"><div class="modal-dialog" style="width:1040px;">'
+	var dialog = $('<div class="modal fade"><div class="modal-dialog" style="width: 80% !important;">'
 			+'<div class="modal-content"><div class="modal-header"><button type="button" class="close" '
 		    +'data-dismiss="modal" aria-hidden="true">&times;</button>'
-		    +'<h4 class="modal-title">编辑段信息</h4></div><div class="modal-body">'
+		    +'<h4 class="modal-title">编辑段信息</h4></div><div class="modal-body" style="overflow-y:auto; max-height:480px;">'
 		    +'<p>One fine body&hellip;</p></div></div>'
 		    +'</div></div>');
 	$.get('<%=path%>/Segment-edit.jsp').done(function(html){
 	    dialog.modal({
-	        keyboard:false
+	        keyboard:false,
+	        backdrop: 'static'
 	    }).on({
 	        'hidden.bs.modal': function(){
 	            $(this).remove();
@@ -619,6 +620,10 @@ var segmentEdit = function(id, recordId){
 	    	    	                callBack: remove
 	    	    	            });
 	    	    	        }        
+	    				});
+	    				dialog.find(".grid-table-body").css({
+	    					"height": "100px",
+	    					"min-height": "100px"
 	    				});
 	    				//dialog.find('.grid-body').attr('style', 'width: 998px;');
 	    				//dialog.find('.grid-table-head').attr('style', 'min-width: 998px;');
@@ -724,7 +729,7 @@ var getAllData = function(dialog){
 var addSegment = function(recordId, grid){
 	var self = this;
 	var recordSegmentId = grid.attr("recordSegmentId");
-    var dialog = $('<div class="modal fade"><div class="modal-dialog" style="width:1040px;"><div class="modal-content"><div class="modal-header"><button type="button" class="close" data-dismiss="modal" aria-hidden="true">&times;</button><h4 class="modal-title">新增段</h4></div><div class="modal-body"><p>One fine body&hellip;</p></div></div></div></div>');
+    var dialog = $('<div class="modal fade"><div class="modal-dialog" style="width: 80% !important;"><div class="modal-content"><div class="modal-header"><button type="button" class="close" data-dismiss="modal" aria-hidden="true">&times;</button><h4 class="modal-title">新增段</h4></div><div class="modal-body" style="overflow-y:auto; max-height:500px;"><p>One fine body&hellip;</p></div></div></div></div>');
     $.get('<%=path%>/RecordSegmentEditConfig.jsp').done(function(html){
         dialog.modal({
             keyboard:false,
@@ -821,7 +826,7 @@ var addSegment = function(recordId, grid){
 var modifySegment = function(recordId, segmentId, grid){
 	var self = this;
 	var recordSegmentId = grid.attr("recordSegmentId");
-    var dialog = $('<div class="modal fade"><div class="modal-dialog" style="width:1040px;"><div class="modal-content"><div class="modal-header"><button type="button" class="close" data-dismiss="modal" aria-hidden="true">&times;</button><h4 class="modal-title">新增段</h4></div><div class="modal-body"><p>One fine body&hellip;</p></div><div class="modal-footer"><button type="button" class="btn btn-default" data-dismiss="modal">取消</button><button type="button" class="btn btn-success" id="save">保存</button></div></div></div></div>');
+	var dialog = $('<div class="modal fade"><div class="modal-dialog" style="width: 80% !important;"><div class="modal-content"><div class="modal-header"><button type="button" class="close" data-dismiss="modal" aria-hidden="true">&times;</button><h4 class="modal-title">修改段</h4></div><div class="modal-body" style="overflow-y:auto; max-height:500px;"><p>One fine body&hellip;</p></div></div></div></div>');
     $.get('<%=path%>/RecordSegmentEditConfig.jsp').done(function(html){
         dialog.modal({
             keyboard:false,
@@ -844,7 +849,7 @@ var modifySegment = function(recordId, segmentId, grid){
         initPage(dialog.find('form'));
         dialog.find('[data-toggle="item"]').attr('disabled', true);
         dialog.find('[data-toggle="button"]').attr('disabled', true);
-        $.get( '${pageContext.request.contextPath}/RecordSegment/getUpdate/' + recordSegmentId + '.koala?segmentId=' + segmentId).done(function(json){
+        $.get('${pageContext.request.contextPath}/RecordSegment/getUpdate/' + recordSegmentId + '.koala?segmentId=' + segmentId).done(function(json){
         	json = json.data;
             var elm;
             var inputs = [];
@@ -857,12 +862,12 @@ var modifySegment = function(recordId, segmentId, grid){
 				}
 			};
             for(var index in json){
-            	if(index=='recordItems'){
+            	if(index == 'recordItems'){
              		var items = json[index];
              		for(var i=0;i<items.length;i++){
              			var data = {};
              			var value = {};
-             			addRow(dialog.find("#itemTable"),items[i]);
+             			addRow(dialog.find("#itemTable"), items[i]);
              			value["rule"] = new RegExp("^.{1," + items[i].itemLength + "}$");
              			value["tip"] = "长度大于" + items[i].itemLength;
              			rules[items[i].itemId] = value;
@@ -884,14 +889,15 @@ var modifySegment = function(recordId, segmentId, grid){
 		    	inputs : inputs,
 		        button : ".save",
 		        rules : rules,
-		        onButtonClick:function(result, button, form){
+		        onButtonClick : function(result, button, form){
 	            	if(result){
 	            		if(!Validator.Validate(dialog.find('form')[0],3))return;
 	                    var content = getAllData(dialog);
 	                    var data = [{ name: 'recordId', value: recordId },
 	              					{ name: 'segMark', value: dialog.find('#segMarkID').val()},
 	             				    { name: 'content', value: content},
-	             				    { name: 'id', value: segmentId}
+	             				    { name: 'id', value: segmentId},
+	             				    { name: 'version', value: dialog.find('#versionID').val()}
 	             		];
 	                    $.post('${pageContext.request.contextPath}/Segment/update.koala', data).done(function(result){
 	                    	if(result.success ){

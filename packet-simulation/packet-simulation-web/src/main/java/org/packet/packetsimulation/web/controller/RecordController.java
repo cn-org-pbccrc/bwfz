@@ -40,10 +40,10 @@ public class RecordController {
 	
 	@ResponseBody
 	@RequestMapping("/add")
-	public InvokeResult add(RecordDTO recordDTO, @RequestParam Long recordTypeId) {
+	public InvokeResult add(RecordDTO recordDTO) {
 		String createdBy = CurrentUser.getUserAccount();
 		recordDTO.setCreatedBy(createdBy);
-		return recordFacade.creatRecord(recordDTO, recordTypeId);
+		return recordFacade.creatRecord(recordDTO);
 	}
 	
 	@ResponseBody

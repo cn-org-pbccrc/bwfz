@@ -26,6 +26,7 @@ public class RecordTypeAssembler {
 		result.setRecordType(RecordType.getRecordType());
 		result.setTransform(RecordType.getTransform());
 		result.setFileType(RecordType.getFileType());
+		result.setType(RecordType.getType());
  	    return result;
 	 }
 	
@@ -55,6 +56,7 @@ public class RecordTypeAssembler {
 		result.setRecordType(RecordTypeDTO.getRecordType());
 		result.setTransform(RecordTypeDTO.getTransform());
 		result.setFileType(RecordTypeDTO.getFileType());
+		result.setType(RecordTypeDTO.getType());
  	  	return result;
 	 }
 	

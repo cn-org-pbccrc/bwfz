@@ -36,9 +36,9 @@ $(function (){
 	                    ],
 	                url:"${pageContext.request.contextPath}/Submission/pageJson.koala",
 	                columns: [
-	                     	                         	                         { title: '报文名称', name: 'name', width: width},
-	                     	                         	                       		{ title: '报文类型', name: 'recordTypeStr', width: width},
-	                         	                         	                         	                         { title: '记录数', name: 'recordNum', width: width},
+	                     	                         	                         { title: '报文名称', name: 'name', width: 240},
+	                     	                         	                       		{ title: '报文类型', name: 'recordTypeStr', width: 200},
+	                         	                         	                         	                         { title: '记录数', name: 'recordNum', width: 200},
 	                         	                         	                             { title: '操作', width: 120, render: function (rowdata, name, index)
 	                                 {
 	                                     var param = '"' + rowdata.id + '"';
@@ -121,17 +121,43 @@ $(function (){
 	    	    		var columns = [
 	    	 	        	{ title:'报文类型', name:'recordType' , width: 250},
 	    	 	            { title:'类型代码', name:'code', width: 120},
-	    	 	            { title:'创建人员', name:'createdBy'}	    	                    
+	    	 	            { title:'创建人员', name:'createdBy', width: 120},
+ 	    	 	            { title:'文件类型', name: 'fileType', width: 130},
+       	                    { title: '类别', name: 'type', width: 150,
+       	                    	render: function(item, name, index){
+						        	if(item[name] == '0'){
+						            	return '一代个人';
+						            }else if(item[name] == '1'){
+						               	return '一代企业';
+						            }else if(item[name] == '2'){
+						               	return '非银';
+						            }
+						        } 	  
+       	                    }
 	    	 	    	];//<!-- definition columns end -->
 	    	 	    	//查询出当前表单所需要得数据。
 	    	 	    	dialog.find('.selectRecordGrid').grid({
 	    	 	    		identity: 'id',
 	    	 	        	columns: columns,
+	    	 	        	querys: [{title: '报文类型', value: 'recordType'},
+	    	 	        	         {title: '类型代码', value: 'code'}
+	    	 	        			],
 	    	 	        	url: contextPath + '/RecordType/pageJson.koala'
 	    	 	    	});
 	         		}
 	    	    }).find('.modal-body').html(html);
-			});	
+	    	    dialog.find('#search').on('click', function(){
+		            var params = {};
+		            dialog.find('input').each(function(){
+		            	var $this = $(this);
+		            	var name = $this.attr('name');
+		            	if(name){
+		            		params[name] = $this.val();
+		            	}
+		            });
+		            dialog.find('.selectRecordGrid').getGrid().search(params);
+		        });
+			});
 	    },
 	    modify: function(id, grid){
 	        var self = this;
@@ -151,6 +177,9 @@ $(function (){
 							"tip" : "不能为空"
 						}
 					};
+			        if(json['recordType'].type == 2){
+						dialog.find('#mark').append('<label class="col-lg-3 control-label">非银填充位:</label><div class="col-lg-9"><input name=padding class="form-control" type="text" dataType="Require" id="paddingID" /><span class="required">*</span></div>');
+					}
                     for(var index in json){
                         elm = dialog.find('#'+ index + 'ID');
                         if(index == 'recordType'){
@@ -194,6 +223,7 @@ $(function (){
 						 				    { name: 'version', value: dialog.find('#versionID').val()},
 						 				    { name: 'createdBy', value: dialog.find('#createdByID').val()},
 						 				    { name: 'recordNum', value: dialog.find('#recordNumID').val()},
+						 				    { name: 'padding', value: dialog.find('#paddingID').val()}
 						 		];
 			                    $.post('${pageContext.request.contextPath}/Submission/update.koala?id='+id, data).done(function(result){
 			                        if(result.success){

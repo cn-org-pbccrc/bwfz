@@ -21,6 +21,7 @@ public class SubmissionAssembler {
      	    	result.setRecordNum (submission.getRecordNum());
      	    	result.setRecordType(submission.getRecordType());
      	    	result.setRecordTypeStr(submission.getRecordType().getRecordType());
+     	    	result.setPadding(submission.getPadding());
      	    return result;
 	 }
 	
@@ -46,6 +47,7 @@ public class SubmissionAssembler {
          result.setName (submissionDTO.getName());
          result.setCreatedBy (submissionDTO.getCreatedBy());
          result.setRecordNum (submissionDTO.getRecordNum());
+         result.setPadding(submissionDTO.getPadding());
  	  	return result;
 	 }
 	

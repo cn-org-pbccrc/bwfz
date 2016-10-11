@@ -59,6 +59,7 @@ public class RecordSegmentFacadeImpl implements RecordSegmentFacade {
 			RecordItem recordItem = recordItems.get(i);
 			recordItem.setItemValue(obj.getString(recordItem.getItemId()));
 		}
+		recordSegment.setVersion(segment.getVersion());
 		return InvokeResult.success(RecordSegmentAssembler.toDTO(recordSegment));
 	}
 	

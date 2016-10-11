@@ -26,6 +26,8 @@ public class RecordTypeDTO implements Serializable {
 	private String recordType;
 	
 	private String fileType;
+	
+	private Integer type;
 
 	/**
 	 * 数据项
@@ -102,6 +104,14 @@ public class RecordTypeDTO implements Serializable {
 
 	public void setFileType(String fileType) {
 		this.fileType = fileType;
+	}
+
+	public Integer getType() {
+		return type;
+	}
+
+	public void setType(Integer type) {
+		this.type = type;
 	}
 
 	@Override
