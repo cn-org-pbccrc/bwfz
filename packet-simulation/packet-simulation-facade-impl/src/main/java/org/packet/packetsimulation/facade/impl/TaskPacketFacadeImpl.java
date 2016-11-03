@@ -80,13 +80,13 @@ public class TaskPacketFacadeImpl implements TaskPacketFacade {
 			Task task = taskApplication.getTask(taskPacketDTO.getTaskId());			
 			taskPacket.setTask(task);
 			Packet packet = packetApplication.getPacket(Long.parseLong(flags[i]));
-			String frontPosition = packet.getOrigSender() + dateFormat1.format(packet.getOrigSendDate()) + packet.getBizType() + PACKETCONSTANT.TASKPACKET_DATATYPE_NORMAL + PACKETCONSTANT.TASKPACKET_TRANSPORTDIRECTION_REPORT;
+			String frontPosition = packet.getOrigSender() + dateFormat1.format(packet.getOrigSendDate()) + packet.getRecordType() + "0";
 			Integer maxPacketNumber = findMaxPacketNumberByFrontPositionAndCreatedBy(frontPosition, packet.getCreatedBy());
-			if(maxPacketNumber > 9998){
-				return InvokeResult.failure("流水号最大值为9999!");
+			if(maxPacketNumber > 998){
+				return InvokeResult.failure("流水号最大值为999");
 			}
-			String sn = String.format("%04d", maxPacketNumber + 1);
-			taskPacket.setSelectedPacketName(frontPosition + sn);
+			String sn = String.format("%03d", maxPacketNumber + 1);
+			taskPacket.setSelectedPacketName(frontPosition + sn + "0");
 			taskPacket.setSelectedFileVersion(packet.getFileVersion());
 			taskPacket.setSelectedOrigSender(packet.getOrigSender());
 			taskPacket.setSelectedOrigSendDate(packet.getOrigSendDate());
@@ -102,18 +102,12 @@ public class TaskPacketFacadeImpl implements TaskPacketFacade {
 			maxSerialNumber++;
 			taskPackets.add(taskPacket);			
 			DateFormat dateFormat2 = new SimpleDateFormat("yyyyMMddHHmmss");  
-	   		String counter;
-	   		String result;
 		   	List<Mesg> mesgList = findMesgsByPacketId(Long.parseLong(flags[i]));
-		   	if(null != mesgList && mesgList.size() > 0){
-		   		counter = fillStringToHead(10,""+mesgList.size(),"0");
-		   		result = "A" + packet.getFileVersion() + packet.getOrigSender() + dateFormat2.format(packet.getOrigSendDate()) + packet.getRecordType() + packet.getDataType() + counter + "                              " + "\r\n";
+			String result = PACKETCONSTANT.HEADER_START + "050" + packet.getRecordType() + packet.getFileVersion() + "10" + packet.getOrigSender() + dateFormat2.format(packet.getOrigSendDate()) + "0" + String.format("%07d", mesgList.size()) + "\r\n";
+			if(mesgList != null && mesgList.size() > 0){
 		   		for(Mesg mesg : mesgList){  			
 					result = result + mesg.getContent() + "\r\n";
 		   		}
-		   	}else{
-		   		counter = fillStringToHead(10,"0","0");
-		   		result = "A" + packet.getFileVersion() + packet.getOrigSender() + dateFormat2.format(packet.getOrigSendDate()) + packet.getRecordType() + packet.getDataType() + counter + "                              " + "\r\n";
 		   	}
 		    File f = new File(ctxPath + frontPosition + sn + ".csv");//新建一个文件对象
 	        FileWriter fw;

@@ -40,6 +40,7 @@
 <script src="${contextPath}/lib/bootstrap-upload/js/fileinput.min.js"></script>
 <script src="${contextPath}/lib/bootstrap-upload/js/fileinput_locale_zh.js"></script>  
 <script type="text/javascript" src="${contextPath}/js/batchConfig/batchConfig.js"></script>
+<script type="text/javascript" src="${contextPath}/js/batchConfig/quantityConfig.js"></script>
 
 <script>
 	$.ajaxSetup({cache:false});

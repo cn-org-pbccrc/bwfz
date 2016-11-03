@@ -226,7 +226,6 @@ public class XmlNode implements Serializable, Cloneable{
 		return result+contentStr;
 	}
 	
-	
 	private String getTabContents(List<XmlNode> nodes,String countTagId,String templateName){
 		if(null!=nodes && nodes.size()>0){			
 			String htmlStr = "";

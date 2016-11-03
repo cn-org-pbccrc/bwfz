@@ -105,8 +105,7 @@ public class FeedBackFacadeImpl implements FeedBackFacade {
 	    		list.add(messageHead);
 			}else{
 				break;
-			}
-			
+			}			
 		}
 	    return new Page<MessageHead>(currentPage*pageSize,totalLines-1,pageSize, list);
 	}
@@ -121,7 +120,8 @@ public class FeedBackFacadeImpl implements FeedBackFacade {
 			try {
 				org.dom4j.Document document = org.dom4j.DocumentHelper.parseText(xmlContent);
 				org.dom4j.Element root = document.getRootElement();
-				org.dom4j.Element element = root.element("CrdtInfMdfc").element("MdfcSgmt");
+				//org.dom4j.Element element = root.element("AcctMdfc").element("MdfcSgmt");
+				org.dom4j.Element element = ((org.dom4j.Element) root.elementIterator().next()).element("MdfcSgmt");
 				Iterator iterInner = element.elementIterator();
 				org.dom4j.Element elementOption = (org.dom4j.Element) iterInner.next();//获取<MdfcSgmt>下一级元素
                 String tagName = elementOption.getName();
@@ -130,8 +130,7 @@ public class FeedBackFacadeImpl implements FeedBackFacade {
 			} catch (DocumentException e) {
 				// TODO Auto-generated catch block
 				e.printStackTrace();
-			}
-			
+			}			
 		}
 		//String a = "<?xml version='1.0' encoding='UTF-8'?><Document xmlns:xsi='http://www.w3.org/2001/XMLSchema-instance'xsi:noNamespaceSchemaLocation='file:/C:/daec.001.001.01-en.xsd'><SceIdInf><SceId>00000</SceId></SceIdInf><ContIdInf><CtrctNbInt>CtrctNbInt0</CtrctNbInt><CdOfDtaPdgOgztn>00000000000000</CdOfDtaPdgOgztn></ContIdInf><ConSumInf><CtrctNbTe>CtrctNbTe0</CtrctNbTe><InfmRepDt>2006-05-04</InfmRepDt><Inf><Nm>Nm0</Nm><IDNb>IDNb0</IDNb><IDTp>0</IDTp></Inf><Inf><Nm>Nm1</Nm><IDNb>IDNb1</IDNb><IDTp>0</IDTp></Inf><CtrctMatrDt>2006-05-04</CtrctMatrDt><CtrctEfctDt>2006-05-04</CtrctEfctDt><CrdtLmtCurcy>AAA</CrdtLmtCurcy><CrdtLmtAdjDt>2006-05-04</CrdtLmtAdjDt><CrdtLmtAmt>49999999.50</CrdtLmtAmt><CrdtLmtReLo>1</CrdtLmtReLo><CtrctSts>1</CtrctSts><CtrctStsChgDt>2006-05-04</CtrctStsChgDt></ConSumInf></Document>";
 		DocumentBuilderFactory factory = DocumentBuilderFactory.newInstance();

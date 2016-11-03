@@ -1,6 +1,6 @@
 <%@ page language="java" contentType="text/html; charset=UTF-8" pageEncoding="UTF-8"%>
 <%@ taglib uri="http://java.sun.com/jsp/jstl/core" prefix="c" %>
-<script type="text/javascript" src="/js/batchConfig/quantityConfig.js"></script>
+<!-- <script type="text/javascript" src="/js/batchConfig/quantityConfig.js"></script> -->
 <div class="recordDetail" id="recordDetail">
 <html lang="zh-CN">
 <head>

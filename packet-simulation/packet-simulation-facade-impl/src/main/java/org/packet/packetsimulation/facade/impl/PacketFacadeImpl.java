@@ -99,7 +99,7 @@ public class PacketFacadeImpl implements PacketFacade {
        if(queryChannel==null){
           queryChannel = InstanceFactory.getInstance(QueryChannelService.class,"queryChannel");
        }
-     return queryChannel;
+       return queryChannel;
     }
 	
 	public InvokeResult getPacket(Long id) {
@@ -229,18 +229,12 @@ public class PacketFacadeImpl implements PacketFacade {
 		Packet packet = application.getPacket(packetId);
 		Date origSendDate = packet.getOrigSendDate();
    		DateFormat dateFormat = new SimpleDateFormat("yyyyMMddHHmmss");  
-   		String counter;
-   		String result;
 	   	List<Mesg> mesgList = findMesgsByPacketId(packetId);
-	   	if(null!=mesgList && mesgList.size()>0){
-	   		counter = fillStringToHead(8,""+mesgList.size(),"0");
-	   		result = PACKETCONSTANT.HEADER_START + packet.getFileVersion() + packet.getOrigSender() + dateFormat.format(origSendDate) + packet.getRecordType() + counter + PACKETCONSTANT.HEADER_RESERVED + "\r\n";
+	   	String result = PACKETCONSTANT.HEADER_START + "050" + packet.getRecordType() + packet.getFileVersion() + "10" + packet.getOrigSender() + dateFormat.format(origSendDate) + "0" + String.format("%07d", mesgList.size()) + "\r\n";
+	   	if(mesgList != null && mesgList.size() > 0){
 	   		for(Mesg mesg : mesgList){  			
 				result = result + mesg.getContent() + "\r\n";
 	   		}
-	   	}else{
-	   		counter = fillStringToHead(8,"0","0");
-	   		result = PACKETCONSTANT.HEADER_START + packet.getFileVersion() + packet.getOrigSender() + dateFormat.format(origSendDate) + packet.getRecordType() + counter + PACKETCONSTANT.HEADER_RESERVED + "\r\n";
 	   	}
 		return result;
 	}
@@ -256,18 +250,6 @@ public class PacketFacadeImpl implements PacketFacade {
 	   	}
 	   	List<Mesg> mesgList = getQueryChannelService().createJpqlQuery(jpql.toString()).setParameters(conditionVals).list();
 	   	return mesgList;
-	}
-	
-	private String fillStringToHead(int length,String target,String filler){
-		if(null!=target && target.length()<length && null!=filler && !"".equals(filler)){
-			String result = "";
-			for(int i=target.length();i<length;i++){
-				result = result + filler;
-			}
-			result = result + target;
-			return result;
-		}
-		return target;
 	}
 	
 	@Transactional

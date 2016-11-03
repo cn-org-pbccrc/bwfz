@@ -146,7 +146,7 @@ public class MesgController {
 	@ResponseBody
 	@RequestMapping("/initSend")
 	public InvokeResult initSend(@RequestParam String ids ,@RequestParam Long mesgType) {
-		Map map=new HashMap();
+		Map map = new HashMap();
 		String[] value = ids.split(",");
         Long[] idArrs = new Long[value.length];
 		for (int i = 0; i < value.length; i++) {
@@ -198,7 +198,7 @@ public class MesgController {
 		if (!file.exists()) {    	
 			file.mkdirs();    	
 		}	
-		String taskCreator=CurrentUser.getUserAccount();
+		String taskCreator = CurrentUser.getUserAccount();
 		taskDTO.setMissionId(missionId);
 		taskDTO.setTaskCreator(taskCreator);
 		taskDTO.setTaskCreatedTime(new Date());

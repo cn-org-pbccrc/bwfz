@@ -612,7 +612,6 @@ function initFun(){
 	 				            { name: 'remark', value: dialog.find("#remarkID").val()},
 	 				            { name: 'mesgFrom', value: 1}
 	 				           ];
-	                	alert(1)
 	    	        $.post('${pageContext.request.contextPath}/Mesg/add.koala', data).done(function(result){
 	     	        	if(result.success ){
 	     	            	dialog.modal('hide');
@@ -727,9 +726,9 @@ function initFun(){
     	                }
     	            }).find('.modal-body').html(html);
     	            self.initPage(dialog.find('form'));
-    	            var data = [{ name: 'ids', value: ids.join(',') },{ name: 'mesgType', value: $("#mesgType").val() }];
-    	            $.get( '${pageContext.request.contextPath}/Mesg/initSend.koala',data).done(function(json){
-    	            	var json=json.data;
+    	            var data = [{ name: 'ids', value: ids.join(',') }, { name: 'mesgType', value: $("#mesgType").val() }];
+    	            $.get('${pageContext.request.contextPath}/Mesg/initSend.koala', data).done(function(json){
+    	            	var json = json.data;
     	            	dialog.find("#mesgContentID").val(json.mesgContent);
     	            	dialog.find("#selectedRecordTypeID").val(json.mesgType);
     	            	if(json.bizType != ''){

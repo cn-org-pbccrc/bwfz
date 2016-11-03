@@ -442,10 +442,10 @@ public class MesgFacadeImpl implements MesgFacade {
 		String currentOrgNO = employeeUser.getDepartment()!=null?employeeUser.getDepartment().getSn():employeeUser.getCompany().getSn();
 		SimpleDateFormat dateFormat = new SimpleDateFormat("yyyyMMddhhmmss");
 		String currentDate = dateFormat.format(new Date());
-		String counter = String.format("%08d", ids.length);
-		mesgBuffer.append("A").append(PACKETCONSTANT.TASKPACKET_FILEVERSION).append(currentOrgNO).append(currentDate).append(mesgType).append(counter).append("                             ").append("\r\n");
+		String counter = String.format("%07d", ids.length);
+		mesgBuffer.append("A050").append(mesgType).append("2.0.0").append("10").append(currentOrgNO).append(currentDate).append("0").append(counter).append("\r\n");
 		for (Long id : ids) {
-			Mesg mesg=application.getMesg(id);
+			Mesg mesg = application.getMesg(id);
 			mesgBuffer.append(mesg.getContent()).append("\r\n");
 		}
 		return mesgBuffer.toString();
@@ -475,7 +475,7 @@ public class MesgFacadeImpl implements MesgFacade {
 		taskPacketDTO.setTaskId(task.getId());		
 		EmployeeUser employeeUser = findEmployeeUserByCreatedBy(taskDTO.getTaskCreator());
 		SimpleDateFormat dateFormat=new SimpleDateFormat("yyyyMMdd");
-		String orgCode= employeeUser.getDepartment()!=null?employeeUser.getDepartment().getSn():employeeUser.getCompany().getSn();
+		String orgCode = employeeUser.getDepartment()!=null?employeeUser.getDepartment().getSn():employeeUser.getCompany().getSn();
 		String selectedBizType;
 		if(!oriMesgType.equals("")){
 			MesgType mesgType = findMesgTypeByCode(oriMesgType);
@@ -483,23 +483,22 @@ public class MesgFacadeImpl implements MesgFacade {
 		}else{
 			selectedBizType = taskPacketDTO.getSelectedBizType();
 		}
-		String frontPosition =orgCode
+		String frontPosition = orgCode
 				+ dateFormat.format(new Date())
-				+ selectedBizType
-				+ PACKETCONSTANT.TASKPACKET_DATATYPE_NORMAL
+				+ taskPacketDTO.getSelectedRecordType()
 				+ PACKETCONSTANT.TASKPACKET_TRANSPORTDIRECTION_REPORT;
-		Integer maxPacketNo=findMaxPacketNumberByFrontPositionAndCreatedBy(frontPosition, taskPacketDTO.getCreatedBy());
-		if(maxPacketNo>9998){
-			return InvokeResult.failure("流水号最大值为9999!");
+		Integer maxPacketNo = findMaxPacketNumberByFrontPositionAndCreatedBy(frontPosition, taskPacketDTO.getCreatedBy());
+		if(maxPacketNo > 998){
+			return InvokeResult.failure("流水号最大值为999");
 		}
-	    String sn=String.format("%04d", maxPacketNo+1);	    
-	    createPacketFile(filePath, frontPosition+sn, mesgContent);
-		TaskPacket taskPacket=TaskPacketAssembler.toEntity(taskPacketDTO);
+	    String sn = String.format("%03d", maxPacketNo + 1);	    
+	    createPacketFile(filePath, frontPosition + sn + "0", mesgContent);
+		TaskPacket taskPacket = TaskPacketAssembler.toEntity(taskPacketDTO);
 		taskPacket.setTask(task);
 		taskPacket.setSelectedOrigSender(orgCode);
 		taskPacket.setFrontPosition(frontPosition);
-		taskPacket.setPacketNumber(maxPacketNo+1);
-		taskPacket.setSelectedPacketName(frontPosition+sn);
+		taskPacket.setPacketNumber(maxPacketNo + 1);
+		taskPacket.setSelectedPacketName(frontPosition + sn + "0");
 		taskPacket.setSelectedOrigSendDate(new Date());
 		taskPacket.setPacketFrom(PACKETCONSTANT.TASKPACKET_PACKETFROM_EASYSEND);
 		taskPacket.setSelectedDataType(0);
@@ -512,10 +511,10 @@ public class MesgFacadeImpl implements MesgFacade {
 	}
 	
 	private void createPacketFile(String path, String fileName, String mesgContent) {
-		File f = new File(path+fileName+".csv");//新建一个文件对象
+		File f = new File(path + fileName + ".csv");//新建一个文件对象
         FileWriter fw;
         try {
-        	fw=new FileWriter(f);	    
+        	fw = new FileWriter(f);	    
         	fw.write(mesgContent);
         	fw.close();
         } catch (IOException e) {
