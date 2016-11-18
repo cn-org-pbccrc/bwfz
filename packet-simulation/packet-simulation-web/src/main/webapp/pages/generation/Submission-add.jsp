@@ -54,7 +54,7 @@
 						<tr>
 							<td>
 								<div class="grid-body">
-									<div class="grid-table-head"  style="width:950px">
+									<div class="grid-table-head"  style="width:1150px">
 										<table class="table table-bordered" >
 											<tr>
 												<th class="v-itemId">标识符</th>
@@ -69,8 +69,8 @@
 											</tr>
 										</table>
 									</div>
-									<div class="grid-table-body" style="overflow-x: hidden;width:950px">
-										<table class="table table-bordered table-hover table-striped staticQueryRightTable" style="width:950px" id="itemTable">
+									<div class="grid-table-body" style="overflow-x: hidden;width:1150px">
+										<table class="table table-bordered table-hover table-striped staticQueryRightTable" style="width:1150px" id="itemTable">
 										</table>
 									</div>
 								</div>

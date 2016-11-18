@@ -91,7 +91,7 @@
 					<tr>
 						<td>
 							<div class="grid-body">
-								<div class="grid-table-head"  style="width:950px">
+								<div class="grid-table-head"  style="width:1100px">
 									<table class="table table-bordered" >
 										<tr>
 											<th class="v-itemId">标识符</th>
@@ -106,9 +106,9 @@
 										</tr>
 									</table>
 								</div>
-								<div class="grid-table-body" style="overflow-x: hidden;width:950px">
+								<div class="grid-table-body" style="overflow-x: hidden;width:1100px">
 									<table
-										class="table table-bordered table-hover table-striped staticQueryRightTable" style="width:950px"
+										class="table table-bordered table-hover table-striped staticQueryRightTable" style="width:1100px"
 										id="itemTable">
 									</table>
 								</div>

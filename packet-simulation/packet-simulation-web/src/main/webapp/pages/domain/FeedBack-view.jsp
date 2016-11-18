@@ -162,7 +162,7 @@ legend {
 				var data = [{ name: 'code', value: code },
 				            { name: 'sourceCode', value: sourceCode },
 					        { name: 'xml', value: '' }
-				            ];
+				];
 				if(catagory == 'modify'){
 					var modSegMark = $('#content1').find('.active.in').attr('id');
 					var xml = '<MdfcSgmt-' + modSegMark + '>';
@@ -171,8 +171,7 @@ legend {
 							var name = ($(this).attr('name'));
 		    				var value = ($(this).attr('value'));
 							xml += '<' + name + '>' + value + '</' + name + '>';
-						}
-						else{
+						}else{
 							var name = ($(this).attr('name')); 
 							xml += '<' + name + '>';
 							$(this).parent().find($("[subName]")).each(function(){
@@ -187,7 +186,7 @@ legend {
 					data = [{ name: 'code', value: code },
 					        { name: 'sourceCode', value: sourceCode },
 					        { name: 'xml', value: xml }
-					        ];
+					];
 				}				
 				$.get('${pageContext.request.contextPath}/MesgType/getEditHtmlByCode.koala', data).done(function(data){
                     $("#content2").append(data.data);   
@@ -196,7 +195,7 @@ legend {
         				$('[name="' + map[key] + '"]').attr('value', value);
     				}
                     var data = [{ name: 'code', value: code}];
-                    $.get( '${pageContext.request.contextPath}/FeedBack/initSend.koala',data).done(function(json){
+                    $.get('${pageContext.request.contextPath}/FeedBack/initSend.koala', data).done(function(json){
     	            	var json = json.data;
     	            	var xml = json.packetHead;
     	            	var info = $("#content2").find($(".tab-content")).attr('id');
@@ -218,8 +217,7 @@ legend {
         								var value = ($(this).val());
         								xml += '<' + name + '>' + value + '</' + name + '>';
         							}
-        						}
-        						else{
+        						}else{
         							var name = ($(this).attr('name')); 
         							xml += '<' + name + '>';
         							$(this).parent().parent().find($("[subName]")).each(function(){

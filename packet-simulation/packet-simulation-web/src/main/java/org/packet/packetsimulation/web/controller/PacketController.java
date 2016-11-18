@@ -76,8 +76,6 @@ import javax.crypto.IllegalBlockSizeException;
 import javax.crypto.KeyGenerator;
 import javax.crypto.NoSuchPaddingException;
 
-
-
 @Controller
 @RequestMapping("/Packet")
 public class PacketController {

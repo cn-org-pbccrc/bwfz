@@ -533,10 +533,11 @@ var loadMesgTree = function(){
     });
 };
 var segmentEdit = function(id, recordId){
+	var h = $(window).height();
 	var dialog = $('<div class="modal fade"><div class="modal-dialog" style="width: 80% !important;">'
 			+'<div class="modal-content"><div class="modal-header"><button type="button" class="close" '
 		    +'data-dismiss="modal" aria-hidden="true">&times;</button>'
-		    +'<h4 class="modal-title">编辑段信息</h4></div><div class="modal-body" style="overflow-y:auto; max-height:480px;">'
+		    +'<h4 class="modal-title">编辑段信息</h4></div><div class="modal-body" style="overflow-y:auto; height:' + 0.8 * h + 'px;">'
 		    +'<p>One fine body&hellip;</p></div></div>'
 		    +'</div></div>');
 	$.get('<%=path%>/Segment-edit.jsp').done(function(html){
@@ -727,9 +728,10 @@ var getAllData = function(dialog){
 };
 
 var addSegment = function(recordId, grid){
+	var h = $(window).height();
 	var self = this;
 	var recordSegmentId = grid.attr("recordSegmentId");
-    var dialog = $('<div class="modal fade"><div class="modal-dialog" style="width: 80% !important;"><div class="modal-content"><div class="modal-header"><button type="button" class="close" data-dismiss="modal" aria-hidden="true">&times;</button><h4 class="modal-title">新增段</h4></div><div class="modal-body" style="overflow-y:auto; max-height:500px;"><p>One fine body&hellip;</p></div></div></div></div>');
+    var dialog = $('<div class="modal fade"><div class="modal-dialog" style="width: 80% !important;"><div class="modal-content"><div class="modal-header"><button type="button" class="close" data-dismiss="modal" aria-hidden="true">&times;</button><h4 class="modal-title">新增段</h4></div><div class="modal-body" style="overflow-y:auto; height:' + 0.8 * h + 'px;"><p>One fine body&hellip;</p></div></div></div></div>');
     $.get('<%=path%>/RecordSegmentEditConfig.jsp').done(function(html){
         dialog.modal({
             keyboard:false,
@@ -824,9 +826,10 @@ var addSegment = function(recordId, grid){
 }
 
 var modifySegment = function(recordId, segmentId, grid){
+	var h = $(window).height();
 	var self = this;
 	var recordSegmentId = grid.attr("recordSegmentId");
-	var dialog = $('<div class="modal fade"><div class="modal-dialog" style="width: 80% !important;"><div class="modal-content"><div class="modal-header"><button type="button" class="close" data-dismiss="modal" aria-hidden="true">&times;</button><h4 class="modal-title">修改段</h4></div><div class="modal-body" style="overflow-y:auto; max-height:500px;"><p>One fine body&hellip;</p></div></div></div></div>');
+	var dialog = $('<div class="modal fade"><div class="modal-dialog" style="width: 80% !important;"><div class="modal-content"><div class="modal-header"><button type="button" class="close" data-dismiss="modal" aria-hidden="true">&times;</button><h4 class="modal-title">修改段</h4></div><div class="modal-body" style="overflow-y:auto; height:' + 0.8 * h + 'px;"><p>One fine body&hellip;</p></div></div></div></div>');
     $.get('<%=path%>/RecordSegmentEditConfig.jsp').done(function(html){
         dialog.modal({
             keyboard:false,

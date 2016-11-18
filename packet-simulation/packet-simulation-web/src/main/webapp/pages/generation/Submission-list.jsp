@@ -104,7 +104,7 @@ $(function (){
 	         });
 	    },
 	    add: function(grid){
-	    	var dialog = $('<div class="modal fade"><div class="modal-dialog" style="width:1040px;">'
+	    	var dialog = $('<div class="modal fade"><div class="modal-dialog" style="width:1200px;">'
 	    			+'<div class="modal-content"><div class="modal-header"><button type="button" class="close" '
 	    		    +'data-dismiss="modal" aria-hidden="true">&times;</button>'
 	    		    +'<h4 class="modal-title">编辑报文</h4></div><div class="modal-body">'
@@ -161,7 +161,7 @@ $(function (){
 	    },
 	    modify: function(id, grid){
 	        var self = this;
-	        var dialog = $('<div class="modal fade"><div class="modal-dialog" style="width:1040px;"><div class="modal-content"><div class="modal-header"><button type="button" class="close" data-dismiss="modal" aria-hidden="true">&times;</button><h4 class="modal-title">修改</h4></div><div class="modal-body"><p>One fine body&hellip;</p></div></div></div></div>');
+	        var dialog = $('<div class="modal fade"><div class="modal-dialog" style="width:1150px;"><div class="modal-content"><div class="modal-header"><button type="button" class="close" data-dismiss="modal" aria-hidden="true">&times;</button><h4 class="modal-title">修改</h4></div><div class="modal-body"><p>One fine body&hellip;</p></div></div></div></div>');
 	        $.get('<%=path%>/Submission-update.jsp').done(function(html){
 	        	dialog.find('.modal-body').html(html);
 	            self.initPage(dialog.find('form'));

@@ -4,6 +4,33 @@
 <meta http-equiv="Content-Type" content="text/html; charset=UTF-8">
 </head>
 <style>
+.recordItemConfig  .v-itemId {
+	width: 7%;
+}
+.recordItemConfig  .v-itemName {
+	width: 14%;
+}
+.recordItemConfig  .v-itemType {
+	width: 10%;
+}
+.recordItemConfig .v-itemLength {
+	width: 8%;
+}
+.recordItemConfig  .v-itemLocation {
+	width: 9%;
+}
+.recordItemConfig  .v-itemDesc {
+	width: 14%;
+}
+.recordItemConfig .v-state {
+	width: 12%;
+}
+.recordItemConfig .v-itemValue {
+	width: 13%;
+}
+.recordItemConfig .v-itemPrompt {
+	width: 13%;
+}
 </style>
 <body>
 	<form class="form-horizontal" id="itemForm">
