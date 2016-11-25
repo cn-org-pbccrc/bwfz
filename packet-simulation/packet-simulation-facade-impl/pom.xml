@@ -57,6 +57,10 @@
 		<dependency>
 		    <groupId>jaxen</groupId>
 		    <artifactId>jaxen</artifactId>
-		</dependency> 
+		</dependency>
+		<dependency>
+			<groupId>org.pbccrc</groupId>
+			<artifactId>qry-ntr-subjectid-api</artifactId>
+		</dependency>
     </dependencies> 
 </project>

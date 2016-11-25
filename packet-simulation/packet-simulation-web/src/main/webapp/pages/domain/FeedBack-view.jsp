@@ -153,48 +153,51 @@ legend {
 				});
 			},
 			'onNext' : function(tab, navigation, index) {
-				$("#content2").empty();				
 				var flag = $('input:radio:checked').attr('flag');
 				var code = $('input:radio:checked').val();
 				var sourceCode = $('input:radio:checked').attr('sourceCode');
 				var catagory = $('input:radio:checked').attr('catagory');
 				var map = eval("("+flag+")");
-				var data = [{ name: 'code', value: code },
-				            { name: 'sourceCode', value: sourceCode },
-					        { name: 'xml', value: '' }
-				];
-				if(catagory == 'modify'){
-					var modSegMark = $('#content1').find('.active.in').attr('id');
-					var xml = '<MdfcSgmt-' + modSegMark + '>';
-					$('#'+modSegMark).find($("[name]")).each(function(){
-						if($(this).parent()[0].tagName != 'FIELDSET'){        							
-							var name = ($(this).attr('name'));
-		    				var value = ($(this).attr('value'));
-							xml += '<' + name + '>' + value + '</' + name + '>';
-						}else{
-							var name = ($(this).attr('name')); 
-							xml += '<' + name + '>';
-							$(this).parent().find($("[subName]")).each(function(){
-								var subName = ($(this).attr('subName'));
-								var value = ($(this).attr('value'));	
-								xml += '<' + subName + '>' + value + '</' + subName + '>';
-							});
-							xml += '</' + name + '>';
-						}
-					});
-					xml += '</MdfcSgmt-' + modSegMark + '>';
-					data = [{ name: 'code', value: code },
-					        { name: 'sourceCode', value: sourceCode },
-					        { name: 'xml', value: xml }
+				if(index == 1){
+					$("#content2").empty();				
+					var data = [{ name: 'code', value: code },
+					            { name: 'sourceCode', value: sourceCode },
+						        { name: 'xml', value: '' }
 					];
-				}				
-				$.get('${pageContext.request.contextPath}/MesgType/getEditHtmlByCode.koala', data).done(function(data){
-                    $("#content2").append(data.data);   
-                    for (var key in map){
-                    	var value = $('#content1').find('[name="' + key +'"]').attr('value');
-        				$('[name="' + map[key] + '"]').attr('value', value);
-    				}
-                    var data = [{ name: 'code', value: code}];
+					if(catagory == 'modify'){
+						var modSegMark = $('#content1').find('.active.in').attr('id');
+						var xml = '<MdfcSgmt-' + modSegMark + '>';
+						$('#'+modSegMark).find($("[name]")).each(function(){
+							if($(this).parent()[0].tagName != 'FIELDSET'){        							
+								var name = ($(this).attr('name'));
+			    				var value = ($(this).attr('value'));
+								xml += '<' + name + '>' + value + '</' + name + '>';
+							}else{
+								var name = ($(this).attr('name')); 
+								xml += '<' + name + '>';
+								$(this).parent().find($("[subName]")).each(function(){
+									var subName = ($(this).attr('subName'));
+									var value = ($(this).attr('value'));	
+									xml += '<' + subName + '>' + value + '</' + subName + '>';
+								});
+								xml += '</' + name + '>';
+							}
+						});
+						xml += '</MdfcSgmt-' + modSegMark + '>';
+						data = [{ name: 'code', value: code },
+						        { name: 'sourceCode', value: sourceCode },
+						        { name: 'xml', value: xml }
+						];
+					}				
+					$.get('${pageContext.request.contextPath}/MesgType/getEditHtmlByCode.koala', data).done(function(data){
+	                    $("#content2").append(data.data);   
+	                    for (var key in map){
+	                    	var value = $('#content1').find('[name="' + key +'"]').attr('value');
+	        				$('[name="' + map[key] + '"]').attr('value', value);
+	    				}
+					});
+				}else if(index == 2){
+					var data = [{ name: 'code', value: code}];
                     $.get('${pageContext.request.contextPath}/FeedBack/initSend.koala', data).done(function(json){
     	            	var json = json.data;
     	            	var xml = json.packetHead;
@@ -241,8 +244,8 @@ legend {
         				});
         				xml += '</'+info+'></Document>';
         				$('#tab3').find("#mesgContentID").val(xml);
-	                });                    
-				});			
+	                });
+				}
 			},
 			'onTabClick' : function() {
 				return false;

@@ -6,18 +6,46 @@
 </style>
 </head>
 <body>
-<form class="form-horizontal">
-	<div class="form-group">
-    	<label class="col-lg-3 control-label">两标:</label>
-		<div class="col-lg-9">
-    		<input name="compression" style="display:inline; width:27%;" class="form-control"  type="text"  id="compressionID" />
-			<button id="query" class="btn btn-primary" type="button"><span class="glyphicon glyphicon-plus"><span>查询</button>
+<!-- <div class="tab-content">
+	<div class="container-fluid">
+		<div class="row">
+			<div class="col-md-3">
+				<div class="form-group">
+					<div class="col-lg-12">
+						<div id="ifChoose" class="btn-group select"></div>
+					</div>
+				</div>
+			</div>
+			<div class="col-md-8">
+				<form class="form-inline" id="ifQuery">
+					<button id="query" type="button" class="btn btn-primary">查询</button>
+				</form>
+			</div>
 		</div>
+		<div id="right-box" style="height: 510px; border-right: 1px solid rgb(221, 221, 221); border-bottom: 1px solid rgb(221, 221, 221); border-radius: 0px; resize: none; overflow-y: scroll; outline: medium none; position: relative;">
+            <div class="ro" id="json-target" style="padding: 0px 25px;"></div>
+        </div>
 	</div>
-	<div id="right-box" style="height: 510px; border-right: 1px solid rgb(221, 221, 221); border-bottom: 1px solid rgb(221, 221, 221); border-radius: 0px; resize: none; overflow-y: scroll; outline: medium none; position: relative;">
-        <div class="ro" id="json-target" style="padding: 0px 25px;"></div>
+</div> -->
+<div class="form-inline">
+	<div class="form-group">
+		<span class="control-label">接口:</span>
+        <div class="btn-group select" id="ifSelect"></div>
+	</div>
+    <div class="form-group">
+        <span class="control-label">方法:</span>
+        <div class="btn-group select" id="mtSelect"> </div>
     </div>
-</form>
+    <div class="form-group">
+		<form class="form-inline" id="ifQuery">
+			<button id="query" type="button" class="btn btn-primary">查询</button>
+		</form>
+	</div>
+</div>
+<div id="right-box" style="height: 510px; border-right: 1px solid rgb(221, 221, 221); border-bottom: 1px solid rgb(221, 221, 221); border-radius: 0px; resize: none; overflow-y: scroll; outline: medium none; position: relative;">
+    <div class="ro" id="json-target" style="padding: 0px 25px;"></div>
+</div>
+
 <link rel="stylesheet" href="${contextPath}/query/index.css"/>
 <script src="${contextPath}/query/hm.js"></script>
 <script src="${contextPath}/query/hm_001.js"></script>
@@ -53,6 +81,63 @@ $('#query').click(function(){
 	        $('#json-target').html('');
 	    }
     });
+});
+var ifContents = [];
+var selectedInfo;
+var info = {};
+$.ajax({
+	url : '${pageContext.request.contextPath}/QueryRepository/getInterfaceList.koala',
+	success : function(data){
+		$.each(data.data, function(k, v){
+			ifContents.push({title : v.id, value : v.id});
+		});
+		$('#ifSelect').data('koala.select').options.contents = ifContents;
+		$('#ifSelect').data('koala.select').setItems(ifContents);
+
+     }
+});
+$('#ifSelect').select({
+	title: '请选择查询接口',
+	contents : ifContents
+}).on('change', function(){
+	$('#mtSelect').setSelectItems([]);
+	var interfaceId = $(this).getValue();
+	var url = '${pageContext.request.contextPath}/QueryRepository/getMethodList.koala?interfaceId=' + interfaceId;
+	$.get(url).done(function(data){
+		if(data.result){
+			$('#ifSelect').message({
+				type: 'error',
+				content: data.errorMessage
+			});
+			$(this).find('[data-toggle="item"]').text('请选择');
+			return;
+		}
+		var mtContents = [];
+		info.data = data.data;
+		$.each(data.data, function(k, v){
+			mtContents.push({title : v.title, value : v.id});
+		});
+		$('#mtSelect').setSelectItems(mtContents);
+		$('#mtSelect').setValue(mtContents[0].value);
+	});
+});
+$('#mtSelect').select({
+	title : '请选择查询方法'
+}).on('change', function(){
+	var choosenTitle = $(this).getValue();
+	$.each(info.data, function(k, v){
+		if(info.data[k].id == choosenTitle){
+			selectedInfo = info.data[k];
+		}	
+	});
+	$('#ifQuery').children('.form-group').remove();
+	if(selectedInfo.queryCondition){
+		$.each(selectedInfo.queryCondition, function(k,v){
+			$('#ifQuery').prepend(
+				'<div class="form-group"><div class="input-group"><div class="input-group-addon">' + v.title + '</div><input id="param" name= ' + v.name +' type="text" class="form-control" placeholder="" /></div></div>'
+			);
+		});
+	}
 });
 </script>
 </body>

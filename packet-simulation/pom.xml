@@ -833,7 +833,16 @@
             	<artifactId>dom4j</artifactId>
             	<version>1.6.1</version>
         	</dependency>
-
+			<dependency>
+				<groupId>org.pbccrc</groupId>
+				<artifactId>qry-ntr-subjectid-api</artifactId>
+				<version>0.0.1-SNAPSHOT</version>
+			</dependency>
+			<dependency>
+				<groupId>org.pbccrc</groupId>
+				<artifactId>qry-ntr-certcredit-api</artifactId>
+				<version>0.0.1-SNAPSHOT</version>
+			</dependency>
         </dependencies>
 
     </dependencyManagement>

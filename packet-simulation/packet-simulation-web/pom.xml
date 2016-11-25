@@ -133,6 +133,14 @@
 			<artifactId>commons-io</artifactId>
 			<version>2.4</version>
 		</dependency>
+<!-- 		<dependency> -->
+<!-- 			<groupId>org.pbccrc</groupId> -->
+<!-- 			<artifactId>qry-ntr-subjectid-api</artifactId> -->
+<!-- 		</dependency> -->
+		<dependency>
+			<groupId>org.pbccrc</groupId>
+			<artifactId>qry-ntr-certcredit-api</artifactId>
+		</dependency>
     </dependencies>  
     <build> 
         <plugins> 

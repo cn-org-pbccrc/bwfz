@@ -313,7 +313,7 @@ var mark;
 function openLotSubmission(id){
     var thiz 	= $(this);
     var  mark 	= thiz.attr('mark');
-    mark = openTab("/pages/domain/LotSubmission-list.jsp", "添加文件 ", 'addSubmission', id);
+    mark = openTab("/pages/generation/LotSubmission-list.jsp", "添加文件 ", 'addSubmission', id);
     if(mark){
         thiz.attr("mark",mark);
     }

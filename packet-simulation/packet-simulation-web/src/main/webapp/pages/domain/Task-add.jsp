@@ -7,7 +7,7 @@
 <form class="form-horizontal">
 	
 	           <div class="form-group">
-                    <label class="col-lg-3 control-label">任务名称:</label>
+                    <label class="col-lg-3 control-label">批次名称:</label>
 	                    <div class="col-lg-9">
                            <input name="taskName" style="display:inline; width:94%;" class="form-control"  type="text" dataType="Require" id="taskNameID" />
 		<span class="required">*</span>	    </div>

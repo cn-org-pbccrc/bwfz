@@ -5,6 +5,35 @@
    String path = request.getContextPath()+request.getServletPath().substring(0,request.getServletPath().lastIndexOf("/")+1);
 %>
 <meta http-equiv="Content-Type" content="text/html; charset=UTF-8">
+<style>
+.recordItemConfig  .v-itemId {
+	width: 7%;
+}
+.recordItemConfig  .v-itemName {
+	width: 14%;
+}
+.recordItemConfig  .v-itemType {
+	width: 10%;
+}
+.recordItemConfig .v-itemLength {
+	width: 8%;
+}
+.recordItemConfig  .v-itemLocation {
+	width: 9%;
+}
+.recordItemConfig  .v-itemDesc {
+	width: 14%;
+}
+.recordItemConfig .v-state {
+	width: 12%;
+}
+.recordItemConfig .v-itemValue {
+	width: 13%;
+}
+.recordItemConfig .v-itemPrompt {
+	width: 13%;
+}
+</style>
 <%@ taglib uri="http://java.sun.com/jsp/jstl/core" prefix="c" %>
 <script type="text/javascript" src="<c:url value='/js/generation/recordEdit.js' />"></script>
 <body>	
@@ -24,15 +53,7 @@
             	<div class="selectRecordGrid"></div>
 	    	</div>
 	    	<div class="tab-pane" id="tab2">
-<!-- 				<div class="form-group"> -->
-<!-- 					<p> -->
-<!-- 						<label class="rgt">报文名称 :</label>  -->
-<!-- 						<label class="lft">  -->
-<!-- 							<input name="name" class="form-control" type="text" id="nameID" /> -->
-<!-- 						</label> -->
-<!-- 					</p> -->
-<!-- 				</div> -->
-				<div class="form-group row">
+				<div class="form-group row">					
 					<div class="col-lg-6 form-group">
 						<label class="col-lg-3 control-label">报文名称:</label>
 						<div class="col-lg-9">
@@ -40,13 +61,7 @@
 							<span class="required">*</span>
 						</div>
 					</div>
-					<div id="mark" class="col-lg-6 form-group">
-<!-- 						<label class="col-lg-3 control-label">非银填充位:</label> -->
-<!-- 						<div class="col-lg-9"> -->
-<!-- 							<input name=padding class="form-control" type="text" dataType="Require" id="paddingID" /> -->
-<!-- 							<span class="required">*</span> -->
-<!-- 						</div> -->
-					</div>
+					<div id="mark" class="col-lg-6 form-group"></div>
 				</div>
 				<div class="panel panel-default table-responsive">
 					<div class="panel-heading">数据项</div>
@@ -70,8 +85,7 @@
 										</table>
 									</div>
 									<div class="grid-table-body" style="overflow-x: hidden;width:1150px">
-										<table class="table table-bordered table-hover table-striped staticQueryRightTable" style="width:1150px" id="itemTable">
-										</table>
+										<table class="table table-bordered table-hover table-striped staticQueryRightTable" style="width:1150px" id="itemTable"></table>
 									</div>
 								</div>
 							</td>
