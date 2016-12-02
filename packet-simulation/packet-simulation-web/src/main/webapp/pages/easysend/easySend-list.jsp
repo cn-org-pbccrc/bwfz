@@ -245,7 +245,7 @@ function initFun(){
 			initTaskPacketGridPanel : function() {
 				var self = this;
 				var columns = [
-				            { title: '任务名称', name: 'task', width: 100,
+				            { title: '任务名称', name: 'task', width: 80,
 				            	render:function(item, name, index){
 				            		return item[name].taskName
 				            	}	
@@ -281,7 +281,7 @@ function initFun(){
 					             }	
 					                }
 	                        },
-	                        { title: '反馈时间', name: 'receiveDate', width: 100,
+	                        { title: '反馈时间', name: 'receiveDate', width: 70,
 	                        	render: function(item, name, index){
 					                if(item[name]){
 					                var d = new Date(item[name]);    //根据时间戳生成的时间对象
@@ -297,7 +297,7 @@ function initFun(){
 					             }
 					                }
 	                        },
-                         	{ title: '状态', name: 'sendState', width: 100,
+                         	{ title: '状态', name: 'sendState', width: 70,
 	                        	render: function(item, name, index){
 					                 if(item[name] == '0'){
 					                     return '失败';
@@ -314,7 +314,7 @@ function initFun(){
 							title : '操作',
 							render : function(rowdata, name, index) {
 								var param = '"' + rowdata.id + '"';
-								var h = "<a href='javascript:openSourceFile("+ param + ")'><span class='glyphicon glyphicon glyphicon-book'></span>&nbsp查看文件</a>&nbsp&nbsp&nbsp&nbsp<a href='javascript:openFeedBackFile("
+								var h = "<a href='javascript:openSourceFile("+ param + ")'><span class='glyphicon glyphicon glyphicon-book'></span>&nbsp查看文件</a>&nbsp&nbsp&nbsp&nbsp<a href='javascript:downSourceFile("+ param + ")'><span class='glyphicon glyphicon glyphicon-export'></span>&nbsp下载文件</a>&nbsp&nbsp&nbsp&nbsp<a href='javascript:openFeedBackFile("
 										+ param + ")'><span class='glyphicon glyphicon glyphicon-eye-open'></span>&nbsp查看反馈</a>&nbsp&nbsp&nbsp&nbsp<a href='javascript:deleteTaskPacket("+param+")'><span class='glyphicon glyphicon glyphicon-remove'></span>&nbsp删除</a> ";
 								return h;
 							}
@@ -927,6 +927,12 @@ var openSourceFile = function(id){
             });
     });
 }
+
+var downSourceFile = function(id){
+	var date = new Date();
+	window.open('${pageContext.request.contextPath}/TaskPacket/downSourceFile/' + id + '.koala?id='+date.getTime()+'.txt');
+}
+
  var mark;
  function openFeedBackFile(id){
      var thiz 	= $(this);

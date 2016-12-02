@@ -10,7 +10,7 @@ public interface RecordSegmentFacade {
 
 	public InvokeResult getRecordSegment(Long recordSegmentId);
 	
-	public InvokeResult getUpdateRecordSegment(Long recordSegmentId, Long segmentId);
+	public InvokeResult getUpdateRecordSegment(Long recordSegmentId, String checkedLocalData);
 	
 	public InvokeResult creatRecordSegment(RecordSegmentDTO recordSegment);
 	
@@ -24,6 +24,6 @@ public interface RecordSegmentFacade {
 	
 	public Page<RecordSegmentDTO> pageQueryRecordSegment(RecordSegmentDTO recordSegment, int currentPage, int pageSize);
 	
-	public List<RecordSegmentDTO> findRecordSegmentByRecordType(Long id);
+	public List<RecordSegmentDTO> findRecordSegmentByRecordType(Long submissionId);
 }
 

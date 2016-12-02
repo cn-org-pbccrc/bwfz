@@ -15,6 +15,7 @@ import org.dayatang.utils.Page;
 import org.openkoala.koala.commons.InvokeResult;
 import org.packet.packetsimulation.application.RecordSegmentApplication;
 import org.packet.packetsimulation.application.RecordTypeApplication;
+import org.packet.packetsimulation.application.SubmissionApplication;
 import org.packet.packetsimulation.core.domain.Segment;
 import org.packet.packetsimulation.facade.RecordSegmentFacade;
 import org.packet.packetsimulation.facade.dto.RecordSegmentDTO;
@@ -24,8 +25,10 @@ import org.packet.packetsimulation.facade.impl.assembler.RecordSegmentAssembler;
 import org.packet.packetsimulation.facade.impl.assembler.RecordTypeAssembler;
 import org.packet.packetsimulationGeneration.core.domain.RecordItem;
 import org.packet.packetsimulationGeneration.core.domain.RecordSegment;
+import org.packet.packetsimulationGeneration.core.domain.Submission;
 
 import com.alibaba.fastjson.JSON;
+import com.alibaba.fastjson.JSONArray;
 import com.alibaba.fastjson.JSONObject;
 
 @Named
@@ -33,8 +36,12 @@ public class RecordSegmentFacadeImpl implements RecordSegmentFacade {
 
 	@Inject
 	private RecordSegmentApplication  application;
+	
 	@Inject
 	private RecordTypeApplication  recordTypeApplication;
+	
+	@Inject
+	private SubmissionApplication  submissionApplication;
 
 	private QueryChannelService queryChannel;
 
@@ -49,17 +56,16 @@ public class RecordSegmentFacadeImpl implements RecordSegmentFacade {
 		return InvokeResult.success(RecordSegmentAssembler.toDTO(application.getRecordSegment(recordSegmentId)));
 	}
 	
-	public InvokeResult getUpdateRecordSegment(Long recordSegmentId, Long segmentId){
-		Segment segment = findSegmentById(segmentId);
-		String content = segment.getContent();
-		JSONObject obj = JSON.parseObject(content);		
+	public InvokeResult getUpdateRecordSegment(Long recordSegmentId, String checkedLocalData){
+		JSONArray objArr = JSON.parseArray(checkedLocalData);
+		JSONObject obj = objArr.getJSONObject(0);
 		RecordSegment recordSegment = application.getRecordSegment(recordSegmentId);
 		List<RecordItem> recordItems = recordSegment.getRecordItems();
 		for(int i = 0; i < recordItems.size(); i++){
 			RecordItem recordItem = recordItems.get(i);
 			recordItem.setItemValue(obj.getString(recordItem.getItemId()));
 		}
-		recordSegment.setVersion(segment.getVersion());
+		//recordSegment.setVersion(segment.getVersion());
 		return InvokeResult.success(RecordSegmentAssembler.toDTO(recordSegment));
 	}
 	
@@ -135,15 +141,17 @@ public class RecordSegmentFacadeImpl implements RecordSegmentFacade {
 	}
 
 	@Override
-	public List<RecordSegmentDTO> findRecordSegmentByRecordType(Long id) {
+	public List<RecordSegmentDTO> findRecordSegmentByRecordType(Long submissionId){
+		Submission submisssion = submissionApplication.getSubmission(submissionId);
+		Long recordTypeId = submisssion.getRecordType().getId();
 		List<Object> conditionVals = new ArrayList<Object>();
-	   	StringBuilder jpql = new StringBuilder("select _segment from RecordSegment _segment  where 1=1 ");	   	
-	   	if (id != null ) {
-	   		jpql.append(" and _segment.recordType.id = ? ");
-	   		conditionVals.add(id);
+	   	StringBuilder jpql = new StringBuilder("select _recordSegment from RecordSegment _recordSegment  where 1=1 ");	   	
+	   	if (recordTypeId != null ) {
+	   		jpql.append(" and _recordSegment.recordType.id = ? ");
+	   		conditionVals.add(recordTypeId);
 	   	}
-	   	List<RecordSegment> segmentList = getQueryChannelService().createJpqlQuery(jpql.toString()).setParameters(conditionVals).list();
-	   	return  RecordSegmentAssembler.toDTOs(segmentList);		
+	   	List<RecordSegment> recordSegmentList = getQueryChannelService().createJpqlQuery(jpql.toString()).setParameters(conditionVals).list();
+	   	return  RecordSegmentAssembler.toDTOs(recordSegmentList);		
 	}
 	
 	public Segment findSegmentById(Long id) {

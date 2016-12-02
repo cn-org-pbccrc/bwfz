@@ -207,8 +207,8 @@ public class FeedBackFacadeImpl implements FeedBackFacade {
 		String currentOrgNO = employeeUser.getDepartment().getSn();
 		SimpleDateFormat dateFormat = new SimpleDateFormat("yyyyMMddhhmmss");
 		String currentDate = dateFormat.format(new Date());
-		String counter = String.format("%08d", 1);
-		packetHead.append("A").append(PACKETCONSTANT.TASKPACKET_FILEVERSION).append(currentOrgNO).append(currentDate).append(code).append(counter).append("                             ").append("\r\n");
+		String counter = String.format("%07d", 1);
+		packetHead.append("A050").append(code).append("2.0.0").append("10").append(currentOrgNO).append(currentDate).append("0").append(counter).append("\r\n");
 		return packetHead.toString();
 	}
 	

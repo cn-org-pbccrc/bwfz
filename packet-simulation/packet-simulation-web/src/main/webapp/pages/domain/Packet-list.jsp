@@ -125,7 +125,7 @@ function initFun(){
 	                                     var param = '"' + rowdata.id + '"';
 	                                     var packId = '"' + rowdata.packId + '"';
 	                                     var h = "<a href='javascript:openPacket(" + param + ")'><span class='glyphicon glyphicon glyphicon-edit'></span>&nbsp记录管理</a> "
-	                                     +"&nbsp;&nbsp;<a href='javascript:downloadCSV(" + param + ")'><span class='glyphicon glyphicon glyphicon-export'></span>&nbsp导出csv文件</a> "
+	                                     +"&nbsp;&nbsp;<a href='javascript:downloadCSV(" + param + ")'><span class='glyphicon glyphicon glyphicon-export'></span>&nbsp导出txt文件</a> "
 	                                     +"&nbsp;&nbsp;<a href='javascript:downloadENC(" + param + ")'><span class='glyphicon glyphicon glyphicon-export'></span>&nbsp导出enc文件</a>"
 	                                     +"&nbsp;&nbsp;<a href='javascript:openPacketView(" + param + ")'><span class='glyphicon glyphicon glyphicon-eye-open'></span>&nbsp显示报文</a>";
 	                                     return h;
@@ -473,7 +473,7 @@ function openPacket(id){
 
 function downloadCSV(id){
 	var date = new Date();
-	window.open('${pageContext.request.contextPath}/Packet/downloadCSV/' + id + '.koala?id='+date.getTime()+'.csv');
+	window.open('${pageContext.request.contextPath}/Packet/downloadCSV/' + id + '.koala?id='+date.getTime()+'.txt');
 }
 
 function downloadENC(id){

@@ -134,7 +134,7 @@ $('#mtSelect').select({
 	if(selectedInfo.queryCondition){
 		$.each(selectedInfo.queryCondition, function(k,v){
 			$('#ifQuery').prepend(
-				'<div class="form-group"><div class="input-group"><div class="input-group-addon">' + v.title + '</div><input id="param" name= ' + v.name +' type="text" class="form-control" placeholder="" /></div></div>'
+				'<div class="form-group"><div class="input-group"><div class="input-group-addon">' + v.title + '</div><input id="param" name= ' + v.name +' type="text" class="form-control" placeholder=""/></div></div>'
 			);
 		});
 	}

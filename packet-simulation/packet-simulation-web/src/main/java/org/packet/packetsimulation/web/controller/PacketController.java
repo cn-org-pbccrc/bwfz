@@ -1,17 +1,11 @@
 package org.packet.packetsimulation.web.controller;
 
-import java.io.BufferedReader;
 import java.io.ByteArrayInputStream;
 import java.io.ByteArrayOutputStream;
 import java.io.File;
-import java.io.FileInputStream;
 import java.io.IOException;
 import java.io.InputStream;
-import java.io.InputStreamReader;
 import java.io.OutputStream;
-import java.io.Reader;
-import java.io.StringReader;
-import java.io.StringWriter;
 import java.security.SecureRandom;
 import java.text.ParseException;
 import java.text.SimpleDateFormat;
@@ -20,7 +14,6 @@ import java.util.HashMap;
 import java.util.Map;
 import java.util.zip.GZIPInputStream;
 import java.util.zip.GZIPOutputStream;
-
 import javax.crypto.Cipher;
 import javax.crypto.SecretKey;
 import javax.crypto.SecretKeyFactory;
@@ -28,21 +21,9 @@ import javax.crypto.spec.DESKeySpec;
 import javax.inject.Inject;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
-import javax.xml.parsers.DocumentBuilder;
-import javax.xml.parsers.DocumentBuilderFactory;
 import javax.xml.parsers.ParserConfigurationException;
-import javax.xml.transform.Source;
-import javax.xml.transform.stream.StreamSource;
-import javax.xml.validation.Schema;
-import javax.xml.validation.SchemaFactory;
-import javax.xml.validation.Validator;
-
 import org.apache.commons.codec.binary.Base64;
 import org.dayatang.utils.Page;
-import org.dom4j.DocumentHelper;
-import org.dom4j.io.OutputFormat;
-import org.dom4j.io.XMLWriter;
-import org.openkoala.gqc.infra.util.ReadAppointedLine;
 import org.openkoala.koala.commons.InvokeResult;
 import org.openkoala.security.shiro.CurrentUser;
 import org.packet.packetsimulation.application.PacketApplication;
@@ -63,14 +44,9 @@ import org.springframework.web.multipart.MultipartFile;
 import org.springframework.web.multipart.MultipartHttpServletRequest;
 import org.springframework.web.servlet.ModelAndView;
 import org.springframework.web.servlet.view.json.MappingJacksonJsonView;
-import org.w3c.dom.Document;
-import org.w3c.dom.Element;
-import org.xml.sax.InputSource;
 import org.xml.sax.SAXException;
-
 import java.security.InvalidKeyException;
 import java.security.NoSuchAlgorithmException;
-
 import javax.crypto.BadPaddingException;
 import javax.crypto.IllegalBlockSizeException;
 import javax.crypto.KeyGenerator;
@@ -125,8 +101,8 @@ public class PacketController {
 		String[] value = ids.split(",");
         Long[] idArrs = new Long[value.length];
         for (int i = 0; i < value.length; i ++) {
-        	        					idArrs[i] = Long.parseLong(value[i]);
-						        }
+        	idArrs[i] = Long.parseLong(value[i]);
+		}
         return packetFacade.removePackets(idArrs);
 	}
 	
@@ -138,12 +114,11 @@ public class PacketController {
 	
 	@ResponseBody
 	@RequestMapping("/downloadCSV/{id}")
-	public void downloadCSV(@PathVariable Long id,HttpServletRequest request, HttpServletResponse response) {	
+	public void downloadCSV(@PathVariable Long id, HttpServletRequest request, HttpServletResponse response) {	
 		String downloadCSV = packetFacade.downloadCSV(id);
-		System.out.println(PACKETCONSTANT.HEADER_RESERVED.length());
 		Packet packet = application.getPacket(id);
-		response.setContentType("application/csv;charset=UTF-8");
-		response.setHeader("Content-Disposition", "attachment; filename=" + packet.getPacketName() + ".csv");
+		response.setContentType("application/txt;charset=UTF-8");
+		response.setHeader("Content-Disposition", "attachment; filename=" + packet.getPacketName() + ".txt");
 		response.setCharacterEncoding("UTF-8");
 		
 		InputStream in = null;;
@@ -160,7 +135,7 @@ public class PacketController {
 		} catch (IOException e) {
 			// TODO Auto-generated catch block
 			e.printStackTrace();
-		}finally {
+		} finally {
 			if (in != null) {
 				try {
 					in.close();
@@ -194,8 +169,7 @@ public class PacketController {
 		String haha = uncompress(decryption(downloadENC,key));
 		System.out.println(haha);
 		response.setContentType("application/enc;charset=UTF-8");
-		response.setHeader("Content-Disposition", "attachment; filename="
-				+ new Date().getTime() + ".enc");	
+		response.setHeader("Content-Disposition", "attachment; filename=" + new Date().getTime() + ".enc");	
 		response.setCharacterEncoding("UTF-8");
 		
 		InputStream in = null;;
@@ -215,7 +189,7 @@ public class PacketController {
 		} catch (IOException e) {
 			// TODO Auto-generated catch block
 			e.printStackTrace();
-		}finally {
+		} finally {
 			if (in != null) {
 				try {
 					in.close();

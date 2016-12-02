@@ -42,10 +42,8 @@ public class RecordSegmentController {
 
 	@ResponseBody
 	@RequestMapping("/pageJson")
-	public Page pageJson(RecordSegmentDTO recordSegmentDTO,
-			@RequestParam int page, @RequestParam int pagesize) {
-		Page<RecordSegmentDTO> all = recordSegmentFacade
-				.pageQueryRecordSegment(recordSegmentDTO, page, pagesize);
+	public Page pageJson(RecordSegmentDTO recordSegmentDTO, @RequestParam int page, @RequestParam int pagesize) {
+		Page<RecordSegmentDTO> all = recordSegmentFacade.pageQueryRecordSegment(recordSegmentDTO, page, pagesize);
 		return all;
 	}
 
@@ -68,25 +66,23 @@ public class RecordSegmentController {
 
 	@ResponseBody
 	@RequestMapping("/getUpdate/{recordSegmentId}")
-	public InvokeResult getUpdate(@PathVariable Long recordSegmentId, @RequestParam Long segmentId) {
-		return recordSegmentFacade.getUpdateRecordSegment(recordSegmentId, segmentId);
+	public InvokeResult getUpdate(@PathVariable Long recordSegmentId, @RequestParam String checkedLocalData) {
+		return recordSegmentFacade.getUpdateRecordSegment(recordSegmentId, checkedLocalData);
 	}
 	
 	@ResponseBody
-	@RequestMapping("/findRecordSegmentByRecordType/{id}")
-	public List<RecordSegmentDTO> findRecordTypeByRecordSegment(
-			@PathVariable Long id) {
-		return recordSegmentFacade.findRecordSegmentByRecordType(id);
+	@RequestMapping("/findRecordSegmentByRecordType/{submissionId}")
+	public List<RecordSegmentDTO> findRecordTypeByRecordSegment(@PathVariable Long submissionId) {
+		return recordSegmentFacade.findRecordSegmentByRecordType(submissionId);
 	}
 
 	@InitBinder
 	public void initBinder(WebDataBinder binder) {
 		SimpleDateFormat dateFormat = new SimpleDateFormat("yyyy-MM-dd");
 		dateFormat.setLenient(false);
-		binder.registerCustomEditor(Date.class, new CustomDateEditor(
-				dateFormat, true));
+		binder.registerCustomEditor(Date.class, new CustomDateEditor(dateFormat, true));
 		// CustomDateEditor 可以换成自己定义的编辑器。
-		// 注册一个Date 类型的绑定器 。
+		// 注册一个Date类型的绑定器 。
 		binder.setAutoGrowCollectionLimit(Integer.MAX_VALUE);
 	}
 

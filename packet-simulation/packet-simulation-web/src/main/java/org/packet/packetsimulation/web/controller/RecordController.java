@@ -18,6 +18,7 @@ import org.packet.packetsimulation.facade.dto.MesgTypeDTO;
 import org.packet.packetsimulation.facade.dto.RecordDTO;
 import org.packet.packetsimulation.facade.dto.RecordSegmentDTO;
 import org.packet.packetsimulation.facade.dto.RecordTypeDTO;
+import org.packet.packetsimulation.facade.dto.SegmentDTO;
 import org.packet.packetsimulationGeneration.core.domain.RecordType;
 import org.springframework.beans.propertyeditors.CustomDateEditor;
 import org.springframework.stereotype.Controller;
@@ -27,6 +28,8 @@ import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.ResponseBody;
+
+import com.alibaba.fastjson.JSONObject;
 
 @Controller
 @RequestMapping("/Record")
@@ -48,8 +51,8 @@ public class RecordController {
 	
 	@ResponseBody
 	@RequestMapping("/update")
-	public InvokeResult update(RecordDTO recordDTO, @RequestParam Long recordTypeId) {
-		return recordFacade.updateRecord(recordDTO, recordTypeId);
+	public InvokeResult update(RecordDTO recordDTO) {
+		return recordFacade.updateRecord(recordDTO);
 	}
 	
 	@ResponseBody
@@ -121,6 +124,12 @@ public class RecordController {
 	@RequestMapping("/initBatch/{id}")
 	public InvokeResult initBatch(@PathVariable Long id) {
 		return recordFacade.getRecordForBatch(id);
+	}
+	
+	@ResponseBody
+	@RequestMapping("/pageQuerySegments")
+	public List<JSONObject> pageQuerySegments(RecordDTO recordDTO, @RequestParam String segMark) {
+		return recordFacade.pageQuerySegments(recordDTO, segMark);
 	}
 		
     @InitBinder    

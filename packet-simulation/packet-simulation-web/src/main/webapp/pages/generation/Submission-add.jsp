@@ -56,7 +56,7 @@
 				<div class="form-group row">					
 					<div class="col-lg-6 form-group">
 						<label class="col-lg-3 control-label">报文名称:</label>
-						<div class="col-lg-9">
+						<div class="col-lg-6">
 							<input name="name" class="form-control" type="text" dataType="Require" id="nameID" />
 							<span class="required">*</span>
 						</div>
@@ -137,7 +137,7 @@
 				}
 				$('#mark').empty();
 				if(items[0].type == 2){
-					$('#mark').append('<label class="col-lg-3 control-label">非银填充位:</label><div class="col-lg-9"><input name=padding class="form-control" type="text" dataType="Require" id="paddingID" /><span class="required">*</span></div>');
+					$('#mark').append('<label class="col-lg-3 control-label">非银填充位:</label><div class="col-lg-6"><input name=padding class="form-control" type="text" dataType="Require" id="paddingID" /><span class="required">*</span></div>');
 				}
 				$('#main').find("#itemTable").empty();
 		        $('#main').find('[data-toggle="item"]').attr('disabled', true);

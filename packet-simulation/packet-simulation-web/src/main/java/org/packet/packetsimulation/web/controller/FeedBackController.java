@@ -61,7 +61,7 @@ public class FeedBackController {
 	@RequestMapping("/initSend")
 	public InvokeResult initSend(@RequestParam String code) {
 		Map map = new HashMap();
-        String packetHead = feedBackFacade.getPacketHeadForSend(code,CurrentUser.getUserAccount());
+        String packetHead = feedBackFacade.getPacketHeadForSend(code, CurrentUser.getUserAccount());
         map.put("packetHead", packetHead);
 		return InvokeResult.success(map);
 	}

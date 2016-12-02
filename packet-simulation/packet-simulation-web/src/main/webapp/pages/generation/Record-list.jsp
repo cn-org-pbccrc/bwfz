@@ -62,7 +62,6 @@ legend {
 <script type="text/javascript">
 var selectItems = {};
 var tabData = $('.tab-pane.active').data();
-// var packetId = $('.mesgDetail').parent().attr('data-value');
 var mesgTypeOption = '';
 var grid;
 var form;
@@ -72,7 +71,6 @@ var batchContent;
 var mesgType;
 var packetId;
 var version;
-
 var submissionId = $('.recordDetail').parent().attr('data-value');
 var selectMesg;
 var mesgInput;
@@ -85,12 +83,6 @@ $.get('${pageContext.request.contextPath}/auth/currentUser/getUserDetail.koala')
     initFun();
 });   
 function initFun(){
-// 	$.get( '${pageContext.request.contextPath}/RecordType/findRecordTypes.koala').done(function(data){
-//     	json = data;
-//         for(var index in json){
-//         	mesgTypeOption=mesgTypeOption+'<option value="'+json[index].id+'"> '+json[index].filePath + '</option>';
-//         }
-//     });
     grid = $("#<%=gridId%>");
     form = $("#<%=formId%>");
     PageLoader = {
@@ -122,7 +114,7 @@ function initFun(){
     	        ]
     	    }).on({
     	    	'add': function(){
-    	        	self.add($(this));
+    	        	segmentEdit($(this), submissionId);
     	        },
     	        'modify': function(event, data){
    	            	var indexs = data.data;
@@ -141,10 +133,10 @@ function initFun(){
    	                    })
    	                    return;
    	                }
-   	                self.modify(indexs[0], $this);
+   	            	segmentEdit($(this), submissionId, indexs[0]);
    	            },
     	        'delete': function(event, data){
-    	        	var indexs = data.data;
+     	        	var indexs = data.data;
     	            var $this = $(this);
     	            if(indexs.length == 0){
     	            	$this.message({
@@ -209,7 +201,7 @@ function initFun(){
   	            }
     	    });
     	},
-    	add: function(grid){
+    	<%-- add: function(grid){
     		var self = this;
     		var dialog = $('<div class="modal fade"><div class="modal-dialog">'
     	        	+'<div class="modal-content"><div class="modal-header"><button type="button" class="close" '
@@ -255,8 +247,8 @@ function initFun(){
     	            });  	        
         	    });
     	    });
- 	    },
-    	modify: function(id, grid){
+ 	    }, --%>
+<%--     	modify: function(id, grid){
 	        var self = this;
 	        var dialog = $('<div class="modal fade"><div class="modal-dialog"><div class="modal-content"><div class="modal-header"><button type="button" class="close" data-dismiss="modal" aria-hidden="true">&times;</button><h4 class="modal-title">修改</h4></div><div class="modal-body"><p>One fine body&hellip;</p></div><div class="modal-footer"><button type="button" class="	btn btn-default" data-dismiss="modal">取消</button><button type="button" class="btn btn-success" id="save">保存</button></div></div></div></div>');	      
 	        $.get('<%=path%>/Record-update.jsp').done(function(html){
@@ -302,7 +294,7 @@ function initFun(){
     	            }); 
 	            });
 	        });
-	    },
+	    }, --%>
     	initPage: function(form){
     		form.find('.form_datetime').datetimepicker({
     	    	language: 'zh-CN',
@@ -532,121 +524,8 @@ var loadMesgTree = function(){
         });
     });
 };
-var segmentEdit = function(id, recordId){
-	var h = $(window).height();
-	var dialog = $('<div class="modal fade"><div class="modal-dialog" style="width: 80% !important;">'
-			+'<div class="modal-content"><div class="modal-header"><button type="button" class="close" '
-		    +'data-dismiss="modal" aria-hidden="true">&times;</button>'
-		    +'<h4 class="modal-title">编辑段信息</h4></div><div class="modal-body" style="overflow-y:auto; height:' + 0.8 * h + 'px;">'
-		    +'<p>One fine body&hellip;</p></div></div>'
-		    +'</div></div>');
-	$.get('<%=path%>/Segment-edit.jsp').done(function(html){
-	    dialog.modal({
-	        keyboard:false,
-	        backdrop: 'static'
-	    }).on({
-	        'hidden.bs.modal': function(){
-	            $(this).remove();
-	        },
-	    	'shown.bs.modal': function(){
-	    	    $.get('${pageContext.request.contextPath}/RecordSegment/findRecordSegmentByRecordType/' + id + '.koala').done(function(data) {					
-	    			for(var i=0; i<data.length; i++){
-	    				var recordSegment = data[i];
-	    				var recordSegmentId = recordSegment.id;
-	    				var recordSegmentName = recordSegment.segName;
-	    				var segMark = recordSegment.segMark;
-	    				var recordItems = recordSegment.recordItems;
-	    				var mycolumns = new Array();
-	    				for(var j=0; j<recordItems.length; j++){
-	    					var recordItem = recordItems[j];
-	    					mycolumns.push({
-	    						'title' : recordItem.itemName,
-	    						'name' : recordItem.itemId,
-	    						'width' : '200px'
-	    					});
-	    				}
-	    				//alert('first')
-	    				var subGrid = "grid" + i;
-	    				//dialog.find('#mainGrid').append("<div id=" + subGrid + " recordSegmentId=" + recordSegmentId + "></div>")
-	    				dialog.find('#mainGrid').append('<div class="panel panel-default"><div class="panel-heading"><h3 class="panel-title">' + recordSegmentName + '</h3></div><div class="panel-body"><div id="' + subGrid + '" recordSegmentId="' + recordSegmentId + '"></div></div></div>');
-	    				//dialog.find('#mainGrid').append('<div class="panel panel-default"><div class="panel-heading"><h3 class="panel-title">' + recordSegmentName + '</h3></div><div id="' + subGrid + '" recordSegmentId="' + recordSegmentId + '"></div></div>');
-	    				dialog.find('#' + subGrid).grid({
-	    					identity: 'id',
-	    					buttons: [
-	    					    {content: '<button class="btn btn-primary" type="button"><span class="glyphicon glyphicon-plus"><span>添加</button>', action: 'add'},
-	    					    {content: '<button class="btn btn-success" type="button"><span class="glyphicon glyphicon-edit"><span>修改</button>', action: 'modify'},
-	    					    {content: '<button class="btn btn-danger" type="button"><span class="glyphicon glyphicon-remove"><span>删除</button>', action: 'delete'},
-	    					],
-	    					columns : mycolumns,
-	    					url: contextPath + '/Segment/pageJson.koala?recordId=' + recordId + '&segMark=' +  segMark
-	    				}).on({
-	    			    	'add': function(){
-	    			    		addSegment(recordId, $(this));
-	    			    	},
-	    			    	'modify': function(event, data){
-	    	   	            	var indexs = data.data;
-	    	   	                var $this = $(this);
-	    	   	                if(indexs.length == 0){
-	    	   	                	$this.message({
-	    	   	                    	type: 'warning',
-	    	   	                        content: '请选择一条记录进行修改'
-	    	   	                    })
-	    	   	                    return;
-	    	   	                }
-	    	   	                if(indexs.length > 1){
-	    	   	                	$this.message({
-	    	   	                    	type: 'warning',
-	    	   	                        content: '只能选择一条记录进行修改'
-	    	   	                    })
-	    	   	                    return;
-	    	   	                }
-	    	   	                modifySegment(recordId, indexs[0], $this);
-	    	   	            },
-	    	    	        'delete': function(event, data){
-	    	    	        	var indexs = data.data;
-	    	    	            var $this = $(this);
-	    	    	            if(indexs.length == 0){
-	    	    	            	$this.message({
-	    	    	                	type: 'warning',
-	    	    	                    content: '请选择要删除的记录'
-	    	    	                });
-	    	    	                return;
-	    	    	            }
-	    	    	            var remove = function(){
-	    	    	            	removeSegment(indexs, $this);
-	    	    	            };
-	    	    	            $this.confirm({
-	    	    	            	backdrop: false,
-	    	    	            	content: '确定要删除所选记录吗?',
-	    	    	                callBack: remove
-	    	    	            });
-	    	    	        }        
-	    				});
-	    				dialog.find(".grid-table-body").css({
-	    					"height": "100px",
-	    					"min-height": "100px"
-	    				});
-	    				//dialog.find('.grid-body').attr('style', 'width: 998px;');
-	    				//dialog.find('.grid-table-head').attr('style', 'min-width: 998px;');
-	    			}		
-	    		});
-     		}
-	    }).find('.modal-body').html(html);
-	});
-	
-}
 
-//填充数据项状态
-var fillStateSelect = function(select){
-	  var contents = [{title:'必选', value: 'M',selected: true}];
-       contents.push({title:'条件选择' , value:'C'});
-       contents.push({title:'可选' , value:'O'});
-	select.select({
-		contents: contents
-	});
-};
-
-var insertRow = function(itemTable, variable, insertRow){
+/* var insertRow = function(itemTable, variable, insertRow){
 	var row = $('<tr data-toggle="context" data-target="#context-menu"><td class="v-itemId"><input data-role="itemId" required="true" readonly="true" style="display: inline; " class="form-control" type="text" /></td>'
 			+'<td class="v-itemName"><input data-role="itemName" required="true" readonly="true" style="display: inline; " class="form-control" type="text" /></td>'
 			+'<td class="v-itemType"><div class="btn-group select" id="itemTypeSelect" data-role="itemType"></div></td>'
@@ -685,6 +564,31 @@ var insertRow = function(itemTable, variable, insertRow){
 	}else{
 		row.appendTo(itemTable);
 	}
+} */
+
+var insertRow = function(itemTable, variable){
+	var row = $('<tr data-toggle="context" data-target="#context-menu"><td class="v-itemId"><p class="form-control-static" data-role="itemId"></p></td>'
+		+'<td class="v-itemName"><p class="form-control-static" data-role="itemName"></p></td>'
+		+'<td class="v-itemType"><p class="form-control-static" data-role="itemType"></p></td>'
+		+'<td class="v-itemLength"><p class="form-control-static" data-role="itemLength"></p></td>'
+		+'<td class="v-itemLocation"><p class="form-control-static" data-role="itemLocation"></p></td>'
+		+'<td class="v-itemDesc"><p class="form-control-static" data-role="itemDesc"></p></td>'
+		+'<td class="v-state"><p class="form-control-static" data-role="state"></p></td>'
+		+'<td class="v-itemValue"><input data-role="itemValue" style="display: inline;" class="form-control" type="text" /></td>'
+		+'<td class="v-itemPrompt"></td>');
+	if(variable){
+		//row.find('input[data-role="itemId"]').val(variable.itemId);
+		row.find('p[data-role="itemId"]').html(variable.itemId);
+		row.find('p[data-role="itemName"]').html(variable.itemName);
+		row.find('p[data-role="itemType"]').html(fillVTypeSelect(variable.itemType));
+		row.find('p[data-role="itemLength"]').html(variable.itemLength);
+		row.find('p[data-role="itemLocation"]').html(variable.itemLocation);
+		row.find('p[data-role="itemDesc"]').html(variable.itemDesc);
+		row.find('p[data-role="state"]').html(fillStateSelect(variable.state));
+		row.find('input[data-role="itemValue"]').val(variable.itemValue);
+		row.find('input[data-role="itemValue"]').attr('name', variable.itemId);
+	}
+	row.appendTo(itemTable);
 }
 
 //删除行
@@ -693,24 +597,37 @@ var removeRow = function($this){
 };
 
 //填充数据项类型
-var fillVTypeSelect = function(select){
-	select.select({
-		contents: [
-					{value: '0', title: 'N',selected: true},
-					{value: '1', title: 'AN'},
-					{value: '2', title: 'ANC'}
-				]
-	});
+var fillVTypeSelect = function(itemType){
+	if(itemType == '0'){
+		return 'N';
+	}else if(itemType == '1'){
+		return 'AN';
+	}else{
+		return 'ANC';
+	}
 };
 
 //填充数据项状态
-var fillStateSelect = function(select){
-	  var contents = [{title:'必选', value: 'M',selected: true}];
-       contents.push({title:'条件选择' , value:'C'});
-       contents.push({title:'可选' , value:'O'});
-	select.select({
-		contents: contents
-	});
+var fillStateSelect = function(state){
+	if(state == 'M'){
+		return '必选';
+	}else if(state == 'C'){
+		return '条件选择';
+	}else{
+		return '可选';
+	}
+};
+
+var fillAppearTimesSelect = function(appearTimes){
+	if(appearTimes == '0'){
+		return '1:1';
+	}else if(appearTimes == '1'){
+		return '0: 1'
+	}else if(appearTimes == '2'){
+		return '0：n';
+	}else{
+		return '1：n'
+	}
 };
 
 var getAllData = function(dialog){
@@ -724,14 +641,199 @@ var getAllData = function(dialog){
 		itemValue = $tr.find('input[data-role="itemValue"]').val();
 		data[itemId] = itemValue;
 	});
-	return JSON.stringify(data);
+	return data;
 };
 
-var addSegment = function(recordId, grid){
+var segmentEdit = function(grid, submissionId, id){
 	var h = $(window).height();
+	var dialog = $('<div class="modal fade"><div class="modal-dialog" style="width: 80% !important;">'
+		+'<div class="modal-content"><div class="modal-header"><button type="button" class="close" '
+	    +'data-dismiss="modal" aria-hidden="true">&times;</button>'
+	    +'<h4 class="modal-title">编辑段信息</h4></div><div class="modal-body" style="overflow-y:auto; height:' + 0.68 * h + 'px;">'
+	    +'<p>One fine body&hellip;</p></div><div class="modal-footer">'
+       	+'<button type="button" class="btn btn-default" data-dismiss="modal">取消</button>'
+       	+'<button type="button" class="btn btn-success" id="save">保存</button></div></div>'
+	    +'</div></div>');
+	$.get('<%=path%>/Segment-edit.jsp').done(function(html){
+	    dialog.modal({
+	        keyboard:false,
+	        backdrop: 'static'
+	    }).on({
+	        'hidden.bs.modal': function(){
+	            $(this).remove();
+	        },
+	    	'shown.bs.modal': function(){
+	    	    $.get('${pageContext.request.contextPath}/RecordSegment/findRecordSegmentByRecordType/' + submissionId + '.koala').done(function(data) {
+	    	    	for(var i=0; i<data.length; i++){
+	    				var recordSegment = data[i];
+	    				var recordSegmentId = recordSegment.id;
+	    				var recordSegmentName = recordSegment.segName;
+	    				var segMark = recordSegment.segMark;
+	    				var recordItems = recordSegment.recordItems;
+	    				var mycolumns = new Array();
+	    				for(var j=0; j<recordItems.length; j++){
+	    					var recordItem = recordItems[j];
+	    					mycolumns.push({
+	    						'title' : recordItem.itemName,
+	    						'name' : recordItem.itemId,
+	    						'width' : '200px'
+	    					});
+	    				}
+	    				var subGrid = "grid" + i;
+	    				//dialog.find('#mainGrid').append("<div id=" + subGrid + " recordSegmentId=" + recordSegmentId + "></div>")
+	    				dialog.find('#mainGrid').append('<div class="panel panel-default"><div class="panel-heading"><h3 class="panel-title">' + recordSegmentName + '</h3></div><div class="panel-body"><div id="' + subGrid + '" recordSegmentId="' + recordSegmentId + '"segMark="' + segMark + '" grid="grid"></div></div></div>');
+	    				//dialog.find('#mainGrid').append('<div class="panel panel-default"><div class="panel-heading"><h3 class="panel-title">' + recordSegmentName + '</h3></div><div id="' + subGrid + '" recordSegmentId="' + recordSegmentId + '"></div></div>');
+	    				dialog.find('#' + subGrid).grid({
+			    			identity : 'id',
+			    			buttons : [
+	    					    {content: '<button class="btn btn-primary" type="button"><span class="glyphicon glyphicon-plus"><span>添加</button>', action: 'add'},
+	    					    {content: '<button class="btn btn-success" type="button"><span class="glyphicon glyphicon-edit"><span>修改</button>', action: 'modify'},
+	    					    {content: '<button class="btn btn-danger" type="button"><span class="glyphicon glyphicon-remove"><span>删除</button>', action: 'delete'},
+	    					],
+	    					columns : mycolumns,
+	    					isUserLocalData : true,
+	    					localData : [],
+	    					isShowPages : false
+	    					//url: contextPath + '/Record/pageQuerySegments.koala?id=' + 20 + '&segMark=' +  segMark
+	    				}).on({
+	    			    	'add': function(){
+	    			    		addSegment($(this));
+	    			    	},
+	    			    	'modify': function(event, data){
+// 	    			    		var localData = $(this).data('koala.grid').options.localData;
+ 	    			    		var indexs = $(this).data('koala.grid').selectedRowsNo();
+// 	    			    		localData.splice(indexs[0], 1);
+// 	    			    		$(this).data('koala.grid').options.localData = localData;
+// 	    			    		$(this).data('koala.grid')._initHead();
+// 	    			    		$(this).data('koala.grid').refresh();
+ 	    	   	            	//var indexs = data.data;
+ 	    	   	                var $this = $(this);
+ 	    	   	                if(indexs.length == 0){
+ 	    	   	                	$this.message({
+ 	    	   	                    	type: 'warning',
+ 	    	   	                        content: '请选择一条记录进行修改'
+ 	    	   	                    })
+ 	    	   	                    return;
+ 	    	   	                }
+ 	    	   	                if(indexs.length > 1){
+ 	    	   	                	$this.message({
+ 	    	   	                    	type: 'warning',
+ 	    	   	                        content: '只能选择一条记录进行修改'
+ 	    	   	                    })
+ 	    	   	                    return;
+ 	    	   	                }
+ 	    	   	                modifySegment(indexs[0], $this);
+	    	   	            },
+	    	    	        'delete': function(event, data){
+	    	    	        	var indexs = data.data;
+	    	    	            var $this = $(this);
+	    	    	            if(indexs.length == 0){
+	    	    	            	$this.message({
+	    	    	                	type: 'warning',
+	    	    	                    content: '请选择要删除的记录'
+	    	    	                });
+	    	    	                return;
+	    	    	            }
+	    	    	            var remove = function(){
+	    	    	            	removeSegment(indexs, $this);
+	    	    	            };
+	    	    	            $this.confirm({
+	    	    	            	backdrop: false,
+	    	    	            	content: '确定要删除所选记录吗?',
+	    	    	                callBack: remove
+	    	    	            });
+	    	    	        }        
+	    				});
+	    				dialog.find(".grid-table-body").css({
+	    					"height": "100px",
+	    					"min-height": "100px"
+	    				});
+	    				if(id){
+	    					$.ajax({
+		    					url : '${pageContext.request.contextPath}/Record/pageQuerySegments.koala?id=' + id + '&segMark=' +  segMark,
+		    					dataType : 'json',
+		    					async: false,
+		    					success : function(result){
+		    						dialog.find('#' + subGrid).data('koala.grid').options.localData = result;
+		     						//dialog.find('#' + subGrid).data('koala.grid')._initHead();
+		     						//dialog.find('#' + subGrid).data('koala.grid').refresh();
+		    					}
+		    				});
+	    				}
+	    				
+// 	    				dialog.find('.grid-body').attr('style', 'width: 998px;');
+// 	    				dialog.find('.grid-table-head').attr('style', 'min-width: 998px;');
+//     					console.log(data)
+// 	                    dialog.find('#' + subGrid).data('koala.grid').options.localData = data;
+// 						dialog.find('#' + subGrid).data('koala.grid')._initHead();
+// 						dialog.find('#' + subGrid).data('koala.grid').refresh();
+// 						console.log(dialog.find('#' + subGrid).data('koala.grid').options.localData)
+// 	    				if(id){
+// 		    				$.get('${pageContext.request.contextPath}/Record/pageQuerySegments.koala?id=' + id + '&segMark=' +  segMark).done(function(data){
+// 		    					console.log(segMark)
+// 		    					console.log("~~~~~" + data)
+// 		    	    		}); 
+// 	    				}
+	    			}		
+	    		});
+     		}
+	    }).find('.modal-body').html(html);
+	    dialog.find('#save').on('click',{grid: grid}, function(e){
+	    	var recordObj = {};
+		    var num = dialog.find($("[grid='grid']")).size();
+		    for(var i=0; i<num; i++){
+		    	var segmentObj = dialog.find('#grid' + i).data('koala.grid').options.localData;
+		    	var segMark = dialog.find('#grid' + i).attr('segMark');
+		    	recordObj[segMark] = segmentObj;		    	
+		    }
+// 		    var data = [{ name: 'submissionId', value: submissionId},
+//       					{ name: 'content', value: JSON.stringify(recordObj)},
+//       					{ name: 'recordName', value: dialog.find('#name').val()}
+//      		];
+		    var getAllData = function(id){
+				var data = {};
+				data.submissionId = submissionId;
+				data.content = JSON.stringify(recordObj);
+				data.recordName = dialog.find('#name').val();
+				return data;
+			};
+		    var url = '${pageContext.request.contextPath}/Record/add.koala';
+		    var data = getAllData();
+			if(id){
+				url = '${pageContext.request.contextPath}/Record/update.koala?id='+id;
+			}
+	        $.post(url, data).done(function(result){
+	        	if(result.success){
+	            	dialog.modal('hide');
+	                grid.data('koala.grid').refresh();
+	                grid.message({
+	                	type: 'success',
+	                    content: '保存成功'
+	                });
+	            }else{
+	                dialog.find('.modal-content').message({
+	                    type: 'error',
+	                    content: result.errorMessage
+	                });
+	            }
+	        });  	        
+	    });
+	});
+}
+
+var addSegment = function(grid){
 	var self = this;
+	var h = $(window).height();
 	var recordSegmentId = grid.attr("recordSegmentId");
-    var dialog = $('<div class="modal fade"><div class="modal-dialog" style="width: 80% !important;"><div class="modal-content"><div class="modal-header"><button type="button" class="close" data-dismiss="modal" aria-hidden="true">&times;</button><h4 class="modal-title">新增段</h4></div><div class="modal-body" style="overflow-y:auto; height:' + 0.8 * h + 'px;"><p>One fine body&hellip;</p></div></div></div></div>');
+    //var dialog = $('<div class="modal fade"><div class="modal-dialog" style="width: 80% !important;"><div class="modal-content"><div class="modal-header"><button type="button" class="close" data-dismiss="modal" aria-hidden="true">&times;</button><h4 class="modal-title">新增段</h4></div><div class="modal-body" style="overflow-y:auto; height:' + 0.8 * h + 'px;"><p>One fine body&hellip;</p></div></div></div></div>');
+    var dialog = $('<div class="modal fade"><div class="modal-dialog" style="width: 80% !important;">'
+		+'<div class="modal-content"><div class="modal-header"><button type="button" class="close" '
+	    +'data-dismiss="modal" aria-hidden="true">&times;</button>'
+	    +'<h4 class="modal-title">编辑段信息</h4></div><div class="modal-body" style="overflow-y:auto; height:' + 0.68 * h + 'px;">'
+	    +'<p>One fine body&hellip;</p></div><div class="modal-footer">'
+       	+'<button type="button" class="btn btn-default" data-dismiss="modal">取消</button>'
+       	+'<button type="button" class="btn btn-success save" id="save">保存</button></div></div>'
+	    +'</div></div>');
     $.get('<%=path%>/RecordSegmentEditConfig.jsp').done(function(html){
         dialog.modal({
             keyboard:false,
@@ -741,20 +843,9 @@ var addSegment = function(recordId, grid){
                 $(this).remove();
             }
         }).find('.modal-body').html(html);
-        var stateSelect = dialog.find('#stateID');
-        fillStateSelect(stateSelect);
-       	var contents = [{title:'1:1', value: '0',selected: true}];
-        contents.push({title:'0：1' , value:'1'});
-        contents.push({title:'0：n' , value:'2'});
-        contents.push({title:'1：n' , value:'3'});
-        var appearTimesSelect = dialog.find('#appearTimesID');
-        appearTimesSelect.select({
-    		contents: contents
-   		});
+        dialog.find('#stateID').html()             
         initPage(dialog.find('form'));
-        dialog.find('[data-toggle="item"]').attr('disabled', true);
-        dialog.find('[data-toggle="button"]').attr('disabled', true);
-        $.get( '${pageContext.request.contextPath}/RecordSegment/get/' + recordSegmentId + '.koala').done(function(json){
+        $.get('${pageContext.request.contextPath}/RecordSegment/get/' + recordSegmentId + '.koala').done(function(json){
         	json = json.data;
             var elm;
             var inputs = [];
@@ -767,12 +858,12 @@ var addSegment = function(recordId, grid){
 				}
 			};
             for(var index in json){
-            	if(index=='recordItems'){
+            	if(index == 'recordItems'){
              		var items = json[index];
              		for(var i=0;i<items.length;i++){
              			var data = {};
              			var value = {};
-             			insertRow(dialog.find("#itemTable"),items[i]);
+             			insertRow(dialog.find("#itemTable"), items[i]);
              			value["rule"] = new RegExp("^.{1," + items[i].itemLength + "}$");
              			value["tip"] = "长度大于" + items[i].itemLength;
              			rules[items[i].itemId] = value;
@@ -782,24 +873,30 @@ var addSegment = function(recordId, grid){
                  		data["rightMsg"] = "正确";
              			inputs.push(data);
              		}
-             	}       		
-                elm = dialog.find('#'+ index + 'ID');
-                if(elm.hasClass('select')){
-                	elm.setValue(json[index]);
-                }else{
-                    elm.val(json[index]);
-                }
+             	}else if(index == 'state'){
+             		dialog.find('#'+ index + 'ID').html(fillStateSelect(json[index]));
+             	}else if(index == 'appearTimes'){
+             		dialog.find('#'+ index + 'ID').html(fillAppearTimesSelect(json[index]));
+             	}else{
+	                dialog.find('#'+ index + 'ID').html(json[index]);             		
+             	}
             }
 
-			dialog.find("#itemForm").validateForm({
+			dialog.validateForm({
 		    	inputs : inputs,
 		        button : ".save",
 		        rules : rules,
-		        onButtonClick:function(result, button, form){
+		        onButtonClick : function(result, button, form){
 	            	if(result){
 	            		if(!Validator.Validate(dialog.find('form')[0],3))return;
 	                    var content = getAllData(dialog);
-	                    var data = [{ name: 'recordId', value: recordId },
+	                    dialog.modal('hide');
+	                    var localData = grid.data('koala.grid').options.localData;
+	                    localData.push(content);
+	                    grid.data('koala.grid').options.localData = localData;
+	                    grid.data('koala.grid')._initHead();
+	                    grid.data('koala.grid').refresh();
+	                    /* var data = [{ name: 'recordId', value: recordId },
 	              					{ name: 'segMark', value: dialog.find('#segMarkID').val()},
 	             				    { name: 'content', value: content}
 	             		];
@@ -817,7 +914,7 @@ var addSegment = function(recordId, grid){
 	                                content: result.errorMessage
 	                            });
 	                        }
-	                    });
+	                    }); */
 	            	}
 		        }
 		    });
@@ -825,12 +922,22 @@ var addSegment = function(recordId, grid){
     });
 }
 
-var modifySegment = function(recordId, segmentId, grid){
-	var h = $(window).height();
+var modifySegment = function(index, grid){
 	var self = this;
+	var h = $(window).height();
 	var recordSegmentId = grid.attr("recordSegmentId");
-	var dialog = $('<div class="modal fade"><div class="modal-dialog" style="width: 80% !important;"><div class="modal-content"><div class="modal-header"><button type="button" class="close" data-dismiss="modal" aria-hidden="true">&times;</button><h4 class="modal-title">修改段</h4></div><div class="modal-body" style="overflow-y:auto; height:' + 0.8 * h + 'px;"><p>One fine body&hellip;</p></div></div></div></div>');
-    $.get('<%=path%>/RecordSegmentEditConfig.jsp').done(function(html){
+	var localData = grid.data('koala.grid').options.localData;
+	var checkedLocalData = localData.splice(index, 1);
+	//var dialog = $('<div class="modal fade"><div class="modal-dialog" style="width: 80% !important;"><div class="modal-content"><div class="modal-header"><button type="button" class="close" data-dismiss="modal" aria-hidden="true">&times;</button><h4 class="modal-title">修改段</h4></div><div class="modal-body" style="overflow-y:auto; height:' + 0.8 * h + 'px;"><p>One fine body&hellip;</p></div></div></div></div>');
+    var dialog = $('<div class="modal fade"><div class="modal-dialog" style="width: 80% !important;">'
+		+'<div class="modal-content"><div class="modal-header"><button type="button" class="close" '
+	    +'data-dismiss="modal" aria-hidden="true">&times;</button>'
+	    +'<h4 class="modal-title">编辑段信息</h4></div><div class="modal-body" style="overflow-y:auto; height:' + 0.68 * h + 'px;">'
+	    +'<p>One fine body&hellip;</p></div><div class="modal-footer">'
+       	+'<button type="button" class="btn btn-default" data-dismiss="modal">取消</button>'
+       	+'<button type="button" class="btn btn-success" id="save">保存</button></div></div>'
+	    +'</div></div>');
+	$.get('<%=path%>/RecordSegmentEditConfig.jsp').done(function(html){
         dialog.modal({
             keyboard:false,
             backdrop:false
@@ -847,12 +954,12 @@ var modifySegment = function(recordId, segmentId, grid){
         contents.push({title:'1：n' , value:'3'});
         var appearTimesSelect = dialog.find('#appearTimesID');
         appearTimesSelect.select({
-    		contents: contents
+    		contents : contents
    		});
         initPage(dialog.find('form'));
         dialog.find('[data-toggle="item"]').attr('disabled', true);
         dialog.find('[data-toggle="button"]').attr('disabled', true);
-        $.get('${pageContext.request.contextPath}/RecordSegment/getUpdate/' + recordSegmentId + '.koala?segmentId=' + segmentId).done(function(json){
+        $.get('${pageContext.request.contextPath}/RecordSegment/getUpdate/' + recordSegmentId + '.koala?checkedLocalData=' + JSON.stringify(checkedLocalData)).done(function(json){
         	json = json.data;
             var elm;
             var inputs = [];
@@ -952,12 +1059,12 @@ var initPage = function(form){
          pickerPosition: 'bottom-left'
      }).datetimepicker('setDate', new Date());//加载日期选择器
      form.find('.select').each(function(){
-          var select = $(this);
-          var idAttr = select.attr('id');
-          form.find('#'+ idAttr + '_').val($(this).getValue());
-          select.on('change', function(){
-              form.find('#'+ idAttr + '_').val($(this).getValue());
-          });
+         var select = $(this);
+         var idAttr = select.attr('id');
+         form.find('#'+ idAttr + '_').val($(this).getValue());
+         select.on('change', function(){
+             form.find('#'+ idAttr + '_').val($(this).getValue());
+         });
      });
 }
 </script>

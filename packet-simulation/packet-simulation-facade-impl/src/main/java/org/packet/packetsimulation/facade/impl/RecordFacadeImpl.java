@@ -75,7 +75,7 @@ public class RecordFacadeImpl implements RecordFacade {
        if(queryChannel==null){
           queryChannel = InstanceFactory.getInstance(QueryChannelService.class,"queryChannel");
        }
-     return queryChannel;
+       return queryChannel;
     }
 	
 	public InvokeResult getRecord(Long id) {
@@ -96,10 +96,10 @@ public class RecordFacadeImpl implements RecordFacade {
 		return InvokeResult.success();
 	}
 	
-	public InvokeResult updateRecord(RecordDTO recordDTO, Long recordTypeId) {
-		Record record = RecordAssembler.toEntity(recordDTO);
-		record.setRecordType(recordTypeApplication.getRecordType(recordTypeId));
-		record.setSubmission(submissionApplication.getSubmission(recordDTO.getSubmissionId()));
+	public InvokeResult updateRecord(RecordDTO recordDTO) {
+		Record record = recordApplication.getRecord(recordDTO.getId());
+		record.setContent(recordDTO.getContent());
+		record.setRecordName(recordDTO.getRecordName());
 		application.updateRecord(record);
 		return InvokeResult.success();
 	}
@@ -343,6 +343,46 @@ public class RecordFacadeImpl implements RecordFacade {
 		   .pagedList();
 		   
         return new Page<RecordDTO>(pages.getStart(), pages.getResultCount(),pageSize, RecordAssembler.toDTOs(pages.getData()));
+	}
+	
+//	public Page<JSONObject> pageQuerySegments(RecordDTO recordDTO, String segMark, int page, int pagesize){
+//	   	Record record = recordApplication.getRecord(recordDTO.getId());
+//	   	String recordContent = record.getContent();
+//	   	JSONObject recordObj = JSON.parseObject(recordContent);
+//	   	String segmentContent = recordObj.getString(segMark);
+//	   	JSONArray segmentArray = null;
+//	   	List<JSONObject> list = new ArrayList<JSONObject>();
+//	   	if(segmentContent != null){
+//	   		segmentArray = JSON.parseArray(segmentContent);
+//		   	for(int i = page * pagesize; i < page * pagesize + pagesize; i++){
+//		   		if(i < segmentArray.size()){
+//		   			JSONObject obj = (JSONObject) segmentArray.get(i);
+//		   			obj.put("id", i);
+//			   		list.add(obj);
+//		   		}else{
+//		   			break;
+//		   		}	   		
+//		   	}
+//	   	}
+//	   	return new Page<JSONObject>(page * pagesize, segmentArray.size(), pagesize, list);
+//	}
+	
+	public List<JSONObject> pageQuerySegments(RecordDTO recordDTO, String segMark){
+	   	Record record = recordApplication.getRecord(recordDTO.getId());
+	   	String recordContent = record.getContent();
+	   	JSONObject recordObj = JSON.parseObject(recordContent);
+	   	String segmentContent = recordObj.getString(segMark);
+	   	JSONArray segmentArray = null;
+	   	List<JSONObject> list = new ArrayList<JSONObject>();
+	   	if(segmentContent != null){
+	   		segmentArray = JSON.parseArray(segmentContent);
+	   		for(int i = 0; i < segmentArray.size(); i++){
+	   			JSONObject obj = (JSONObject) segmentArray.get(i);
+	   			obj.put("id", i);
+		   		list.add(obj);
+	   		}
+	   	}
+	   	return list;
 	}
 	
 	@SuppressWarnings("unchecked")

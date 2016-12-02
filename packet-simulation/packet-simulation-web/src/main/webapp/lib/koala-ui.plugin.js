@@ -1426,4 +1426,3 @@
 		return this;
 	};
 }(window.jQuery)
-

@@ -4,129 +4,168 @@
 <meta http-equiv="Content-Type" content="text/html; charset=UTF-8">
 </head>
 <style>
+.generalQuery .form-inline {
+    padding-bottom: 5px;
+}
+.generalQuery .form-inline .form-group {
+    margin-left: 25px;
+}
+.generalQuery .form-inline .form-group .control-label {
+    margin-right: 5px;
+}
+.generalQuery  .required {
+    position: relative;
+    top: 4px;
+    margin-left: 3px;
+    color: red;
+}
+.generalQuery .form-inline .form-group .btn-group .queryName {
+    display: inline;
+    width: 200px;
+}
+.generalQuery .table {
+    border-width: 0;
+    text-align: center;
+}
+.generalQuery .table th {
+    text-align: center;
+}
+.generalQuery  a {
+    cursor: pointer!important;
+}
+.generalQuery  .panel {
+    margin-top: 5px;
+    margin-bottom: 0;
+}
+/* .generalQuery  .table .panel {
+    padding: 0;
+    margin: 0;
+}
+.generalQuery  .table .table-value .required {
+    color:red;
+    position: relative;
+    top: 6px;
+    margin-left: 2px;
+}
+.generalQuery .table td .form-control {
+    display: inline!important;
+    width: 95%;
+}
+.grid-table-head table tr th:last-child,
+.grid-table-body table tr td:last-child{
+    border-right-width: 0!important;
+}
+.grid-table-body {
+    overflow-y: auto;
+    overflow-x: hidden;
+}
+.recordItemConfig table {
+    table-layout: auto;
+}
+.recordItemConfig table td {
+    padding: 2px!important;
+} */
+
 .recordItemConfig  .v-itemId {
-	width: 7%;
+	width: 5%;
 }
 .recordItemConfig  .v-itemName {
 	width: 14%;
 }
 .recordItemConfig  .v-itemType {
-	width: 10%;
+	width: 5%;
 }
 .recordItemConfig .v-itemLength {
-	width: 8%;
+	width: 5%;
 }
 .recordItemConfig  .v-itemLocation {
-	width: 9%;
+	width: 6%;
 }
 .recordItemConfig  .v-itemDesc {
-	width: 14%;
+	width: 30%;
 }
 .recordItemConfig .v-state {
-	width: 12%;
+	width: 7%;
 }
 .recordItemConfig .v-itemValue {
-	width: 13%;
+	width: 17%;
 }
 .recordItemConfig .v-itemPrompt {
-	width: 13%;
+	width: 11%;
 }
 </style>
 <body>
-	<form class="form-horizontal" id="itemForm">
-	<input type="hidden" id="idID" name="id" /> 
-	<input type="hidden" id="versionID" name="version" /> 
-		<div class="form-group row">
-			<div class="col-lg-6 form-group">
-				<label class="col-lg-3 control-label">段名称:</label>
-				<div class="col-lg-9">
-					<input name="segName" 
-						class="form-control" readonly="true" type="text" dataType="Require" id="segNameID" />
-					<span class="required">*</span>
-				</div>
-			</div>
-			<div class="col-lg-6 form-group">
-				<label class="col-lg-3 control-label">段标:</label>
-				<div class="col-lg-9">
-					<input name="segMark" 
-						class="form-control" readonly="true" type="text" dataType="Require" id="segMarkID" />
-					<span class="required">*</span>
-				</div>
-			</div>
-			<div class="col-lg-6 form-group">
-				<label class="col-lg-3 control-label">描述:</label>
-				<div class="col-lg-9">
-					<input name="segDescID" 
-						class="form-control" readonly="true" type="text" id="segDescID" />
-				</div>
-			</div>
-			<div class="col-lg-6 form-group">
-				<label class="col-lg-3 control-label">长度:</label>
-				<div class="col-lg-9">
-					<input name="segLength" readonly="true"
-						class="form-control" type="text" id="segLengthID" />
-				</div>
-			</div>
-			<div class="col-lg-6 form-group">
-				<label class="col-lg-3 control-label">状态:</label>
-				<div class="col-lg-9">
-					<div class="btn-group select" id="stateID"></div>
-					<input type="hidden" id="stateID_" name="state" dataType="Require" />
-					<span class="required">*</span>
-				</div>
-			</div>
-			<div class="col-lg-6 form-group">
-				<label class="col-lg-3 control-label">出现次数:</label>
-				<div class="col-lg-9">
-					<div class="btn-group select" id="appearTimesID"></div>
-					<input type="hidden" id="appearTimesID_" name="appearTimes"
-						dataType="Require" /> <span class="required">*</span>
-				</div>
-			</div>
-
-		</div>
-		<div class="panel panel-default table-responsive">
-				<div class="panel-heading">数据项</div>
-				<table	class="table table-responsive table-bordered grid recordItemConfig">
-					<tr>
-						<td>
-							<div class="grid-body">
-								<div class="grid-table-head"  style="width:990px">
-									<table class="table table-bordered" >
-										<tr>
-											<th class="v-itemId">标识符</th>
-											<th class="v-itemName">数据项名称</th>
-											<th class="v-itemType">类型</th>
-											<th class="v-itemLength">长度</th>
-											<th class="v-itemLocation">位置</th>
-											<th class="v-itemDesc">描述及代码表</th>
-											<th class="v-state">状态</th>
-											<th class="v-itemValue">值</th>
-											<th class="v-itemPrompt">提示</th>
-										</tr>
-									</table>
-								</div>
-								<div class="grid-table-body" style="overflow-x: hidden;width:990px">
-									<table
-										class="table table-bordered table-hover table-striped staticQueryRightTable" style="width:990px"
-										id="itemTable">
-									</table>
-								</div>
-<!-- 								<button type="button" class="btn btn-success save" id="save">保存</button> -->
-							</div>
-						</td>
-					</tr>
-				</table>
-		</div>
-		<div class="modal-footer"><button type="button" class="btn btn-default" data-dismiss="modal">取消</button><button type="button" class="btn btn-success save" id="save">保存</button></div>
-<!-- 		<div id="context-menu"> -->
-<!-- 			<ul class="dropdown-menu" role="menu"> -->
-<!-- 				<li><a tabindex="-1" href="#">插入数据项</a></li> -->
-<!-- 			</ul> -->
-<!-- 		</div> -->
-	</form>
-	<script type="text/javascript">
-		
-	</script>
+<div class="generalQuery">
+    <div class="form-inline">
+	    <div class="form-group">
+	        <span class="control-label">段名称:</span>
+	        <div class="btn-group">
+	        	<p class="form-control-static" id="segNameID"></p>
+	        </div>
+	    </div>
+	    <div class="form-group">
+	    	<span class="control-label">段标:</span>
+	        <div class="btn-group">
+	        	<p class="form-control-static" id="segMarkID"></p>
+	        </div>
+	    </div>
+	    <div class="form-group">
+	    	<span class="control-label">长度:</span>
+	        <div class="btn-group">
+	        	<p class="form-control-static" id="segLengthID"></p>
+	        </div>
+	    </div>
+	    <div class="form-group">
+	    	<span class="control-label">状态:</span>
+	        <div class="btn-group">
+	        	<p class="form-control-static" id="stateID"></p>
+	        </div>
+	    </div>
+	    <div class="form-group">
+	    	<span class="control-label">出现次数:</span>
+	        <div class="btn-group">
+	        	<p class="form-control-static" id="appearTimesID"></p>
+	        </div>
+	    </div>
+	    <div class="form-group">
+	    	<span class="control-label">描述:</span>
+	        <div class="btn-group">
+	        	<p class="form-control-static" id="segDescID"></p>
+	        </div>
+	    </div>
+	</div>
+	
+	<div class="panel panel-default table-responsive">
+		<div class="panel-heading">数据项</div>
+		<table class="table table-responsive table-bordered grid recordItemConfig">
+			<tr>
+				<td>
+					<div class="grid-body">
+						<div class="grid-table-head" style="width:990px;">
+							<table class="table table-bordered">
+								<tr>
+									<th class="v-itemId">标识符</th>
+									<th class="v-itemName">数据项名称</th>
+									<th class="v-itemType">类型</th>
+									<th class="v-itemLength">长度</th>
+									<th class="v-itemLocation">位置</th>
+									<th class="v-itemDesc">描述及代码表</th>
+									<th class="v-state">状态</th>
+									<th class="v-itemValue">值</th>
+									<th class="v-itemPrompt">提示</th>
+								</tr>
+							</table>
+						</div>
+						<div class="grid-table-body" style="width:990px; overflow-x:hidden;">
+							<table class="table table-bordered table-hover table-striped staticQueryRightTable" id="itemTable" style="width:990px;"></table>
+						</div>
+					</div>
+				</td>
+			</tr>
+		</table>
+	</div>
+</div>
+<script type="text/javascript">
+</script>
 </body>
 </html>

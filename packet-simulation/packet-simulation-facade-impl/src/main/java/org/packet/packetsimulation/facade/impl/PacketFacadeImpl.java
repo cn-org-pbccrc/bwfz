@@ -82,8 +82,6 @@ import org.springframework.web.servlet.view.json.MappingJacksonJsonView;
 @Named
 public class PacketFacadeImpl implements PacketFacade {
 	
-	private static final Logger LOGGER = LoggerFactory.getLogger(PacketFacadeImpl.class);
-	
 	@Inject
 	private PacketApplication  application;
 	
@@ -147,7 +145,7 @@ public class PacketFacadeImpl implements PacketFacade {
 	   		jpql.append(" and _mesg.packet.id = ? ");
 	   		conditionVals.add(idOfPacket);
 	   	}
-	   	List<Mesg> mesgs = (List<Mesg>) getQueryChannelService().createJpqlQuery(jpql.toString()).setParameters(conditionVals).list();
+	   	List<Mesg> mesgs = getQueryChannelService().createJpqlQuery(jpql.toString()).setParameters(conditionVals).list();
 	   	return mesgs;
 	}
 	

@@ -7,8 +7,11 @@ import javax.servlet.http.HttpServletResponse;
 import org.springframework.util.FileCopyUtils;
 import org.springframework.web.bind.WebDataBinder;
 
+import java.io.ByteArrayInputStream;
 import java.io.File;
 import java.io.IOException;
+import java.io.InputStream;
+import java.io.OutputStream;
 import java.text.ParseException;
 import java.text.SimpleDateFormat;
 import java.util.ArrayList;
@@ -36,7 +39,9 @@ import org.springframework.web.servlet.ModelAndView;
 //import org.apache.commons.fileupload.disk.DiskFileItemFactory;
 //import org.apache.commons.fileupload.servlet.ServletFileUpload;
 import org.dayatang.utils.Page;
+import org.packet.packetsimulation.application.TaskPacketApplication;
 import org.packet.packetsimulation.core.domain.MesgType;
+import org.packet.packetsimulation.core.domain.Packet;
 import org.packet.packetsimulation.core.domain.TaskPacket;
 import org.packet.packetsimulation.facade.dto.*;
 import org.packet.packetsimulation.facade.TaskPacketFacade;
@@ -51,6 +56,9 @@ public class TaskPacketController {
 		
 	@Inject
 	private TaskPacketFacade taskPacketFacade;
+	
+	@Inject
+	private TaskPacketApplication application;
 	
 	@ResponseBody
 	@RequestMapping("/add")
@@ -110,8 +118,43 @@ public class TaskPacketController {
 	@RequestMapping("/getTaskPacketView/{id}")
 	public InvokeResult getPacketView(@PathVariable Long id, HttpServletRequest request) throws Exception{		
 		String ctxPath = request.getSession().getServletContext().getRealPath("/") + File.separator + "uploadFiles" + File.separator;
-		String packetContent = taskPacketFacade.showPacketContent(id,ctxPath);
+		String packetContent = taskPacketFacade.showPacketContent(id, ctxPath);
 		return InvokeResult.success(packetContent);	
+	}
+	
+	@ResponseBody
+	@RequestMapping("/downSourceFile/{id}")
+	public void downSourceFile(@PathVariable Long id, HttpServletRequest request, HttpServletResponse response) throws Exception{		
+		String ctxPath = request.getSession().getServletContext().getRealPath("/") + File.separator + "uploadFiles" + File.separator;
+		String packetContent = taskPacketFacade.showPacketContent(id, ctxPath);
+		TaskPacket taskPacket = application.getTaskPacket(id);
+		response.setContentType("application/txt;charset=UTF-8");
+		response.setHeader("Content-Disposition", "attachment; filename=" + taskPacket.getSelectedPacketName() + ".txt");
+		response.setCharacterEncoding("UTF-8");
+		
+		InputStream in = null;;
+		OutputStream out;
+		try {
+			in = new ByteArrayInputStream(packetContent.getBytes("UTF-8"));
+			out = response.getOutputStream();
+			int len = 0;
+			byte[] buffer = new byte[1024];
+			while ((len = in.read(buffer)) > 0) {
+//				out.write(new byte[] { (byte) 0xEF, (byte) 0xBB, (byte) 0xBF });
+				out.write(buffer, 0, len);
+			}
+		} catch (IOException e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+		} finally {
+			if (in != null) {
+				try {
+					in.close();
+				} catch (Exception e) {
+					throw new RuntimeException(e);
+				}
+			}
+		}
 	}
 	
 	@ResponseBody
