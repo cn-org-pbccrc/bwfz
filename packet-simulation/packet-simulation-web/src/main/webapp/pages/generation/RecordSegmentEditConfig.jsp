@@ -37,35 +37,10 @@
     margin-top: 5px;
     margin-bottom: 0;
 }
-/* .generalQuery  .table .panel {
-    padding: 0;
-    margin: 0;
-}
-.generalQuery  .table .table-value .required {
-    color:red;
-    position: relative;
-    top: 6px;
-    margin-left: 2px;
-}
-.generalQuery .table td .form-control {
-    display: inline!important;
-    width: 95%;
-}
-.grid-table-head table tr th:last-child,
-.grid-table-body table tr td:last-child{
-    border-right-width: 0!important;
-}
-.grid-table-body {
+.recordItemConfig .grid-table-body {
     overflow-y: auto;
     overflow-x: hidden;
 }
-.recordItemConfig table {
-    table-layout: auto;
-}
-.recordItemConfig table td {
-    padding: 2px!important;
-} */
-
 .recordItemConfig  .v-itemId {
 	width: 5%;
 }
@@ -82,7 +57,7 @@
 	width: 6%;
 }
 .recordItemConfig  .v-itemDesc {
-	width: 30%;
+	width: 28%;
 }
 .recordItemConfig .v-state {
 	width: 7%;
@@ -91,7 +66,7 @@
 	width: 17%;
 }
 .recordItemConfig .v-itemPrompt {
-	width: 11%;
+	width: 13%;
 }
 </style>
 <body>
@@ -141,7 +116,7 @@
 			<tr>
 				<td>
 					<div class="grid-body">
-						<div class="grid-table-head" style="width:990px;">
+						<div class="grid-table-head">
 							<table class="table table-bordered">
 								<tr>
 									<th class="v-itemId">标识符</th>
@@ -156,8 +131,8 @@
 								</tr>
 							</table>
 						</div>
-						<div class="grid-table-body" style="width:990px; overflow-x:hidden;">
-							<table class="table table-bordered table-hover table-striped staticQueryRightTable" id="itemTable" style="width:990px;"></table>
+						<div class="grid-table-body">
+							<table class="table table-bordered table-hover table-striped staticQueryRightTable" id="itemTable"></table>
 						</div>
 					</div>
 				</td>

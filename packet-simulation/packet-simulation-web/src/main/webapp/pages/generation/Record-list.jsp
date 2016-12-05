@@ -637,7 +637,7 @@ var getAllData = function(dialog){
 	var itemTable = dialog.find("#itemTable");
 	itemTable.find('tr').each(function(index,tr){
 		var $tr = $(tr);
-		itemId = $tr.find('input[data-role="itemId"]').val();
+		itemId = $tr.find('p[data-role="itemId"]').html();
 		itemValue = $tr.find('input[data-role="itemValue"]').val();
 		data[itemId] = itemValue;
 	});
@@ -778,6 +778,16 @@ var segmentEdit = function(grid, submissionId, id){
 	    		});
      		}
 	    }).find('.modal-body').html(html);
+	    $.get('${pageContext.request.contextPath}/Record/get/' + id + '.koala').done(function(json){
+        	json = json.data;
+            var elm;
+            for(var index in json){
+                elm = dialog.find('#'+ index + 'ID');
+                if(index == 'recordName'){
+                	elm.val(json[index]);
+                }
+            }
+        });
 	    dialog.find('#save').on('click',{grid: grid}, function(e){
 	    	var recordObj = {};
 		    var num = dialog.find($("[grid='grid']")).size();
@@ -823,6 +833,7 @@ var segmentEdit = function(grid, submissionId, id){
 
 var addSegment = function(grid){
 	var self = this;
+	var w = $(window).width() * 0.75;
 	var h = $(window).height();
 	var recordSegmentId = grid.attr("recordSegmentId");
     //var dialog = $('<div class="modal fade"><div class="modal-dialog" style="width: 80% !important;"><div class="modal-content"><div class="modal-header"><button type="button" class="close" data-dismiss="modal" aria-hidden="true">&times;</button><h4 class="modal-title">新增段</h4></div><div class="modal-body" style="overflow-y:auto; height:' + 0.8 * h + 'px;"><p>One fine body&hellip;</p></div></div></div></div>');
@@ -843,8 +854,8 @@ var addSegment = function(grid){
                 $(this).remove();
             }
         }).find('.modal-body').html(html);
-        dialog.find('#stateID').html()             
-        initPage(dialog.find('form'));
+        dialog.find('.grid-table-body').css('width', w).find('table').css('width',w);
+		dialog.find('.grid-table-head').find('table').css('width',w);
         $.get('${pageContext.request.contextPath}/RecordSegment/get/' + recordSegmentId + '.koala').done(function(json){
         	json = json.data;
             var elm;
@@ -888,7 +899,6 @@ var addSegment = function(grid){
 		        rules : rules,
 		        onButtonClick : function(result, button, form){
 	            	if(result){
-	            		if(!Validator.Validate(dialog.find('form')[0],3))return;
 	                    var content = getAllData(dialog);
 	                    dialog.modal('hide');
 	                    var localData = grid.data('koala.grid').options.localData;
@@ -924,10 +934,11 @@ var addSegment = function(grid){
 
 var modifySegment = function(index, grid){
 	var self = this;
+	var w = $(window).width() * 0.75;
 	var h = $(window).height();
 	var recordSegmentId = grid.attr("recordSegmentId");
 	var localData = grid.data('koala.grid').options.localData;
-	var checkedLocalData = localData.splice(index, 1);
+	var checkedLocalData = JSON.parse(JSON.stringify(localData)).splice(index, 1);
 	//var dialog = $('<div class="modal fade"><div class="modal-dialog" style="width: 80% !important;"><div class="modal-content"><div class="modal-header"><button type="button" class="close" data-dismiss="modal" aria-hidden="true">&times;</button><h4 class="modal-title">修改段</h4></div><div class="modal-body" style="overflow-y:auto; height:' + 0.8 * h + 'px;"><p>One fine body&hellip;</p></div></div></div></div>');
     var dialog = $('<div class="modal fade"><div class="modal-dialog" style="width: 80% !important;">'
 		+'<div class="modal-content"><div class="modal-header"><button type="button" class="close" '
@@ -935,7 +946,7 @@ var modifySegment = function(index, grid){
 	    +'<h4 class="modal-title">编辑段信息</h4></div><div class="modal-body" style="overflow-y:auto; height:' + 0.68 * h + 'px;">'
 	    +'<p>One fine body&hellip;</p></div><div class="modal-footer">'
        	+'<button type="button" class="btn btn-default" data-dismiss="modal">取消</button>'
-       	+'<button type="button" class="btn btn-success" id="save">保存</button></div></div>'
+       	+'<button type="button" class="btn btn-success save" id="save">保存</button></div></div>'
 	    +'</div></div>');
 	$.get('<%=path%>/RecordSegmentEditConfig.jsp').done(function(html){
         dialog.modal({
@@ -946,19 +957,8 @@ var modifySegment = function(index, grid){
                 $(this).remove();
             }
         }).find('.modal-body').html(html);
-        var stateSelect = dialog.find('#stateID');
-        fillStateSelect(stateSelect);
-       	var contents = [{title:'1:1', value: '0',selected: true}];
-        contents.push({title:'0：1' , value:'1'});
-        contents.push({title:'0：n' , value:'2'});
-        contents.push({title:'1：n' , value:'3'});
-        var appearTimesSelect = dialog.find('#appearTimesID');
-        appearTimesSelect.select({
-    		contents : contents
-   		});
-        initPage(dialog.find('form'));
-        dialog.find('[data-toggle="item"]').attr('disabled', true);
-        dialog.find('[data-toggle="button"]').attr('disabled', true);
+        dialog.find('.grid-table-body').css('width', w).find('table').css('width', w);
+		dialog.find('.grid-table-head').find('table').css('width', w);
         $.get('${pageContext.request.contextPath}/RecordSegment/getUpdate/' + recordSegmentId + '.koala?checkedLocalData=' + JSON.stringify(checkedLocalData)).done(function(json){
         	json = json.data;
             var elm;
@@ -977,7 +977,7 @@ var modifySegment = function(index, grid){
              		for(var i=0;i<items.length;i++){
              			var data = {};
              			var value = {};
-             			addRow(dialog.find("#itemTable"), items[i]);
+             			insertRow(dialog.find("#itemTable"), items[i]);
              			value["rule"] = new RegExp("^.{1," + items[i].itemLength + "}$");
              			value["tip"] = "长度大于" + items[i].itemLength;
              			rules[items[i].itemId] = value;
@@ -987,23 +987,28 @@ var modifySegment = function(index, grid){
                  		data["rightMsg"] = "正确";
              			inputs.push(data);
              		}
+             	}else if(index == 'state'){
+             		dialog.find('#'+ index + 'ID').html(fillStateSelect(json[index]));
+             	}else if(index == 'appearTimes'){
+             		dialog.find('#'+ index + 'ID').html(fillAppearTimesSelect(json[index]));
+             	}else{
+	                dialog.find('#'+ index + 'ID').html(json[index]);             		
              	}
-                elm = dialog.find('#'+ index + 'ID');
-                if(elm.hasClass('select')){
-                	elm.setValue(json[index]);
-                }else{
-                    elm.val(json[index]);
-                }
             }
-			dialog.find("#itemForm").validateForm({
+            dialog.validateForm({
 		    	inputs : inputs,
 		        button : ".save",
 		        rules : rules,
 		        onButtonClick : function(result, button, form){
 	            	if(result){
-	            		if(!Validator.Validate(dialog.find('form')[0],3))return;
 	                    var content = getAllData(dialog);
-	                    var data = [{ name: 'recordId', value: recordId },
+	                    dialog.modal('hide');
+	                    var localData = grid.data('koala.grid').options.localData;
+	                    localData.push(content);
+	                    grid.data('koala.grid').options.localData = localData;
+	                    grid.data('koala.grid')._initHead();
+	                    grid.data('koala.grid').refresh();
+	                    /* var data = [{ name: 'recordId', value: recordId },
 	              					{ name: 'segMark', value: dialog.find('#segMarkID').val()},
 	             				    { name: 'content', value: content},
 	             				    { name: 'id', value: segmentId},
@@ -1023,7 +1028,7 @@ var modifySegment = function(index, grid){
 	                                content: result.errorMessage
 	                            });
 	                        }
-	                    });
+	                    }); */
 	            	}
 		        }
 		    });

@@ -209,13 +209,13 @@ $(function (){
 	                            dialog.modal('hide');
 	                            e.data.grid.data('koala.grid').refresh();
 	                            e.data.grid.message({
-	                            type: 'success',
-	                            content: '保存成功'
+	                            	type: 'success',
+	                            	content: '保存成功'
 	                            });
 	                        }else{
 	                            dialog.find('.modal-content').message({
-	                            type: 'error',
-	                            content: result.actionError
+	                            	type: 'error',
+	                            	content: result.actionError
 	                            });
 	                        }
 	                    });
