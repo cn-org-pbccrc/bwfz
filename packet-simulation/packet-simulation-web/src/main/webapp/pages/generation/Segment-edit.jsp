@@ -4,7 +4,7 @@
 <div class="form-group">
 	<div class="input-group">
 		<div class="input-group-addon">记录名称</div>
-		<input name="recordName" id="recordNameId" type="text" style="width:30%!important;" class="form-control"/>
+		<input name="recordName" id="recordNameID" type="text" style="width:30%!important;" class="form-control"/>
 	</div>
 </div>
 <div id="mainGrid">

@@ -83,7 +83,7 @@ public class SubmissionController {
 		return submissionFacade.getSubmission(id);
 	}
 	
-	@ResponseBody
+/*	@ResponseBody
 	@RequestMapping("/exportSubmissions")
 	public void downloadCSV(@RequestParam String ids, HttpServletRequest request, HttpServletResponse response) {	
 		String[] value = ids.split(",");
@@ -119,7 +119,7 @@ public class SubmissionController {
 				}
 			}
 		}
-	}
+	}*/
 		
     @InitBinder    
     public void initBinder(WebDataBinder binder) {  

@@ -30,11 +30,12 @@ $(function (){
 	                buttons: [
 	                        {content: '<button class="btn btn-primary" type="button"><span class="glyphicon glyphicon-plus"><span>添加</button>', action: 'add'},
 	                        {content: '<button class="btn btn-success" type="button"><span class="glyphicon glyphicon-edit"><span>修改</button>', action: 'modify'},
+	                        {content: '<button class="btn btn-danger" type="button"><span class="glyphicon glyphicon-remove"><span>删除</button>', action: 'delete'},
 	                        {content: '<button class="btn btn-inverse" type="button"><span class="glyphicon glyphicon-cloud-upload"><span>上传</button>', action: 'upload'},
+	                        {content: '<button class="btn btn-inverse" type="button"><span class="glyphicon glyphicon-export"><span>导出</button>', action: 'export'},
 	                        {content: '<button class="btn btn-info" type="button"><span class="glyphicon glyphicon-arrow-up"><span>上移</button>', action: 'up'},
 	                        {content: '<button class="btn btn-info" type="button"><span class="glyphicon glyphicon-arrow-down"><span>下移</button>', action: 'down'},
-	                        {content: '<button class="btn btn-warning" type="button"><span class="glyphicon glyphicon-refresh"><span>刷新</button>', action: 'fresh'},
-	                        {content: '<button class="btn btn-danger" type="button"><span class="glyphicon glyphicon-remove"><span>删除</button>', action: 'delete'}
+	                        {content: '<button class="btn btn-warning" type="button"><span class="glyphicon glyphicon-refresh"><span>刷新</button>', action: 'fresh'}
 	                    ],
 	                url:"${pageContext.request.contextPath}/LotSubmission/pageJson/" + lotId + ".koala",
 	                columns: [
@@ -93,6 +94,25 @@ $(function (){
 	                   'upload': function(){
 		                   self.upload($(this));
 		               },
+		               'export': function(event, data){
+	                   	   var indexs = data.data;
+	                       var $this = $(this);
+	                       if(indexs.length == 0){
+	                           $this.message({
+	                               type: 'warning',
+	                               content: '请选择一条记录进行导出'
+	                           })
+	                           return;
+	                       }
+	                       if(indexs.length > 1){
+	                           $this.message({
+	                               type: 'warning',
+	                               content: '只能选择一条记录进行导出'
+	                           })
+	                           return;
+	                       }
+	                       self.exportLotSubmission(indexs[0]);
+	                   },
 		               'up':function(event, data){
 	                        var indexs = data.data;
 	                        var $this = $(this);
@@ -328,6 +348,10 @@ $(function (){
                     });
         		});
 	        });
+	    },
+	    exportLotSubmission: function(id){
+	    	var date = new Date();
+	    	window.open('${pageContext.request.contextPath}/LotSubmission/exportLotSubmission/' + id + '.koala?id=' + date.getTime() + '.txt');	    
 	    },
 	    up: function(grid){
 	    	if(grid.getGrid().selectedRowsNo()==0){

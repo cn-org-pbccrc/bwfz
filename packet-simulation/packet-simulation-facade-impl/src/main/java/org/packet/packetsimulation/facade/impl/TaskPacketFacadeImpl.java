@@ -169,12 +169,12 @@ public class TaskPacketFacadeImpl implements TaskPacketFacade {
 	public String showPacketContent(Long id, String ctxPath){
 		TaskPacket taskPacket = application.getTaskPacket(id);
 		String path;
-		if(taskPacket.getPacketFrom()==0){
-			path = ctxPath + taskPacket.getTask().getId() + File.separator + "insideFiles" + File.separator + taskPacket.getSelectedPacketName() + ".csv";
-		}else if(taskPacket.getPacketFrom()==1){
+		if(taskPacket.getPacketFrom() == 0){
+			path = ctxPath + taskPacket.getTask().getId() + File.separator + "insideFiles" + File.separator + taskPacket.getSelectedPacketName() + ".txt";
+		}else if(taskPacket.getPacketFrom() == 1){
 			path = ctxPath + taskPacket.getTask().getId() + File.separator + "outsideFiles" + File.separator + taskPacket.getSelectedPacketName();
 		}else{
-			path = ctxPath + "easySendFiles" + File.separator + taskPacket.getSelectedPacketName() + ".csv";
+			path = ctxPath + "easySendFiles" + File.separator + taskPacket.getSelectedPacketName() + ".txt";
 		}
 		StringBuffer sb = new StringBuffer();
 		try {
@@ -199,18 +199,6 @@ public class TaskPacketFacadeImpl implements TaskPacketFacade {
         reader.close();
         is.close();
     }
-	
-	private String fillStringToHead(int length,String target,String filler){
-		if(null!=target && target.length()<length && null!=filler && !"".equals(filler)){
-			String result = "";
-			for(int i=target.length();i<length;i++){
-				result = result + filler;
-			}
-			result = result + target;
-			return result;
-		}
-		return target;
-	}
 	
 	@SuppressWarnings("unchecked")
 	private List<Mesg> findMesgsByPacketId(Long id){

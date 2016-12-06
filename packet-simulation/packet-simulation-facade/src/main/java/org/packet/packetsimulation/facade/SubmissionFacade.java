@@ -23,6 +23,6 @@ public interface SubmissionFacade {
 	
 	public Page<SubmissionDTO> pageJsonByType(SubmissionDTO submission, int currentPage, int pageSize, String createdBy, Long lotId);
 	
-	public String exportSubmissions(Long[] ids);
+	//public String exportSubmissions(Long[] ids);
 }
 

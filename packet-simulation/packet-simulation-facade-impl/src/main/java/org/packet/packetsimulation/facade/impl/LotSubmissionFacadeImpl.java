@@ -126,7 +126,7 @@ public class LotSubmissionFacadeImpl implements LotSubmissionFacade {
 			lotSubmission.setSerialNumber(maxSerialNumber + 1);
 			maxSerialNumber++;
 			lotSubmissions.add(lotSubmission);						
-			exportSubmission(Long.valueOf(flags[i]), ctxPath + lotSubmission.getName(), lot.getType());
+			generationFile(Long.valueOf(flags[i]), ctxPath + lotSubmission.getName(), lot.getType());
 		}
 		application.creatLotSubmissions(lotSubmissions);
 		return InvokeResult.success();
@@ -146,9 +146,9 @@ public class LotSubmissionFacadeImpl implements LotSubmissionFacade {
 		return itemValue;
 	}
 	
-	private void exportSubmission(Long id, String name, Integer type){
+	private void generationFile(Long id, String name, Integer type){
 		String result = submissionFacadeImpl.exportSubmission(id, type);
-	    File f = new File(name + ".csv");//新建一个文件对象
+	    File f = new File(name + ".txt");//新建一个文件对象
         FileWriter fw;
         try {
         	fw = new FileWriter(f);//新建一个FileWriter	    
@@ -190,7 +190,7 @@ public class LotSubmissionFacadeImpl implements LotSubmissionFacade {
 		LotSubmission lotSubmission = application.getLotSubmission(id);
 		String path = "";
 		if(lotSubmission.getSubmissionFrom() == PACKETCONSTANT.TASKPACKET_PACKETFROM_INSIDE){
-			path = ctxPath + lotSubmission.getLot().getId() + File.separator + "insideFiles" + File.separator + lotSubmission.getName() + ".csv";
+			path = ctxPath + lotSubmission.getLot().getId() + File.separator + "insideFiles" + File.separator + lotSubmission.getName() + ".txt";
 		}else if(lotSubmission.getSubmissionFrom() == PACKETCONSTANT.TASKPACKET_PACKETFROM_OUTSIDE){
 			path = ctxPath + lotSubmission.getLot().getId() + File.separator + "outsideFiles" + File.separator + lotSubmission.getName();
 		}

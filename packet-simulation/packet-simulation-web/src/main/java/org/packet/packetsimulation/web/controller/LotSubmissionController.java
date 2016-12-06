@@ -7,8 +7,11 @@ import javax.servlet.http.HttpServletResponse;
 import org.springframework.util.FileCopyUtils;
 import org.springframework.web.bind.WebDataBinder;
 
+import java.io.ByteArrayInputStream;
 import java.io.File;
 import java.io.IOException;
+import java.io.InputStream;
+import java.io.OutputStream;
 import java.text.ParseException;
 import java.text.SimpleDateFormat;
 import java.util.Date;
@@ -25,6 +28,9 @@ import org.springframework.web.multipart.MultipartFile;
 import org.springframework.web.multipart.MultipartHttpServletRequest;
 import org.springframework.web.servlet.ModelAndView;
 import org.dayatang.utils.Page;
+import org.packet.packetsimulation.application.LotSubmissionApplication;
+import org.packet.packetsimulation.core.domain.LotSubmission;
+import org.packet.packetsimulation.core.domain.TaskPacket;
 import org.packet.packetsimulation.facade.dto.*;
 import org.packet.packetsimulation.facade.LotSubmissionFacade;
 import org.openkoala.koala.commons.InvokeResult;
@@ -35,6 +41,9 @@ public class LotSubmissionController {
 		
 	@Inject
 	private LotSubmissionFacade lotSubmissionFacade;
+	
+	@Inject
+	private LotSubmissionApplication application;
 	
 	@ResponseBody
 	@RequestMapping("/add")
@@ -137,6 +146,39 @@ public class LotSubmissionController {
 			return lotSubmissionFacade.uploadLotSubmission(lotSubmissionDTO, ctxPath);
 		}
 		return modelAndView;  
+	}
+	
+	@ResponseBody
+	@RequestMapping("/exportLotSubmission/{id}")
+	public void exportLotSubmission(@PathVariable Long id, HttpServletRequest request, HttpServletResponse response) throws Exception{		
+		String ctxPath = request.getSession().getServletContext().getRealPath("/") + File.separator + "generationFiles" + File.separator;
+		String submissionContent = lotSubmissionFacade.showSubmissionContent(id, ctxPath);
+		LotSubmission lotSubmission = application.getLotSubmission(id);
+		response.setContentType("application/txt;charset=UTF-8");
+		response.setHeader("Content-Disposition", "attachment; filename=" + lotSubmission.getName() + ".txt");
+		response.setCharacterEncoding("UTF-8");		
+		InputStream in = null;;
+		OutputStream out;
+		try {
+			in = new ByteArrayInputStream(submissionContent.getBytes("UTF-8"));
+			out = response.getOutputStream();
+			int len = 0;
+			byte[] buffer = new byte[1024];
+			while ((len = in.read(buffer)) > 0) {
+				out.write(buffer, 0, len);
+			}
+		} catch (IOException e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+		} finally {
+			if (in != null) {
+				try {
+					in.close();
+				} catch (Exception e) {
+					throw new RuntimeException(e);
+				}
+			}
+		}
 	}
 	
     @InitBinder    

@@ -725,7 +725,7 @@ var segmentEdit = function(grid, submissionId, id){
  	    	   	                modifySegment(indexs[0], $this);
 	    	   	            },
 	    	    	        'delete': function(event, data){
-	    	    	        	var indexs = data.data;
+	    	    	        	var indexs = $(this).data('koala.grid').selectedRowsNo();
 	    	    	            var $this = $(this);
 	    	    	            if(indexs.length == 0){
 	    	    	            	$this.message({
@@ -778,16 +778,18 @@ var segmentEdit = function(grid, submissionId, id){
 	    		});
      		}
 	    }).find('.modal-body').html(html);
-	    $.get('${pageContext.request.contextPath}/Record/get/' + id + '.koala').done(function(json){
-        	json = json.data;
-            var elm;
-            for(var index in json){
-                elm = dialog.find('#'+ index + 'ID');
-                if(index == 'recordName'){
-                	elm.val(json[index]);
-                }
-            }
-        });
+	    if(id){
+	    	$.get('${pageContext.request.contextPath}/Record/get/' + id + '.koala').done(function(json){
+	        	json = json.data;
+	            var elm;
+	            for(var index in json){
+	                elm = dialog.find('#'+ index + 'ID');
+	                if(index == 'recordName'){
+	                	elm.val(json[index]);
+	                }
+	            }
+	        });
+	    }
 	    dialog.find('#save').on('click',{grid: grid}, function(e){
 	    	var recordObj = {};
 		    var num = dialog.find($("[grid='grid']")).size();
@@ -804,7 +806,7 @@ var segmentEdit = function(grid, submissionId, id){
 				var data = {};
 				data.submissionId = submissionId;
 				data.content = JSON.stringify(recordObj);
-				data.recordName = dialog.find('#name').val();
+				data.recordName = dialog.find('#recordNameID').val();
 				return data;
 			};
 		    var url = '${pageContext.request.contextPath}/Record/add.koala';
@@ -875,12 +877,17 @@ var addSegment = function(grid){
              			var data = {};
              			var value = {};
              			insertRow(dialog.find("#itemTable"), items[i]);
-             			value["rule"] = new RegExp("^.{1," + items[i].itemLength + "}$");
+             			value["rule"] = new RegExp("^.{0," + items[i].itemLength + "}$");
              			value["tip"] = "长度大于" + items[i].itemLength;
              			rules[items[i].itemId] = value;
+             			if(items[i].state != 'M'){
+             				data["rules"] = [items[i].itemId];
+             				data["focusMsg"] = "选填";
+             			}else{
+	             			data["rules"] = ["notnull", items[i].itemId];
+	                 		data["focusMsg"] = "必填";
+             			}
              			data["name"] = items[i].itemId;
-             			data["rules"] = ["notnull", items[i].itemId];
-                 		data["focusMsg"] = "必填";
                  		data["rightMsg"] = "正确";
              			inputs.push(data);
              		}
@@ -932,13 +939,13 @@ var addSegment = function(grid){
     });
 }
 
-var modifySegment = function(index, grid){
+var modifySegment = function(id, grid){
 	var self = this;
 	var w = $(window).width() * 0.75;
 	var h = $(window).height();
 	var recordSegmentId = grid.attr("recordSegmentId");
 	var localData = grid.data('koala.grid').options.localData;
-	var checkedLocalData = JSON.parse(JSON.stringify(localData)).splice(index, 1);
+	var checkedLocalData = JSON.parse(JSON.stringify(localData)).splice(id, 1);
 	//var dialog = $('<div class="modal fade"><div class="modal-dialog" style="width: 80% !important;"><div class="modal-content"><div class="modal-header"><button type="button" class="close" data-dismiss="modal" aria-hidden="true">&times;</button><h4 class="modal-title">修改段</h4></div><div class="modal-body" style="overflow-y:auto; height:' + 0.8 * h + 'px;"><p>One fine body&hellip;</p></div></div></div></div>');
     var dialog = $('<div class="modal fade"><div class="modal-dialog" style="width: 80% !important;">'
 		+'<div class="modal-content"><div class="modal-header"><button type="button" class="close" '
@@ -978,12 +985,17 @@ var modifySegment = function(index, grid){
              			var data = {};
              			var value = {};
              			insertRow(dialog.find("#itemTable"), items[i]);
-             			value["rule"] = new RegExp("^.{1," + items[i].itemLength + "}$");
+             			value["rule"] = new RegExp("^.{0," + items[i].itemLength + "}$");
              			value["tip"] = "长度大于" + items[i].itemLength;
              			rules[items[i].itemId] = value;
+             			if(items[i].state != 'M'){
+             				data["rules"] = [items[i].itemId];
+             				data["focusMsg"] = "选填";
+             			}else{
+	             			data["rules"] = ["notnull", items[i].itemId];
+	                 		data["focusMsg"] = "必填";
+             			}
              			data["name"] = items[i].itemId;
-             			data["rules"] = ["notnull", items[i].itemId];
-                 		data["focusMsg"] = "必填";
                  		data["rightMsg"] = "正确";
              			inputs.push(data);
              		}
@@ -1004,7 +1016,8 @@ var modifySegment = function(index, grid){
 	                    var content = getAllData(dialog);
 	                    dialog.modal('hide');
 	                    var localData = grid.data('koala.grid').options.localData;
-	                    localData.push(content);
+	                    localData.splice(id, 1, content);
+	                    //localData.push(content);
 	                    grid.data('koala.grid').options.localData = localData;
 	                    grid.data('koala.grid')._initHead();
 	                    grid.data('koala.grid').refresh();
@@ -1037,21 +1050,14 @@ var modifySegment = function(index, grid){
 }
 
 var removeSegment = function(ids, grid){
-	var data = [{ name: 'ids', value: ids.join(',') }];
-	$.post('${pageContext.request.contextPath}/Segment/delete.koala', data).done(function(result){
-    	if(result.success){
-        	grid.data('koala.grid').refresh();
-            grid.message({
-            	type: 'success',
-                content: '删除成功'
-            });
-        }else{
-            grid.message({
-                type: 'error',
-                content: result.errorMessage
-            });
-        }
-	});
+	var localData = grid.data('koala.grid').options.localData;
+	var indexes = ids.reverse();
+	for (var i = 0; i < indexes.length; i++) {
+		localData.splice(indexes[i], 1);
+	}
+	grid.data('koala.grid').options.localData = localData;
+	grid.data('koala.grid')._initHead();
+	grid.data('koala.grid').refresh();
 }
 
 var initPage = function(form){

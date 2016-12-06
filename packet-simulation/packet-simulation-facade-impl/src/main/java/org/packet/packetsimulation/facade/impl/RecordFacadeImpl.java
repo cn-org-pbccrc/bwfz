@@ -378,7 +378,7 @@ public class RecordFacadeImpl implements RecordFacade {
 	   		segmentArray = JSON.parseArray(segmentContent);
 	   		for(int i = 0; i < segmentArray.size(); i++){
 	   			JSONObject obj = (JSONObject) segmentArray.get(i);
-	   			obj.put("id", i);
+	   			//obj.put("id", i);
 		   		list.add(obj);
 	   		}
 	   	}

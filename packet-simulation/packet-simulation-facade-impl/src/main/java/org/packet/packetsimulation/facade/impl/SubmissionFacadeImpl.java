@@ -116,31 +116,42 @@ public class SubmissionFacadeImpl implements SubmissionFacade {
 		for(RecordItem recordItem : headerItems){
 			head += adjustLength(recordItem.getItemLength(), Integer.parseInt(recordItem.getItemType()), jsonHead.getString(recordItem.getItemId()));
 		}
-		List<Long> recordIds = findRecordIdsBySubmissionId(id);
-		for(int i = 0; i < recordIds.size(); i++){
-			List<Segment> segments = findSegmentsByRecordId(recordIds.get(i));
-			if(segments != null){
-				String record = "";
-				for(int j = 0; j < segments.size(); j++){
-					RecordSegment recordSegment = findRecordSegmentByRecordType(segments.get(j).getRecord().getRecordType().getId(), segments.get(j).getSegMark());
-					List<RecordItem> recordItems = recordSegment.getRecordItems();
-					JSONObject jsonRecord = JSON.parseObject(segments.get(j).getContent());
-					for(RecordItem recordItem : recordItems){
-						record += adjustLength(recordItem.getItemLength(), Integer.parseInt(recordItem.getItemType()), jsonRecord.getString(recordItem.getItemId()));
-					}
-				}
-				body += record + "\n";
+		List<Record> records = findRecordsBySubmissionId(id);
+		for(int i = 0; i < records.size(); i++){
+			Record record = records.get(i);
+			String recordJson = record.getContent();
+			JSONObject recordObj = JSON.parseObject(recordJson);
+			List<RecordSegment> recordSegments = findRecordSegmentsByRecordType(record.getRecordType().getId());
+			String recordContent = "";
+			for(int j = 0; j < recordSegments.size(); j++){
+				List<RecordItem> recordItems = recordSegments.get(j).getRecordItems();
+				String segmentJson= recordObj.getString(recordSegments.get(j).getSegMark());
+			   	JSONArray segmentArray = null;
+			   	if(segmentJson != null){
+			   		segmentArray = JSON.parseArray(segmentJson);
+			   		for(int k = 0; k < segmentArray.size(); k++){
+			   			JSONObject segmentObj = (JSONObject) segmentArray.get(k);
+			   			for(RecordItem recordItem : recordItems){
+			   				recordContent += adjustLength(recordItem.getItemLength(), Integer.parseInt(recordItem.getItemType()), segmentObj.getString(recordItem.getItemId()));
+						}
+			   		}
+			   	}
 			}
+			body += recordContent + "\n";
 		}
-		exportSubmission += head + "\n" + body;
-		if(type == 1){
-			String tail = "Z" + String.format("%010d", submission.getRecordNum());
-			exportSubmission += tail;
+		if(type == 2){
+			exportSubmission += head + "\n" + "\n" + body;
+		}else{
+			exportSubmission += head + "\n" + body;
+			if(type == 1){
+				String tail = "Z" + String.format("%010d", submission.getRecordNum());
+				exportSubmission += tail;
+			}
 		}
 		return exportSubmission.trim();
 	}
 	
-	public String exportSubmissions(Long[] ids){
+/*	public String exportSubmissions(Long[] ids){
 		String exportSubmissions = "";
 		for (Long id : ids){
 			String head = "";
@@ -179,10 +190,10 @@ public class SubmissionFacadeImpl implements SubmissionFacade {
 			exportSubmissions += head + "\n" + body + tail + "\n" + "\n" + "\n";
 		}
 		return exportSubmissions.trim();
-	}
+	}*/
 	
 	private String adjustLength(int itemLength, int itemType, String itemValue){
-		if(itemType == 0){
+		if(itemType == 0 && !itemValue.equals("")){
 			//itemValue = String.format("%0" + itemLength + "d", Integer.parseInt(itemValue));
 			while (itemValue.length() < itemLength) {  
 				StringBuffer sb = new StringBuffer();  
@@ -261,23 +272,21 @@ public class SubmissionFacadeImpl implements SubmissionFacade {
 	   	}
 	   	List<Long> recordIds = getQueryChannelService().createJpqlQuery(jpql.toString()).setParameters(conditionVals).list();
 	   	return recordIds;
-	}	
-	
-	@SuppressWarnings("unchecked")
-	private List<Segment> findSegmentsByRecordId(Long recordId){
-		List<Object> conditionVals = new ArrayList<Object>();
-	   	StringBuilder jpql = new StringBuilder("select _segment from Segment _segment  where 1=1 ");
-	   	
-	   	if (recordId != null ) {
-	   		jpql.append(" and _segment.record.id = ? ");
-	   		conditionVals.add(recordId);
-	   	}
-	   	jpql.append("order by _segment.segMark asc");
-	   	List<Segment> segmentList = getQueryChannelService().createJpqlQuery(jpql.toString()).setParameters(conditionVals).list();
-	   	return segmentList;
 	}
 	
-	private RecordSegment findRecordSegmentByRecordType(Long recordTypeId, String segMark){
+	@SuppressWarnings("unchecked")
+	private List<Record> findRecordsBySubmissionId(Long submissionId){
+		List<Object> conditionVals = new ArrayList<Object>();
+	   	StringBuilder jpql = new StringBuilder("select _record from Record _record  where 1=1 ");	   	
+	   	if (submissionId != null ) {
+	   		jpql.append(" and _record.submission.id = ? ");
+	   		conditionVals.add(submissionId);
+	   	}
+	   	List<Record> records = getQueryChannelService().createJpqlQuery(jpql.toString()).setParameters(conditionVals).list();
+	   	return records;
+	}
+	
+/*	private RecordSegment findRecordSegmentByRecordType(Long recordTypeId, String segMark){
 		List<Object> conditionVals = new ArrayList<Object>();
 	   	StringBuilder jpql = new StringBuilder("select _recordSegment from RecordSegment _recordSegment  where 1=1 ");
 	   	
@@ -291,5 +300,16 @@ public class SubmissionFacadeImpl implements SubmissionFacade {
 	   	}
 	   	RecordSegment recordSegment = (RecordSegment) getQueryChannelService().createJpqlQuery(jpql.toString()).setParameters(conditionVals).singleResult();
 	   	return recordSegment;
+	}*/
+	
+	private List<RecordSegment> findRecordSegmentsByRecordType(Long recordTypeId){
+		List<Object> conditionVals = new ArrayList<Object>();
+	   	StringBuilder jpql = new StringBuilder("select _recordSegment from RecordSegment _recordSegment  where 1=1 ");   	
+	   	if (recordTypeId != null ) {
+	   		jpql.append(" and _recordSegment.recordType.id = ? ");
+	   		conditionVals.add(recordTypeId);
+	   	}
+	   	List<RecordSegment> recordSegments = getQueryChannelService().createJpqlQuery(jpql.toString()).setParameters(conditionVals).list();
+	   	return recordSegments;
 	}
 }

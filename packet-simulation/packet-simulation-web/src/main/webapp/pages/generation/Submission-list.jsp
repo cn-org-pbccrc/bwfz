@@ -31,8 +31,8 @@ $(function (){
 	                buttons: [
 	                        {content: '<button class="btn btn-primary" type="button"><span class="glyphicon glyphicon-plus"><span>添加</button>', action: 'add'},
 	                        {content: '<button class="btn btn-success" type="button"><span class="glyphicon glyphicon-edit"><span>修改</button>', action: 'modify'},
-	                        {content: '<button class="btn btn-danger" type="button"><span class="glyphicon glyphicon-remove"><span>删除</button>', action: 'delete'},
-	                        {content: '<button class="btn btn-info" type="button"><span class="glyphicon glyphicon-export"><span>导出报文</button>', action: 'export'}
+	                        {content: '<button class="btn btn-danger" type="button"><span class="glyphicon glyphicon-remove"><span>删除</button>', action: 'delete'}
+	                        //{content: '<button class="btn btn-info" type="button"><span class="glyphicon glyphicon-export"><span>导出报文</button>', action: 'export'}
 	                    ],
 	                url:"${pageContext.request.contextPath}/Submission/pageJson.koala",
 	                columns: [
@@ -88,8 +88,8 @@ $(function (){
 	                            content: '确定要删除所选记录吗?',
 	                            callBack: remove
 	                        });
-	                   },
-	                   'export': function(event, data){
+	                   }
+	                   /* 'export': function(event, data){
 	                        var indexs = data.data;
 	                        var $this = $(this);
 	                        if(indexs.length == 0){
@@ -100,7 +100,7 @@ $(function (){
 	                            return;
 	                        }
 	                       self.exportSubmission(indexs, $this);
-	                    }
+	                    } */
 	         });
 	    },
 	    add: function(grid){
